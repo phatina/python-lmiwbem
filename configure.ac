@@ -1,0 +1,125 @@
+AC_PREREQ([2.60])
+
+dnl lmiwbem version number
+m4_define(lmiwbem_version_major, 0)
+m4_define(lmiwbem_version_minor, 1)
+m4_define(lmiwbem_version_patch, 0)
+m4_define(lmiwbem_version, lmiwbem_version_major.lmiwbem_version_minor.lmiwbem_version_patch)
+
+AC_INIT([lmiwbem], [lmiwbem_version], [phatina@redhat.com])
+
+AC_CONFIG_MACRO_DIR([m4])
+m4_include([m4/python_devel.m4])
+m4_include([m4/boost_base.m4])
+m4_include([m4/boost_python.m4])
+
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_SILENT_RULES([yes])
+AM_PATH_PYTHON([2.7])
+
+AC_CONFIG_HEADERS([config.h])
+AC_DISABLE_STATIC
+AC_PROG_CXX
+AC_LANG([C++])
+AC_PROG_LIBTOOL
+
+LT_INIT
+
+dnl Check for platform and set TOG-Pegasus platform variable
+dnl TODO: other platforms
+AC_CANONICAL_HOST
+case $host_os in
+    linux*)
+        case `uname -p` in
+            i*86)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_IX86_GNU
+                ;;
+            x86_64)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_X86_64_GNU
+                ;;
+            arm*)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_XSCALE_GNU
+                ;;
+            *)
+                AC_MSG_ERROR([Your platform is not currently supported])
+                ;;
+        esac
+        ;;
+    *)
+        AC_MSG_ERROR([Your platform is not currently supported])
+        ;;
+esac
+AC_SUBST(PEGASUS_PLATFORM)
+
+dnl Check for TOG-Pegasus Client and Common libraries
+SAVE_LIBS=$LIBS
+LIBS="-lpegcommon"
+AC_MSG_CHECKING([for libpegcommon])
+AC_TRY_LINK([], [],
+    [AC_MSG_RESULT([yes]); PEGASUS_COMMON_LIB=-lpegcommon],
+    [AC_MSG_ERROR([TOG-Pegasus common library not found; install tog-pegasus-libs])]
+)
+LIBS="$LIBS -lpegclient"
+AC_MSG_CHECKING([for libpegclient])
+AC_TRY_LINK([], [],
+    [AC_MSG_RESULT([yes]); PEGASUS_CLIENT_LIB=-lpegclient],
+    [AC_MSG_ERROR([TOG-Pegasus client library not found; install tog-pegasus-libs])]
+)
+
+dnl Check for TOG-Pegasus headers
+AC_MSG_CHECKING([for TOG-Pegasus headers])
+AC_TRY_COMPILE(
+    [#define $PEGASUS_PLATFORM
+     #include <Pegasus/Common/Config.h>],
+    [], [AC_MSG_RESULT([yes])],
+    [AC_MSG_RESULT([no])
+     AC_MSG_ERROR([TOG-Pegasus headers not found; install tog-pegasus-devel])]
+)
+
+dnl Check for Pegasus verification callback capabilities
+LIBS="-lpegcommon"
+AC_MSG_CHECKING([for TOG-Pegasus X509 verification capabilities])
+AC_TRY_LINK(
+    [#define $PEGASUS_PLATFORM
+     #include <Pegasus/Common/SSLContext.h>],
+    [Pegasus::SSLCertificateVerifyFunctionWithData cb;],
+    [AC_MSG_RESULT([yes]);
+     AC_DEFINE(
+        [HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA], [1],
+        [TOG-Pegasus supports X509 verification])],
+    [AC_MSG_RESULT([no])]
+)
+
+LIBS=$SAVE_LIBS
+AC_SUBST(PEGASUS_COMMON_LIB)
+AC_SUBST(PEGASUS_CLIENT_LIB)
+
+dnl Check for python-devel
+AX_PYTHON_DEVEL
+
+dnl Check for Boost::Python
+AX_BOOST_BASE([1.50], [],
+    [AC_MSG_ERROR([Boost not found; install boost-devel])])
+AX_BOOST_PYTHON
+if test x"$ac_cv_boost_python" = x"no"; then
+    AC_MSG_ERROR(Boost::Python not found; install boost-python)
+fi
+
+dnl Note that AX_BOOST_PYTHON just gives us the name of the library (BOOST_PYTHON_LIB),
+dnl and not the actual linker flag, so we must add the -l prefix manually
+BOOST_PYTHON_LIB=-l$BOOST_PYTHON_LIB
+AC_SUBST([BOOST_PYTHON_LIB])
+
+AC_OUTPUT(
+    [makefile
+     src/makefile
+     src/__init__.py]
+)
+
+AC_MSG_NOTICE([
+
+    lmiwbem $VERSION
+    =============
+
+    Now type 'make' to build $PACKAGE
+])

@@ -1,0 +1,70 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+"""
+lmiwbem - WBEM client bindings for Python.
+
+LMIWBEM is a Python library, which performs CIM operations using CIM-XML
+protocol. The library tries to mimic PyWBEM, but does things in different way:
+
+- TOG-Pegasus client's library is used for communication
+- lazy evaluation of CIM objects is used
+- some minor API was added for performance reasons
+"""
+
+__version__ = "@VERSION@"
+
+# List all the classes, so they are all listed, when help(lmiwbem) is called
+__all__ = [
+    "CIMClass",
+    "CIMClassName",
+    "CIMDateTime",
+    "CIMError",
+    "CIMFloat",
+    "CIMInstance",
+    "CIMInstanceName",
+    "CIMInt",
+    "CIMMethod",
+    "CIMParameter",
+    "CIMProperty",
+    "CIMQualifier",
+    "CIMType",
+    "ConnectionError",
+    "MinutesFromUTC",
+    "NocaseDict",
+    "NocaseDictItemIterator",
+    "NocaseDictKeyIterator",
+    "NocaseDictValueIterator",
+    "Real32",
+    "Real64",
+    "Sint16",
+    "Sint32",
+    "Sint64",
+    "Sint8",
+    "Uint16",
+    "Uint32",
+    "Uint64",
+    "Uint8",
+    "WBEMConnection"
+]
+
+from lmiwbem_core import *
+from lmiwbem_types import *

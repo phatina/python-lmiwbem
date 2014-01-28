@@ -1,0 +1,278 @@
+/* ***** BEGIN LICENSE BLOCK *****
+ *
+ *   Copyright (C) 2014, Peter Hatina <phatina@redhat.com>
+ *
+ *   This library is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Lesser General Public License as
+ *   published by the Free Software Foundation, either version 2.1 of the
+ *   License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *   MA 02110-1301 USA
+ *
+ * ***** END LICENSE BLOCK ***** */
+
+#include <sstream>
+#include <boost/python/class.hpp>
+#include <boost/python/dict.hpp>
+#include "lmiwbem_extract.h"
+#include "lmiwbem_nocasedict.h"
+#include "lmiwbem_property.h"
+#include "lmiwbem_qualifier.h"
+#include "lmiwbem_util.h"
+#include "lmiwbem_value.h"
+
+bp::object CIMProperty::s_class;
+
+CIMProperty::CIMProperty()
+    : m_name()
+    , m_type()
+    , m_class_origin()
+    , m_reference_class()
+    , m_is_array(false)
+    , m_propagated(false)
+    , m_array_size(-1)
+    , m_value()
+    , m_qualifiers()
+    , m_rc_prop_value()
+    , m_rc_prop_qualifiers()
+{
+}
+
+CIMProperty::CIMProperty(
+    const bp::object &name,
+    const bp::object &value,
+    const bp::object &type,
+    const bp::object &class_origin,
+    const bp::object &array_size,
+    const bp::object &propagated,
+    const bp::object &qualifiers,
+    const bp::object &is_array,
+    const bp::object &reference_class)
+{
+    m_name = lmi::extract_or_throw<std::string>(name, "name");
+    m_type = lmi::extract_or_throw<std::string>(type, "type");
+    m_class_origin = lmi::extract_or_throw<std::string>(
+        class_origin, "class_origin");
+    m_reference_class = lmi::extract_or_throw<std::string>(
+        reference_class, "reference_class");
+    m_is_array = lmi::extract_or_throw<bool>(is_array, "is_array");
+    m_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+    if (array_size != bp::object())
+        m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
+    m_value = value;
+    m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(
+        qualifiers, "qualifiers");
+}
+
+void CIMProperty::init_type()
+{
+    s_class = bp::class_<CIMProperty>("CIMProperty", bp::init<>())
+        .def(bp::init<
+            const bp::object &,
+            const bp::object &,
+            const bp::object &,
+            const bp::object &,
+            const bp::object &,
+            const bp::object &,
+            const bp::object &,
+            const bp::object &,
+            const bp::object &>((
+                bp::arg("name"),
+                bp::arg("value"),
+                bp::arg("type") = std::string(),
+                bp::arg("class_origin") = std::string(),
+                bp::arg("array_size") = -1,
+                bp::arg("propagated") = false,
+                bp::arg("qualifiers") = NocaseDict::create(),
+                bp::arg("is_array") = false,
+                bp::arg("reference_class") = std::string()),
+                "Property of a CIM object.\n\n"
+                ":param str name: String containing the property's name\n"
+                ":param value: Property's value\n"
+                ":param str type: String containing the property's type\n"
+                ":param str class_origin: String containing property's class origin\n"
+                ":param int array_size: Array size\n"
+                ":param bool propagated: True, if the property is propagated;\n"
+                "\tFalse otherwise"
+                ":param NocaseDict qualifiers: Dictionary containing propert's qualifiers\n"
+                ":param bool is_array: True, if the property's value is array;\n"
+                "\tFalse otherwise"
+                ":param str reference_class: String containing property's reference class"))
+        .def("__repr__", &CIMProperty::repr,
+            ":returns: pretty string of the object")
+        .add_property("name",
+            &CIMProperty::getName,
+            &CIMProperty::setName,
+            "Property storing name of the property.\n\n"
+            ":returns: string containing the property's name")
+        .add_property("value",
+            &CIMProperty::setValue,
+            &CIMProperty::getValue,
+            "Property storing value of the property.\n\n"
+            ":returns: property's value")
+        .add_property("type",
+            &CIMProperty::getType,
+            &CIMProperty::setType,
+            "Property storing type of the property.\n\n"
+            ":returns: string containing the property's type")
+        .add_property("class_origin",
+            &CIMProperty::getClassOrigin,
+            &CIMProperty::setClassOrigin,
+            "Property storing class origin of the property.\n\n"
+            ":returns: string containing the property's class origin")
+        .add_property("array_size",
+            &CIMProperty::getArraySize,
+            &CIMProperty::setArraySize,
+            "Property storing array size of the property.\n\n"
+            ":returns: property's array size\n"
+            ":rtype: int")
+        .add_property("propagated",
+            &CIMProperty::getPropagated,
+            &CIMProperty::setPropagated,
+            "Property storing propagation flag of the property.\n\n"
+            ":returns: flag, which indicates, if the property is propagated\n"
+            ":rtype: bool")
+        .add_property("qualifiers",
+            &CIMProperty::getQualifiers,
+            &CIMProperty::setQualifiers,
+            "Property storing qualifiers of the property.\n\n"
+            ":returns: dictionary containing the property's qualifiers"
+            ":rtype: :py:class:`NocaseDict`")
+        .add_property("is_array",
+            &CIMProperty::m_is_array,
+            "Property storing flag, which indicates, if the property's value is\n"
+            "\tarray.\n\n"
+            ":returns: True, if the property's value is array\n"
+            ":rtype: bool")
+        .add_property("reference_class",
+            &CIMProperty::m_reference_class,
+            &CIMProperty::setReferenceClass,
+            "Property storing reference class of the property.\n\n"
+            ":returns: string containing the property's reference class")
+        ;
+}
+
+bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
+{
+    bp::object inst = s_class();
+    CIMProperty &fake_this = lmi::extract<CIMProperty&>(inst);
+    fake_this.m_name = property.getName().getString().getCString();
+    fake_this.m_type = CIMTypeConv::asStdString(property.getType());
+    fake_this.m_class_origin = property.getClassOrigin().getString().getCString();
+    fake_this.m_array_size = static_cast<int>(property.getArraySize());
+    fake_this.m_propagated = property.getPropagated();
+    fake_this.m_is_array = property.isArray();
+    fake_this.m_reference_class = property.getReferenceClassName().getString().getCString();
+
+    // Store value for lazy evaluation
+    fake_this.m_rc_prop_value.set(property.getValue());
+
+    // Store qualifiers for lazy evaluation
+    fake_this.m_rc_prop_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
+    const Pegasus::Uint32 cnt = property.getQualifierCount();
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
+        fake_this.m_rc_prop_qualifiers.get()->push_back(property.getQualifier(i));
+    return inst;
+}
+
+std::string CIMProperty::repr()
+{
+    std::stringstream ss;
+    ss << "CIMProperty(name='" << m_name
+        << "', type='" << m_type
+        << "', value='" << object_as_std_string(getValue())
+        << "', is_array=" << (m_is_array ? "True" : "False") << ", ...)";
+    return ss.str();
+}
+
+bp::object CIMProperty::getType()
+{
+    return std_string_as_pyunicode(m_type);
+}
+
+bp::object CIMProperty::getValue()
+{
+    if (m_value == bp::object()) {
+        m_value = CIMValue::create(*m_rc_prop_value.get());
+        m_rc_prop_value.unref();
+    }
+
+    return m_value;
+}
+
+bp::object CIMProperty::getQualifiers()
+{
+    if (m_qualifiers == bp::object()) {
+        m_qualifiers = NocaseDict::create();
+        std::list<Pegasus::CIMConstQualifier>::const_iterator it;
+        for (it = m_rc_prop_qualifiers.get()->begin();
+             it != m_rc_prop_qualifiers.get()->end(); ++it)
+        {
+            bp::setitem(m_qualifiers,
+                std_string_as_pyunicode(
+                    std::string(it->getName().getString().getCString())),
+                CIMQualifier::create(*it)
+            );
+        }
+
+        m_rc_prop_qualifiers.unref();
+    }
+
+    return m_qualifiers;
+}
+
+void CIMProperty::setName(const bp::object &name)
+{
+    m_name = lmi::extract_or_throw<std::string>(name, "name");
+}
+
+void CIMProperty::setType(const bp::object &type)
+{
+    m_type = lmi::extract_or_throw<std::string>(type, "type");
+}
+
+void CIMProperty::setValue(const bp::object &value)
+{
+    m_value = value;
+
+    // Unref cached resource, it will never be used
+    m_rc_prop_value.unref();
+}
+
+void CIMProperty::setClassOrigin(const bp::object &class_origin)
+{
+    m_class_origin = lmi::extract_or_throw<std::string>(class_origin,
+        "class_origin");
+}
+
+void CIMProperty::setArraySize(const bp::object &array_size)
+{
+    m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
+}
+
+void CIMProperty::setPropagated(const bp::object &propagated)
+{
+    m_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+}
+
+void CIMProperty::setQualifiers(const bp::object &qualifiers)
+{
+    m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+
+    // Unref cached resource, it will never be used
+    m_rc_prop_qualifiers.unref();
+}
+
+void CIMProperty::setReferenceClass(const bp::object &reference_class)
+{
+    m_reference_class = lmi::extract_or_throw<std::string>(reference_class,
+        "reference_class");
+}
