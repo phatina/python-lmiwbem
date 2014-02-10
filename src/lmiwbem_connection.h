@@ -121,6 +121,14 @@ public:
         const bp::object &role,
         const bp::object &result_role);
 
+    bp::object getReferences(
+        const bp::object &object_path,
+        const bp::object &result_class,
+        const bp::object &role,
+        const bool include_qualifiers,
+        const bool include_class_origin,
+        const bp::object &property_list);
+
 protected:
     static std::string s_default_namespace;
 

@@ -384,6 +384,40 @@ void WBEMConnection::init_type()
             ":returns: list of associated :py:class:`CIMInstanceName` objects with\n"
             "\tan input instance\n"
             ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+        .def("References", &WBEMConnection::getReferences,
+            (bp::arg("ObjectName"),
+             bp::arg("ResultClass") = bp::object(),
+             bp::arg("Role") = bp::object(),
+             bp::arg("IncludeQualifiers") = false,
+             bp::arg("IncludeClassOrigin") = false,
+             bp::arg("PropertyList") = bp::object()),
+            "Returns a list of association :py:class:`CIMInstance` objects with an input\n"
+            "instance name.\n\n"
+            ":param CIMInstanceName ObjectName: specifies CIM object for which the association\n"
+            "\tinstances will be enumerated.\n"
+            ":param string ResultClass: valid CIM class name. It acts as a filter on the\n"
+            "\treturned set of objects by mandating that each returned object shall be an\n"
+            "\tinstance of this class (or one of its subclasses) or this class (or one of its\n"
+            "\tsubclasses). Default value is None.\n"
+            ":param string Role: valid property name. It acts as a filter on the returned set\n"
+            "\tof objects by mandating that each returned object shall refer to the target\n"
+            "\tobject through a property with a name that matches the value of this\n"
+            "\tparameter. Default value is None.\n"
+            ":param bool IncludeQualifiers: bool flag indicating, if all qualifiers for each\n"
+            "\tobject (including qualifiers on the object and on any returned properties)\n"
+            "\tshall be included as ``<QUALIFIER>`` elements in the response. Default value\n"
+            "\tis False.\n"
+            ":param bool IncludeClassOrigin: bool flag indicating, if the ``CLASSORIGIN``\n"
+            "\tattribute shall be present on all appropriate elements in each returned\n"
+            "\tobject. Default value is False.\n"
+            ":param list PropertyList: if not None, the members of the list define one or more\n"
+            "\tproperty names. Each returned object shall not include elements for any\n"
+            "\tproperties missing from this list. If PropertyList is an empty list, no\n"
+            "\tproperties are included in each returned object. If PropertyList is None, no\n"
+            "\tadditional filtering is defined. Default value is None.\n"
+            ":returns: list of association :py:class:`CIMInstance` objects with an input\n"
+            "\tinstance\n"
+            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
     ;
 }
 
@@ -847,4 +881,65 @@ bp::object WBEMConnection::getAssociatorNames(
         associator_names.append(CIMInstanceName::create(cim_associator_names[i]));
 
     return associator_names;
+}
+
+bp::object WBEMConnection::getReferences(
+    const bp::object &object_path,
+    const bp::object &result_class,
+    const bp::object &role,
+    const bool include_qualifiers,
+    const bool include_class_origin,
+    const bp::object &property_list)
+{
+    const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
+        object_path, "ObjectName");
+    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+
+    std::string std_ns(s_default_namespace);
+    if (!cim_path.getNameSpace().isNull())
+        std_ns = cim_path.getNameSpace().getString().getCString();
+
+    std::string std_result_class;
+    std::string std_role;
+    if (result_class != bp::object())
+        std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
+    if (role != bp::object())
+        std_role = lmi::extract_or_throw<std::string>(role, "Role");
+
+    Pegasus::CIMPropertyList cim_property_list(
+        ListConv::asPegasusPropertyList(property_list,
+        "PropertyList"));
+
+    Pegasus::Array<Pegasus::CIMObject> cim_references;
+    try {
+        Pegasus::CIMName cim_result_class;
+        Pegasus::String  cim_role = Pegasus::String::EMPTY;
+        if (!std_result_class.empty())
+            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+        if (!std_role.empty())
+            cim_role = Pegasus::String(std_role.c_str());
+
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        cim_references = m_client.references(
+            Pegasus::CIMNamespaceName(std_ns.c_str()),
+            cim_path,
+            cim_result_class,
+            cim_role,
+            include_qualifiers,
+            include_class_origin,
+            cim_property_list);
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
+
+    bp::list references;
+    const Pegasus::Uint32 cnt = cim_references.size();
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
+        references.append(CIMInstance::create(cim_references[i]));
+
+    return references;
 }
