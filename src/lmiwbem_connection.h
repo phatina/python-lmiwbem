@@ -104,6 +104,13 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
+    bp::object getAssociatorNames(
+        const bp::object &object_path,
+        const bp::object &assoc_class,
+        const bp::object &result_class,
+        const bp::object &role,
+        const bp::object &result_role);
+
 protected:
     static std::string s_default_namespace;
 

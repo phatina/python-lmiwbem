@@ -304,6 +304,39 @@ void WBEMConnection::init_type()
             "\tfiltering is defined.\n"
             ":returns: :py:class:`CIMClass` object."
             ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+        .def("AssociatorNames", &WBEMConnection::getAssociatorNames,
+            (bp::arg("ObjectName"),
+             bp::arg("AssocClass") = bp::object(),
+             bp::arg("ResultClass") = bp::object(),
+             bp::arg("Role") = bp::object(),
+             bp::arg("ResultRole") = bp::object()),
+            "Returns a list of associated :py:class:`CIMInstanceName` objects with an input\n"
+            "instance name.\n\n"
+            ":param CIMInstanceName ObjectName: specifies CIM object for which the associated\n"
+            "\tinstance names will be enumerated.\n"
+            ":param string AssocClass: valid CIM association class name. It acts as a filter on\n"
+            "\tthe returned set of names by mandating that each returned name identify an\n"
+            "\tobject that shall be associated to the source object through an instance of\n"
+            "\tthis class or one of its subclasses.\n"
+            ":param string ResultClass: valid CIM class name. It acts as a filter on the\n"
+            "\treturned set of names by mandating that each returned name identify an object\n"
+            "\tthat shall be either an instance of this class (or one of its subclasses) or\n"
+            "\tbe this class (or one of its subclasses).\n"
+            ":param string Role: valid property name. It acts as a filter on the returned set\n"
+            "\tof names by mandating that each returned name identify an object that shall be\n"
+            "\tassociated to the source object through an association in which the source\n"
+            "\tobject plays the specified role. That is, the name of the property in the\n"
+            "\tassociation class that refers to the source object shall match the value of\n"
+            "\tthis parameter.\n"
+            ":param string ResultRole: valid property name. It acts as a filter on the returned\n"
+            "\tset of names by mandating that each returned name identify an object that\n"
+            "\tshall be associated to the source object through an association in which the\n"
+            "\tnamed returned object plays the specified role. That is, the name of the\n"
+            "\tproperty in the association class that refers to the returned object shall\n"
+            "\tmatch the value of this parameter.\n"
+            ":returns: list of associated :py:class:`CIMInstanceName` objects with\n"
+            "\tan input instance\n"
+            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
     ;
 }
 
@@ -621,4 +654,72 @@ bp::object WBEMConnection::getClass(
     }
 
     return CIMClass::create(cim_class);
+}
+
+bp::object WBEMConnection::getAssociatorNames(
+    const bp::object &object_path,
+    const bp::object &assoc_class,
+    const bp::object &result_class,
+    const bp::object &role,
+    const bp::object &result_role)
+{
+    const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
+        object_path, "ObjectName");
+    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+
+    std::string std_ns(s_default_namespace);
+    if (!cim_path.getNameSpace().isNull())
+        std_ns = cim_path.getNameSpace().getString().getCString();
+
+    std::string std_assoc_class;
+    std::string std_result_class;
+    std::string std_role;
+    std::string std_result_role;
+    if (assoc_class != bp::object())
+        std_assoc_class = lmi::extract_or_throw<std::string>(assoc_class, "AssocClass");
+    if (result_class != bp::object())
+        std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
+    if (role != bp::object())
+        std_role = lmi::extract_or_throw<std::string>(role, "Role");
+    if (result_role != bp::object())
+        std_result_role = lmi::extract_or_throw<std::string>(result_role, "ResultRole");
+
+    Pegasus::Array<Pegasus::CIMObjectPath> cim_associator_names;
+    try {
+        Pegasus::CIMName cim_assoc_class;
+        Pegasus::CIMName cim_result_class;
+        Pegasus::String  cim_role = Pegasus::String::EMPTY;
+        Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
+
+        if (!std_assoc_class.empty())
+            cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
+        if (!std_result_class.empty())
+            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+        if (!std_role.empty())
+            cim_role = std_role.c_str();
+        if (!std_result_role.empty())
+            cim_result_role = std_result_role.c_str();
+
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        cim_associator_names = m_client.associatorNames(
+            Pegasus::CIMNamespaceName(std_ns.c_str()),
+            cim_path,
+            cim_assoc_class,
+            cim_result_class,
+            cim_role,
+            cim_result_role);
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
+
+    bp::list associator_names;
+    const Pegasus::Uint32 cnt = cim_associator_names.size();
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
+        associator_names.append(CIMInstanceName::create(cim_associator_names[i]));
+
+    return associator_names;
 }
