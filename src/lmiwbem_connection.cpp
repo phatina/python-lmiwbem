@@ -418,6 +418,25 @@ void WBEMConnection::init_type()
             ":returns: list of association :py:class:`CIMInstance` objects with an input\n"
             "\tinstance\n"
             ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+        .def("ReferenceNames", &WBEMConnection::getReferenceNames,
+            (bp::arg("ObjectName"),
+             bp::arg("ResultClass") = bp::object(),
+             bp::arg("Role") = bp::object()),
+            "Returns a list of association :py:class:`CIMInstanceName` objects with an\n"
+            "input instance.\n\n"
+            ":param CIMInstanceName ObjectName: specifies CIM object for which the association\n"
+            "\tinstance names will be enumerated.\n"
+            ":param string ResultClass: valid CIM class name. It acts as a filter on the\n"
+            "\treturned set of object names by mandating that each returned Object Name identify\n"
+            "\tan instance of this class (or one of its subclasses) or this class (or one of its\n"
+            "\tsubclasses).\n"
+            ":param string Role: valid property name. It acts as a filter on the returned set\n"
+            "\tof object names by mandating that each returned object name shall identify an\n"
+            "\tobject that refers to the target instance through a property with a name that\n"
+            "\tmatches the value of this parameter.\n"
+            ":returns: list of association :py:class:`CIMInstanceName` objects with an input\n"
+            "\tinstance\n"
+            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
     ;
 }
 
@@ -942,4 +961,55 @@ bp::object WBEMConnection::getReferences(
         references.append(CIMInstance::create(cim_references[i]));
 
     return references;
+}
+
+bp::object WBEMConnection::getReferenceNames(
+    const bp::object &object_path,
+    const bp::object &result_class,
+    const bp::object &role)
+{
+    const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
+        object_path, "ObjectName");
+    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+
+    std::string std_ns(s_default_namespace);
+    if (!cim_path.getNameSpace().isNull())
+        std_ns = cim_path.getNameSpace().getString().getCString();
+
+    std::string std_result_class;
+    std::string std_role;
+    if (result_class != bp::object())
+        std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
+    if (role != bp::object())
+        std_role = lmi::extract_or_throw<std::string>(role, "Role");
+
+    Pegasus::Array<Pegasus::CIMObjectPath> cim_reference_names;
+    try {
+        Pegasus::CIMName cim_result_class;
+        Pegasus::String  cim_role = Pegasus::String::EMPTY;
+        if (!std_result_class.empty())
+            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+        if (!std_role.empty())
+            cim_role = Pegasus::String(std_role.c_str());
+
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        cim_reference_names = m_client.referenceNames(
+            Pegasus::CIMNamespaceName(std_ns.c_str()),
+            cim_path,
+            cim_result_class,
+            cim_role);
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
+
+    bp::list reference_names;
+    const Pegasus::Uint32 cnt = cim_reference_names.size();
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
+        reference_names.append(CIMInstanceName::create(cim_reference_names[i]));
+
+    return reference_names;
 }

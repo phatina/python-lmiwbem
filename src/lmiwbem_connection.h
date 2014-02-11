@@ -129,6 +129,11 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
+    bp::object getReferenceNames(
+        const bp::object &object_path,
+        const bp::object &result_class,
+        const bp::object &role);
+
 protected:
     static std::string s_default_namespace;
 
