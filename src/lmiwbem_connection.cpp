@@ -756,7 +756,7 @@ bp::object WBEMConnection::getClass(
     return CIMClass::create(cim_class);
 }
 
-bp::object WBEMConnection::getAssociators(
+bp::list WBEMConnection::getAssociators(
     const bp::object &object_path,
     const bp::object &assoc_class,
     const bp::object &result_class,
@@ -834,7 +834,7 @@ bp::object WBEMConnection::getAssociators(
     return associators;
 }
 
-bp::object WBEMConnection::getAssociatorNames(
+bp::list WBEMConnection::getAssociatorNames(
     const bp::object &object_path,
     const bp::object &assoc_class,
     const bp::object &result_class,
@@ -902,7 +902,7 @@ bp::object WBEMConnection::getAssociatorNames(
     return associator_names;
 }
 
-bp::object WBEMConnection::getReferences(
+bp::list WBEMConnection::getReferences(
     const bp::object &object_path,
     const bp::object &result_class,
     const bp::object &role,
@@ -963,7 +963,7 @@ bp::object WBEMConnection::getReferences(
     return references;
 }
 
-bp::object WBEMConnection::getReferenceNames(
+bp::list WBEMConnection::getReferenceNames(
     const bp::object &object_path,
     const bp::object &result_class,
     const bp::object &role)

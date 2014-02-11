@@ -104,7 +104,7 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
-    bp::object getAssociators(
+    bp::list getAssociators(
         const bp::object &object_path,
         const bp::object &assoc_class,
         const bp::object &result_class,
@@ -114,14 +114,14 @@ public:
         const bool include_class_origin,
         const bp::object property_list);
 
-    bp::object getAssociatorNames(
+    bp::list getAssociatorNames(
         const bp::object &object_path,
         const bp::object &assoc_class,
         const bp::object &result_class,
         const bp::object &role,
         const bp::object &result_role);
 
-    bp::object getReferences(
+    bp::list getReferences(
         const bp::object &object_path,
         const bp::object &result_class,
         const bp::object &role,
@@ -129,7 +129,7 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
-    bp::object getReferenceNames(
+    bp::list getReferenceNames(
         const bp::object &object_path,
         const bp::object &result_class,
         const bp::object &role);
