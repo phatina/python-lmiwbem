@@ -96,6 +96,11 @@ public:
         const bp::object &cls,
         const bool deep_inheritance);
 
+    bp::list execQuery(
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &ns);
+
     bp::object getClass(
         const bp::object &cls,
         const bp::object &ns,

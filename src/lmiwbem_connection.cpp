@@ -268,6 +268,16 @@ void WBEMConnection::init_type()
             "\tEnumerateClasses and EnumerateClassName operations.\n"
             ":returns: list of strings of class names"
             ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+        .def("ExecQuery", &WBEMConnection::execQuery,
+            (bp::arg("QueryLanguage"),
+             bp::arg("Query"),
+             bp::arg("namespace") = bp::object()),
+            "Executes a query and returns a list of :py:class:`CIMInstance` objects.\n\n"
+            ":param string query_lang: query language\n"
+            ":param string query: query to execute\n"
+            ":param string namespace: target namespace for the query\n"
+            ":returns: list of instances\n"
+            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
         .def("GetClass", &WBEMConnection::getClass,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object(),
@@ -716,6 +726,40 @@ bp::list WBEMConnection::enumerateClassNames(
         classnames.append(bp::object(cim_classnames[i]));
 
     return classnames;
+}
+
+bp::list WBEMConnection::execQuery(
+    const bp::object &query_lang,
+    const bp::object &query,
+    const bp::object &ns)
+{
+    std::string std_query_lang = lmi::extract_or_throw<std::string>(query_lang, "QueryLanguage");
+    std::string std_query = lmi::extract_or_throw<std::string>(query, "Query");
+    std::string std_ns(s_default_namespace);
+    if (ns != bp::object())
+        std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
+
+    Pegasus::Array<Pegasus::CIMObject> cim_instances;
+    try {
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        cim_instances = m_client.execQuery(
+            Pegasus::CIMNamespaceName(std_ns.c_str()),
+            Pegasus::String(std_query_lang.c_str()),
+            Pegasus::String(std_query.c_str()));
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
+
+    bp::list instances;
+    const Pegasus::Uint32 cnt = cim_instances.size();
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
+        instances.append(CIMInstance::create(cim_instances[i]));
+
+    return instances;
 }
 
 bp::object WBEMConnection::getClass(
