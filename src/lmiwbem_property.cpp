@@ -114,8 +114,8 @@ void CIMProperty::init_type()
             "Property storing name of the property.\n\n"
             ":returns: string containing the property's name")
         .add_property("value",
-            &CIMProperty::setValue,
             &CIMProperty::getValue,
+            &CIMProperty::setValue,
             "Property storing value of the property.\n\n"
             ":returns: property's value")
         .add_property("type",
