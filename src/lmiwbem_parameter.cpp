@@ -155,7 +155,7 @@ std::string CIMParameter::repr()
 
 bp::object CIMParameter::getQualifiers()
 {
-    if (m_qualifiers == bp::object()) {
+    if (!m_rc_param_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         for (it = m_rc_param_qualifiers.get()->begin();

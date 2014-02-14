@@ -55,6 +55,8 @@ public:
 
     T *get() { return m_value; }
 
+    bool empty() { return m_value == NULL; }
+
     void unref()
     {
         if (m_refcnt && --m_refcnt == 0) {

@@ -172,7 +172,7 @@ bp::object CIMInstance::getClassname()
 
 bp::object CIMInstance::getPath()
 {
-    if (m_path == bp::object()) {
+    if (!m_rc_inst_path.empty()) {
         m_path = CIMInstanceName::create(*m_rc_inst_path.get());
         m_rc_inst_path.unref();
     }
@@ -182,15 +182,13 @@ bp::object CIMInstance::getPath()
 
 bp::object CIMInstance::getProperties()
 {
-    if (m_properties == bp::object())
-        evalProperties();
-
+    evalProperties();
     return m_properties;
 }
 
 bp::object CIMInstance::getQualifiers()
 {
-    if (m_qualifiers == bp::object()) {
+    if (!m_rc_inst_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier> &qualifiers = *m_rc_inst_qualifiers.get();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
@@ -206,9 +204,7 @@ bp::object CIMInstance::getQualifiers()
 
 bp::object CIMInstance::getPropertyList()
 {
-    if (m_property_list == bp::object())
-        evalProperties();
-
+    evalProperties();
     return m_property_list;
 }
 
@@ -227,7 +223,7 @@ void CIMInstance::setPath(const bp::object &path)
 
 void CIMInstance::setProperties(const bp::object &properties)
 {
-    if (m_rc_inst_properties.get())
+    if (!m_rc_inst_properties.empty())
         evalProperties();
 
     m_properties = lmi::get_or_throw<NocaseDict, bp::dict>(properties, "properties");
@@ -246,7 +242,7 @@ void CIMInstance::setQualifiers(const bp::object &qualifiers)
 
 void CIMInstance::setPropertyList(const bp::object &property_list)
 {
-    if (m_rc_inst_properties.get())
+    if (!m_rc_inst_properties.empty())
         evalProperties();
 
     m_property_list = lmi::get_or_throw<bp::list>(property_list);
@@ -257,7 +253,7 @@ void CIMInstance::setPropertyList(const bp::object &property_list)
 
 void CIMInstance::evalProperties()
 {
-    if (!m_rc_inst_properties.get())
+    if (m_rc_inst_properties.empty())
         return;
 
     m_properties = NocaseDict::create();

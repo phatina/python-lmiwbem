@@ -200,7 +200,7 @@ bp::object CIMProperty::getType()
 
 bp::object CIMProperty::getValue()
 {
-    if (m_value == bp::object()) {
+    if (!m_rc_prop_value.empty()) {
         m_value = CIMValue::create(*m_rc_prop_value.get());
         m_rc_prop_value.unref();
     }
@@ -210,7 +210,7 @@ bp::object CIMProperty::getValue()
 
 bp::object CIMProperty::getQualifiers()
 {
-    if (m_qualifiers == bp::object()) {
+    if (!m_rc_prop_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         for (it = m_rc_prop_qualifiers.get()->begin();

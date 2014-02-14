@@ -157,7 +157,7 @@ std::string CIMClass::repr()
 
 bp::object CIMClass::getProperties()
 {
-    if (m_properties == bp::object()) {
+    if (!m_rc_class_properties.empty()) {
         m_properties = NocaseDict::create();
         std::list<Pegasus::CIMConstProperty>::const_iterator it;
         std::list<Pegasus::CIMConstProperty> &properties = *m_rc_class_properties.get();
@@ -175,7 +175,7 @@ bp::object CIMClass::getProperties()
 
 bp::object CIMClass::getQualifiers()
 {
-    if (m_qualifiers == bp::object()) {
+    if (!m_rc_class_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         std::list<Pegasus::CIMConstQualifier> &qualifiers = *m_rc_class_qualifiers.get();
@@ -193,7 +193,7 @@ bp::object CIMClass::getQualifiers()
 
 bp::object CIMClass::getMethods()
 {
-    if (m_methods == bp::object()) {
+    if (!m_rc_class_methods.empty()) {
         m_methods = NocaseDict::create();
         std::list<Pegasus::CIMConstMethod>::const_iterator it;
         std::list<Pegasus::CIMConstMethod> &methods = *m_rc_class_methods.get();

@@ -161,7 +161,7 @@ std::string CIMMethod::repr()
 
 bp::object CIMMethod::getParameters()
 {
-    if (m_parameters == bp::object()) {
+    if (!m_rc_meth_parameters.empty()) {
         m_parameters = NocaseDict::create();
         std::list<Pegasus::CIMConstParameter>::const_iterator it;
         for (it = m_rc_meth_parameters.get()->begin(); it != m_rc_meth_parameters.get()->end(); ++it) {
@@ -179,7 +179,7 @@ bp::object CIMMethod::getParameters()
 
 bp::object CIMMethod::getQualifiers()
 {
-    if (m_qualifiers == bp::object()) {
+    if (!m_rc_meth_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         for (it = m_rc_meth_qualifiers.get()->begin();
