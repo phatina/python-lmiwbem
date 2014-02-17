@@ -27,8 +27,6 @@
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_util.h"
 
-bp::object CIMInstanceName::s_class;
-
 CIMInstanceName::CIMInstanceName()
     : m_classname()
     , m_namespace()
@@ -55,7 +53,7 @@ CIMInstanceName::CIMInstanceName(
 
 void CIMInstanceName::init_type()
 {
-    s_class = bp::class_<CIMInstanceName>("CIMInstanceName", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMInstanceName>("CIMInstanceName", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -102,7 +100,7 @@ bp::object CIMInstanceName::create(
     const std::string &ns,
     const std::string &hostname)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMInstanceName& fake_this = lmi::extract<CIMInstanceName&>(inst);
 
     fake_this.m_classname = obj_path.getClassName().getString().getCString();

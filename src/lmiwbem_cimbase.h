@@ -19,46 +19,25 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_INSTANCE_NAME_H
-#define LMIWBEM_INSTANCE_NAME_H
+#ifndef LMIWBEM_CIMBASE
+#define LMIWBEM_CIMBASE
 
-#include <string>
 #include <boost/python/object.hpp>
-#include <Pegasus/Common/CIMObjectPath.h>
-#include "lmiwbem_cimbase.h"
 
 namespace bp = boost::python;
 
-class CIMInstanceName: public CIMBase<CIMInstanceName>
+template <typename T>
+class CIMBase
 {
 public:
-    CIMInstanceName();
-    CIMInstanceName(
-        const bp::object &cls,
-        const bp::object &keybindings,
-        const bp::object &host,
-        const bp::object &ns);
-
     static void init_type();
-    static bp::object create(
-        const Pegasus::CIMObjectPath &obj_path,
-        const std::string &ns = std::string(),
-        const std::string &hostname = std::string());
+    static const bp::object &type() { return s_class; }
 
-    Pegasus::CIMObjectPath asCIMObjectPath() const;
-
-    std::string repr();
-
-    void setClassname(const bp::object &classname);
-    void setNamespace(const bp::object &namespace_);
-    void setHostname(const bp::object &hostname);
-    void setKeybindings(const bp::object &keybindings);
-
-private:
-    std::string m_classname;
-    std::string m_namespace;
-    std::string m_hostname;
-    bp::object m_keybindings;
+protected:
+    static bp::object s_class;
 };
 
-#endif // LMIWBEM_INSTANCE_NAME_H
+template <typename T>
+bp::object CIMBase<T>::s_class;
+
+#endif // LMIWBEM_CIMBASE

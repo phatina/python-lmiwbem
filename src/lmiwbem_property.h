@@ -29,11 +29,12 @@
 #include <Pegasus/Common/CIMType.h>
 #include <Pegasus/Common/CIMQualifier.h>
 #include <Pegasus/Common/CIMValue.h>
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_refcountedptr.h"
 
 namespace bp = boost::python;
 
-class CIMProperty
+class CIMProperty: public CIMBase<CIMProperty>
 {
 public:
     CIMProperty();
@@ -72,8 +73,6 @@ public:
 
 private:
     static std::string propertyTypeAsString(const Pegasus::CIMType type);
-
-    static bp::object s_class;
 
     std::string m_name;
     std::string m_type;

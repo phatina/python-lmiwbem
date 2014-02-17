@@ -26,11 +26,12 @@
 #include <string>
 #include <boost/python/object.hpp>
 #include <Pegasus/Common/CIMParameter.h>
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_refcountedptr.h"
 
 namespace bp = boost::python;
 
-class CIMParameter
+class CIMParameter: public CIMBase<CIMParameter>
 {
 public:
     CIMParameter();
@@ -59,8 +60,6 @@ public:
     void setValue(const bp::object &value);
 
 private:
-    static bp::object s_class;
-
     std::string m_name;
     std::string m_type;
     std::string m_reference_class;

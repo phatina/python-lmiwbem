@@ -30,11 +30,6 @@
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_util.h"
 
-bp::object NocaseDict::s_class;
-bp::object NocaseDictKeyIterator::s_class;
-bp::object NocaseDictValueIterator::s_class;
-bp::object NocaseDictItemIterator::s_class;
-
 bool NocaseDictComparator::operator ()(const std::string &a, const std::string &b) const
 {
     std::string low_a(a);
@@ -57,7 +52,7 @@ NocaseDict::NocaseDict(const bp::object &d)
 
 void NocaseDict::init_type()
 {
-    s_class = bp::class_<NocaseDict>("NocaseDict", bp::init<>())
+    CIMBase::s_class = bp::class_<NocaseDict>("NocaseDict", bp::init<>())
         .def(bp::init<const bp::object&>())
         .def("__getitem__", &NocaseDict::getitem)
         .def("__setitem__", &NocaseDict::setitem)
@@ -88,7 +83,7 @@ void NocaseDict::init_type()
 
 bp::object NocaseDict::create()
 {
-    return s_class();
+    return CIMBase::s_class();
 }
 
 bp::object NocaseDict::create(const bp::object &d)

@@ -25,8 +25,6 @@
 #include "lmiwbem_util.h"
 #include "lmiwbem_value.h"
 
-bp::object CIMQualifier::s_class;
-
 CIMQualifier::CIMQualifier()
     : m_name()
     , m_type()
@@ -61,7 +59,7 @@ CIMQualifier::CIMQualifier(
 
 void CIMQualifier::init_type()
 {
-    s_class = bp::class_<CIMQualifier>("CIMQualifier", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMQualifier>("CIMQualifier", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -148,7 +146,7 @@ bp::object CIMQualifier::create(const Pegasus::CIMQualifier &qualifier)
 
 bp::object CIMQualifier::create(const Pegasus::CIMConstQualifier &qualifier)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMQualifier &fake_this = lmi::extract<CIMQualifier&>(inst);
     fake_this.m_name = std::string(qualifier.getName().getString().getCString());
     fake_this.m_type = CIMTypeConv::asStdString(qualifier.getType());

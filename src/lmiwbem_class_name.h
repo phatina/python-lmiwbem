@@ -24,10 +24,11 @@
 
 #include <string>
 #include <boost/python/object.hpp>
+#include "lmiwbem_cimbase.h"
 
 namespace bp = boost::python;
 
-class CIMClassName
+class CIMClassName: public CIMBase<CIMClassName>
 {
 public:
     CIMClassName();
@@ -49,8 +50,6 @@ public:
     void setHostname(const bp::object &hostname);
 
 private:
-    static bp::object s_class;
-
     std::string m_classname;
     std::string m_namespace;
     std::string m_hostname;

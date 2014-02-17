@@ -25,11 +25,12 @@
 #include <list>
 #include <boost/python/object.hpp>
 #include <Pegasus/Common/CIMMethod.h>
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_refcountedptr.h"
 
 namespace bp = boost::python;
 
-class CIMMethod
+class CIMMethod: public CIMBase<CIMMethod>
 {
 public:
     CIMMethod();
@@ -57,8 +58,6 @@ public:
     void setQualifiers(const bp::object &qualifiers);
 
 private:
-    static bp::object s_class;
-
     std::string m_name;
     std::string m_return_type;
     std::string m_class_origin;

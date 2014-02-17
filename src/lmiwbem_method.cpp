@@ -30,8 +30,6 @@
 #include "lmiwbem_qualifier.h"
 #include "lmiwbem_util.h"
 
-bp::object CIMMethod::s_class;
-
 CIMMethod::CIMMethod()
     : m_name()
     , m_return_type()
@@ -72,7 +70,7 @@ CIMMethod::CIMMethod(
 
 void CIMMethod::init_type()
 {
-    s_class = bp::class_<CIMMethod>("CIMMethod", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMMethod>("CIMMethod", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -130,7 +128,7 @@ void CIMMethod::init_type()
 
 bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMMethod &fake_this = lmi::extract<CIMMethod&>(inst);
     fake_this.m_name = method.getName().getString().getCString();
     fake_this.m_return_type = CIMTypeConv::asStdString(method.getType());

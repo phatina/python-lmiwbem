@@ -26,6 +26,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/object.hpp>
 #include "lmiwbem.h"
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_extract.h"
 
 namespace bp = boost::python;
@@ -45,7 +46,7 @@ public:
     bool operator ()(const std::string &a, const std::string &b) const;
 };
 
-class NocaseDict
+class NocaseDict: public CIMBase<NocaseDict>
 {
 public:
     NocaseDict();
@@ -89,8 +90,6 @@ public:
     int compare(const bp::object &other);
 
 private:
-    static bp::object s_class;
-
     nocase_map_t m_dict;
 };
 
@@ -104,7 +103,7 @@ protected:
     template <typename T>
     static void init_type(const char *classname)
     {
-        T::s_class = bp::class_<T>(
+        T::CIMBase::s_class = bp::class_<T>(
             classname, bp::init<>())
             .def("__iter__", &T::iter)
             .def("next", &T::next)
@@ -116,7 +115,7 @@ protected:
         const nocase_map_t::const_iterator &it,
         const nocase_map_t::const_iterator &end)
     {
-        bp::object inst = T::s_class();
+        bp::object inst = T::CIMBase::s_class();
         T &fake_this = lmi::extract<T&>(inst);
         fake_this.m_iter = it;
         fake_this.m_iter_end = end;
@@ -127,7 +126,9 @@ protected:
     nocase_map_t::const_iterator m_iter_end;
 };
 
-class NocaseDictKeyIterator: public NocaseDictIterator
+class NocaseDictKeyIterator:
+    public CIMBase<NocaseDictKeyIterator>,
+    public NocaseDictIterator
 {
 public:
     static void init_type();
@@ -140,10 +141,11 @@ public:
 
 private:
     friend class NocaseDictIterator;
-    static bp::object s_class;
 };
 
-class NocaseDictValueIterator: public NocaseDictIterator
+class NocaseDictValueIterator:
+    public CIMBase<NocaseDictValueIterator>,
+    public NocaseDictIterator
 {
 public:
     static void init_type();
@@ -156,10 +158,11 @@ public:
 
 private:
     friend class NocaseDictIterator;
-    static bp::object s_class;
 };
 
-class NocaseDictItemIterator: public NocaseDictIterator
+class NocaseDictItemIterator:
+    public CIMBase<NocaseDictItemIterator>,
+    public NocaseDictIterator
 {
 public:
     static void init_type();
@@ -172,7 +175,6 @@ public:
 
 private:
     friend class NocaseDictIterator;
-    static bp::object s_class;
 };
 
 #endif // LMIWBEM_NOCASEDICT_H

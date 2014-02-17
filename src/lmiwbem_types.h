@@ -25,27 +25,25 @@
 #include <boost/python/import.hpp>
 #include <boost/python/scope.hpp>
 #include <boost/python/object.hpp>
+#include "lmiwbem_cimbase.h"
 
 namespace bp = boost::python;
 
 #define DECL_CIMTYPE(name) \
-    class name \
+    class name: public CIMBase<name> \
     { \
     public: \
         static void init_type(); \
-        static bp::object create() { return s_class(); } \
+        static bp::object create() { return CIMBase::s_class(); } \
         template <typename T> \
-        static bp::object create(const T &value) { return s_class(value); } \
-    private: \
-        static bp::object s_class; \
+        static bp::object create(const T &value) { return CIMBase::s_class(value); } \
     }
 
 #define DEF_CIMTYPE(name) \
-    bp::object name::s_class; \
     void name::init_type() \
     { \
-        s_class = bp::import("lmiwbem.lmiwbem_types").attr(#name); \
-        bp::scope().attr(#name) = s_class; \
+        CIMBase::s_class = bp::import("lmiwbem.lmiwbem_types").attr(#name); \
+        bp::scope().attr(#name) = CIMBase::s_class; \
     } \
 
 DECL_CIMTYPE(MinutesFromUTC);

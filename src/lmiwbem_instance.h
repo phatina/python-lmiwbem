@@ -27,11 +27,12 @@
 #include <boost/python/object.hpp>
 #include <Pegasus/Common/CIMInstance.h>
 #include "lmiwbem.h"
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_refcountedptr.h"
 
 namespace bp = boost::python;
 
-class CIMInstance
+class CIMInstance: public CIMBase<CIMInstance>
 {
 public:
     CIMInstance();
@@ -62,8 +63,6 @@ public:
 
 private:
     void evalProperties();
-
-    static bp::object s_class;
 
     std::string m_classname;
     bp::object m_path;

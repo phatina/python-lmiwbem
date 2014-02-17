@@ -25,8 +25,6 @@
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_extract.h"
 
-bp::object CIMClassName::s_class;
-
 CIMClassName::CIMClassName()
     : m_classname()
     , m_namespace()
@@ -46,7 +44,7 @@ CIMClassName::CIMClassName(
 
 void CIMClassName::init_type()
 {
-    s_class = bp::class_<CIMClassName>("CIMClassName", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMClassName>("CIMClassName", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -83,7 +81,7 @@ bp::object CIMClassName::create(
     const bp::object &namespace_,
     const bp::object &hostname)
 {
-    return s_class(classname, namespace_, hostname);
+    return CIMBase::s_class(classname, namespace_, hostname);
 }
 
 std::string CIMClassName::repr()

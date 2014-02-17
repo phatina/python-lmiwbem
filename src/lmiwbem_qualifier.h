@@ -25,11 +25,12 @@
 #include <string>
 #include <boost/python/object.hpp>
 #include <Pegasus/Common/CIMQualifier.h>
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem.h"
 
 namespace bp = boost::python;
 
-class CIMQualifier
+class CIMQualifier: public CIMBase<CIMQualifier>
 {
 public:
     CIMQualifier();
@@ -62,8 +63,6 @@ public:
     void setTranslatable(const bp::object &translatable);
 
 private:
-    static bp::object s_class;
-
     std::string m_name;
     std::string m_type;
     bp::object m_value;

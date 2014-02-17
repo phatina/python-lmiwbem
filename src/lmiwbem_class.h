@@ -26,11 +26,12 @@
 #include <string>
 #include <boost/python/object.hpp>
 #include <Pegasus/Common/CIMClass.h>
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_refcountedptr.h"
 
 namespace bp = boost::python;
 
-class CIMClass
+class CIMClass: public CIMBase<CIMClass>
 {
 public:
     CIMClass();
@@ -58,8 +59,6 @@ public:
     void setMethods(const bp::object &methods);
 
 private:
-    static bp::object s_class;
-
     std::string m_classname;
     std::string m_super_classname;
     bp::object m_properties;

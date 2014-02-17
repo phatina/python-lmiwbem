@@ -27,8 +27,6 @@
 #include "lmiwbem_qualifier.h"
 #include "lmiwbem_util.h"
 
-bp::object CIMParameter::s_class;
-
 CIMParameter::CIMParameter()
     : m_name()
     , m_type()
@@ -60,7 +58,7 @@ CIMParameter::CIMParameter(
 
 void CIMParameter::init_type()
 {
-    s_class = bp::class_<CIMParameter>("CIMParameter", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMParameter>("CIMParameter", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -128,7 +126,7 @@ bp::object CIMParameter::create(const Pegasus::CIMParameter &parameter)
 
 bp::object CIMParameter::create(const Pegasus::CIMConstParameter &parameter)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMParameter &fake_this = lmi::extract<CIMParameter&>(inst);
     fake_this.m_name = parameter.getName().getString().getCString();
     fake_this.m_type = CIMTypeConv::asStdString(parameter.getType());

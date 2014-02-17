@@ -31,8 +31,6 @@
 #include "lmiwbem_property.h"
 #include "lmiwbem_qualifier.h"
 
-bp::object CIMClass::s_class;
-
 CIMClass::CIMClass()
     : m_classname()
     , m_super_classname()
@@ -61,7 +59,7 @@ CIMClass::CIMClass(
 
 void CIMClass::init_type()
 {
-    s_class = bp::class_<CIMClass>("CIMClass", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMClass>("CIMClass", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -116,7 +114,7 @@ void CIMClass::init_type()
 
 bp::object CIMClass::create(const Pegasus::CIMClass &cls)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMClass &fake_this = lmi::extract<CIMClass&>(inst);
 
     // Store list of properties for lazy evaluation

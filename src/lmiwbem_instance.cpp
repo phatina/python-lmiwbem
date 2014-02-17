@@ -34,8 +34,6 @@
 
 namespace bp = boost::python;
 
-bp::object CIMInstance::s_class;
-
 CIMInstance::CIMInstance()
     : m_classname()
     , m_path()
@@ -77,7 +75,7 @@ CIMInstance::CIMInstance(
 
 void CIMInstance::init_type()
 {
-    s_class = bp::class_<CIMInstance>("CIMInstance", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMInstance>("CIMInstance", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -131,7 +129,7 @@ void CIMInstance::init_type()
 
 bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMInstance &fake_this = lmi::extract<CIMInstance&>(inst);
     fake_this.m_classname = instance.getClassName().getString().getCString();
 

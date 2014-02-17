@@ -29,8 +29,6 @@
 #include "lmiwbem_util.h"
 #include "lmiwbem_value.h"
 
-bp::object CIMProperty::s_class;
-
 CIMProperty::CIMProperty()
     : m_name()
     , m_type()
@@ -74,7 +72,7 @@ CIMProperty::CIMProperty(
 
 void CIMProperty::init_type()
 {
-    s_class = bp::class_<CIMProperty>("CIMProperty", bp::init<>())
+    CIMBase::s_class = bp::class_<CIMProperty>("CIMProperty", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -162,7 +160,7 @@ void CIMProperty::init_type()
 
 bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
 {
-    bp::object inst = s_class();
+    bp::object inst = CIMBase::s_class();
     CIMProperty &fake_this = lmi::extract<CIMProperty&>(inst);
     fake_this.m_name = property.getName().getString().getCString();
     fake_this.m_type = CIMTypeConv::asStdString(property.getType());
