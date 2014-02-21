@@ -29,6 +29,7 @@ class CIMValue
 {
 public:
     static bp::object create(const Pegasus::CIMValue &value);
+    static Pegasus::CIMValue asPegasusCIMValue(const bp::object &value);
 };
 
 #endif // LMIWBEM_VALUE_H

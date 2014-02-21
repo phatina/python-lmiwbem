@@ -21,7 +21,10 @@
 
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
+#include <boost/python/object_attributes.hpp>
 #include "lmiwbem_class.h"
+#include "lmiwbem_class_name.h"
+#include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
 #include "lmiwbem_types.h"
@@ -58,7 +61,9 @@ DEF_PEGASUS_VALUE_CORE(Real64)
 template <typename T>
 bp::object getPegasusValue(const Pegasus::CIMValue &value)
 {
-    if (value.isNull())
+    // We return None for every empty CIMValue except of lists,
+    // so we can reconstruct CIMValue out of Python's objects.
+    if (value.isNull() && !value.isArray())
         return bp::object();
 
     if (!value.isArray()) {
@@ -77,6 +82,83 @@ bp::object getPegasusValue(const Pegasus::CIMValue &value)
         }
         return incref(array);
     }
+}
+
+template <typename T, typename R>
+R setPegasusValueCore(const bp::object &value)
+{
+    return R(lmi::extract<T>(value));
+}
+
+template <>
+Pegasus::String setPegasusValueCore<
+    Pegasus::CIMDateTime,
+    Pegasus::String>(const bp::object &value)
+{
+    return Pegasus::String(object_as_std_string(value).c_str());
+}
+
+template <>
+Pegasus::CIMObjectPath setPegasusValueCore<
+    Pegasus::CIMObjectPath,
+    Pegasus::CIMObjectPath>(const bp::object &value)
+{
+    const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(value);
+    return path.asPegasusCIMObjectPath();
+}
+
+template <>
+Pegasus::CIMObject setPegasusValueCore<
+    Pegasus::CIMClass,
+    Pegasus::CIMObject>(const bp::object &value)
+{
+    CIMClass &cls = lmi::extract<CIMClass&>(value);
+    return Pegasus::CIMObject(cls.asPegasusCIMClass());
+}
+
+template <>
+Pegasus::CIMObject setPegasusValueCore<
+    Pegasus::CIMInstance,
+    Pegasus::CIMObject>(const bp::object &value)
+{
+    CIMInstance &instance = lmi::extract<CIMInstance&>(value);
+    return Pegasus::CIMObject(instance.asPegasusCIMInstance());
+}
+
+template <>
+Pegasus::String setPegasusValueCore<
+    Pegasus::String,
+    Pegasus::String>(const bp::object &value)
+{
+    return Pegasus::String(lmi::extract<const char*>(value));
+}
+
+template <typename T, typename R>
+Pegasus::CIMValue setPegasusValue(
+    const bp::object &value,
+    const bool is_array = false)
+{
+    if (!is_array)
+        return Pegasus::CIMValue(setPegasusValueCore<T, R>(value));
+
+    bp::list list(value);
+    Pegasus::Array<R> array;
+    const int cnt = bp::len(list);
+    for (int i = 0; i < cnt; ++i)
+        array.append(setPegasusValueCore<T, R>(list[i]));
+
+    return Pegasus::CIMValue(array);
+}
+
+// We are compiling under C++98, which does not support template's
+// default parameters. So we define the same template function with
+// "S" suffix; for shorter code used below.
+template <typename T>
+Pegasus::CIMValue setPegasusValueS(
+    const bp::object &value,
+    const bool is_array = false)
+{
+    return setPegasusValue<T, T>(value, is_array);
 }
 
 } // unnamed namespace
@@ -117,4 +199,63 @@ bp::object CIMValue::create(const Pegasus::CIMValue &value)
         bp::throw_error_already_set();
         return bp::object();
     }
+}
+
+Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
+{
+    bool is_array = PyList_Check(value.ptr());
+    if (value.is_none() || (is_array && bp::len(value) == 0))
+        return Pegasus::CIMValue();
+
+    bp::object value_type_check = is_array ? value[0] : value;
+    PyObject *value_type_check_ptr = value_type_check.ptr();
+
+    if (isinstance(value_type_check, CIMType::type())) {
+        std::string type = lmi::extract<std::string>(value_type_check.attr("cimtype"));
+        if (type == "uint8")
+            return setPegasusValueS<Pegasus::Uint8>(value, is_array);
+        else if (type == "sint8")
+            return setPegasusValueS<Pegasus::Sint8>(value, is_array);
+        else if (type == "uint16")
+            return setPegasusValueS<Pegasus::Uint16>(value, is_array);
+        else if (type == "sint16")
+            return setPegasusValueS<Pegasus::Sint16>(value, is_array);
+        else if (type == "uint32")
+            return setPegasusValueS<Pegasus::Uint32>(value, is_array);
+        else if (type == "sint32")
+            return setPegasusValueS<Pegasus::Sint32>(value, is_array);
+        else if (type == "uint64")
+            return setPegasusValueS<Pegasus::Uint64>(value, is_array);
+        else if (type == "sint64")
+            return setPegasusValueS<Pegasus::Sint64>(value, is_array);
+        else if (type == "real32")
+            return setPegasusValueS<Pegasus::Real32>(value, is_array);
+        else if (type == "real64")
+            return setPegasusValueS<Pegasus::Real32>(value, is_array);
+        else if (type == "datetime")
+            return setPegasusValue<Pegasus::CIMDateTime, Pegasus::String>(value, is_array);
+    } else if (isinstance(value_type_check, CIMInstance::type())) {
+        return setPegasusValue<Pegasus::CIMInstance, Pegasus::CIMObject>(value, is_array);
+    } else if (isinstance(value_type_check, CIMClass::type())) {
+        return setPegasusValue<Pegasus::CIMClass, Pegasus::CIMObject>(value, is_array);
+    } else if (isinstance(value_type_check, CIMInstanceName::type())) {
+        return setPegasusValueS<Pegasus::CIMObjectPath>(value, is_array);
+    } else if (isinstance(value_type_check, CIMClassName::type())) {
+        throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
+    } else if (PyString_Check(value_type_check_ptr) ||
+        PyUnicode_Check(value_type_check_ptr))
+    {
+        return setPegasusValueS<Pegasus::String>(value, is_array);
+    } else if (PyBool_Check(value_type_check_ptr)) {
+        return setPegasusValueS<bool>(value, is_array);
+    } else if (PyInt_Check(value_type_check_ptr)) {
+        return setPegasusValueS<Pegasus::Sint32>(value, is_array);
+    } else if (PyLong_Check(value_type_check_ptr)) {
+        return setPegasusValueS<Pegasus::Sint64>(value, is_array);
+    } else if (PyFloat_Check(value_type_check_ptr)) {
+        return setPegasusValueS<float>(value, is_array);
+    }
+
+    throw_TypeError("CIMValue: Unsupported TOG-Pegasus type");
+    return Pegasus::CIMValue();
 }

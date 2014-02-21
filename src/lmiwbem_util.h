@@ -118,5 +118,6 @@ std::string pystring_as_std_string(const bp::object &object);
 bp::object  std_string_as_pyunicode(const std::string &str);
 
 bp::object incref(const bp::object &obj);
+bool isinstance(const bp::object &inst, const bp::object &cls);
 
 #endif // LMIWBEM_UTIL_H

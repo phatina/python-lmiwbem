@@ -21,7 +21,6 @@
 
 #include <boost/python/borrowed.hpp>
 #include <boost/python/handle.hpp>
-#include <boost/python/import.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/object.hpp>
 #include <Pegasus/Common/CIMType.h>
@@ -187,4 +186,9 @@ bp::object incref(const bp::object &obj)
 {
     bp::incref(obj.ptr());
     return obj;
+}
+
+bool isinstance(const bp::object &inst, const bp::object &cls)
+{
+    return PyObject_IsInstance(inst.ptr(), cls.ptr()) == 1;
 }
