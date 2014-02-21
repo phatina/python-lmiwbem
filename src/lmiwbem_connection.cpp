@@ -143,6 +143,11 @@ void WBEMConnection::init_type()
             "Property storing X509 certificate verification flag.\n\n"
             ":returns: True, if the X509 certificate shall be verified; False otherwise.\n"
             ":rtype: bool")
+        .def("DeleteInstance", &WBEMConnection::deleteInstance,
+            (bp::arg("InstanceName")),
+            "Deletes a CIM instance identified by :py:class:`CIMInstanceName`.\n\n"
+            ":param CIMInstanceName InstanceName: object path of CIM instance\n"
+            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`")
         .def("EnumerateInstances", &WBEMConnection::enumerateInstances,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object(),
@@ -532,6 +537,30 @@ void WBEMConnection::disconnectTmp()
 
     m_client.disconnect();
     m_connected_tmp = false;
+}
+
+void WBEMConnection::deleteInstance(const bp::object &object_path)
+{
+    const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName&>(
+        object_path, "InstanceName");
+    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+
+    std::string std_ns(s_default_namespace);
+    if (!cim_path.getNameSpace().isNull())
+        std_ns = cim_path.getNameSpace().getString().getCString();
+
+    try {
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        m_client.deleteInstance(
+            Pegasus::CIMNamespaceName(std_ns.c_str()),
+            cim_path);
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
 }
 
 bp::list WBEMConnection::enumerateInstances(
