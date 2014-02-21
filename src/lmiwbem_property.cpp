@@ -211,7 +211,7 @@ bp::object CIMProperty::getType()
 bp::object CIMProperty::getValue()
 {
     if (!m_rc_prop_value.empty()) {
-        m_value = CIMValue::create(*m_rc_prop_value.get());
+        m_value = CIMValue::asLMIWbemCIMValue(*m_rc_prop_value.get());
         m_rc_prop_value.unref();
     }
 

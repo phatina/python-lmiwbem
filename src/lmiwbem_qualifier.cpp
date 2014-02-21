@@ -150,7 +150,7 @@ bp::object CIMQualifier::create(const Pegasus::CIMConstQualifier &qualifier)
     CIMQualifier &fake_this = lmi::extract<CIMQualifier&>(inst);
     fake_this.m_name = std::string(qualifier.getName().getString().getCString());
     fake_this.m_type = CIMTypeConv::asStdString(qualifier.getType());
-    fake_this.m_value = CIMValue::create(qualifier.getValue());
+    fake_this.m_value = CIMValue::asLMIWbemCIMValue(qualifier.getValue());
     fake_this.m_propagated = static_cast<bool>(qualifier.getPropagated());
     const Pegasus::CIMFlavor &flavor = qualifier.getFlavor();
     fake_this.m_overridable = flavor.hasFlavor(Pegasus::CIMFlavor::OVERRIDABLE);

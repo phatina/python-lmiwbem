@@ -620,7 +620,7 @@ bp::object WBEMConnection::getInstance(
     try {
         Pegasus::CIMPropertyList cim_property_list(
             ListConv::asPegasusPropertyList(property_list, "PropertyList"));
-        Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asCIMObjectPath();
+        Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asPegasusCIMObjectPath();
 
         ScopedMutex sm(m_mutex);
         connectTmp();
@@ -812,7 +812,7 @@ bp::list WBEMConnection::getAssociators(
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
     std::string std_ns(s_default_namespace);
     if (!cim_path.getNameSpace().isNull())
@@ -887,7 +887,7 @@ bp::list WBEMConnection::getAssociatorNames(
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
     std::string std_ns(s_default_namespace);
     if (!cim_path.getNameSpace().isNull())
@@ -956,7 +956,7 @@ bp::list WBEMConnection::getReferences(
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
     std::string std_ns(s_default_namespace);
     if (!cim_path.getNameSpace().isNull())
@@ -1014,7 +1014,7 @@ bp::list WBEMConnection::getReferenceNames(
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asCIMObjectPath();
+    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
     std::string std_ns(s_default_namespace);
     if (!cim_path.getNameSpace().isNull())

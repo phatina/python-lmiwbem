@@ -163,7 +163,7 @@ Pegasus::CIMValue setPegasusValueS(
 
 } // unnamed namespace
 
-bp::object CIMValue::create(const Pegasus::CIMValue &value)
+bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
 {
     switch (value.getType()) {
     case Pegasus::CIMTYPE_BOOLEAN:
