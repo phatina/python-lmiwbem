@@ -19,6 +19,7 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem.h                 \
 	lmiwbem_instance.h        \
 	lmiwbem_instance_name.h   \
+	lmiwbem_make_method.h     \
 	lmiwbem_method.h          \
 	lmiwbem_mutex.h           \
 	lmiwbem_nocasedict.h      \

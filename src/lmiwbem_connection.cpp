@@ -20,11 +20,14 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <boost/python/class.hpp>
+#include <boost/python/dict.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/object.hpp>
+#include <boost/python/raw_function.hpp>
 #include <boost/python/tuple.hpp>
 #include <Pegasus/Common/CIMName.h>
 #include <Pegasus/Common/CIMPropertyList.h>
+#include "lmiwbem_make_method.h"
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_connection.h"
@@ -32,7 +35,9 @@
 #include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
+#include "lmiwbem_nocasedict.h"
 #include "lmiwbem_util.h"
+#include "lmiwbem_value.h"
 
 namespace bp = boost::python;
 
@@ -278,6 +283,14 @@ void WBEMConnection::init_type()
             ":param string namespace: target namespace for the query\n"
             ":returns: list of instances\n"
             ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+        .def("InvokeMethod", lmi::raw_method<WBEMConnection>(&WBEMConnection::invokeMethod, 1),
+            "Executes a method within a given instance.\n\n"
+            ":param CIMInstanceName ObjectName: specifies CIM object within which the method\n"
+            "\twill be called\n"
+            ":param string method: string containing a method name\n"
+            ":param dictionary params: parameters passed to the method call\n"
+            ":returns: tuple containing method's return value and output parameters\n"
+            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionEerror`.")
         .def("GetClass", &WBEMConnection::getClass,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object(),
@@ -600,6 +613,69 @@ bp::list WBEMConnection::enumerateInstanceNames(
     }
 
     return instance_names;
+}
+
+bp::tuple WBEMConnection::invokeMethod(
+    const bp::tuple &args,
+    const bp::dict  &kwds)
+{
+    if (bp::len(args) != 2)
+        throw_TypeError("InvokeMethod() takes at least 2 arguments");
+
+    std::string std_method = lmi::extract_or_throw<std::string>(args[0], "MethodName");
+
+    const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName&>(
+        args[1], "ObjectName");
+    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+
+    std::string std_ns(s_default_namespace);
+    if (!cim_path.getNameSpace().isNull())
+        std_ns = cim_path.getNameSpace().getString().getCString();
+
+    Pegasus::CIMValue cim_rval;
+    Pegasus::Array<Pegasus::CIMParamValue> cim_out_params;
+    Pegasus::Array<Pegasus::CIMParamValue> cim_in_params;
+
+    // Create Pegasus::Array from **kwargs
+    bp::list keys = kwds.keys();
+    const int keys_cnt = bp::len(keys);
+    for (int i = 0; i < keys_cnt; ++i) {
+        std::string param_name = lmi::extract_or_throw<std::string>(keys[i]);
+        cim_in_params.append(
+            Pegasus::CIMParamValue(
+                Pegasus::String(param_name.c_str()),
+                CIMValue::asPegasusCIMValue(kwds[keys[i]]),
+                true /* isTyped */));
+    }
+
+    try {
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        cim_rval = m_client.invokeMethod(
+            Pegasus::CIMNamespaceName(std_ns.c_str()),
+            cim_path,
+            Pegasus::CIMName(std_method.c_str()),
+            cim_in_params,
+            cim_out_params);
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
+
+    // Create a NocaseDict of method's return parameters
+    bp::object rparams = NocaseDict::create();
+    const Pegasus::Uint32 cnt = cim_out_params.size();
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
+        bp::object param(cim_out_params[i].getParameterName());
+        bp::setitem(rparams, param,
+            CIMValue::asLMIWbemCIMValue(cim_out_params[i].getValue()));
+    }
+
+    return bp::make_tuple(
+        CIMValue::asLMIWbemCIMValue(cim_rval),
+        rparams);
 }
 
 bp::object WBEMConnection::getInstance(

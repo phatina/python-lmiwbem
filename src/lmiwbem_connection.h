@@ -28,8 +28,10 @@
 #include "lmiwbem_mutex.h"
 
 BOOST_PYTHON_BEGIN
+    class dict;
     class list;
     class object;
+    class tuple;
 BOOST_PYTHON_END
 
 namespace bp = boost::python;
@@ -100,6 +102,10 @@ public:
         const bp::object &query_lang,
         const bp::object &query,
         const bp::object &ns);
+
+    bp::tuple invokeMethod(
+        const bp::tuple &args,
+        const bp::dict  &kwds);
 
     bp::object getClass(
         const bp::object &cls,
