@@ -45,6 +45,8 @@ public:
     static void init_type();
     static bp::object create(const Pegasus::CIMConstMethod &method);
 
+    Pegasus::CIMMethod asPegasusCIMMethod();
+
     std::string repr();
 
     bp::object getParameters();

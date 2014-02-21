@@ -46,6 +46,8 @@ public:
     static bp::object create(const Pegasus::CIMClass &cls);
     static bp::object create(const Pegasus::CIMObject &object);
 
+    Pegasus::CIMClass asPegasusCIMClass();
+
     std::string repr();
 
     bp::object getProperties();

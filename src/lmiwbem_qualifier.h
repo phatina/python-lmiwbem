@@ -48,6 +48,8 @@ public:
     static bp::object create(const Pegasus::CIMQualifier &qualifier);
     static bp::object create(const Pegasus::CIMConstQualifier &qualifier);
 
+    Pegasus::CIMQualifier asPegasusCIMQualifier() const;
+
     std::string repr();
 
     bp::object getName();

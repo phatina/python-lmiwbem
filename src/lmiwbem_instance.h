@@ -47,6 +47,8 @@ public:
     static bp::object create(const Pegasus::CIMInstance &instance);
     static bp::object create(const Pegasus::CIMObject &object);
 
+    Pegasus::CIMInstance asPegasusCIMInstance();
+
     std::string repr();
 
     bp::object getClassname();

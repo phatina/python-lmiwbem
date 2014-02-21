@@ -143,6 +143,32 @@ bp::object CIMParameter::create(const Pegasus::CIMConstParameter &parameter)
     return inst;
 }
 
+Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
+{
+    Pegasus::CIMParameter parameter(
+        Pegasus::CIMName(m_name.c_str()),
+        CIMTypeConv::asCIMType(m_type),
+        m_is_array,
+        static_cast<Pegasus::Uint32>(m_array_size),
+        Pegasus::CIMName(m_reference_class.c_str()));
+
+    // Add all the qualifiers
+    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    nocase_map_t::const_iterator it;
+    for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
+        CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
+        parameter.addQualifier(qualifier.asPegasusCIMQualifier());
+    }
+
+    return parameter;
+} catch (const Pegasus::TypeMismatchException &e) {
+    throw_Exception(e);
+
+    // Return present not to make compiler complain about missing return
+    // statement.
+    return Pegasus::CIMParameter();
+}
+
 std::string CIMParameter::repr()
 {
     std::stringstream ss;

@@ -45,7 +45,7 @@ public:
         const std::string &ns = std::string(),
         const std::string &hostname = std::string());
 
-    Pegasus::CIMObjectPath asCIMObjectPath() const;
+    Pegasus::CIMObjectPath asPegasusCIMObjectPath() const;
 
     std::string repr();
 

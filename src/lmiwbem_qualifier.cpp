@@ -160,6 +160,24 @@ bp::object CIMQualifier::create(const Pegasus::CIMConstQualifier &qualifier)
     return inst;
 }
 
+Pegasus::CIMQualifier CIMQualifier::asPegasusCIMQualifier() const
+{
+    Pegasus::CIMFlavor flavor;
+    if (m_overridable)
+        flavor.addFlavor(Pegasus::CIMFlavor::OVERRIDABLE);
+    if (m_tosubclass)
+        flavor.addFlavor(Pegasus::CIMFlavor::TOSUBCLASS);
+    if (m_toinstance)
+        flavor.addFlavor(Pegasus::CIMFlavor::TOINSTANCE);
+    if (m_translatable)
+        flavor.addFlavor(Pegasus::CIMFlavor::TRANSLATABLE);
+    return Pegasus::CIMQualifier(
+        Pegasus::CIMName(m_name.c_str()),
+        CIMValue::asPegasusCIMValue(m_value),
+        flavor,
+        m_propagated);
+}
+
 std::string CIMQualifier::repr()
 {
     std::stringstream ss;

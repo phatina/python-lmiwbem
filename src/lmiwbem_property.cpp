@@ -181,6 +181,18 @@ bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
     return inst;
 }
 
+Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()
+{
+    Pegasus::CIMValue value = CIMValue::asPegasusCIMValue(getValue());
+    return Pegasus::CIMProperty(
+        Pegasus::CIMName(m_name.c_str()),
+        value,
+        value.isNull() ? 0 : static_cast<Pegasus::Uint32>(m_array_size),
+        m_reference_class.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_reference_class.c_str()),
+        m_class_origin.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_class_origin.c_str()),
+        m_propagated);
+}
+
 std::string CIMProperty::repr()
 {
     std::stringstream ss;

@@ -47,6 +47,8 @@ public:
     static bp::object create(const Pegasus::CIMParameter &parameter);
     static bp::object create(const Pegasus::CIMConstParameter &parameter);
 
+    Pegasus::CIMParameter asPegasusCIMParameter();
+
     std::string repr();
 
     bp::object getQualifiers();

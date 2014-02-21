@@ -150,6 +150,32 @@ bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)
     return inst;
 }
 
+Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
+{
+    Pegasus::CIMMethod method(
+        Pegasus::CIMName(m_name.c_str()),
+        CIMTypeConv::asCIMType(m_return_type),
+        Pegasus::CIMName(m_class_origin.c_str()),
+        m_propagated);
+
+    // Add all the parameters
+    NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
+    nocase_map_t::const_iterator it;
+    for (it = parameters.begin(); it != parameters.end(); ++it) {
+        CIMParameter &parameter = lmi::extract<CIMParameter&>(it->second);
+        method.addParameter(parameter.asPegasusCIMParameter());
+    }
+
+    // Add all the qualifiers
+    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
+        CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
+        method.addQualifier(qualifier.asPegasusCIMQualifier());
+    }
+
+    return method;
+}
+
 std::string CIMMethod::repr()
 {
     std::stringstream ss;

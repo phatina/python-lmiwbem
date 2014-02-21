@@ -146,6 +146,37 @@ bp::object CIMClass::create(const Pegasus::CIMObject &object)
     return create(Pegasus::CIMClass(object));
 }
 
+Pegasus::CIMClass CIMClass::asPegasusCIMClass()
+{
+    Pegasus::CIMClass cls(
+        Pegasus::CIMName(m_classname.c_str()),
+        Pegasus::CIMName(m_super_classname.c_str()));
+
+    // Add all the properties
+    const NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    nocase_map_t::const_iterator it;
+    for (it = properties.begin(); it != properties.end(); ++it) {
+        CIMProperty &property = lmi::extract<CIMProperty&>(it->second);
+        cls.addProperty(property.asPegasusCIMProperty());
+    }
+
+    // Add all the qualifiers
+    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
+        CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
+        cls.addQualifier(qualifier.asPegasusCIMQualifier());
+    }
+
+    // Add all the methods
+    const NocaseDict &methods = lmi::extract<NocaseDict&>(getMethods());
+    for (it = methods.begin(); it != methods.end(); ++it) {
+        CIMMethod &method = lmi::extract<CIMMethod&>(it->second);
+        cls.addMethod(method.asPegasusCIMMethod());
+    }
+
+    return cls;
+}
+
 std::string CIMClass::repr()
 {
     std::stringstream ss;

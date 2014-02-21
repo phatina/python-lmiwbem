@@ -156,6 +156,32 @@ bp::object CIMInstance::create(const Pegasus::CIMObject &object)
     return create(Pegasus::CIMInstance(object));
 }
 
+Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
+{
+    Pegasus::CIMInstance instance(Pegasus::CIMName(m_classname.c_str()));
+    const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
+
+    // Set CIMObjectPath
+    instance.setPath(path.asPegasusCIMObjectPath());
+
+    // Add all the properties
+    const NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    nocase_map_t::const_iterator it;
+    for (it = properties.begin(); it != properties.end(); ++it) {
+        CIMProperty &property = lmi::extract<CIMProperty&>(it->second);
+        instance.addProperty(property.asPegasusCIMProperty());
+    }
+
+    // Add all the qualifiers
+    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
+        CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
+        instance.addQualifier(qualifier.asPegasusCIMQualifier());
+    }
+
+    return instance;
+}
+
 std::string CIMInstance::repr()
 {
     std::stringstream ss;

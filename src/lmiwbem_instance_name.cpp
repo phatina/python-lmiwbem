@@ -128,7 +128,7 @@ bp::object CIMInstanceName::create(
     return inst;
 }
 
-Pegasus::CIMObjectPath CIMInstanceName::asCIMObjectPath() const
+Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
 {
     Pegasus::Array<Pegasus::CIMKeyBinding> arr_keybindings;
     NocaseDict &keybindings = lmi::extract_or_throw<NocaseDict&>(
@@ -182,7 +182,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asCIMObjectPath() const
             arr_keybindings.append(
                 Pegasus::CIMKeyBinding(
                     Pegasus::CIMName(it->first.c_str()),
-                    instance_name.asCIMObjectPath()));
+                    instance_name.asPegasusCIMObjectPath()));
             continue;
         }
 

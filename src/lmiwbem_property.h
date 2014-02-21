@@ -52,6 +52,8 @@ public:
     static void init_type();
     static bp::object create(const Pegasus::CIMConstProperty &property);
 
+    Pegasus::CIMProperty asPegasusCIMProperty();
+
     std::string repr();
 
     bp::object getName() { return bp::object(m_name); }
