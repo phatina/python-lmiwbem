@@ -87,7 +87,7 @@ void CIMProperty::init_type()
                 bp::arg("value"),
                 bp::arg("type") = std::string(),
                 bp::arg("class_origin") = std::string(),
-                bp::arg("array_size") = -1,
+                bp::arg("array_size") = 0,
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create(),
                 bp::arg("is_array") = false,
