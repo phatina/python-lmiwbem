@@ -49,6 +49,10 @@ public:
 
     std::string repr();
 
+    std::string getClassname() const { return m_classname; }
+    std::string getNamespace() const { return m_namespace; }
+    std::string getHostname()  const { return m_hostname;  }
+
     void setClassname(const bp::object &classname);
     void setNamespace(const bp::object &namespace_);
     void setHostname(const bp::object &hostname);

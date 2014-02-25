@@ -64,6 +64,8 @@ public:
     bool getVerifyCertificate() { return m_client.getVerifyCertificate(); }
     void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(verify_cert); }
 
+    bp::object createInstance(const bp::object &instance);
+
     void deleteInstance(const bp::object &object_path);
 
     bp::list enumerateInstances(
