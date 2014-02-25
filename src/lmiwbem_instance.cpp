@@ -56,8 +56,9 @@ CIMInstance::CIMInstance(
     m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
 
     // We store properties in NocaseDict. Convert python's dict, if necessary.
-    lmi::extract<bp::dict> ext_properties(properties);
-    if (ext_properties.check())
+    if (properties == bp::object())
+        m_properties = NocaseDict::create();
+    else if (lmi::extract<bp::dict>(properties).check())
         m_properties = NocaseDict::create(properties);
     else
         m_properties = lmi::get_or_throw<NocaseDict>(properties, "properties");
@@ -72,8 +73,9 @@ CIMInstance::CIMInstance(
     }
 
     // We store qualifiers in NocaseDict. Convert python's dict, if necessary.
-    lmi::extract<bp::dict> ext_qualifiers(qualifiers);
-    if (ext_qualifiers.check())
+    if (qualifiers == bp::object())
+        m_qualifiers = NocaseDict::create();
+    else if (lmi::extract<bp::dict>(qualifiers).check())
         m_qualifiers = NocaseDict::create(qualifiers);
     else
         m_qualifiers = lmi::get_or_throw<NocaseDict>(qualifiers, "qualifiers");
