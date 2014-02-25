@@ -258,8 +258,7 @@ void CIMInstance::setPath(const bp::object &path)
 
 void CIMInstance::setProperties(const bp::object &properties)
 {
-    if (!m_rc_inst_properties.empty())
-        evalProperties();
+    evalProperties();
 
     m_properties = lmi::get_or_throw<NocaseDict, bp::dict>(properties, "properties");
 
@@ -277,8 +276,7 @@ void CIMInstance::setQualifiers(const bp::object &qualifiers)
 
 void CIMInstance::setPropertyList(const bp::object &property_list)
 {
-    if (!m_rc_inst_properties.empty())
-        evalProperties();
+    evalProperties();
 
     m_property_list = lmi::get_or_throw<bp::list>(property_list);
 
