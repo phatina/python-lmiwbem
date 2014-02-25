@@ -68,6 +68,11 @@ public:
 
     void deleteInstance(const bp::object &object_path);
 
+    void modifyInstance(
+        const bp::object &instance,
+        const bool include_qualifiers,
+        const bp::object &property_list);
+
     bp::list enumerateInstances(
         const bp::object &cls,
         const bp::object &ns,

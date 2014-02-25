@@ -154,6 +154,22 @@ void WBEMConnection::init_type()
             "Deletes a CIM instance identified by :py:class:`CIMInstanceName`.\n\n"
             ":param CIMInstanceName InstanceName: object path of CIM instance\n"
             ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`")
+        .def("ModifyInstance", &WBEMConnection::modifyInstance,
+            (bp::arg("ModifiedInstance"),
+             bp::arg("IncludeQualifiers") = true,
+             bp::arg("PropertyList") = bp::object()),
+            "Modifies properties of a existing instance.\n\n"
+            ":param CIMInstance ModifiedInstance: modified instance\n"
+            ":param bool IncludeQualifiers: Indicates, if the qualifiers are modified as\n"
+            "\tspecified in ModifiedInstance. If the parameter is false, qualifiers in\n"
+            "\tModifiedInstance are ignored and no qualifiers are explicitly modified.\n"
+            ":param list PropertyList: if present and not None, the members of the list\n"
+            "\tdefine one or more property names. The properties specified in PropertyList\n"
+            "\tare designated to be modified. Properties of the ModifiedInstance that are\n"
+            "\tmissing from PropertyList are not designated to be modified. If PropertyList\n"
+            "\tis an empty array, no properties are designated to be modified. If\n"
+            "\tPropertyList is None, the properties of ModifiedInstance with values different\n"
+            "\tfrom the current values in the instance are designated to be modified.")
         .def("EnumerateInstances", &WBEMConnection::enumerateInstances,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object(),
@@ -182,7 +198,7 @@ void WBEMConnection::init_type()
            "\telements for properties missing from this list. Note that if LocalOnly is\n"
            "\tspecified as True, it acts as an additional filter on the set of properties\n"
            "\treturned. For example, if property A is included in the PropertyList but\n"
-           "\tLocalOnly is set t True and A is not local to the requested class, it is not\n"
+           "\tLocalOnly is set to True and A is not local to the requested class, it is not\n"
            "\tincluded in the response. If the PropertyList input parameter is an empty\n"
            "\tlist, no properties are included in the response. If the PropertyList input\n"
            "\tparameter is None, no additional filtering is defined. Default value is None.\n"
@@ -226,7 +242,7 @@ void WBEMConnection::init_type()
             "\telements for properties missing from this list. Note that if LocalOnly is\n"
             "\tspecified as True, it acts as an additional filter on the set of properties\n"
             "\treturned. For example, if property A is included in the PropertyList but\n"
-            "\tLocalOnly is set t True and A is not local to the requested class, it is not\n"
+            "\tLocalOnly is set to True and A is not local to the requested class, it is not\n"
             "\tincluded in the response. If the PropertyList input parameter is an empty\n"
             "\tlist, no properties are included in the response. If the PropertyList input\n"
             "\tparameter is None, no additional filtering is defined. Default value is None.\n"
@@ -586,6 +602,36 @@ void WBEMConnection::deleteInstance(const bp::object &object_path)
         m_client.deleteInstance(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path);
+        disconnectTmp();
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_Exception(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
+}
+
+void WBEMConnection::modifyInstance(
+    const bp::object &instance,
+    const bool include_qualifiers,
+    const bp::object &property_list)
+{
+    CIMInstance &inst = lmi::extract_or_throw<CIMInstance&>(
+        instance, "ModifiedInstance");
+    CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(
+        inst.getPath());
+
+    try {
+        Pegasus::CIMPropertyList cim_property_list(
+            ListConv::asPegasusPropertyList(property_list,
+            "PropertyList"));
+
+        ScopedMutex sm(m_mutex);
+        connectTmp();
+        m_client.modifyInstance(
+            Pegasus::CIMNamespaceName(inst_name.getNamespace().c_str()),
+            inst.asPegasusCIMInstance(),
+            include_qualifiers,
+            cim_property_list);
         disconnectTmp();
     } catch (const Pegasus::CannotConnectException &e) {
         throw_Exception(e);
