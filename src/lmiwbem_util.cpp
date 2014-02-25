@@ -98,7 +98,7 @@ Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
 {
     Pegasus::CIMPropertyList cim_property_list;
 
-    if (property_list != bp::object()) {
+    if (!property_list.is_none()) {
         bp::list py_property_list(lmi::get_or_throw<bp::list>(property_list, message));
         const int cnt = bp::len(py_property_list);
         Pegasus::Array<Pegasus::CIMName> property_arr(cnt);

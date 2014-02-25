@@ -262,7 +262,7 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
 
 std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
 {
-    if (value == bp::object())
+    if (value.is_none())
         return std::string();
 
     bool is_array = PyList_Check(value.ptr());

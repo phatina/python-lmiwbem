@@ -56,7 +56,7 @@ CIMProperty::CIMProperty(
     const bp::object &reference_class)
 {
     m_name = lmi::extract_or_throw<std::string>(name, "name");
-    if (type != bp::object()) {
+    if (!type.is_none()) {
         m_type = lmi::extract_or_throw<std::string>(type, "type");
         m_is_array = lmi::extract_or_throw<bool>(is_array, "is_array");
         m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");

@@ -71,7 +71,7 @@ WBEMConnection::WBEMConnection(
 {
     m_url = lmi::extract_or_throw<std::string>(url, "url");
 
-    if (creds != bp::object()) {
+    if (!creds.is_none()) {
         bp::tuple creds_tpl = lmi::extract_or_throw<bp::tuple>(creds, "creds");
         if (bp::len(creds_tpl) != 2)
             throw_ValueError("creds must be tuple of 2 strings");
@@ -82,7 +82,7 @@ WBEMConnection::WBEMConnection(
     bool verify = lmi::extract_or_throw<bool>(verify_cert, "verify_certificate");
     m_client.setVerifyCertificate(verify);
 
-    if (default_namespace != bp::object()) {
+    if (!default_namespace.is_none()) {
         m_default_namespace = lmi::extract_or_throw<std::string>(
             default_namespace, "default_namespace");
     }
@@ -504,18 +504,18 @@ void WBEMConnection::connect(
 
     // Check, if provided parameters are None. If not, try to get a string value
     // out of them.
-    if (url != bp::object())
+    if (!url.is_none())
         std_url = lmi::extract_or_throw<std::string>(url, "url");
-    if (username != bp::object())
+    if (!username.is_none())
         std_username = lmi::extract_or_throw<std::string>(username, "username");
-    if (password != bp::object())
+    if (!password.is_none())
         std_password = lmi::extract_or_throw<std::string>(password, "password");
 
     // Check, if we have any url to connect to
     if (std_url.empty())
         throw_ValueError("url parameter missing");
 
-    if (verify_cert != bp::object()) {
+    if (!verify_cert.is_none()) {
         bool verify = lmi::extract_or_throw<bool>(verify_cert, "verify_certificate");
         m_client.setVerifyCertificate(verify);
     }
@@ -651,7 +651,7 @@ bp::list WBEMConnection::enumerateInstances(
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::Array<Pegasus::CIMInstance> cim_instances;
@@ -693,7 +693,7 @@ bp::list WBEMConnection::enumerateInstanceNames(
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_instance_names;
@@ -795,7 +795,7 @@ bp::object WBEMConnection::getInstance(
     CIMInstanceName &cim_instance_name = lmi::extract_or_throw<CIMInstanceName&>(
         instance_name, "InstanceName");
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::CIMInstance cim_instance;
@@ -836,11 +836,11 @@ bp::list WBEMConnection::enumerateClasses(
     const bool include_class_origin)
 {
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::CIMName classname;
-    if (cls != bp::object()) {
+    if (!cls.is_none()) {
         std::string std_cls(lmi::extract_or_throw<std::string>(cls, "ClassName"));
         classname = Pegasus::CIMName(std_cls.c_str());
     }
@@ -877,11 +877,11 @@ bp::list WBEMConnection::enumerateClassNames(
     const bool deep_inheritance)
 {
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::CIMName classname;
-    if (cls != bp::object()) {
+    if (!cls.is_none()) {
         std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
         classname = Pegasus::CIMName(std_cls.c_str());
     }
@@ -918,7 +918,7 @@ bp::list WBEMConnection::execQuery(
     std::string std_query_lang = lmi::extract_or_throw<std::string>(query_lang, "QueryLanguage");
     std::string std_query = lmi::extract_or_throw<std::string>(query, "Query");
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::Array<Pegasus::CIMObject> cim_instances;
@@ -954,7 +954,7 @@ bp::object WBEMConnection::getClass(
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "ClassName"));
     std::string std_ns(s_default_namespace);
-    if (ns != bp::object())
+    if (!ns.is_none())
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::CIMClass cim_class;
@@ -1004,13 +1004,13 @@ bp::list WBEMConnection::getAssociators(
     std::string std_result_class;
     std::string std_role;
     std::string std_result_role;
-    if (assoc_class != bp::object())
+    if (!assoc_class.is_none())
         std_assoc_class = lmi::extract_or_throw<std::string>(assoc_class, "AssocClass");
-    if (result_class != bp::object())
+    if (!result_class.is_none())
         std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
-    if (role != bp::object())
+    if (!role.is_none())
         std_role = lmi::extract_or_throw<std::string>(role, "Role");
-    if (result_role != bp::object())
+    if (!result_role.is_none())
         std_result_role = lmi::extract_or_throw<std::string>(result_role, "ResultRole");
 
     Pegasus::CIMPropertyList cim_property_list(
@@ -1079,13 +1079,13 @@ bp::list WBEMConnection::getAssociatorNames(
     std::string std_result_class;
     std::string std_role;
     std::string std_result_role;
-    if (assoc_class != bp::object())
+    if (!assoc_class.is_none())
         std_assoc_class = lmi::extract_or_throw<std::string>(assoc_class, "AssocClass");
-    if (result_class != bp::object())
+    if (!result_class.is_none())
         std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
-    if (role != bp::object())
+    if (!role.is_none())
         std_role = lmi::extract_or_throw<std::string>(role, "Role");
-    if (result_role != bp::object())
+    if (!result_role.is_none())
         std_result_role = lmi::extract_or_throw<std::string>(result_role, "ResultRole");
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_associator_names;
@@ -1146,9 +1146,9 @@ bp::list WBEMConnection::getReferences(
 
     std::string std_result_class;
     std::string std_role;
-    if (result_class != bp::object())
+    if (!result_class.is_none())
         std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
-    if (role != bp::object())
+    if (!role.is_none())
         std_role = lmi::extract_or_throw<std::string>(role, "Role");
 
     Pegasus::CIMPropertyList cim_property_list(
@@ -1204,9 +1204,9 @@ bp::list WBEMConnection::getReferenceNames(
 
     std::string std_result_class;
     std::string std_role;
-    if (result_class != bp::object())
+    if (!result_class.is_none())
         std_result_class = lmi::extract_or_throw<std::string>(result_class, "ResultClass");
-    if (role != bp::object())
+    if (!role.is_none())
         std_role = lmi::extract_or_throw<std::string>(role, "Role");
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_reference_names;

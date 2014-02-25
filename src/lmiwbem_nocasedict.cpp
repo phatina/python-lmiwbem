@@ -226,7 +226,7 @@ bp::object NocaseDict::get(const bp::object &key, const bp::object &def)
 
     nocase_map_t::const_iterator found = m_dict.find(std_key);
     if (found == m_dict.end()) {
-        if (def != bp::object())
+        if (!def.is_none())
             return def;
         else
             throw_KeyError("Key not found");
@@ -241,7 +241,7 @@ bp::object NocaseDict::pop(const bp::object &key, const bp::object &def)
 
     nocase_map_t::iterator found = m_dict.find(std_key);
     if (found == m_dict.end()) {
-        if (def != bp::object())
+        if (!def.is_none())
             return def;
         else
             throw_KeyError("Key not found");
