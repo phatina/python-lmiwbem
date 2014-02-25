@@ -259,3 +259,33 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
     throw_TypeError("CIMValue: Unsupported TOG-Pegasus type");
     return Pegasus::CIMValue();
 }
+
+std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
+{
+    if (value == bp::object())
+        return std::string();
+
+    bool is_array = PyList_Check(value.ptr());
+    bp::object value_type_check = is_array ? value[0] : value;
+    PyObject *value_type_check_ptr = value_type_check.ptr();
+
+    if (isinstance(value_type_check, CIMType::type()))
+        return lmi::extract<std::string>(value_type_check.attr("cimtype"));
+    else if (isinstance(value_type_check, CIMInstance::type()))
+        return std::string("string"); // XXX: instance?
+    else if (isinstance(value_type_check, CIMClass::type()))
+        return std::string("object");
+    else if (isinstance(value_type_check, CIMInstanceName::type()))
+        return std::string("reference");
+    else if (isinstance(value_type_check, CIMClassName::type()))
+        throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
+    else if (PyString_Check(value_type_check_ptr) ||
+        PyUnicode_Check(value_type_check_ptr))
+    {
+        return std::string("string");
+    } else if (PyBool_Check(value_type_check_ptr))
+        return std::string("bool");
+
+    throw_TypeError("CIMValue: Invalid CIM type");
+    return std::string();
+}

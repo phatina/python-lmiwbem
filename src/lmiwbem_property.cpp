@@ -56,15 +56,21 @@ CIMProperty::CIMProperty(
     const bp::object &reference_class)
 {
     m_name = lmi::extract_or_throw<std::string>(name, "name");
-    m_type = lmi::extract_or_throw<std::string>(type, "type");
+    if (type != bp::object()) {
+        m_type = lmi::extract_or_throw<std::string>(type, "type");
+        m_is_array = lmi::extract_or_throw<bool>(is_array, "is_array");
+        m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
+    } else {
+        // Deduce the value type
+        m_type = CIMValue::LMIWbemCIMValueType(value);
+        m_is_array = static_cast<bool>(PyList_Check(value.ptr()));
+        m_array_size = m_is_array ? bp::len(value) : 0;
+    }
     m_class_origin = lmi::extract_or_throw<std::string>(
         class_origin, "class_origin");
     m_reference_class = lmi::extract_or_throw<std::string>(
         reference_class, "reference_class");
-    m_is_array = lmi::extract_or_throw<bool>(is_array, "is_array");
     m_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
-    if (array_size != bp::object())
-        m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
     m_value = value;
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(
         qualifiers, "qualifiers");
@@ -85,7 +91,7 @@ void CIMProperty::init_type()
             const bp::object &>((
                 bp::arg("name"),
                 bp::arg("value"),
-                bp::arg("type") = std::string(),
+                bp::arg("type") = bp::object(),
                 bp::arg("class_origin") = std::string(),
                 bp::arg("array_size") = 0,
                 bp::arg("propagated") = false,
@@ -179,6 +185,13 @@ bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
         fake_this.m_rc_prop_qualifiers.get()->push_back(property.getQualifier(i));
     return inst;
+}
+
+bp::object CIMProperty::create(
+    const bp::object &name,
+    const bp::object &value)
+{
+    return CIMBase::s_class(name, value);
 }
 
 Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()

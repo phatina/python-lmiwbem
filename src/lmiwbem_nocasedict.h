@@ -56,8 +56,12 @@ public:
     static bp::object create();
     static bp::object create(const bp::object &d);
 
+    nocase_map_t::iterator begin() { return m_dict.begin(); }
+    nocase_map_t::iterator end() { return m_dict.end(); }
     nocase_map_t::const_iterator begin() const { return m_dict.begin(); }
     nocase_map_t::const_iterator end() const { return m_dict.end(); }
+
+    bool empty() { return m_dict.empty(); }
 
     void delitem(const bp::object &key);
     void setitem(const bp::object &key, const bp::object &value);

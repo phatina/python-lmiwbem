@@ -51,6 +51,9 @@ public:
 
     static void init_type();
     static bp::object create(const Pegasus::CIMConstProperty &property);
+    static bp::object create(
+        const bp::object &name,
+        const bp::object &value);
 
     Pegasus::CIMProperty asPegasusCIMProperty();
 
