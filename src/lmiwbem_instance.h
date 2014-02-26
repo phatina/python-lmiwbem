@@ -51,6 +51,19 @@ public:
 
     std::string repr();
 
+    bp::object getitem(const bp::object &key);
+    void setitem(
+        const bp::object &key,
+        const bp::object &value);
+    ssize_t len();
+    bool haskey(const bp::object &key);
+    bp::object keys();
+    bp::object values();
+    bp::object items();
+    bp::object iterkeys();
+    bp::object itervalues();
+    bp::object iteritems();
+
     bp::object getClassname();
     bp::object getPath();
     bp::object getProperties();

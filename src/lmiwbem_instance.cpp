@@ -106,6 +106,17 @@ void CIMInstance::init_type()
                 ":param list property_list: List containing strings of properties"))
         .def("__repr__", &CIMInstance::repr,
             ":returns: pretty string of the object")
+        .def("__getitem__", &CIMInstance::getitem)
+        .def("__setitem__", &CIMInstance::setitem)
+        .def("__contains__", &CIMInstance::haskey)
+        .def("__len__", &CIMInstance::len)
+        .def("has_key", &CIMInstance::haskey)
+        .def("keys", &CIMInstance::keys)
+        .def("values", &CIMInstance::values)
+        .def("items", &CIMInstance::items)
+        .def("iterkeys", &CIMInstance::iterkeys)
+        .def("itervalues", &CIMInstance::itervalues)
+        .def("iteritems", &CIMInstance::iteritems)
         .add_property("classname",
             &CIMInstance::getClassname,
             &CIMInstance::setClassname,
@@ -198,6 +209,82 @@ std::string CIMInstance::repr()
     std::stringstream ss;
     ss << "CIMInstance(classname='" << m_classname << "', ...)";
     return ss.str();
+}
+
+bp::object CIMInstance::getitem(const bp::object &key)
+{
+    evalProperties();
+    lmi::extract<CIMProperty> ext_property(m_properties[key]);
+
+    if (ext_property.check())
+        return static_cast<CIMProperty>(ext_property).getValue();
+    return m_properties[key];
+}
+
+void CIMInstance::setitem(
+    const bp::object &key,
+    const bp::object &value)
+{
+    evalProperties();
+    lmi::extract<CIMProperty> ext_property(value);
+
+    if (ext_property.check())
+        m_properties[key] = value;
+    else
+        m_properties[key] = CIMProperty::create(key, value);
+}
+
+ssize_t CIMInstance::len()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    return static_cast<int>(properties.len());
+}
+
+bool CIMInstance::haskey(const bp::object &key)
+{
+    return getProperties().contains(key);
+}
+
+bp::object CIMInstance::keys()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    return properties.keys();
+}
+
+bp::object CIMInstance::values()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    return properties.values();
+}
+
+bp::object CIMInstance::items()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    nocase_map_t::const_iterator it;
+
+    bp::list items;
+    for (it = properties.begin(); it != properties.end(); ++it)
+        items.append(bp::make_tuple(bp::str(it->first), it->second));
+
+    return items;
+}
+
+bp::object CIMInstance::iterkeys()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    return properties.iterkeys();
+}
+
+bp::object CIMInstance::itervalues()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    return properties.itervalues();
+}
+
+bp::object CIMInstance::iteritems()
+{
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    return properties.iteritems();
 }
 
 bp::object CIMInstance::getClassname()

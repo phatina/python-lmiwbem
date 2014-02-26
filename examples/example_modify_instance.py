@@ -43,7 +43,7 @@ account = conn.GetInstance(
     IncludeClassOrigin=False)
 
 # Modify the instance
-account.properties["LoginShell"] = lmiwbem.CIMProperty("LoginShell", shell)
+account["LoginShell"] = shell
 conn.ModifyInstance(account)
 
 # Disconnect from CIMOM
