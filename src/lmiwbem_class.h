@@ -48,6 +48,8 @@ public:
 
     Pegasus::CIMClass asPegasusCIMClass();
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     bp::object getProperties();

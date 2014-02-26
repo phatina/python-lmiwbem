@@ -50,6 +50,8 @@ public:
 
     Pegasus::CIMQualifier asPegasusCIMQualifier() const;
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     bp::object getName();

@@ -110,6 +110,7 @@ void CIMProperty::init_type()
                 ":param bool is_array: True, if the property's value is array;\n"
                 "\tFalse otherwise"
                 ":param str reference_class: String containing property's reference class"))
+        .def("__cmp__", &CIMProperty::cmp)
         .def("__repr__", &CIMProperty::repr,
             ":returns: pretty string of the object")
         .add_property("name",
@@ -204,6 +205,33 @@ Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()
         m_reference_class.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_reference_class.c_str()),
         m_class_origin.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_class_origin.c_str()),
         m_propagated);
+}
+
+int CIMProperty::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMProperty::type()))
+        return 1;
+
+    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+
+    int rval;
+    if ((rval = m_name.compare(other_property.m_name)) != 0 ||
+        (rval = m_type.compare(other_property.m_type)) != 0 ||
+        (rval = m_class_origin.compare(other_property.m_class_origin)) != 0 ||
+        (rval = m_reference_class.compare(other_property.m_reference_class)) != 0 ||
+        (rval = compare(bp::object(m_is_array),
+            bp::object(other_property.m_is_array))) != 0 ||
+        (rval = compare(bp::object(m_propagated),
+            bp::object(other_property.m_propagated))) != 0 ||
+        (rval = compare(bp::object(m_array_size),
+            bp::object(other_property.m_array_size))) != 0 ||
+        (rval = compare(getValue(), other_property.getValue())) != 0 ||
+        (rval = compare(getQualifiers(), other_property.getQualifiers())) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMProperty::repr()

@@ -49,6 +49,8 @@ public:
 
     Pegasus::CIMParameter asPegasusCIMParameter();
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     bp::object getQualifiers();

@@ -81,6 +81,7 @@ void CIMParameter::init_type()
                 "\tis array\n"
                 ":param int array_size: Array size\n"
                 ":param NocaseDict qualifiers: Dictionary of :py:class:`CIMQualifier`"))
+        .def("__cmp__", &CIMParameter::cmp)
         .def("__repr__", &CIMParameter::repr,
             ":returns: pretty string of the object")
         .add_property("name",
@@ -167,6 +168,29 @@ Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
     // Return present not to make compiler complain about missing return
     // statement.
     return Pegasus::CIMParameter();
+}
+
+int CIMParameter::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMParameter::type()))
+        return 1;
+
+    CIMParameter &other_parameter = lmi::extract<CIMParameter&>(other);
+
+    int rval;
+    if ((rval = m_name.compare(other_parameter.m_name)) != 0 ||
+        (rval = m_type.compare(other_parameter.m_type)) != 0 ||
+        (rval = m_reference_class.compare(other_parameter.m_reference_class)) != 0 ||
+        (rval = compare(bp::object(m_is_array),
+            bp::object(other_parameter.m_is_array))) != 0 ||
+        (rval = compare(bp::object(m_array_size),
+            bp::object(other_parameter.m_array_size))) != 0 ||
+        (rval = compare(getQualifiers(), other_parameter.getQualifiers())) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMParameter::repr()

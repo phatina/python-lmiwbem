@@ -70,6 +70,7 @@ void CIMInstanceName::init_type()
                 "\t of the object path\n"
                 ":param str host: String containing hostname of the object path\n"
                 ":param str namespace: String containing namespace of the object path"))
+        .def("__cmp__", &CIMInstanceName::cmp)
         .def("__repr__", &CIMInstanceName::repr,
             ":returns: pretty string of the object")
         .add_property("classname",
@@ -195,6 +196,25 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
         Pegasus::CIMNamespaceName(m_namespace.c_str()),
         Pegasus::CIMName(m_classname.c_str()),
         arr_keybindings);
+}
+
+int CIMInstanceName::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstanceName::type()))
+        return 1;
+
+    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+
+    int rval;
+    if ((rval = m_classname.compare(other_inst_name.m_classname)) != 0 ||
+        (rval = m_namespace.compare(other_inst_name.m_namespace)) != 0 ||
+        (rval = m_hostname.compare(other_inst_name.m_hostname)) != 0 ||
+        (rval = compare(m_keybindings, other_inst_name.m_keybindings)) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMInstanceName::repr()

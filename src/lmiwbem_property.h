@@ -57,6 +57,8 @@ public:
 
     Pegasus::CIMProperty asPegasusCIMProperty();
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     bp::object getName() { return bp::object(m_name); }

@@ -104,6 +104,7 @@ void CIMInstance::init_type()
                 ":param NocaseDict qualifiers: Dictionary containing :py:class:`CIMQualifier`\n"
                 ":param CIMInstanceName path: Object path\n"
                 ":param list property_list: List containing strings of properties"))
+        .def("__cmp__", &CIMInstance::cmp)
         .def("__repr__", &CIMInstance::repr,
             ":returns: pretty string of the object")
         .def("__getitem__", &CIMInstance::getitem)
@@ -202,6 +203,25 @@ Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
     }
 
     return instance;
+}
+
+int CIMInstance::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstance::type()))
+        return 1;
+
+    CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
+
+    int rval;
+    if ((rval = m_classname.compare(other_inst.m_classname)) != 0 ||
+        (rval = compare(getPath(), other_inst.getPath())) != 0 ||
+        (rval = compare(getProperties(), other_inst.getProperties())) != 0 ||
+        (rval = compare(getQualifiers(), other_inst.getQualifiers())) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMInstance::repr()

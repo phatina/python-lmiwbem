@@ -192,3 +192,10 @@ bool isinstance(const bp::object &inst, const bp::object &cls)
 {
     return PyObject_IsInstance(inst.ptr(), cls.ptr()) == 1;
 }
+
+int compare(const bp::object &o1, const bp::object &o2)
+{
+    int result = 1;
+    PyObject_Cmp(o1.ptr(), o2.ptr(), &result);
+    return result;
+}

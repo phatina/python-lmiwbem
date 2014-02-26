@@ -24,6 +24,7 @@
 #include <boost/python/dict.hpp>
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_extract.h"
+#include "lmiwbem_util.h"
 
 CIMClassName::CIMClassName()
     : m_classname()
@@ -56,6 +57,7 @@ void CIMClassName::init_type()
                 ":param str classname: String containing class name\n"
                 ":param str host: String containing host name\n"
                 ":param str namespace: String containing namespace name"))
+        .def("__cmp__", &CIMClassName::cmp)
         .def("__repr__", &CIMClassName::repr,
             ":returns: pretty string of the object")
         .add_property("classname",
@@ -82,6 +84,24 @@ bp::object CIMClassName::create(
     const bp::object &hostname)
 {
     return CIMBase::s_class(classname, namespace_, hostname);
+}
+
+int CIMClassName::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMClassName::type()))
+        return 1;
+
+    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+
+    int rval;
+    if ((rval = m_classname.compare(other_classname.m_classname)) != 0 ||
+        (rval = m_namespace.compare(other_classname.m_namespace)) != 0 ||
+        (rval = m_hostname.compare(other_classname.m_hostname)) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMClassName::repr()

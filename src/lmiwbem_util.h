@@ -119,5 +119,6 @@ bp::object  std_string_as_pyunicode(const std::string &str);
 
 bp::object incref(const bp::object &obj);
 bool isinstance(const bp::object &inst, const bp::object &cls);
+int compare(const bp::object &o1, const bp::object &o2);
 
 #endif // LMIWBEM_UTIL_H

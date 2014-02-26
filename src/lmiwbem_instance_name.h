@@ -47,6 +47,8 @@ public:
 
     Pegasus::CIMObjectPath asPegasusCIMObjectPath() const;
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     std::string getClassname() const { return m_classname; }

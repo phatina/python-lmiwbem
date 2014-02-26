@@ -30,6 +30,7 @@
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_property.h"
 #include "lmiwbem_qualifier.h"
+#include "lmiwbem_util.h"
 
 CIMClass::CIMClass()
     : m_classname()
@@ -79,6 +80,7 @@ void CIMClass::init_type()
                 "\tof the class\n"
                 ":param NocaseDict methods: Dictionary containing methods of the class\n"
                 ":param str superclass: String containing the name of super-class"))
+        .def("__cmp__", &CIMClass::cmp)
         .def("__repr__", &CIMClass::repr,
             ":returns: pretty string of the object")
         .add_property("classname",
@@ -175,6 +177,26 @@ Pegasus::CIMClass CIMClass::asPegasusCIMClass()
     }
 
     return cls;
+}
+
+int CIMClass::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMClass::type()))
+        return 1;
+
+    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+
+    int rval;
+    if ((rval = m_classname.compare(other_class.m_classname)) != 0 ||
+        (rval = m_super_classname.compare(other_class.m_super_classname)) != 0 ||
+        (rval = compare(getProperties(), other_class.getProperties())) != 0 ||
+        (rval = compare(getQualifiers(), other_class.getQualifiers())) != 0 ||
+        (rval = compare(getMethods(), other_class.getMethods())) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMClass::repr()

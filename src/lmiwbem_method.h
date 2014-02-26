@@ -47,6 +47,8 @@ public:
 
     Pegasus::CIMMethod asPegasusCIMMethod();
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     bp::object getParameters();

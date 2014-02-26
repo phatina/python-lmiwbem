@@ -43,6 +43,8 @@ public:
         const bp::object &namespace_,
         const bp::object &hostname);
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     void setClassname(const bp::object &classname);

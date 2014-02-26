@@ -88,6 +88,7 @@ void CIMMethod::init_type()
                 ":param str methodname: String containing the method's name\n"
                 ":param str return_type: String containing the method's return type\n"
                 ":param NocaseDict parameters: Dictionary containing method's parameters\n"))
+        .def("__cmp__", &CIMMethod::cmp)
         .def("__repr__", &CIMMethod::repr,
             ":returns: pretty string of the object")
         .add_property("name",
@@ -174,6 +175,28 @@ Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
     }
 
     return method;
+}
+
+int CIMMethod::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMMethod::type()))
+        return 1;
+
+    CIMMethod &other_method = lmi::extract<CIMMethod&>(other);
+
+    int rval;
+    if ((rval = m_name.compare(other_method.m_name)) != 0 ||
+        (rval = m_return_type.compare(other_method.m_return_type)) != 0 ||
+        (rval = m_class_origin.compare(other_method.m_class_origin)) != 0 ||
+        (rval = compare(bp::object(m_propagated),
+            bp::object(other_method.m_propagated))) != 0 ||
+        (rval = compare(getParameters(), other_method.getParameters())) != 0 ||
+        (rval = compare(getQualifiers(), other_method.getQualifiers())) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMMethod::repr()

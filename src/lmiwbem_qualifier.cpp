@@ -91,6 +91,7 @@ void CIMQualifier::init_type()
                 "\tFalse otherwise"
                 ":param bool translatable: True, if the qualifier can be translated;\n"
                 "\tFalse otherwise"))
+        .def("__cmp__", &CIMQualifier::cmp)
         .def("__repr__", &CIMQualifier::repr,
             ":returns: pretty string of the object")
         .add_property("name",
@@ -176,6 +177,34 @@ Pegasus::CIMQualifier CIMQualifier::asPegasusCIMQualifier() const
         CIMValue::asPegasusCIMValue(m_value),
         flavor,
         m_propagated);
+}
+
+int CIMQualifier::cmp(const bp::object &other)
+{
+    if (!isinstance(other, CIMQualifier::type()))
+        return 1;
+
+    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+
+    int rval;
+    if ((rval = m_name.compare(other_qualifier.m_name)) != 0 ||
+        (rval = m_type.compare(other_qualifier.m_type)) != 0 ||
+        (rval = compare(m_value, other_qualifier.m_value)) != 0 ||
+        (rval = compare(bp::object(m_propagated),
+            bp::object(other_qualifier.m_propagated))) != 0 ||
+        (rval = compare(bp::object(m_overridable),
+            bp::object(other_qualifier.m_overridable))) != 0 ||
+        (rval = compare(bp::object(m_tosubclass),
+            bp::object(other_qualifier.m_tosubclass))) != 0 ||
+        (rval = compare(bp::object(m_toinstance),
+            bp::object(other_qualifier.m_toinstance))) != 0 ||
+        (rval = compare(bp::object(m_translatable),
+            bp::object(other_qualifier.m_translatable))) != 0)
+    {
+        return rval;
+    }
+
+    return 0;
 }
 
 std::string CIMQualifier::repr()

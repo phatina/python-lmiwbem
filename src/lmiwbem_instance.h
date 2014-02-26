@@ -49,6 +49,8 @@ public:
 
     Pegasus::CIMInstance asPegasusCIMInstance();
 
+    int cmp(const bp::object &other);
+
     std::string repr();
 
     bp::object getitem(const bp::object &key);
