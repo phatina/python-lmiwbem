@@ -84,6 +84,7 @@ void CIMParameter::init_type()
         .def("__cmp__", &CIMParameter::cmp)
         .def("__repr__", &CIMParameter::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMParameter::copy)
         .add_property("name",
             &CIMParameter::m_name,
             &CIMParameter::setName,
@@ -199,6 +200,22 @@ std::string CIMParameter::repr()
     ss << "CIMParameter(name='" << m_name << "', type='" << m_type
        << "', is_array=" << (m_is_array ? "True" : "False") << ')';
     return ss.str();
+}
+
+bp::object CIMParameter::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMParameter &parameter = lmi::extract<CIMParameter&>(obj);
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+
+    parameter.m_name = m_name;
+    parameter.m_type = m_type;
+    parameter.m_reference_class = m_reference_class;
+    parameter.m_is_array = m_is_array;
+    parameter.m_array_size = m_array_size;
+    parameter.m_qualifiers = qualifiers.copy();
+
+    return obj;
 }
 
 bp::object CIMParameter::getQualifiers()

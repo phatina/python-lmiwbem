@@ -60,6 +60,7 @@ void CIMClassName::init_type()
         .def("__cmp__", &CIMClassName::cmp)
         .def("__repr__", &CIMClassName::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMClassName::copy)
         .add_property("classname",
             &CIMClassName::m_classname,
             &CIMClassName::setClassname,
@@ -114,6 +115,18 @@ std::string CIMClassName::repr()
         ss << ", namespace='" << m_namespace << '\'';
     ss << ')';
     return ss.str();
+}
+
+bp::object CIMClassName::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMClassName &classname = lmi::extract<CIMClassName&>(obj);
+
+    classname.m_classname = m_classname;
+    classname.m_namespace = m_namespace;
+    classname.m_hostname  = m_hostname;
+
+    return obj;
 }
 
 void CIMClassName::setClassname(const bp::object &classname)

@@ -94,6 +94,7 @@ void CIMQualifier::init_type()
         .def("__cmp__", &CIMQualifier::cmp)
         .def("__repr__", &CIMQualifier::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMQualifier::copy)
         .add_property("name",
             &CIMQualifier::getName,
             &CIMQualifier::setName,
@@ -212,6 +213,23 @@ std::string CIMQualifier::repr()
     std::stringstream ss;
     ss << "CIMQualifier(name='" << m_name << "', ...')";
     return ss.str();
+}
+
+bp::object CIMQualifier::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(obj);
+
+    qualifier.m_name = m_name;
+    qualifier.m_type = m_type;
+    qualifier.m_value = m_value;
+    qualifier.m_propagated = m_propagated;
+    qualifier.m_overridable = m_overridable;
+    qualifier.m_tosubclass = m_tosubclass;
+    qualifier.m_toinstance = m_toinstance;
+    qualifier.m_translatable = m_translatable;
+
+    return obj;
 }
 
 bp::object CIMQualifier::getName()

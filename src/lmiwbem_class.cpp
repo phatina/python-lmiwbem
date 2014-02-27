@@ -83,6 +83,7 @@ void CIMClass::init_type()
         .def("__cmp__", &CIMClass::cmp)
         .def("__repr__", &CIMClass::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMClass::copy)
         .add_property("classname",
             &CIMClass::m_classname,
             &CIMClass::setClassname,
@@ -204,6 +205,23 @@ std::string CIMClass::repr()
     std::stringstream ss;
     ss << "CIMClass(classname='" << m_classname << "', ...)";
     return ss.str();
+}
+
+bp::object CIMClass::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMClass &cls = lmi::extract<CIMClass&>(obj);
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    NocaseDict &methods    = lmi::extract<NocaseDict&>(getMethods());
+
+    cls.m_classname = m_classname;
+    cls.m_super_classname = m_super_classname;
+    cls.m_properties = properties.copy();
+    cls.m_qualifiers = qualifiers.copy();
+    cls.m_methods    = methods.copy();
+
+    return obj;
 }
 
 bp::object CIMClass::getProperties()

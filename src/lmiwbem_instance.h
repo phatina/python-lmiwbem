@@ -66,6 +66,8 @@ public:
     bp::object itervalues();
     bp::object iteritems();
 
+    bp::object copy();
+
     bp::object getClassname();
     bp::object getPath();
     bp::object getProperties();

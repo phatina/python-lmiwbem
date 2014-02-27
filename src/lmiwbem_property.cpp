@@ -113,6 +113,7 @@ void CIMProperty::init_type()
         .def("__cmp__", &CIMProperty::cmp)
         .def("__repr__", &CIMProperty::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMProperty::copy)
         .add_property("name",
             &CIMProperty::getName,
             &CIMProperty::setName,
@@ -242,6 +243,25 @@ std::string CIMProperty::repr()
         << "', value='" << object_as_std_string(getValue())
         << "', is_array=" << (m_is_array ? "True" : "False") << ", ...)";
     return ss.str();
+}
+
+bp::object CIMProperty::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMProperty &property = lmi::extract<CIMProperty&>(obj);
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+
+    property.m_name = m_name;
+    property.m_type = m_type;
+    property.m_class_origin = m_class_origin;
+    property.m_reference_class = m_reference_class;
+    property.m_is_array = m_is_array;
+    property.m_propagated = m_propagated;
+    property.m_array_size = m_array_size;
+    property.m_value = m_value;
+    property.m_qualifiers = qualifiers.copy();
+
+    return obj;
 }
 
 bp::object CIMProperty::getType()

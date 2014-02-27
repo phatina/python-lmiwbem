@@ -51,6 +51,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     std::string getClassname() const { return m_classname; }
     std::string getNamespace() const { return m_namespace; }
     std::string getHostname()  const { return m_hostname;  }

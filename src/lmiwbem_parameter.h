@@ -53,6 +53,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     bp::object getQualifiers();
 
     void setName(const bp::object &name);

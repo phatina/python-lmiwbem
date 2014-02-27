@@ -61,6 +61,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     bp::object getName() { return bp::object(m_name); }
     bp::object getType();
     bp::object getValue();

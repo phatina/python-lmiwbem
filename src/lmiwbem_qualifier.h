@@ -54,6 +54,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     bp::object getName();
     bp::object getType();
 

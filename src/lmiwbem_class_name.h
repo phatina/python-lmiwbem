@@ -47,6 +47,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     void setClassname(const bp::object &classname);
     void setNamespace(const bp::object &namespace_);
     void setHostname(const bp::object &hostname);

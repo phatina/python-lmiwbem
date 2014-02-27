@@ -52,6 +52,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     bp::object getProperties();
     bp::object getQualifiers();
     bp::object getMethods();

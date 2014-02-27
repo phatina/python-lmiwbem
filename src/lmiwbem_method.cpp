@@ -91,6 +91,7 @@ void CIMMethod::init_type()
         .def("__cmp__", &CIMMethod::cmp)
         .def("__repr__", &CIMMethod::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMMethod::copy)
         .add_property("name",
             &CIMMethod::m_name,
             &CIMMethod::setName,
@@ -204,6 +205,23 @@ std::string CIMMethod::repr()
     std::stringstream ss;
     ss << "CIMMethod(name='" << m_name << "', return_type='" << m_return_type << "', ...)";
     return ss.str();
+}
+
+bp::object CIMMethod::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMMethod &method = lmi::extract<CIMMethod&>(obj);
+    NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+
+    method.m_name = m_name;
+    method.m_return_type = m_return_type;
+    method.m_class_origin = m_class_origin;
+    method.m_propagated = m_propagated;
+    method.m_parameters = parameters.copy();
+    method.m_qualifiers = qualifiers.copy();
+
+    return obj;
 }
 
 bp::object CIMMethod::getParameters()

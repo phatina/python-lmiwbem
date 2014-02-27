@@ -73,6 +73,7 @@ void CIMInstanceName::init_type()
         .def("__cmp__", &CIMInstanceName::cmp)
         .def("__repr__", &CIMInstanceName::repr,
             ":returns: pretty string of the object")
+        .def("copy", &CIMInstanceName::copy)
         .add_property("classname",
             &CIMInstanceName::m_classname,
             &CIMInstanceName::setClassname,
@@ -215,6 +216,18 @@ int CIMInstanceName::cmp(const bp::object &other)
     }
 
     return 0;
+}
+
+bp::object CIMInstanceName::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(obj);
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    inst_name.m_classname = m_classname;
+    inst_name.m_namespace = m_namespace;
+    inst_name.m_hostname = m_hostname;
+    inst_name.m_keybindings = keybindings.copy();
+    return obj;
 }
 
 std::string CIMInstanceName::repr()

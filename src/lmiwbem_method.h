@@ -51,6 +51,8 @@ public:
 
     std::string repr();
 
+    bp::object copy();
+
     bp::object getParameters();
     bp::object getQualifiers();
 

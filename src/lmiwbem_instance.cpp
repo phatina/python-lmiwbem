@@ -118,6 +118,7 @@ void CIMInstance::init_type()
         .def("iterkeys", &CIMInstance::iterkeys)
         .def("itervalues", &CIMInstance::itervalues)
         .def("iteritems", &CIMInstance::iteritems)
+        .def("copy", &CIMInstance::copy)
         .add_property("classname",
             &CIMInstance::getClassname,
             &CIMInstance::setClassname,
@@ -305,6 +306,25 @@ bp::object CIMInstance::iteritems()
 {
     NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
     return properties.iteritems();
+}
+
+bp::object CIMInstance::copy()
+{
+    bp::object obj = CIMBase::s_class();
+    CIMInstance &inst = lmi::extract<CIMInstance&>(obj);
+    CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+
+    inst.m_classname = m_classname;
+    if (!m_path.is_none())
+        inst.m_path = path.copy();
+    inst.m_properties = properties.copy();
+    inst.m_qualifiers = qualifiers.copy();
+    if (!m_property_list.is_none())
+        inst.m_property_list = bp::list(getPropertyList());
+
+    return obj;
 }
 
 bp::object CIMInstance::getClassname()
