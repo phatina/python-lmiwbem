@@ -39,9 +39,9 @@ public:
 
     static void init_type();
     static bp::object create(
-        const bp::object &classname,
-        const bp::object &namespace_,
-        const bp::object &hostname);
+        const std::string &classname_,
+        const std::string &namespace_,
+        const std::string &hostname);
 
     int cmp(const bp::object &other);
 

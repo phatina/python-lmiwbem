@@ -80,11 +80,18 @@ void CIMClassName::init_type()
 }
 
 bp::object CIMClassName::create(
-    const bp::object &classname,
-    const bp::object &namespace_,
-    const bp::object &hostname)
+    const std::string &classname_,
+    const std::string &namespace_,
+    const std::string &hostname)
 {
-    return CIMBase::s_class(classname, namespace_, hostname);
+    bp::object inst = CIMBase::s_class();
+    CIMClassName &classname = lmi::extract<CIMClassName&>(inst);
+
+    classname.m_classname = classname_;
+    classname.m_namespace = namespace_;
+    classname.m_hostname  = hostname;
+
+    return inst;
 }
 
 int CIMClassName::cmp(const bp::object &other)
