@@ -128,7 +128,7 @@ bp::object CIMParameter::create(const Pegasus::CIMParameter &parameter)
 
 bp::object CIMParameter::create(const Pegasus::CIMConstParameter &parameter)
 {
-    bp::object inst = CIMBase::s_class();
+    bp::object inst = CIMBase::create();
     CIMParameter &fake_this = lmi::extract<CIMParameter&>(inst);
     fake_this.m_name = parameter.getName().getString().getCString();
     fake_this.m_type = CIMTypeConv::asStdString(parameter.getType());
@@ -204,7 +204,7 @@ std::string CIMParameter::repr()
 
 bp::object CIMParameter::copy()
 {
-    bp::object obj = CIMBase::s_class();
+    bp::object obj = CIMBase::create();
     CIMParameter &parameter = lmi::extract<CIMParameter&>(obj);
     NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
 

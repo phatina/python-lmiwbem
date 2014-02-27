@@ -148,7 +148,7 @@ bp::object CIMQualifier::create(const Pegasus::CIMQualifier &qualifier)
 
 bp::object CIMQualifier::create(const Pegasus::CIMConstQualifier &qualifier)
 {
-    bp::object inst = CIMBase::s_class();
+    bp::object inst = CIMBase::create();
     CIMQualifier &fake_this = lmi::extract<CIMQualifier&>(inst);
     fake_this.m_name = std::string(qualifier.getName().getString().getCString());
     fake_this.m_type = CIMTypeConv::asStdString(qualifier.getType());
@@ -217,7 +217,7 @@ std::string CIMQualifier::repr()
 
 bp::object CIMQualifier::copy()
 {
-    bp::object obj = CIMBase::s_class();
+    bp::object obj = CIMBase::create();
     CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(obj);
 
     qualifier.m_name = m_name;

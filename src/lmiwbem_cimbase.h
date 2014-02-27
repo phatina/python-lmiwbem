@@ -33,7 +33,20 @@ public:
     static void init_type();
     static const bp::object &type() { return s_class; }
 
-protected:
+    static bp::object create() { return s_class(); }
+
+    template <typename U>
+    static bp::object create(const U &param) { return s_class(param); }
+
+    template <typename U, typename V>
+    static bp::object create(
+        const U &param1,
+        const V &param2)
+    {
+        return s_class(param1, param2);
+    }
+
+private:
     static bp::object s_class;
 };
 

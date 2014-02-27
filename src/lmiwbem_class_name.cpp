@@ -84,7 +84,7 @@ bp::object CIMClassName::create(
     const std::string &namespace_,
     const std::string &hostname)
 {
-    bp::object inst = CIMBase::s_class();
+    bp::object inst = CIMBase::create();
     CIMClassName &classname = lmi::extract<CIMClassName&>(inst);
 
     classname.m_classname = classname_;
@@ -126,7 +126,7 @@ std::string CIMClassName::repr()
 
 bp::object CIMClassName::copy()
 {
-    bp::object obj = CIMBase::s_class();
+    bp::object obj = CIMBase::create();
     CIMClassName &classname = lmi::extract<CIMClassName&>(obj);
 
     classname.m_classname = m_classname;

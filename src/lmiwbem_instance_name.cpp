@@ -103,7 +103,7 @@ bp::object CIMInstanceName::create(
     const std::string &ns,
     const std::string &hostname)
 {
-    bp::object inst = CIMBase::s_class();
+    bp::object inst = CIMBase::create();
     CIMInstanceName& fake_this = lmi::extract<CIMInstanceName&>(inst);
 
     fake_this.m_classname = obj_path.getClassName().getString().getCString();
@@ -220,7 +220,7 @@ int CIMInstanceName::cmp(const bp::object &other)
 
 bp::object CIMInstanceName::copy()
 {
-    bp::object obj = CIMBase::s_class();
+    bp::object obj = CIMBase::create();
     CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(obj);
     NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
     inst_name.m_classname = m_classname;

@@ -168,7 +168,7 @@ void CIMProperty::init_type()
 
 bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
 {
-    bp::object inst = CIMBase::s_class();
+    bp::object inst = CIMBase::create();
     CIMProperty &fake_this = lmi::extract<CIMProperty&>(inst);
     fake_this.m_name = property.getName().getString().getCString();
     fake_this.m_type = CIMTypeConv::asStdString(property.getType());
@@ -193,7 +193,7 @@ bp::object CIMProperty::create(
     const bp::object &name,
     const bp::object &value)
 {
-    return CIMBase::s_class(name, value);
+    return CIMBase::create(name, value);
 }
 
 Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()
@@ -247,7 +247,7 @@ std::string CIMProperty::repr()
 
 bp::object CIMProperty::copy()
 {
-    bp::object obj = CIMBase::s_class();
+    bp::object obj = CIMBase::create();
     CIMProperty &property = lmi::extract<CIMProperty&>(obj);
     NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
 

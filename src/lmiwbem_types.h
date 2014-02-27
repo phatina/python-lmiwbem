@@ -34,9 +34,9 @@ namespace bp = boost::python;
     { \
     public: \
         static void init_type(); \
-        static bp::object create() { return CIMBase::s_class(); } \
+        static bp::object create() { return CIMBase::create(); } \
         template <typename T> \
-        static bp::object create(const T &value) { return CIMBase::s_class(value); } \
+        static bp::object create(const T &value) { return CIMBase::create(value); } \
     }
 
 #define DEF_CIMTYPE(name) \
