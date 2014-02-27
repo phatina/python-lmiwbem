@@ -124,7 +124,7 @@ bp::object CIMInstanceName::create(
             std_string_as_pyunicode(std::string(keybinding.getValue().getCString()))
         );
 
-        bp::setitem(fake_this.m_keybindings, name, value);
+        fake_this.m_keybindings[name] = value;
     }
 
     return inst;

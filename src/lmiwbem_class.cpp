@@ -230,10 +230,8 @@ bp::object CIMClass::getProperties()
         std::list<Pegasus::CIMConstProperty>::const_iterator it;
         std::list<Pegasus::CIMConstProperty> &properties = *m_rc_class_properties.get();
 
-        for (it = properties.begin(); it != properties.end(); ++it) {
-            bp::object prop_name(it->getName());
-            bp::setitem(m_properties, prop_name, CIMProperty::create(*it));
-        }
+        for (it = properties.begin(); it != properties.end(); ++it)
+            m_properties[bp::object(it->getName())] = CIMProperty::create(*it);
 
         m_rc_class_properties.unref();
     }
@@ -248,10 +246,8 @@ bp::object CIMClass::getQualifiers()
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         std::list<Pegasus::CIMConstQualifier> &qualifiers = *m_rc_class_qualifiers.get();
 
-        for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
-            bp::object qualif_name(it->getName());
-            bp::setitem(m_qualifiers, qualif_name, CIMQualifier::create(*it));
-        }
+        for (it = qualifiers.begin(); it != qualifiers.end(); ++it)
+            m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
 
         m_rc_class_qualifiers.unref();
     }
@@ -266,10 +262,8 @@ bp::object CIMClass::getMethods()
         std::list<Pegasus::CIMConstMethod>::const_iterator it;
         std::list<Pegasus::CIMConstMethod> &methods = *m_rc_class_methods.get();
 
-        for (it = methods.begin(); it != methods.end(); ++it) {
-            bp::object method_name(it->getName());
-            bp::setitem(m_methods, method_name, CIMMethod::create(*it));
-        }
+        for (it = methods.begin(); it != methods.end(); ++it)
+            m_methods[bp::object(it->getName())] = CIMMethod::create(*it);
 
         m_rc_class_methods.unref();
     }

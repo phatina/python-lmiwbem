@@ -353,10 +353,8 @@ bp::object CIMInstance::getQualifiers()
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier> &qualifiers = *m_rc_inst_qualifiers.get();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
-        for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
-            bp::object qualif_name(it->getName());
-            bp::setitem(m_qualifiers, qualif_name, CIMQualifier::create(*it));
-        }
+        for (it = qualifiers.begin(); it != qualifiers.end(); ++it)
+            m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
         m_rc_inst_qualifiers.unref();
     }
 
@@ -421,7 +419,7 @@ void CIMInstance::evalProperties()
     std::list<Pegasus::CIMConstProperty> &properties = *m_rc_inst_properties.get();
     for (it = properties.begin(); it != properties.end(); ++it) {
         bp::object prop_name(it->getName());
-        bp::setitem(m_properties, prop_name, CIMProperty::create(*it));
+        m_properties[prop_name] = CIMProperty::create(*it);
         property_list.append(prop_name);
     }
 

@@ -774,9 +774,8 @@ bp::tuple WBEMConnection::invokeMethod(
     bp::object rparams = NocaseDict::create();
     const Pegasus::Uint32 cnt = cim_out_params.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        bp::object param(cim_out_params[i].getParameterName());
-        bp::setitem(rparams, param,
-            CIMValue::asLMIWbemCIMValue(cim_out_params[i].getValue()));
+        rparams[bp::object(cim_out_params[i].getParameterName())] =
+            CIMValue::asLMIWbemCIMValue(cim_out_params[i].getValue());
     }
 
     return bp::make_tuple(

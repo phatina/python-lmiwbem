@@ -225,11 +225,9 @@ bp::object CIMParameter::getQualifiers()
         for (it = m_rc_param_qualifiers.get()->begin();
             it != m_rc_param_qualifiers.get()->end(); ++it)
         {
-            bp::setitem(m_qualifiers,
-                std_string_as_pyunicode(
-                    std::string(it->getName().getString().getCString())),
-                CIMQualifier::create(*it)
-            );
+            bp::object name = std_string_as_pyunicode(
+                std::string(it->getName().getString().getCString()));
+            m_qualifiers[name] = CIMQualifier::create(*it);
         }
 
         m_rc_param_qualifiers.unref();

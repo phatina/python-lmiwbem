@@ -229,11 +229,9 @@ bp::object CIMMethod::getParameters()
         m_parameters = NocaseDict::create();
         std::list<Pegasus::CIMConstParameter>::const_iterator it;
         for (it = m_rc_meth_parameters.get()->begin(); it != m_rc_meth_parameters.get()->end(); ++it) {
-            bp::setitem(m_parameters,
-                std_string_as_pyunicode(
-                    std::string(it->getName().getString().getCString())),
-                CIMParameter::create(*it)
-            );
+            bp::object name = std_string_as_pyunicode(
+                std::string(it->getName().getString().getCString()));
+            m_parameters[name] = CIMParameter::create(*it);
         }
 
         m_rc_meth_parameters.unref();
@@ -249,11 +247,9 @@ bp::object CIMMethod::getQualifiers()
         for (it = m_rc_meth_qualifiers.get()->begin();
             it != m_rc_meth_qualifiers.get()->end(); ++it)
         {
-            bp::setitem(m_qualifiers,
-                std_string_as_pyunicode(
-                    std::string(it->getName().getString().getCString())),
-                CIMQualifier::create(*it)
-            );
+            bp::object name = std_string_as_pyunicode(
+                std::string(it->getName().getString().getCString()));
+            m_qualifiers[name] = CIMQualifier::create(*it);
         }
 
         m_rc_meth_qualifiers.unref();
