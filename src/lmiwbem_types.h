@@ -42,8 +42,8 @@ namespace bp = boost::python;
 #define DEF_CIMTYPE(name) \
     void name::init_type() \
     { \
-        CIMBase::s_class = bp::import("lmiwbem.lmiwbem_types").attr(#name); \
-        bp::scope().attr(#name) = CIMBase::s_class; \
+        CIMBase::init_type(bp::import("lmiwbem.lmiwbem_types").attr(#name)); \
+        bp::scope().attr(#name) = CIMBase::type(); \
     } \
 
 DECL_CIMTYPE(MinutesFromUTC);

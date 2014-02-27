@@ -52,7 +52,7 @@ NocaseDict::NocaseDict(const bp::object &d)
 
 void NocaseDict::init_type()
 {
-    CIMBase::s_class = bp::class_<NocaseDict>("NocaseDict", bp::init<>())
+    CIMBase::init_type(bp::class_<NocaseDict>("NocaseDict", bp::init<>())
         .def(bp::init<const bp::object&>())
         .def("__getitem__", &NocaseDict::getitem)
         .def("__setitem__", &NocaseDict::setitem)
@@ -77,8 +77,7 @@ void NocaseDict::init_type()
         .def("pop", &NocaseDict::pop,
             (bp::arg("key"), bp::arg("def") = bp::object())
         )
-        .def("copy", &NocaseDict::copy)
-        ;
+        .def("copy", &NocaseDict::copy));
 }
 
 bp::object NocaseDict::create(const bp::object &d)

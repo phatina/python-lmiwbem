@@ -30,7 +30,7 @@ template <typename T>
 class CIMBase
 {
 public:
-    static void init_type();
+    static void init_type(const bp::object &class_) { s_class = class_; }
     static const bp::object &type() { return s_class; }
 
     static bp::object create() { return s_class(); }

@@ -60,7 +60,7 @@ CIMClass::CIMClass(
 
 void CIMClass::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMClass>("CIMClass", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMClass>("CIMClass", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -111,8 +111,7 @@ void CIMClass::init_type()
             &CIMClass::setMethods,
             "Property storing methods.\n\n"
             ":returns: dictionary containing the methods\n"
-            ":rtype: :py:class:`NocaseDict`")
-        ;
+            ":rtype: :py:class:`NocaseDict`"));
 }
 
 bp::object CIMClass::create(const Pegasus::CIMClass &cls)

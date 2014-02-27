@@ -70,7 +70,7 @@ CIMMethod::CIMMethod(
 
 void CIMMethod::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMMethod>("CIMMethod", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMMethod>("CIMMethod", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -124,8 +124,7 @@ void CIMMethod::init_type()
             &CIMMethod::setQualifiers,
             "Property storing method's qualifiers.\n\n"
             ":returns: dictionary containing the method's qualifiers\n"
-            ":rtype: :py:class:`NocaseDict`")
-        ;
+            ":rtype: :py:class:`NocaseDict`"));
 }
 
 bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)

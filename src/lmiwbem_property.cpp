@@ -78,7 +78,7 @@ CIMProperty::CIMProperty(
 
 void CIMProperty::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMProperty>("CIMProperty", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMProperty>("CIMProperty", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -162,8 +162,7 @@ void CIMProperty::init_type()
             &CIMProperty::m_reference_class,
             &CIMProperty::setReferenceClass,
             "Property storing reference class of the property.\n\n"
-            ":returns: string containing the property's reference class")
-        ;
+            ":returns: string containing the property's reference class"));
 }
 
 bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)

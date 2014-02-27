@@ -107,11 +107,10 @@ protected:
     template <typename T>
     static void init_type(const char *classname)
     {
-        T::CIMBase::s_class = bp::class_<T>(
+        T::CIMBase::init_type(bp::class_<T>(
             classname, bp::init<>())
             .def("__iter__", &T::iter)
-            .def("next", &T::next)
-            ;
+            .def("next", &T::next));
     }
 
     template <typename T>

@@ -86,7 +86,7 @@ CIMInstance::CIMInstance(
 
 void CIMInstance::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMInstance>("CIMInstance", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMInstance>("CIMInstance", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -147,8 +147,7 @@ void CIMInstance::init_type()
             &CIMInstance::getPropertyList,
             &CIMInstance::setPropertyList,
             "Property storing instance properties\n\n"
-            ":returns: list of instance properties\n")
-        ;
+            ":returns: list of instance properties\n"));
 }
 
 bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)

@@ -59,7 +59,7 @@ CIMQualifier::CIMQualifier(
 
 void CIMQualifier::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMQualifier>("CIMQualifier", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMQualifier>("CIMQualifier", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -137,8 +137,7 @@ void CIMQualifier::init_type()
             &CIMQualifier::setTranslatable,
             "Property storing qualifier's translation flag.\n\n"
             ":returns: True, if the qualifier can be translated; False otherwise\n"
-            ":rtype: bool")
-        ;
+            ":rtype: bool"));
 }
 
 bp::object CIMQualifier::create(const Pegasus::CIMQualifier &qualifier)

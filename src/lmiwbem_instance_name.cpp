@@ -54,7 +54,7 @@ CIMInstanceName::CIMInstanceName(
 
 void CIMInstanceName::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMInstanceName>("CIMInstanceName", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMInstanceName>("CIMInstanceName", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -94,8 +94,7 @@ void CIMInstanceName::init_type()
             &CIMInstanceName::setKeybindings,
             "Property storing keybindings.\n\n"
             ":returns: dictionary containing keybindings\n"
-            ":rtype: :py:class:`NocaseDict`")
-        ;
+            ":rtype: :py:class:`NocaseDict`"));
 }
 
 bp::object CIMInstanceName::create(

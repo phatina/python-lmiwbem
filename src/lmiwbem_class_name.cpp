@@ -45,7 +45,7 @@ CIMClassName::CIMClassName(
 
 void CIMClassName::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMClassName>("CIMClassName", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMClassName>("CIMClassName", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -75,8 +75,7 @@ void CIMClassName::init_type()
             &CIMClassName::m_hostname,
             &CIMClassName::setHostname,
             "Property storing host name.\n\n"
-            ":returns: string containing host name")
-        ;
+            ":returns: string containing host name"));
 }
 
 bp::object CIMClassName::create(

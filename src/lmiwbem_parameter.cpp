@@ -58,7 +58,7 @@ CIMParameter::CIMParameter(
 
 void CIMParameter::init_type()
 {
-    CIMBase::s_class = bp::class_<CIMParameter>("CIMParameter", bp::init<>())
+    CIMBase::init_type(bp::class_<CIMParameter>("CIMParameter", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -117,8 +117,7 @@ void CIMParameter::init_type()
             &CIMParameter::setQualifiers,
             "Property storing qualifiers of the parameter.\n\n"
             ":returns: dictionary containing parameter's qualifiers\n"
-            ":rtype: :py:class:`NocaseDict`")
-        ;
+            ":rtype: :py:class:`NocaseDict`"));
 }
 
 bp::object CIMParameter::create(const Pegasus::CIMParameter &parameter)
