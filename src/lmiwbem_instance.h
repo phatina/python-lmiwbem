@@ -52,6 +52,7 @@ public:
     int cmp(const bp::object &other);
 
     std::string repr();
+    bp::object tomof();
 
     bp::object getitem(const bp::object &key);
     void setitem(
@@ -82,6 +83,8 @@ public:
 
 private:
     void evalProperties();
+
+    static std::string tomofContent(const bp::object &value);
 
     std::string m_classname;
     bp::object m_path;

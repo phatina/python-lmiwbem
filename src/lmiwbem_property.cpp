@@ -265,11 +265,6 @@ bp::object CIMProperty::copy()
     return obj;
 }
 
-bp::object CIMProperty::getType()
-{
-    return std_string_as_pyunicode(m_type);
-}
-
 bp::object CIMProperty::getValue()
 {
     if (!m_rc_prop_value.empty()) {

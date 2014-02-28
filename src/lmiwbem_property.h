@@ -63,13 +63,14 @@ public:
 
     bp::object copy();
 
-    bp::object getName() { return bp::object(m_name); }
-    bp::object getType();
+    std::string getName() const { return m_name; }
+    std::string getType() const { return m_type; }
     bp::object getValue();
-    bp::object getClassOrigin() { return bp::object(m_class_origin); }
-    bp::object getArraySize() { return bp::object(m_array_size); }
-    bp::object getPropagated() { return bp::object(m_propagated); }
+    std::string getClassOrigin() const { return m_class_origin; }
+    int getArraySize() const { return m_array_size; }
+    bool getPropagated() const { return m_propagated; }
     bp::object getQualifiers();
+    bool isArray() const { return m_is_array; }
 
     void setName(const bp::object &name);
     void setType(const bp::object &type);

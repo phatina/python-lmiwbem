@@ -118,6 +118,7 @@ void CIMInstance::init_type()
         .def("itervalues", &CIMInstance::itervalues)
         .def("iteritems", &CIMInstance::iteritems)
         .def("copy", &CIMInstance::copy)
+        .def("tomof", &CIMInstance::tomof)
         .add_property("classname",
             &CIMInstance::getClassname,
             &CIMInstance::setClassname,
@@ -323,6 +324,49 @@ bp::object CIMInstance::copy()
         inst.m_property_list = bp::list(getPropertyList());
 
     return obj;
+}
+
+std::string CIMInstance::tomofContent(const bp::object &value)
+{
+    std::stringstream ss;
+
+    if (value.is_none()) {
+        ss << "NULL";
+    } else if (PyList_Check(value.ptr())) {
+        ss << '{';
+        const int cnt = bp::len(value);
+        for (int i = 0; i < cnt; ++i) {
+            ss << tomofContent(value[i]);
+            if (i < cnt - 1)
+                ss << ", ";
+        }
+        ss << '}';
+    } else if (PyString_Check(value.ptr()) || PyUnicode_Check(value.ptr())) {
+        ss << '"' << object_as_std_string(value) << '"';
+    } else {
+        ss << object_as_std_string(value);
+    }
+
+    return ss.str();
+}
+
+bp::object CIMInstance::tomof()
+{
+    std::stringstream ss;
+    ss << "instance of " << m_classname << " {\n";
+
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    nocase_map_t::iterator it;
+    for (it = properties.begin(); it != properties.end(); ++it) {
+        CIMProperty &property = lmi::extract<CIMProperty&>(it->second);
+        ss << "\t" << property.getName() << " = "
+           << tomofContent(property.getValue())
+           << ";\n";
+    }
+
+    ss << "};\n";
+
+    return std_string_as_pyunicode(ss.str());
 }
 
 bp::object CIMInstance::getClassname()
