@@ -84,6 +84,7 @@ void CIMParameter::init_type()
         .def("__cmp__", &CIMParameter::cmp)
         .def("__repr__", &CIMParameter::repr,
             ":returns: pretty string of the object")
+        .def("tomof", &CIMParameter::tomof)
         .def("copy", &CIMParameter::copy)
         .add_property("name",
             &CIMParameter::m_name,
@@ -198,6 +199,13 @@ std::string CIMParameter::repr()
     std::stringstream ss;
     ss << "CIMParameter(name='" << m_name << "', type='" << m_type
        << "', is_array=" << (m_is_array ? "True" : "False") << ')';
+    return ss.str();
+}
+
+std::string CIMParameter::tomof()
+{
+    std::stringstream ss;
+    ss << m_type << ' ' << m_name;
     return ss.str();
 }
 

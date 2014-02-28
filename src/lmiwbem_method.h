@@ -50,9 +50,14 @@ public:
     int cmp(const bp::object &other);
 
     std::string repr();
+    std::string tomof();
 
     bp::object copy();
 
+    std::string getName() const { return m_name; }
+    std::string getReturnType() const { return m_return_type; }
+    std::string getClassOrigin() const { return m_class_origin; }
+    bool getPropagated() const { return m_propagated; }
     bp::object getParameters();
     bp::object getQualifiers();
 

@@ -95,6 +95,7 @@ void CIMQualifier::init_type()
         .def("__repr__", &CIMQualifier::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMQualifier::copy)
+        .def("tomof", &CIMQualifier::tomof)
         .add_property("name",
             &CIMQualifier::getName,
             &CIMQualifier::setName,
@@ -229,6 +230,35 @@ bp::object CIMQualifier::copy()
     qualifier.m_translatable = m_translatable;
 
     return obj;
+}
+
+std::string CIMQualifier::tomof()
+{
+    std::stringstream ss;
+
+    ss << m_name;
+    if (!PyList_Check(m_value.ptr()) && !PyTuple_Check(m_value.ptr())) {
+        if (PyString_Check(m_value.ptr()) || PyUnicode_Check(m_value.ptr()))
+            ss << " (\"" << object_as_std_string(m_value) << "\")";
+        else
+            ss << " (" << object_as_std_string(m_value) << ')';
+    } else {
+        ss << " {";
+        const int cnt = bp::len(m_value);
+        for (int i = 0; i < cnt; ++i) {
+            const bp::object &value = m_value[i];
+            if (PyString_Check(value.ptr()) || PyUnicode_Check(value.ptr()))
+                ss << '"' << object_as_std_string(value) << '"';
+            else
+                ss << object_as_std_string(value);
+
+            if (i < cnt - 1)
+                ss << ", ";
+        }
+        ss << '}';
+    }
+
+    return ss.str();
 }
 
 bp::object CIMQualifier::getName()

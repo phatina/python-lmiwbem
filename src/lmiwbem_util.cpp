@@ -43,7 +43,7 @@ CIMTypeConv::CIMTypeHolder *CIMTypeConv::CIMTypeHolder::instance()
 
 CIMTypeConv::CIMTypeHolder::CIMTypeHolder()
 {
-    m_type_string[Pegasus::CIMTYPE_BOOLEAN] = "bool";
+    m_type_string[Pegasus::CIMTYPE_BOOLEAN] = "boolean";
     m_type_string[Pegasus::CIMTYPE_UINT8] = "uint8";
     m_type_string[Pegasus::CIMTYPE_SINT8] = "sint8";
     m_type_string[Pegasus::CIMTYPE_UINT16] = "uint16";

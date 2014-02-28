@@ -53,6 +53,7 @@ public:
     int cmp(const bp::object &other);
 
     std::string repr();
+    std::string tomof();
 
     bp::object copy();
 

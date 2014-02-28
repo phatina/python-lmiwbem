@@ -91,14 +91,15 @@ void CIMMethod::init_type()
         .def("__cmp__", &CIMMethod::cmp)
         .def("__repr__", &CIMMethod::repr,
             ":returns: pretty string of the object")
+        .def("tomof", &CIMMethod::tomof)
         .def("copy", &CIMMethod::copy)
         .add_property("name",
-            &CIMMethod::m_name,
+            &CIMMethod::getName,
             &CIMMethod::setName,
             "Property storing method's name.\n\n"
             ":returns: string containing the method's name")
         .add_property("return_type",
-            &CIMMethod::m_return_type,
+            &CIMMethod::getReturnType,
             &CIMMethod::setReturnType,
             "Property storing method's return type.\n\n"
             ":returns: string containing the method's return type\n")
@@ -109,12 +110,12 @@ void CIMMethod::init_type()
             ":returns: dictionary containing the method's parameters\n"
             ":rtype: :py:class:`NocaseDict`")
         .add_property("class_origin",
-            &CIMMethod::m_class_origin,
+            &CIMMethod::getClassOrigin,
             &CIMMethod::setClassOrigin,
             "Property storing method's class origin.\n\n"
             ":returns: string containing the method's class origin")
         .add_property("propagated",
-            &CIMMethod::m_propagated,
+            &CIMMethod::getPropagated,
             &CIMMethod::setPropagated,
             "Property storing flag, which indicates, if the method is propagated.\n\n"
             ":returns: True, if the method is propagated; False otherwise\n"
@@ -203,6 +204,28 @@ std::string CIMMethod::repr()
 {
     std::stringstream ss;
     ss << "CIMMethod(name='" << m_name << "', return_type='" << m_return_type << "', ...)";
+    return ss.str();
+}
+
+std::string CIMMethod::tomof()
+{
+    std::stringstream ss;
+
+    if (!m_return_type.empty())
+        ss << m_return_type << ' ';
+    ss << m_name << '(';
+
+    const NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
+    nocase_map_t::const_iterator it;
+    for (it = parameters.begin(); it != parameters.end(); ++it) {
+        CIMParameter &parameter = lmi::extract_or_throw<CIMParameter&>(it->second);
+        ss << parameter.tomof();
+        nocase_map_t::const_iterator tmp_it = it;
+        if (tmp_it != parameters.end() && ++tmp_it != parameters.end())
+            ss << ", ";
+    }
+    ss << ");";
+
     return ss.str();
 }
 
