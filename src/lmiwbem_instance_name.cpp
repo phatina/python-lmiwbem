@@ -20,6 +20,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <sstream>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
 #include "lmiwbem_instance_name.h"
@@ -71,6 +72,9 @@ void CIMInstanceName::init_type()
                 ":param str host: String containing hostname of the object path\n"
                 ":param str namespace: String containing namespace of the object path"))
         .def("__cmp__", &CIMInstanceName::cmp)
+        .def("__str__", &CIMInstanceName::str,
+            ":returns: serialized object\n"
+            ":rtype: str")
         .def("__repr__", &CIMInstanceName::repr,
             ":returns: pretty string of the object")
         .def("__getitem__", &CIMInstanceName::getitem)
@@ -239,6 +243,41 @@ bp::object CIMInstanceName::copy()
     inst_name.m_hostname = m_hostname;
     inst_name.m_keybindings = keybindings.copy();
     return obj;
+}
+
+std::string CIMInstanceName::str()
+{
+    std::stringstream ss;
+
+    if (!m_hostname.empty())
+        ss << "//" << m_hostname << '/';
+    if (!m_namespace.empty())
+        ss << m_namespace << ':';
+    ss << m_classname << '.';
+
+    const NocaseDict &keybindings = lmi::extract<const NocaseDict&>(m_keybindings);
+    nocase_map_t::const_iterator it;
+    for (it = keybindings.begin(); it != keybindings.end(); ++it) {
+        ss << it->first << '=';
+        if (isinstance(it->second, CIMInstanceName::type())) {
+            std::string iname_str = object_as_std_string(it->second);
+            boost::replace_all(iname_str, "\\", "\\\\");
+            boost::replace_all(iname_str, "\"", "\\\"");
+            ss << '"' << iname_str << '"';
+        } else if (PyString_Check(it->second.ptr()) ||
+            PyUnicode_Check(it->second.ptr()))
+        {
+            ss << '"' << object_as_std_string(it->second) << '"';
+        } else {
+            ss << object_as_std_string(it->second);
+        }
+
+        nocase_map_t::const_iterator tmp_it = it;
+        if (tmp_it != keybindings.end() && ++tmp_it != keybindings.end())
+            ss << ',';
+    }
+
+    return ss.str();
 }
 
 std::string CIMInstanceName::repr()

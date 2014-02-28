@@ -49,6 +49,7 @@ public:
 
     int cmp(const bp::object &other);
 
+    std::string str();
     std::string repr();
 
     bp::object getitem(const bp::object &key) { return m_keybindings[key]; }
