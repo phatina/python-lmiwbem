@@ -51,6 +51,20 @@ public:
 
     std::string repr();
 
+    bp::object getitem(const bp::object &key) { return m_keybindings[key]; }
+    void delitem(const bp::object &key) { bp::delitem(m_keybindings, key); }
+    void setitem(
+        const bp::object &key,
+        const bp::object &value) { m_keybindings[key] = value; }
+    ssize_t len() { return bp::len(m_keybindings); }
+    bool haskey(const bp::object &key) { return m_keybindings.contains(key); }
+    bp::object keys();
+    bp::object values();
+    bp::object items();
+    bp::object iterkeys();
+    bp::object itervalues();
+    bp::object iteritems();
+
     bp::object copy();
 
     std::string getClassname() const { return m_classname; }

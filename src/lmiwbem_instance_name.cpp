@@ -73,6 +73,18 @@ void CIMInstanceName::init_type()
         .def("__cmp__", &CIMInstanceName::cmp)
         .def("__repr__", &CIMInstanceName::repr,
             ":returns: pretty string of the object")
+        .def("__getitem__", &CIMInstanceName::getitem)
+        .def("__delitem__", &CIMInstanceName::delitem)
+        .def("__setitem__", &CIMInstanceName::setitem)
+        .def("__contains__", &CIMInstanceName::haskey)
+        .def("__len__", &CIMInstanceName::len)
+        .def("has_key", &CIMInstanceName::haskey)
+        .def("keys", &CIMInstanceName::keys)
+        .def("values", &CIMInstanceName::values)
+        .def("items", &CIMInstanceName::items)
+        .def("iterkeys", &CIMInstanceName::iterkeys)
+        .def("itervalues", &CIMInstanceName::itervalues)
+        .def("iteritems", &CIMInstanceName::iteritems)
         .def("copy", &CIMInstanceName::copy)
         .add_property("classname",
             &CIMInstanceName::m_classname,
@@ -239,6 +251,42 @@ std::string CIMInstanceName::repr()
     ss <<  ", namespace='"
        << m_namespace << "')";
     return ss.str();
+}
+
+bp::object CIMInstanceName::keys()
+{
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    return keybindings.keys();
+}
+
+bp::object CIMInstanceName::values()
+{
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    return keybindings.values();
+}
+
+bp::object CIMInstanceName::items()
+{
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    return keybindings.items();
+}
+
+bp::object CIMInstanceName::iterkeys()
+{
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    return keybindings.iterkeys();
+}
+
+bp::object CIMInstanceName::itervalues()
+{
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    return keybindings.itervalues();
+}
+
+bp::object CIMInstanceName::iteritems()
+{
+    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    return keybindings.iteritems();
 }
 
 void CIMInstanceName::setClassname(const bp::object &classname)
