@@ -266,6 +266,9 @@ std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
         return std::string();
 
     bool is_array = PyList_Check(value.ptr());
+    if (is_array && !bp::len(value))
+        throw_TypeError("CIMValue: empty array must have a type");
+
     bp::object value_type_check = is_array ? value[0] : value;
     PyObject *value_type_check_ptr = value_type_check.ptr();
 

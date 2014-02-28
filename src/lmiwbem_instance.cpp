@@ -65,11 +65,10 @@ CIMInstance::CIMInstance(
 
     // Convert plain values
     NocaseDict &prop_dict = lmi::extract<NocaseDict&>(m_properties);
-    if (!prop_dict.empty() && !isinstance(prop_dict.begin()->second, CIMProperty::type())) {
-        nocase_map_t::iterator it;
-        for (it = prop_dict.begin(); it != prop_dict.end(); ++it) {
+    nocase_map_t::iterator it;
+    for (it = prop_dict.begin(); it != prop_dict.end(); ++it) {
+        if (!isinstance(it->second, CIMProperty::type()))
             it->second = CIMProperty::create(bp::object(it->first), it->second);
-        }
     }
 
     // We store qualifiers in NocaseDict. Convert python's dict, if necessary.

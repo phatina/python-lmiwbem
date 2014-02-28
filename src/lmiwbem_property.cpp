@@ -58,7 +58,9 @@ CIMProperty::CIMProperty(
     m_name = lmi::extract_or_throw<std::string>(name, "name");
     if (!type.is_none()) {
         m_type = lmi::extract_or_throw<std::string>(type, "type");
-        m_is_array = lmi::extract_or_throw<bool>(is_array, "is_array");
+        m_is_array = is_array.is_none() ?
+            static_cast<bool>(PyList_Check(value.ptr())) :
+            lmi::extract_or_throw<bool>(is_array, "is_array");
         m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
     } else {
         // Deduce the value type
@@ -96,7 +98,7 @@ void CIMProperty::init_type()
                 bp::arg("array_size") = 0,
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create(),
-                bp::arg("is_array") = false,
+                bp::arg("is_array") = bp::object(),
                 bp::arg("reference_class") = std::string()),
                 "Property of a CIM object.\n\n"
                 ":param str name: String containing the property's name\n"
