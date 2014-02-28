@@ -91,22 +91,22 @@ void CIMInstanceName::init_type()
         .def("iteritems", &CIMInstanceName::iteritems)
         .def("copy", &CIMInstanceName::copy)
         .add_property("classname",
-            &CIMInstanceName::m_classname,
+            &CIMInstanceName::getClassname,
             &CIMInstanceName::setClassname,
             "Property storing class name.\n\n"
             ":returns: string containing the class name")
         .add_property("namespace",
-            &CIMInstanceName::m_namespace,
+            &CIMInstanceName::getNamespace,
             &CIMInstanceName::setNamespace,
             "Property storing namespace.\n\n"
             ":returns: string containing the namespace name")
-        .add_property("hostname",
-            &CIMInstanceName::m_hostname,
+        .add_property("host",
+            &CIMInstanceName::getHostname,
             &CIMInstanceName::setHostname,
             "Property storing hostname.\n\n"
             ":returns: string containing the hostname")
         .add_property("keybindings",
-            &CIMInstanceName::m_keybindings,
+            &CIMInstanceName::getKeybindings,
             &CIMInstanceName::setKeybindings,
             "Property storing keybindings.\n\n"
             ":returns: dictionary containing keybindings\n"
