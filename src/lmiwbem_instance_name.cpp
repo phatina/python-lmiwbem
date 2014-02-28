@@ -156,7 +156,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
     // bool, numeric, str or CIMInstanceName
     nocase_map_t::const_iterator it;
     for (it = keybindings.begin(); it != keybindings.end(); ++it) {
-        if (PyBool_Check(it->second.ptr())) {
+        if (isbool(it->second)) {
             // Create bool CIMKeyBinding
             bool bval = lmi::extract<bool>(it->second);
             Pegasus::CIMValue value = Pegasus::CIMValue(bval);
@@ -167,10 +167,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
             continue;
         }
 
-        if (PyLong_Check(it->second.ptr()) ||
-            PyFloat_Check(it->second.ptr()) ||
-            PyInt_Check(it->second.ptr()))
-        {
+        if (islong(it->second) || isfloat(it->second) || isint(it->second)) {
             // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
             // are derived from long or float, so we get here.
             arr_keybindings.append(
@@ -264,9 +261,7 @@ std::string CIMInstanceName::str()
             boost::replace_all(iname_str, "\\", "\\\\");
             boost::replace_all(iname_str, "\"", "\\\"");
             ss << '"' << iname_str << '"';
-        } else if (PyString_Check(it->second.ptr()) ||
-            PyUnicode_Check(it->second.ptr()))
-        {
+        } else if (isbasestring(it->second)) {
             ss << '"' << object_as_std_string(it->second) << '"';
         } else {
             ss << object_as_std_string(it->second);

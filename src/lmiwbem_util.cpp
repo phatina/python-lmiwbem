@@ -112,29 +112,28 @@ Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
     return cim_property_list;
 }
 
-std::string object_as_std_string(const bp::object &object)
+std::string object_as_std_string(const bp::object &obj)
 {
-    PyObject *str = PyObject_Str(object.ptr());
+    PyObject *str = PyObject_Str(obj.ptr());
     if (!str)
         return std::string();
-    return std::string(PyString_AS_STRING(str));
+    return std::string(PyString_AsString(str));
 }
 
-std::string pystring_as_std_string(const bp::object &object)
+std::string pystring_as_std_string(const bp::object &obj)
 {
-    PyObject *pyobj = object.ptr();
-    if (PyUnicode_Check(pyobj)) {
+    if (isunicode(obj)) {
         return std::string(
             PyString_AsString(
                 PyUnicode_EncodeUTF8(
-                    PyUnicode_AS_UNICODE(pyobj),
-                    PyUnicode_GetSize(pyobj),
+                    PyUnicode_AsUnicode(obj.ptr()),
+                    PyUnicode_GetSize(obj.ptr()),
                     NULL
                 )
             )
         );
-    } else if (PyString_Check(pyobj)) {
-        return std::string(PyString_AS_STRING(pyobj));
+    } else if (isstring(obj)) {
+        return std::string(PyString_AsString(obj.ptr()));
     }
 
     return std::string();
@@ -190,7 +189,42 @@ bp::object incref(const bp::object &obj)
 
 bool isinstance(const bp::object &inst, const bp::object &cls)
 {
-    return PyObject_IsInstance(inst.ptr(), cls.ptr()) == 1;
+    return static_cast<bool>(PyObject_IsInstance(inst.ptr(), cls.ptr()));
+}
+
+bool isstring(const bp::object &obj)
+{
+    return static_cast<bool>(PyString_Check(obj.ptr()));
+}
+
+bool isunicode(const bp::object &obj)
+{
+    return static_cast<bool>(PyUnicode_Check(obj.ptr()));
+}
+
+bool isbasestring(const bp::object &obj)
+{
+    return isstring(obj) || isunicode(obj);
+}
+
+bool isbool(const bp::object &obj)
+{
+    return static_cast<bool>(PyBool_Check(obj.ptr()));
+}
+
+bool isint(const bp::object &obj)
+{
+    return static_cast<bool>(PyInt_Check(obj.ptr()));
+}
+
+bool islong(const bp::object &obj)
+{
+    return static_cast<bool>(PyLong_Check(obj.ptr()));
+}
+
+bool isfloat(const bp::object &obj)
+{
+    return static_cast<bool>(PyFloat_Check(obj.ptr()));
 }
 
 int compare(const bp::object &o1, const bp::object &o2)

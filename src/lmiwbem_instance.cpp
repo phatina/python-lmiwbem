@@ -330,7 +330,7 @@ std::string CIMInstance::tomofContent(const bp::object &value)
                 ss << ", ";
         }
         ss << '}';
-    } else if (PyString_Check(value.ptr()) || PyUnicode_Check(value.ptr())) {
+    } else if (isbasestring(value)) {
         ss << '"' << object_as_std_string(value) << '"';
     } else {
         ss << object_as_std_string(value);

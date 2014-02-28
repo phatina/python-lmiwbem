@@ -112,13 +112,22 @@ private:
     ListConv();
 };
 
-std::string object_as_std_string(const bp::object &object);
+std::string object_as_std_string(const bp::object &obj);
 
-std::string pystring_as_std_string(const bp::object &object);
+std::string pystring_as_std_string(const bp::object &obj);
 bp::object  std_string_as_pyunicode(const std::string &str);
 
 bp::object incref(const bp::object &obj);
+
 bool isinstance(const bp::object &inst, const bp::object &cls);
+bool isstring(const bp::object &obj);
+bool isunicode(const bp::object &obj);
+bool isbasestring(const bp::object &obj);
+bool isbool(const bp::object &obj);
+bool isint(const bp::object &obj);
+bool islong(const bp::object &obj);
+bool isfloat(const bp::object &obj);
+
 int compare(const bp::object &o1, const bp::object &o2);
 
 #endif // LMIWBEM_UTIL_H

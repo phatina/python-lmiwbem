@@ -238,7 +238,7 @@ std::string CIMQualifier::tomof()
 
     ss << m_name;
     if (!PyList_Check(m_value.ptr()) && !PyTuple_Check(m_value.ptr())) {
-        if (PyString_Check(m_value.ptr()) || PyUnicode_Check(m_value.ptr()))
+        if (isbasestring(m_value))
             ss << " (\"" << object_as_std_string(m_value) << "\")";
         else
             ss << " (" << object_as_std_string(m_value) << ')';
@@ -247,7 +247,7 @@ std::string CIMQualifier::tomof()
         const int cnt = bp::len(m_value);
         for (int i = 0; i < cnt; ++i) {
             const bp::object &value = m_value[i];
-            if (PyString_Check(value.ptr()) || PyUnicode_Check(value.ptr()))
+            if (isbasestring(value))
                 ss << '"' << object_as_std_string(value) << '"';
             else
                 ss << object_as_std_string(value);

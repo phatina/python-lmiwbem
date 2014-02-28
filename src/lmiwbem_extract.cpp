@@ -22,6 +22,7 @@
 #include <string>
 #include <boost/python/object.hpp>
 #include "lmiwbem_extract.h"
+#include "lmiwbem_util.h"
 
 namespace bp = boost::python;
 
@@ -45,19 +46,18 @@ extract<std::string>::extract(const bp::object &obj)
 
 void extract<std::string>::convert()
 {
-    PyObject *pyobj = m_obj.ptr();
-    if (PyUnicode_Check(pyobj)) {
+    if (isunicode(m_obj)) {
         m_str = std::string(
             PyString_AsString(
                 PyUnicode_EncodeUTF8(
-                    PyUnicode_AS_UNICODE(pyobj),
-                    PyUnicode_GetSize(pyobj),
+                    PyUnicode_AsUnicode(m_obj.ptr()),
+                    PyUnicode_GetSize(m_obj.ptr()),
                     NULL
                 )
             )
         );
-    } else if (PyString_Check(pyobj)) {
-        m_str = std::string(PyString_AS_STRING(pyobj));
+    } else if (isstring(m_obj)) {
+        m_str = std::string(PyString_AsString(m_obj.ptr()));
     } else {
         m_good = false;
     }
