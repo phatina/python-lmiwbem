@@ -58,8 +58,8 @@ public:
     void setitem(
         const bp::object &key,
         const bp::object &value);
-    ssize_t len();
-    bool haskey(const bp::object &key);
+    ssize_t len() { return bp::len(getProperties()); }
+    bool haskey(const bp::object &key) { return getProperties().contains(key); }
     bp::object keys();
     bp::object values();
     bp::object items();

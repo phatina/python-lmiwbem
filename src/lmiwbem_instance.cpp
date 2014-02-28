@@ -254,17 +254,6 @@ void CIMInstance::setitem(
         m_properties[key] = CIMProperty::create(key, value);
 }
 
-ssize_t CIMInstance::len()
-{
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
-    return static_cast<int>(properties.len());
-}
-
-bool CIMInstance::haskey(const bp::object &key)
-{
-    return getProperties().contains(key);
-}
-
 bp::object CIMInstance::keys()
 {
     NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
