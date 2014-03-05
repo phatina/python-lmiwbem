@@ -22,17 +22,25 @@
 #include <cerrno>
 #include "lmiwbem_addr.h"
 
-Address::Address(Pegasus::String url)
+Address::Address()
     : m_hostname("unknown")
-    , m_port(5989)
+    , m_port(Address::DEF_HTTPS_PORT)
     , m_is_https(true)
-    , m_is_valid(true)
 {
-    if (url.find("http://") != Pegasus::PEG_NOT_FOUND) {
+}
+
+bool Address::set(Pegasus::String url)
+{
+    if (url.subString(0, 7) == "http://") {
         url.remove(0, 7);
+        m_port = Address::DEF_HTTP_PORT;
         m_is_https = false;
-    } else if (url.find("https://") != Pegasus::PEG_NOT_FOUND) {
+    } else if (url.subString(0, 8) == "https://") {
         url.remove(0, 8);
+        m_port = Address::DEF_HTTPS_PORT;
+        m_is_https = true;
+    } else {
+        return false;
     }
 
     Pegasus::Uint32 pos = url.reverseFind(':');
@@ -41,9 +49,11 @@ Address::Address(Pegasus::String url)
         long int port = strtol(url.subString(pos + 1,
             url.size() - pos - 1).getCString(), NULL, 10);
         if (errno == ERANGE || port < 0 || port > 65535)
-            m_is_valid = false;
+            return false;
         m_port = static_cast<Pegasus::Uint32>(port);
     } else {
         m_hostname = url;
     }
+
+    return true;
 }

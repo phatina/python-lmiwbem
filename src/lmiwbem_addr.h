@@ -28,19 +28,22 @@
 class Address
 {
 public:
-    Address(Pegasus::String url);
+    Address();
+
+    bool set(Pegasus::String url);
 
     Pegasus::String hostname() const { return m_hostname; }
     Pegasus::Uint32 port() const { return m_port; }
 
     bool isHttps() const { return m_is_https; }
-    bool isValid() const { return m_is_valid; }
 
 private:
+    static const Pegasus::Uint32 DEF_HTTPS_PORT = 5989;
+    static const Pegasus::Uint32 DEF_HTTP_PORT  = 5988;
+
     Pegasus::String m_hostname;
     Pegasus::Uint32 m_port;
     bool m_is_https;
-    bool m_is_valid;
 };
 
 #endif // WBEM_CLIENT_ADDRESS_H

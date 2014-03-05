@@ -28,7 +28,7 @@
 
 CIMClient::CIMClient()
     : Pegasus::CIMClient()
-    , m_hostname()
+    , m_addr_info()
     , m_is_connected(false)
     , m_verify_cert(true)
 {
@@ -40,15 +40,17 @@ void CIMClient::connect(
     const Pegasus::String &password,
     const Pegasus::String &trust_store)
 {
-    Address addr(uri);
-    if (!addr.isValid()) {
+    if (!m_addr_info.set(uri)) {
         throw_CIMError("Invalid host address");
         return;
     }
 
-    m_hostname = std::string(addr.hostname().getCString());
-    if (!addr.isHttps()) {
-        Pegasus::CIMClient::connect(addr.hostname(), addr.port(), username, password);
+    if (!m_addr_info.isHttps()) {
+        Pegasus::CIMClient::connect(
+            m_addr_info.hostname(),
+            m_addr_info.port(),
+            username,
+            password);
     } else {
         Pegasus::SSLContext ctx(trust_store,
             m_verify_cert ? verifyCertificate : NULL
@@ -57,7 +59,12 @@ void CIMClient::connect(
 #else
             );
 #endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
-        Pegasus::CIMClient::connect(addr.hostname(), addr.port(), ctx, username, password);
+        Pegasus::CIMClient::connect(
+            m_addr_info.hostname(),
+            m_addr_info.port(),
+            ctx,
+            username,
+            password);
     }
     m_is_connected = true;
 }
@@ -71,7 +78,6 @@ void CIMClient::connectLocally()
 void CIMClient::disconnect()
 {
     Pegasus::CIMClient::disconnect();
-    m_hostname.clear();
     m_is_connected = false;
 }
 
@@ -112,7 +118,7 @@ Pegasus::Boolean CIMClient::verifyCertificate(Pegasus::SSLCertificateInfo &ci, v
     }
 
     CIMClient *fake_this = reinterpret_cast<CIMClient*>(data);
-    Pegasus::String hostname(fake_this->m_hostname.c_str());
+    Pegasus::String hostname(fake_this->m_addr_info.hostname());
 
     // Verify against DNS names
     Pegasus::Array<Pegasus::String> dnsNames = ci.getSubjectAltNames().getDnsNames();

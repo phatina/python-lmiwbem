@@ -26,6 +26,7 @@
 #include <Pegasus/Client/CIMClient.h>
 #include <Pegasus/Common/CIMType.h>
 #include <Pegasus/Common/SSLContext.h>
+#include "lmiwbem_addr.h"
 
 class CIMClient: public Pegasus::CIMClient
 {
@@ -44,7 +45,10 @@ public:
     void setVerifyCertificate(bool verify = true) { m_verify_cert = verify; }
     bool getVerifyCertificate() const { return m_verify_cert; }
 
-    std::string hostname() const { return m_hostname; }
+    std::string hostname() const
+    {
+        return std::string(m_addr_info.hostname().getCString());
+    }
 
 private:
     // We hide these from Pegasus::CIMClient
@@ -59,7 +63,7 @@ private:
     static Pegasus::Boolean verifyCertificate(Pegasus::SSLCertificateInfo &ci);
 #  endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
 
-    std::string m_hostname;
+    Address m_addr_info;
     bool m_is_connected;
     bool m_verify_cert;
 };
