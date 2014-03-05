@@ -28,6 +28,7 @@
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_connection.h"
+#include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_method.h"
@@ -111,4 +112,5 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     CIMQualifier::init_type();
     CIMClass::init_type();
     CIMClassName::init_type();
+    CIMConstants::init_type();
 }
