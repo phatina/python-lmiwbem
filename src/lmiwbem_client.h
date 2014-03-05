@@ -37,6 +37,7 @@ public:
         const Pegasus::String &username,
         const Pegasus::String &password,
         const Pegasus::String &trust_store = "/etc/pki/tls/certs");
+    void connectLocally();
     void disconnect();
     bool isConnected() const { return m_is_connected; }
 
@@ -48,6 +49,7 @@ public:
 private:
     // We hide these from Pegasus::CIMClient
     using Pegasus::CIMClient::connect;
+    using Pegasus::CIMClient::connectLocal;
 
     static bool matchPattern(const Pegasus::String &pattern, const Pegasus::String &str);
 

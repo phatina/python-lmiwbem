@@ -43,25 +43,14 @@ namespace bp = boost::python;
 
 std::string WBEMConnection::s_default_namespace = "root/cimv2";
 
-WBEMConnection::WBEMConnection(const bp::object &verify_cert)
-    : m_connected_tmp(false)
-    , m_url()
-    , m_username()
-    , m_password()
-    , m_default_namespace(s_default_namespace)
-    , m_client()
-    , m_mutex()
-{
-    bool verify = lmi::extract_or_throw<bool>(verify_cert, "verify_certificate");
-    m_client.setVerifyCertificate(verify);
-}
-
 WBEMConnection::WBEMConnection(
     const bp::object &url,
     const bp::object &creds,
     const bp::object &default_namespace,
-    const bp::object &verify_cert)
+    const bp::object &verify_cert,
+    const bool connect_locally)
     : m_connected_tmp(false)
+    , m_connect_locally(connect_locally)
     , m_url()
     , m_username()
     , m_password()
@@ -69,7 +58,13 @@ WBEMConnection::WBEMConnection(
     , m_client()
     , m_mutex()
 {
-    m_url = lmi::extract_or_throw<std::string>(url, "url");
+    // We are constructing with local connection flag; disregard other
+    // parameters.
+    if (m_connect_locally)
+        return;
+
+    if (!url.is_none())
+        m_url = lmi::extract_or_throw<std::string>(url, "url");
 
     if (!creds.is_none()) {
         bp::tuple creds_tpl = lmi::extract_or_throw<bp::tuple>(creds, "creds");
@@ -97,25 +92,26 @@ void WBEMConnection::init_type()
 {
     bp::class_<WBEMConnection, boost::noncopyable>(
         "WBEMConnection",
-        bp::init<
-            const bp::object &>((
-                bp::arg("verify_certificate") = true))
-        )
+        bp::no_init)
         .def(bp::init<
             const bp::object &,
             const bp::object &,
             const bp::object &,
-            const bp::object &>((
-                bp::arg("url"),
+            const bp::object &,
+            const bool>((
+                bp::arg("url") = bp::object(),
                 bp::arg("creds") = bp::object(),
                 bp::arg("default_namespace") = bp::object(),
-                bp::arg("verify_certificate") = true),
+                bp::arg("verify_certificate") = true,
+                bp::arg("connect_locally") = false),
                 "Constructs :py:class:`WBEMConnection` object.\n\n"
                 ":param str url: String containing URL of CIMOM instance\n"
                 ":param tuple creds: tuple containing two string, where the first\n"
                 "\tone stands for username, second for password\n"
                 ":param bool verify_certificate: set to True, if CIMOM's X509 certificate\n"
-                "\t shall be verified; False otherwise. Default value is True.\n"))
+                "\t shall be verified; False otherwise. Default value is True.\n"
+                ":param bool connect_locally: if True, Unix socket will be\n"
+                "\tused. Default value is False.\n"))
         .def("connect", &WBEMConnection::connect,
             (bp::arg("url") = bp::object(),
              bp::arg("username") = bp::object(),
@@ -128,8 +124,10 @@ void WBEMConnection::init_type()
             ":param str password: String containing password for authentication.\n"
             ":param bool verify_certificate: set to True, if CIMOM's X509 certificate\n"
             "\t shall be verified; False otherwise. Default value is True.\n"
-            ":raises: :py:exc:ConnectionError:"
-        )
+            ":raises: :py:exc:`ConnectionError`")
+        .def("connectLocally", &WBEMConnection::connectLocally,
+            "Connect to CIMOM using local Unix socket.\n\n"
+            ":raises: :py:exc:`ConnectionError`")
         .def("disconnect",
             &WBEMConnection::disconnect,
             "Disconnects from CIMOM.")
@@ -143,6 +141,11 @@ void WBEMConnection::init_type()
             "Property storing X509 certificate verification flag.\n\n"
             ":returns: True, if the X509 certificate shall be verified; False otherwise.\n"
             ":rtype: bool")
+        .add_property("connect_locally",
+            &WBEMConnection::getConnectLocally,
+            &WBEMConnection::setConnectLocally,
+            "Property storing flag means of connection. If set to True, local Unix socket\n"
+            "will be used; HTTP(S) otherwise.")
         .def("CreateInstance", &WBEMConnection::createInstance,
             (bp::arg("NewInstance")),
             "Creates a new CIM instance and returns its instance name.\n\n"
@@ -496,6 +499,13 @@ void WBEMConnection::connect(
     const bp::object &password,
     const bp::object &verify_cert)
 {
+    // If we have local connection flag set, disregard other parameters and
+    // perform socket connection.
+    if (m_connect_locally) {
+        connectLocally();
+        return;
+    }
+
     // All three parameters can be omitted, WBEMConnection was has been
     // with such parameters; WBEMConnection(url, (username, password)).
     std::string std_url(m_url);
@@ -525,11 +535,22 @@ void WBEMConnection::connect(
             Pegasus::String(std_url.c_str()),
             Pegasus::String(std_username.c_str()),
             Pegasus::String(std_password.c_str()));
+        m_connect_locally = false;
     } catch (const Pegasus::CannotConnectException &e) {
         throw_Exception(e);
     } catch (const Pegasus::Exception &e) {
         throw_Exception(e);
     }
+}
+
+void WBEMConnection::connectLocally() try
+{
+    m_client.connectLocally();
+    m_connect_locally = true;
+} catch (const Pegasus::CannotConnectException &e) {
+    throw_Exception(e);
+} catch (const Pegasus::Exception &e) {
+    throw_Exception(e);
 }
 
 void WBEMConnection::disconnect()
@@ -541,14 +562,16 @@ void WBEMConnection::connectTmp()
 {
     if (m_client.isConnected() || m_connected_tmp)
         return;
-
-    if (m_url.empty())
+    else if (m_connect_locally)
+        m_client.connectLocally();
+    else if (m_url.empty())
         throw_ValueError("WBEMConnection constructed without url parameter");
 
     m_client.connect(
         Pegasus::String(m_url.c_str()),
         Pegasus::String(m_username.c_str()),
         Pegasus::String(m_password.c_str()));
+
     m_connected_tmp = true;
 }
 

@@ -39,13 +39,12 @@ namespace bp = boost::python;
 class WBEMConnection
 {
 public:
-    WBEMConnection(const bp::object &verify_cert);
-
     WBEMConnection(
         const bp::object &url,
         const bp::object &creds,
         const bp::object &default_namespace,
-        const bp::object &verify_cert);
+        const bp::object &verify_cert,
+        const bool connect_locally);
     ~WBEMConnection();
 
     static void init_type();
@@ -55,6 +54,7 @@ public:
         const bp::object &username,
         const bp::object &password,
         const bp::object &verify_cert);
+    void connectLocally();
     void disconnect();
     bool isConnected() const { return m_client.isConnected(); }
 
@@ -63,6 +63,8 @@ public:
 
     bool getVerifyCertificate() { return m_client.getVerifyCertificate(); }
     void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(verify_cert); }
+    bool getConnectLocally() const { return m_connect_locally; }
+    void setConnectLocally(bool connect_locally) { m_connect_locally = connect_locally; }
 
     bp::object createInstance(const bp::object &instance);
 
@@ -158,6 +160,7 @@ protected:
     static std::string s_default_namespace;
 
     bool m_connected_tmp;
+    bool m_connect_locally;
     std::string m_url;
     std::string m_username;
     std::string m_password;

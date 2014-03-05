@@ -62,6 +62,12 @@ void CIMClient::connect(
     m_is_connected = true;
 }
 
+void CIMClient::connectLocally()
+{
+    Pegasus::CIMClient::connectLocal();
+    m_is_connected = true;
+}
+
 void CIMClient::disconnect()
 {
     Pegasus::CIMClient::disconnect();
