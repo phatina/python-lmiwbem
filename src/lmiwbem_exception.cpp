@@ -21,7 +21,10 @@
 
 #include <sstream>
 #include <boost/python/object.hpp>
+#include <boost/python/str.hpp>
+#include <boost/python/tuple.hpp>
 #include "lmiwbem.h"
+#include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
 
 namespace bp = boost::python;
@@ -37,9 +40,26 @@ inline void throw_core(PyObject *exc, const std::string &message)
     bp::throw_error_already_set();
 }
 
+inline void throw_core(
+    PyObject *exc,
+    const std::string &message,
+    int code)
+{
+    PyErr_SetObject(exc, bp::make_tuple(bp::str(message), code).ptr());
+    bp::throw_error_already_set();
+}
+
 inline void throw_core(const bp::object &exc, const std::string &message)
 {
     throw_core(exc.ptr(), message);
+}
+
+inline void throw_core(
+    const bp::object &exc,
+    const std::string &message,
+    int code)
+{
+    throw_core(exc.ptr(), message, code);
 }
 
 } // unnamed namespace
@@ -50,14 +70,23 @@ void throw_Exception(const Pegasus::Exception &e)
         (Pegasus::String("Pegasus: ") + e.getMessage()).getCString()));
 }
 
-void throw_Exception(const Pegasus::CannotConnectException &e)
+void throw_ConnectionError(const std::string &message, int code)
 {
-    throw_core(ConnectionError, std::string(e.getMessage().getCString()));
+    throw_core(ConnectionError, message, code);
 }
 
-void throw_CIMError(const std::string &message)
+void throw_CIMError(const Pegasus::CIMException &e)
 {
-    throw_core(CIMError.ptr(), message);
+    throw_core(
+        CIMError,
+        std::string(e.getMessage().getCString()),
+        static_cast<int>(e.getCode()));
+}
+
+void throw_CIMError(const std::string &message, int code)
+{
+    throw_core(CIMError, message, code);
+    bp::throw_error_already_set();
 }
 
 void throw_ValueError(const std::string &message)
@@ -78,4 +107,41 @@ void throw_StopIteration(const std::string &message)
 void throw_TypeError(const std::string &message)
 {
     throw_core(PyExc_TypeError, message);
+}
+
+void handle_all_exceptions()
+{
+    try {
+        // Rethrow the exception and decide, which Python exception will be
+        // raised.
+        throw;
+    } catch (const Pegasus::AlreadyConnectedException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_ALREADY_CONNECTED);
+    } catch (const Pegasus::NotConnectedException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_NOT_CONNECTED);
+    } catch (const Pegasus::InvalidLocatorException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_INVALID_LOCATOR);
+    } catch (const Pegasus::CannotCreateSocketException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_CANNOT_CREATE_SOCKET);
+    } catch (const Pegasus::CannotConnectException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_CANNOT_CONNECT);
+    } catch (const Pegasus::ConnectionTimeoutException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_CONNECTION_TIMEOUT);
+    } catch (const Pegasus::CIMException &e) {
+        throw_CIMError(e);
+    } catch (const Pegasus::Exception &e) {
+        throw_Exception(e);
+    }
 }

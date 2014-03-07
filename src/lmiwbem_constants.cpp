@@ -43,4 +43,13 @@ void CIMConstants::init_type()
     bp::scope().attr("CIM_ERR_INVALID_QUERY") =  CIM_ERR_INVALID_QUERY;
     bp::scope().attr("CIM_ERR_METHOD_NOT_AVAILABLE") =  CIM_ERR_METHOD_NOT_AVAILABLE;
     bp::scope().attr("CIM_ERR_METHOD_NOT_FOUND") =  CIM_ERR_METHOD_NOT_FOUND;
+
+    bp::scope().attr("CON_ERR_OTHER") = CON_ERR_OTHER;
+    bp::scope().attr("CON_ERR_ALREADY_CONNECTED") = CON_ERR_ALREADY_CONNECTED;
+    bp::scope().attr("CON_ERR_NOT_CONNECTED") = CON_ERR_NOT_CONNECTED;
+    bp::scope().attr("CON_ERR_INVALID_LOCATOR") = CON_ERR_INVALID_LOCATOR;
+    bp::scope().attr("CON_ERR_CANNOT_CREATE_SOCKET") = CON_ERR_CANNOT_CREATE_SOCKET;
+    bp::scope().attr("CON_ERR_CANNOT_CONNECT") = CON_ERR_CANNOT_CONNECT;
+    bp::scope().attr("CON_ERR_CONNECTION_TIMEOUT") = CON_ERR_CONNECTION_TIMEOUT;
+    bp::scope().attr("CON_ERR_SSL_EXCEPTION") = CON_ERR_SSL_EXCEPTION;
 }

@@ -31,8 +31,10 @@
 namespace bp = boost::python;
 
 void throw_Exception(const Pegasus::Exception &e);
-void throw_Exception(const Pegasus::CannotConnectException &e);
-void throw_CIMError(const std::string &message);
+void throw_CIMError(const Pegasus::CIMException &e);
+void throw_CIMError(const std::string &message, int code = 0);
+void throw_ConnectionError(const std::string &message, int code = 0);
+
 void throw_ValueError(const std::string &message);
 void throw_KeyError(const std::string &message);
 void throw_StopIteration(const std::string &message);
@@ -47,5 +49,7 @@ void throw_TypeError_member(const std::string &member)
         msg = member + std::string(" must be ") + type + std::string(" type");
     throw_TypeError(msg);
 }
+
+void handle_all_exceptions();
 
 #endif // LMIWBEM_EXCEPTION_H

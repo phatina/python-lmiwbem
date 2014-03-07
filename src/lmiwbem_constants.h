@@ -44,6 +44,15 @@ public:
     static const int CIM_ERR_INVALID_QUERY                = 15;
     static const int CIM_ERR_METHOD_NOT_AVAILABLE         = 16;
     static const int CIM_ERR_METHOD_NOT_FOUND             = 17;
+
+    static const int CON_ERR_OTHER                        = 0;
+    static const int CON_ERR_ALREADY_CONNECTED            = 1;
+    static const int CON_ERR_NOT_CONNECTED                = 2;
+    static const int CON_ERR_INVALID_LOCATOR              = 3;
+    static const int CON_ERR_CANNOT_CREATE_SOCKET         = 4;
+    static const int CON_ERR_CANNOT_CONNECT               = 5;
+    static const int CON_ERR_CONNECTION_TIMEOUT           = 6;
+    static const int CON_ERR_SSL_EXCEPTION                = 7;
 };
 
 #endif // LMIWBEM_CONSTANTS_H

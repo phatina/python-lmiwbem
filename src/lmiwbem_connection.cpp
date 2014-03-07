@@ -536,10 +536,8 @@ void WBEMConnection::connect(
             Pegasus::String(std_username.c_str()),
             Pegasus::String(std_password.c_str()));
         m_connect_locally = false;
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 }
 
@@ -547,10 +545,8 @@ void WBEMConnection::connectLocally() try
 {
     m_client.connectLocally();
     m_connect_locally = true;
-} catch (const Pegasus::CannotConnectException &e) {
-    throw_Exception(e);
-} catch (const Pegasus::Exception &e) {
-    throw_Exception(e);
+} catch (...) {
+    handle_all_exceptions();
 }
 
 void WBEMConnection::disconnect()
@@ -600,10 +596,8 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
                 inst_name.getNamespace().c_str()),
             inst.asPegasusCIMInstance());
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     return CIMInstanceName::create(new_inst_name);
@@ -626,10 +620,8 @@ void WBEMConnection::deleteInstance(const bp::object &object_path)
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 }
 
@@ -656,10 +648,8 @@ void WBEMConnection::modifyInstance(
             include_qualifiers,
             cim_property_list);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 }
 
@@ -694,10 +684,8 @@ bp::list WBEMConnection::enumerateInstances(
             include_class_origin,
             cim_property_list);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list instances;
@@ -727,10 +715,8 @@ bp::list WBEMConnection::enumerateInstanceNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             Pegasus::CIMName(std_cls.c_str()));
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list instance_names;
@@ -787,10 +773,8 @@ bp::tuple WBEMConnection::invokeMethod(
             cim_in_params,
             cim_out_params);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     // Create a NocaseDict of method's return parameters
@@ -840,10 +824,8 @@ bp::object WBEMConnection::getInstance(
         // CIMClient::getInstance() does not set the CIMObjectPath member in
         // CIMInstance. We need to do that manually.
         cim_instance.setPath(cim_object_path);
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     return CIMInstance::create(cim_instance);
@@ -879,10 +861,8 @@ bp::list WBEMConnection::enumerateClasses(
             include_qualifiers,
             include_class_origin);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list classes;
@@ -917,10 +897,8 @@ bp::list WBEMConnection::enumerateClassNames(
             classname,
             deep_inheritance);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     // We do not create lmiwbem.CIMClassName objects here; we try to mimic pywbem.
@@ -952,10 +930,8 @@ bp::list WBEMConnection::execQuery(
             Pegasus::String(std_query_lang.c_str()),
             Pegasus::String(std_query.c_str()));
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list instances;
@@ -995,10 +971,8 @@ bp::object WBEMConnection::getClass(
             include_class_origin,
             cim_property_list);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     return CIMClass::create(cim_class);
@@ -1068,10 +1042,8 @@ bp::list WBEMConnection::getAssociators(
             include_class_origin,
             cim_property_list);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list associators;
@@ -1136,10 +1108,8 @@ bp::list WBEMConnection::getAssociatorNames(
             cim_role,
             cim_result_role);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list associator_names;
@@ -1197,10 +1167,8 @@ bp::list WBEMConnection::getReferences(
             include_class_origin,
             cim_property_list);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list references;
@@ -1248,10 +1216,8 @@ bp::list WBEMConnection::getReferenceNames(
             cim_result_class,
             cim_role);
         disconnectTmp();
-    } catch (const Pegasus::CannotConnectException &e) {
-        throw_Exception(e);
-    } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+    } catch (...) {
+        handle_all_exceptions();
     }
 
     bp::list reference_names;
