@@ -22,52 +22,101 @@
 #ifndef LMIWBEM_REFCOUNTEDPTR_H
 #define LMIWBEM_REFCOUNTEDPTR_H
 
+#include "lmiwbem_mutex.h"
+
+template <typename T>
+class RefCountedPtrValue
+{
+public:
+    RefCountedPtrValue()
+        : m_refcnt(0)
+        , m_value(NULL)
+        , m_mutex()
+    {
+    }
+
+    RefCountedPtrValue(T *value)
+        : m_refcnt(1)
+        , m_value(value)
+        , m_mutex()
+    {
+    }
+
+    size_t ref()
+    {
+        ScopedMutex sm(m_mutex);
+        return ++m_refcnt;
+    }
+
+    size_t unref()
+    {
+        ScopedMutex sm(m_mutex);
+        if (m_refcnt > 0 && --m_refcnt == 0) {
+            delete m_value;
+            m_value = NULL;
+        }
+        return m_refcnt;
+    }
+
+    size_t refcnt() const { return m_refcnt; }
+    bool empty() const { return m_refcnt == 0; }
+
+    void set(T *value)
+    {
+        m_refcnt = 1;
+        m_value = value;
+    }
+
+    T *get() const { return m_value; }
+
+private:
+    RefCountedPtrValue(const RefCountedPtrValue &copy);
+    RefCountedPtrValue &operator=(const RefCountedPtrValue &rhs);
+
+    size_t m_refcnt;
+    T *m_value;
+    Mutex m_mutex;
+};
+
 template <typename T>
 class RefCountedPtr
 {
 public:
-    RefCountedPtr()
-        : m_value(NULL)
-        , m_refcnt(0)
+    RefCountedPtr(): m_value(new RefCountedPtrValue<T>()) { }
+    RefCountedPtr(const RefCountedPtr &copy)
+        : m_value(copy.m_value)
     {
-    }
-
-    RefCountedPtr(const T &value, size_t refcnt = 1)
-        : m_value(new T(value))
-        , m_refcnt(refcnt)
-    {
+        m_value->ref();
     }
 
     ~RefCountedPtr()
     {
-        if (m_refcnt)
-            delete m_value;
-    }
-
-    void set(const T &value, size_t refcnt = 1)
-    {
-        if (m_refcnt)
-            delete m_value;
-
-        m_value = new T(value);
-        m_refcnt = refcnt;
-    }
-
-    T *get() { return m_value; }
-
-    bool empty() { return m_value == NULL; }
-
-    void unref()
-    {
-        if (m_refcnt && --m_refcnt == 0) {
-            delete m_value;
-            m_value = NULL;
+        if (m_value->unref() != 0) {
+            // Return immediately, somebody this value.
+            return;
         }
+
+        delete m_value;
     }
+
+    void set(const T &value)
+    {
+        if (m_value->unref() != 0)
+            m_value = new RefCountedPtrValue<T>();
+
+        m_value->set(new T(value));
+    }
+
+    T *get() { return m_value->get(); }
+
+    bool empty() { return m_value->empty(); }
+    size_t unref() { return m_value->unref(); }
+    size_t refcnt() const { return m_value->refcnt(); }
 
 private:
-    T *m_value;
-    size_t m_refcnt;
+    RefCountedPtr &operator=(const RefCountedPtr &rhs);
+
+    RefCountedPtrValue<T> *m_value;
 };
 
 #endif // LMIWBEM_REFCOUNTEDPTR_H
