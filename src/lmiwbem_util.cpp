@@ -227,6 +227,11 @@ bool isfloat(const bp::object &obj)
     return static_cast<bool>(PyFloat_Check(obj.ptr()));
 }
 
+bool iscallable(const bp::object &obj)
+{
+    return static_cast<bool>(PyCallable_Check(obj.ptr()));
+}
+
 int compare(const bp::object &o1, const bp::object &o2)
 {
     int result = 1;

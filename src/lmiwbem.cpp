@@ -30,6 +30,7 @@
 #include "lmiwbem_connection.h"
 #include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
+#include "lmiwbem_listener.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_method.h"
 #include "lmiwbem_instance_name.h"
@@ -53,6 +54,9 @@ inline void translatePegasusCannotConnectException(const Pegasus::CannotConnectE
 }
 
 BOOST_PYTHON_MODULE(lmiwbem_core) {
+    // Initialize Python threads
+    PyEval_InitThreads();
+
     CIMError = bp::object(
         bp::handle<>(PyErr_NewException((char*) "lmiwbem.CIMError", NULL, NULL))
     );
@@ -113,4 +117,5 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     CIMClass::init_type();
     CIMClassName::init_type();
     CIMConstants::init_type();
+    CIMIndicationListener::init_type();
 }

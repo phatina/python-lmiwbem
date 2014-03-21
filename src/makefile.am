@@ -20,6 +20,7 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem.h                 \
 	lmiwbem_instance.h        \
 	lmiwbem_instance_name.h   \
+	lmiwbem_listener.h        \
 	lmiwbem_make_method.h     \
 	lmiwbem_method.h          \
 	lmiwbem_mutex.h           \
@@ -43,6 +44,7 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_extract.cpp       \
 	lmiwbem_instance.cpp      \
 	lmiwbem_instance_name.cpp \
+	lmiwbem_listener.cpp      \
 	lmiwbem_method.cpp        \
 	lmiwbem_nocasedict.cpp    \
 	lmiwbem_parameter.cpp     \
@@ -64,5 +66,6 @@ lmiwbem_core_la_CPPFLAGS     =    \
 lmiwbem_core_la_LIBADD       =    \
 	@PEGASUS_COMMON_LIB@      \
 	@PEGASUS_CLIENT_LIB@      \
+	@PEGASUS_LISTENER_LIB@    \
 	@PYTHON_LDFLAGS@          \
 	@BOOST_PYTHON_LIB@

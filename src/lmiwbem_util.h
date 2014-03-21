@@ -127,6 +127,7 @@ bool isbool(const bp::object &obj);
 bool isint(const bp::object &obj);
 bool islong(const bp::object &obj);
 bool isfloat(const bp::object &obj);
+bool iscallable(const bp::object &obj);
 
 int compare(const bp::object &o1, const bp::object &o2);
 

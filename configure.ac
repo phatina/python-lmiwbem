@@ -51,7 +51,7 @@ case $host_os in
 esac
 AC_SUBST(PEGASUS_PLATFORM)
 
-dnl Check for TOG-Pegasus Client and Common libraries
+dnl Check for TOG-Pegasus Client library
 SAVE_LIBS=$LIBS
 LIBS="-lpegcommon"
 AC_MSG_CHECKING([for libpegcommon])
@@ -59,11 +59,21 @@ AC_TRY_LINK([], [],
     [AC_MSG_RESULT([yes]); PEGASUS_COMMON_LIB=-lpegcommon],
     [AC_MSG_ERROR([TOG-Pegasus common library not found; install tog-pegasus-libs])]
 )
+
+dnl Check for TOG-Pegasus Common library
 LIBS="$LIBS -lpegclient"
 AC_MSG_CHECKING([for libpegclient])
 AC_TRY_LINK([], [],
     [AC_MSG_RESULT([yes]); PEGASUS_CLIENT_LIB=-lpegclient],
     [AC_MSG_ERROR([TOG-Pegasus client library not found; install tog-pegasus-libs])]
+)
+
+dnl Check for TOG-Pegasus Listener library
+LIBS="-lpeglistener"
+AC_MSG_CHECKING([for libpeglistener])
+AC_TRY_LINK([], [],
+    [AC_MSG_RESULT([yes]); PEGASUS_LISTENER_LIB=-lpeglistener],
+    [AC_MSG_ERROR([TOG-Pegasus indication listener library not found; install tog-pegasus-libs])]
 )
 
 dnl Check for TOG-Pegasus headers
@@ -93,6 +103,7 @@ AC_TRY_LINK(
 LIBS=$SAVE_LIBS
 AC_SUBST(PEGASUS_COMMON_LIB)
 AC_SUBST(PEGASUS_CLIENT_LIB)
+AC_SUBST(PEGASUS_LISTENER_LIB)
 
 dnl Check for python-devel
 AX_PYTHON_DEVEL

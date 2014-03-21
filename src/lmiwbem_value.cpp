@@ -39,6 +39,12 @@ bp::object getPegasusValueCore(const T &value)
     return incref(bp::object(value));
 }
 
+template <>
+bp::object getPegasusValueCore<Pegasus::CIMObject>(const Pegasus::CIMObject &value)
+{
+    return incref(CIMInstance::create(value));
+}
+
 // We could not use to_python converters here.
 #define DEF_PEGASUS_VALUE_CORE(type) \
     template<> \

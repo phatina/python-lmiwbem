@@ -39,6 +39,7 @@ void throw_ValueError(const std::string &message);
 void throw_KeyError(const std::string &message);
 void throw_StopIteration(const std::string &message);
 void throw_TypeError(const std::string &message);
+void throw_RuntimeError(const std::string &message);
 
 template <typename T>
 void throw_TypeError_member(const std::string &member)

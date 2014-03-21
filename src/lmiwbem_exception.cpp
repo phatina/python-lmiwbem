@@ -109,6 +109,11 @@ void throw_TypeError(const std::string &message)
     throw_core(PyExc_TypeError, message);
 }
 
+void throw_RuntimeError(const std::string &message)
+{
+    throw_core(PyExc_RuntimeError, message);
+}
+
 void handle_all_exceptions()
 {
     try {
