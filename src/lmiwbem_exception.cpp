@@ -45,7 +45,7 @@ inline void throw_core(
     const std::string &message,
     int code)
 {
-    PyErr_SetObject(exc, bp::make_tuple(bp::str(message), code).ptr());
+    PyErr_SetObject(exc, bp::make_tuple(code, bp::str(message)).ptr());
     bp::throw_error_already_set();
 }
 
