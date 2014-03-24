@@ -65,6 +65,8 @@ public:
     void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(verify_cert); }
     bool getConnectLocally() const { return m_connect_locally; }
     void setConnectLocally(bool connect_locally) { m_connect_locally = connect_locally; }
+    unsigned int getTimeout() const { return m_client.getTimeout(); }
+    void setTimeout(unsigned int timeout) { m_client.setTimeout(timeout); }
 
     bp::object createInstance(const bp::object &instance);
 

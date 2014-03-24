@@ -83,6 +83,9 @@ WBEMConnection::WBEMConnection(
         m_default_namespace = lmi::extract_or_throw<std::string>(
             default_namespace, "default_namespace");
     }
+
+    // Set timeout to 1 minute.
+    m_client.setTimeout(60000);
 }
 
 WBEMConnection::~WBEMConnection()
@@ -148,6 +151,10 @@ void WBEMConnection::init_type()
             &WBEMConnection::setConnectLocally,
             "Property storing flag means of connection. If set to True, local Unix socket\n"
             "will be used; HTTP(S) otherwise.")
+        .add_property("timeout",
+            &WBEMConnection::getTimeout,
+            &WBEMConnection::setTimeout,
+            "Property storing CIM operations timeout in milliseconds. Default value is 60000")
         .def("CreateInstance", &WBEMConnection::createInstance,
             (bp::arg("NewInstance")),
             "Creates a new CIM instance and returns its instance name.\n\n"
