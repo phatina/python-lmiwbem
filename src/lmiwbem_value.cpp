@@ -136,7 +136,8 @@ Pegasus::String setPegasusValueCore<
     Pegasus::String,
     Pegasus::String>(const bp::object &value)
 {
-    return Pegasus::String(lmi::extract<const char*>(value));
+    std::string std_value = lmi::extract<std::string>(value);
+    return Pegasus::String(std_value.c_str());
 }
 
 template <typename T, typename R>
