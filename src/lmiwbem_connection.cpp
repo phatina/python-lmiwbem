@@ -47,7 +47,7 @@ WBEMConnection::WBEMConnection(
     const bp::object &url,
     const bp::object &creds,
     const bp::object &default_namespace,
-    const bp::object &verify_cert,
+    const bp::object &verify_server_cert,
     const bool connect_locally)
     : m_connected_tmp(false)
     , m_connect_locally(connect_locally)
@@ -74,7 +74,9 @@ WBEMConnection::WBEMConnection(
         m_password = lmi::extract_or_throw<std::string>(creds_tpl[1], "password");
     }
 
-    bool verify = lmi::extract_or_throw<bool>(verify_cert, "verify_certificate");
+    bool verify = lmi::extract_or_throw<bool>(
+        verify_server_cert,
+        "verify_server_cert");
     m_client.setVerifyCertificate(verify);
 
     if (!default_namespace.is_none()) {
@@ -102,7 +104,7 @@ void WBEMConnection::init_type()
                 bp::arg("url") = bp::object(),
                 bp::arg("creds") = bp::object(),
                 bp::arg("default_namespace") = bp::object(),
-                bp::arg("verify_certificate") = true,
+                bp::arg("verify_server_cert") = true,
                 bp::arg("connect_locally") = false),
                 "Constructs :py:class:`WBEMConnection` object.\n\n"
                 ":param str url: String containing URL of CIMOM instance\n"

@@ -43,7 +43,7 @@ public:
         const bp::object &url,
         const bp::object &creds,
         const bp::object &default_namespace,
-        const bp::object &verify_cert,
+        const bp::object &verify_server_cert,
         const bool connect_locally);
     ~WBEMConnection();
 
