@@ -597,14 +597,18 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
         inst.getPath());
 
     Pegasus::CIMObjectPath new_inst_name;
+    Pegasus::CIMNamespaceName new_inst_name_ns(inst_name.getNamespace().c_str());
     try {
         ScopedMutex sm(m_mutex);
         connectTmp();
         new_inst_name = m_client.createInstance(
-            Pegasus::CIMNamespaceName(
-                inst_name.getNamespace().c_str()),
+            new_inst_name_ns,
             inst.asPegasusCIMInstance());
         disconnectTmp();
+
+        // CIMClient::createInstance() does not set the CIMObjectPath's
+        // namespace.  We need to do that manually.
+        new_inst_name.setNameSpace(new_inst_name_ns);
     } catch (...) {
         handle_all_exceptions();
     }
