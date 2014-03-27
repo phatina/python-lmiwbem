@@ -79,14 +79,18 @@ public:
 
     static void init_type();
 
-    void run();
+    void start();
     void stop();
 
     bool isAlive() const { return m_listener && m_listener->isAlive(); }
 
+    int getPort() const { return m_listener ? m_listener->getPortNumber() : -1; }
+
     bp::object addHandler(
         const bp::tuple &args,
         const bp::dict  &kwds);
+    void removeHandler(const bp::object &name);
+    bp::object handlers() const;
 
 private:
     static const Pegasus::Uint32 DEF_LISTENER_PORT = 10240;

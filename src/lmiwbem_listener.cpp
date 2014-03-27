@@ -110,13 +110,17 @@ void CIMIndicationListener::init_type()
         bp::class_<CIMIndicationListener>("CIMIndicationListener",
             bp::init<Pegasus::Uint32>(
                 (bp::arg("port") = CIMIndicationListener::DEF_LISTENER_PORT)))
-            .def("run",  &CIMIndicationListener::run)
+            .def("start",  &CIMIndicationListener::start)
             .def("stop", &CIMIndicationListener::stop)
             .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
+            .def("remove_handler", &CIMIndicationListener::removeHandler)
+            .def("handlers", &CIMIndicationListener::handlers)
+            .def("is_alive", &CIMIndicationListener::isAlive)
+            .add_property("port", &CIMIndicationListener::getPort)
         );
 }
 
-void CIMIndicationListener::run()
+void CIMIndicationListener::start()
 {
     if (m_listener)
         return;
@@ -126,7 +130,12 @@ void CIMIndicationListener::run()
         throw_RuntimeError("Can't create CIMListener");
 
     m_listener->addConsumer(&m_consumer);
-    m_listener->start();
+
+    try {
+        m_listener->start();
+    } catch (...) {
+        handle_all_exceptions();
+    }
 }
 
 void CIMIndicationListener::stop()
@@ -154,6 +163,24 @@ bp::object CIMIndicationListener::addHandler(
         kwds);
 
     return bp::object();
+}
+
+void CIMIndicationListener::removeHandler(const bp::object &name)
+{
+    std::string std_name = lmi::extract_or_throw<std::string>(name, "name");
+    handler_map_t::iterator it = m_handlers.find(std_name);
+    if (it == m_handlers.end())
+        throw_KeyError("No such handler registered: " + std_name);
+    m_handlers.erase(it);
+}
+
+bp::object CIMIndicationListener::handlers() const
+{
+    bp::list handlers;
+    handler_map_t::const_iterator it;
+    for (it = m_handlers.begin(); it != m_handlers.end(); ++it)
+        handlers.append(it->first);
+    return handlers;
 }
 
 void CIMIndicationListener::call(

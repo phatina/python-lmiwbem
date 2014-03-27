@@ -53,6 +53,9 @@ public:
     static const int CON_ERR_CANNOT_CONNECT               = 5;
     static const int CON_ERR_CONNECTION_TIMEOUT           = 6;
     static const int CON_ERR_SSL_EXCEPTION                = 7;
+
+    // Non standard error codes
+    static const int CON_ERR_BIND                         = 8;
 };
 
 #endif // LMIWBEM_CONSTANTS_H

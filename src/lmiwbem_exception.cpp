@@ -146,6 +146,10 @@ void handle_all_exceptions()
             CIMConstants::CON_ERR_CONNECTION_TIMEOUT);
     } catch (const Pegasus::CIMException &e) {
         throw_CIMError(e);
+    } catch (const Pegasus::BindFailedException &e) {
+        throw_ConnectionError(
+            std::string(e.getMessage().getCString()),
+            CIMConstants::CON_ERR_BIND);
     } catch (const Pegasus::Exception &e) {
         throw_Exception(e);
     }

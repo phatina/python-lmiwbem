@@ -52,4 +52,5 @@ void CIMConstants::init_type()
     bp::scope().attr("CON_ERR_CANNOT_CONNECT") = CON_ERR_CANNOT_CONNECT;
     bp::scope().attr("CON_ERR_CONNECTION_TIMEOUT") = CON_ERR_CONNECTION_TIMEOUT;
     bp::scope().attr("CON_ERR_SSL_EXCEPTION") = CON_ERR_SSL_EXCEPTION;
+    bp::scope().attr("CON_ERR_BIND") = CON_ERR_BIND;
 }
