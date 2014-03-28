@@ -219,12 +219,8 @@ bp::object NocaseDict::get(const bp::object &key, const bp::object &def)
     std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
 
     nocase_map_t::const_iterator found = m_dict.find(std_key);
-    if (found == m_dict.end()) {
-        if (!def.is_none())
-            return def;
-        else
-            throw_KeyError("Key not found");
-    }
+    if (found == m_dict.end())
+        return def;
 
     return found->second;
 }
@@ -234,12 +230,8 @@ bp::object NocaseDict::pop(const bp::object &key, const bp::object &def)
     std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
 
     nocase_map_t::iterator found = m_dict.find(std_key);
-    if (found == m_dict.end()) {
-        if (!def.is_none())
+    if (found == m_dict.end())
             return def;
-        else
-            throw_KeyError("Key not found");
-    }
 
     bp::object rval = found->second;
     m_dict.erase(found);
