@@ -57,6 +57,7 @@ public:
     void connectLocally();
     void disconnect();
     bool isConnected() const { return m_client.isConnected(); }
+    std::string getHostname() const { return m_client.hostname(); }
 
     void connectTmp();
     void disconnectTmp();

@@ -140,6 +140,10 @@ void WBEMConnection::init_type()
             &WBEMConnection::isConnected,
             "Property, which return True, if the client is connected to certain CIMOM.\n\n"
             ":rtype: bool")
+        .add_property("hostname",
+            &WBEMConnection::getHostname,
+            "Property returning CIMOM hostname.\n\n"
+            ":rtype: str")
         .add_property("verify_certificate",
             &WBEMConnection::getVerifyCertificate,
             &WBEMConnection::setVerifyCertificate,
