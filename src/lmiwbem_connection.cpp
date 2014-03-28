@@ -609,13 +609,15 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
             new_inst_name_ns,
             inst.asPegasusCIMInstance());
         disconnectTmp();
-
-        // CIMClient::createInstance() does not set the CIMObjectPath's
-        // namespace.  We need to do that manually.
-        new_inst_name.setNameSpace(new_inst_name_ns);
     } catch (...) {
         handle_all_exceptions();
     }
+
+    // CIMClient::createInstance() does not set namespace and hostname
+    // in newly created CIMInstanceName. We need to do that manually.
+    new_inst_name.setNameSpace(
+        Pegasus::CIMNamespaceName(inst_name.getNamespace().c_str()));
+    new_inst_name.setHost(inst_name.getHostname().c_str());
 
     return CIMInstanceName::create(new_inst_name);
 }
