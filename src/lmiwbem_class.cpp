@@ -233,7 +233,7 @@ bp::object CIMClass::getProperties()
         for (it = properties.begin(); it != properties.end(); ++it)
             m_properties[bp::object(it->getName())] = CIMProperty::create(*it);
 
-        m_rc_class_properties.unref();
+        m_rc_class_properties.release();
     }
 
     return m_properties;
@@ -249,7 +249,7 @@ bp::object CIMClass::getQualifiers()
         for (it = qualifiers.begin(); it != qualifiers.end(); ++it)
             m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
 
-        m_rc_class_qualifiers.unref();
+        m_rc_class_qualifiers.release();
     }
 
     return m_qualifiers;
@@ -265,7 +265,7 @@ bp::object CIMClass::getMethods()
         for (it = methods.begin(); it != methods.end(); ++it)
             m_methods[bp::object(it->getName())] = CIMMethod::create(*it);
 
-        m_rc_class_methods.unref();
+        m_rc_class_methods.release();
     }
 
     return m_methods;
@@ -286,7 +286,7 @@ void CIMClass::setProperties(const bp::object &properties)
     m_properties = lmi::get_or_throw<NocaseDict, bp::dict>(properties, "properties");
 
     // Unref cached resource, it will never be used
-    m_rc_class_properties.unref();
+    m_rc_class_properties.release();
 }
 
 void CIMClass::setQualifiers(const bp::object &qualifiers)
@@ -294,7 +294,7 @@ void CIMClass::setQualifiers(const bp::object &qualifiers)
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_class_qualifiers.unref();
+    m_rc_class_qualifiers.release();
 }
 
 void CIMClass::setMethods(const bp::object &methods)
@@ -302,5 +302,5 @@ void CIMClass::setMethods(const bp::object &methods)
     m_methods = lmi::get_or_throw<NocaseDict, bp::dict>(methods, "methods");
 
     // Unref cached resource, it will never be used
-    m_rc_class_methods.unref();
+    m_rc_class_methods.release();
 }

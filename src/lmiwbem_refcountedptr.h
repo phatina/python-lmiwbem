@@ -89,19 +89,11 @@ public:
         m_value->ref();
     }
 
-    ~RefCountedPtr()
-    {
-        if (m_value->unref() != 0) {
-            // Return immediately, somebody this value.
-            return;
-        }
-
-        delete m_value;
-    }
+    ~RefCountedPtr() { release(); }
 
     void set(const T &value)
     {
-        if (m_value->unref() != 0)
+        if (!m_value || m_value->unref() != 0)
             m_value = new RefCountedPtrValue<T>();
 
         m_value->set(new T(value));
@@ -109,9 +101,15 @@ public:
 
     T *get() { return m_value->get(); }
 
-    bool empty() { return m_value->empty(); }
-    size_t unref() { return m_value->unref(); }
-    size_t refcnt() const { return m_value->refcnt(); }
+    bool empty() { return m_value == NULL || m_value->get() == NULL; }
+
+    void release()
+    {
+        if (m_value && m_value->unref() == 0)
+            delete m_value;
+
+        m_value = NULL;
+    }
 
 private:
     RefCountedPtr &operator=(const RefCountedPtr &rhs);

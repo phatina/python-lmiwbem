@@ -238,7 +238,7 @@ bp::object CIMParameter::getQualifiers()
             m_qualifiers[name] = CIMQualifier::create(*it);
         }
 
-        m_rc_param_qualifiers.unref();
+        m_rc_param_qualifiers.release();
     }
 
     return m_qualifiers;
@@ -274,5 +274,5 @@ void CIMParameter::setQualifiers(const bp::object &qualifiers)
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_param_qualifiers.unref();
+    m_rc_param_qualifiers.release();
 }

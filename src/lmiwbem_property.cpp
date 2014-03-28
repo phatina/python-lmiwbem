@@ -269,7 +269,7 @@ bp::object CIMProperty::getValue()
 {
     if (!m_rc_prop_value.empty()) {
         m_value = CIMValue::asLMIWbemCIMValue(*m_rc_prop_value.get());
-        m_rc_prop_value.unref();
+        m_rc_prop_value.release();
     }
 
     return m_value;
@@ -288,7 +288,7 @@ bp::object CIMProperty::getQualifiers()
             m_qualifiers[name] = CIMQualifier::create(*it);
         }
 
-        m_rc_prop_qualifiers.unref();
+        m_rc_prop_qualifiers.release();
     }
 
     return m_qualifiers;
@@ -309,7 +309,7 @@ void CIMProperty::setValue(const bp::object &value)
     m_value = value;
 
     // Unref cached resource, it will never be used
-    m_rc_prop_value.unref();
+    m_rc_prop_value.release();
 }
 
 void CIMProperty::setClassOrigin(const bp::object &class_origin)
@@ -333,7 +333,7 @@ void CIMProperty::setQualifiers(const bp::object &qualifiers)
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_prop_qualifiers.unref();
+    m_rc_prop_qualifiers.release();
 }
 
 void CIMProperty::setReferenceClass(const bp::object &reference_class)

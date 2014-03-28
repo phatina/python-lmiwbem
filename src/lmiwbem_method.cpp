@@ -257,7 +257,7 @@ bp::object CIMMethod::getParameters()
             m_parameters[name] = CIMParameter::create(*it);
         }
 
-        m_rc_meth_parameters.unref();
+        m_rc_meth_parameters.release();
     }
     return m_parameters;
 }
@@ -275,7 +275,7 @@ bp::object CIMMethod::getQualifiers()
             m_qualifiers[name] = CIMQualifier::create(*it);
         }
 
-        m_rc_meth_qualifiers.unref();
+        m_rc_meth_qualifiers.release();
     }
 
     return m_qualifiers;
@@ -296,7 +296,7 @@ void CIMMethod::setParameters(const bp::object &parameters)
     m_parameters = lmi::get_or_throw<NocaseDict, bp::dict>(parameters, "parameters");
 
     // Unref cached resource, it will never be used
-    m_rc_meth_parameters.unref();
+    m_rc_meth_parameters.release();
 }
 
 void CIMMethod::setClassOrigin(const bp::object &class_origin)
@@ -314,5 +314,5 @@ void CIMMethod::setQualifiers(const bp::object &qualifiers)
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_meth_qualifiers.unref();
+    m_rc_meth_qualifiers.release();
 }

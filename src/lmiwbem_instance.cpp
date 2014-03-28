@@ -367,7 +367,7 @@ bp::object CIMInstance::getPath()
 {
     if (!m_rc_inst_path.empty()) {
         m_path = CIMInstanceName::create(*m_rc_inst_path.get());
-        m_rc_inst_path.unref();
+        m_rc_inst_path.release();
     }
 
     return m_path;
@@ -387,7 +387,7 @@ bp::object CIMInstance::getQualifiers()
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         for (it = qualifiers.begin(); it != qualifiers.end(); ++it)
             m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
-        m_rc_inst_qualifiers.unref();
+        m_rc_inst_qualifiers.release();
     }
 
     return m_qualifiers;
@@ -409,7 +409,7 @@ void CIMInstance::setPath(const bp::object &path)
     m_path = lmi::get_or_throw<CIMInstanceName>(path);
 
     // Unref cached resource, it will never be used
-    m_rc_inst_path.unref();
+    m_rc_inst_path.release();
 }
 
 void CIMInstance::setProperties(const bp::object &properties)
@@ -419,7 +419,7 @@ void CIMInstance::setProperties(const bp::object &properties)
     m_properties = lmi::get_or_throw<NocaseDict, bp::dict>(properties, "properties");
 
     // Unref cached resource, it will never be used
-    m_rc_inst_properties.unref();
+    m_rc_inst_properties.release();
 }
 
 void CIMInstance::setQualifiers(const bp::object &qualifiers)
@@ -427,7 +427,7 @@ void CIMInstance::setQualifiers(const bp::object &qualifiers)
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_inst_qualifiers.unref();
+    m_rc_inst_qualifiers.release();
 }
 
 void CIMInstance::setPropertyList(const bp::object &property_list)
@@ -437,7 +437,7 @@ void CIMInstance::setPropertyList(const bp::object &property_list)
     m_property_list = lmi::get_or_throw<bp::list>(property_list);
 
     // Unref cached resource, it will never be used
-    m_rc_inst_properties.unref();
+    m_rc_inst_properties.release();
 }
 
 void CIMInstance::evalProperties()
@@ -456,5 +456,5 @@ void CIMInstance::evalProperties()
     }
 
     m_property_list = property_list;
-    m_rc_inst_properties.unref();
+    m_rc_inst_properties.release();
 }
