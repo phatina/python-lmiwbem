@@ -56,6 +56,8 @@ public:
 
     // Non standard error codes
     static const int CON_ERR_BIND                         = 8;
+
+    static const std::string DEF_NAMESPACE;
 };
 
 #endif // LMIWBEM_CONSTANTS_H

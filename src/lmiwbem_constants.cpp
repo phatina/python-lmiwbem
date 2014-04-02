@@ -24,6 +24,8 @@
 
 namespace bp = boost::python;
 
+const std::string CIMConstants::DEF_NAMESPACE = "root/cimv2";
+
 void CIMConstants::init_type()
 {
     bp::scope().attr("CIM_ERR_FAILED") = CIM_ERR_FAILED;
@@ -53,4 +55,6 @@ void CIMConstants::init_type()
     bp::scope().attr("CON_ERR_CONNECTION_TIMEOUT") = CON_ERR_CONNECTION_TIMEOUT;
     bp::scope().attr("CON_ERR_SSL_EXCEPTION") = CON_ERR_SSL_EXCEPTION;
     bp::scope().attr("CON_ERR_BIND") = CON_ERR_BIND;
+
+    bp::scope().attr("DEF_NAMESPACE") = DEF_NAMESPACE;
 }
