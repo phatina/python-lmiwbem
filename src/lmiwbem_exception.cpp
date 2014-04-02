@@ -23,6 +23,7 @@
 #include <boost/python/object.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
+#include <Pegasus/Client/CIMClientException.h>
 #include "lmiwbem.h"
 #include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
@@ -144,6 +145,10 @@ void handle_all_exceptions()
         throw_ConnectionError(
             std::string(e.getMessage().getCString()),
             CIMConstants::CON_ERR_CONNECTION_TIMEOUT);
+    } catch (const Pegasus::CIMClientHTTPErrorException &e) {
+        throw_ConnectionError(
+            std::string(e.getCIMError().getCString()),
+            static_cast<int>(e.getCode()));
     } catch (const Pegasus::CIMException &e) {
         throw_CIMError(e);
     } catch (const Pegasus::BindFailedException &e) {
