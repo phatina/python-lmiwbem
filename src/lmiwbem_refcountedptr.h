@@ -86,7 +86,8 @@ public:
     RefCountedPtr(const RefCountedPtr &copy)
         : m_value(copy.m_value)
     {
-        m_value->ref();
+        if (m_value)
+            m_value->ref();
     }
 
     ~RefCountedPtr() { release(); }
