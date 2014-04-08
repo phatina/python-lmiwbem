@@ -248,7 +248,7 @@ std::string CIMQualifier::tomof()
         for (int i = 0; i < cnt; ++i) {
             const bp::object &value = m_value[i];
             if (isbasestring(value))
-                ss << '"' << object_as_std_string(value) << '"';
+                ss << '\'' << object_as_std_string(value) << '\'';
             else
                 ss << object_as_std_string(value);
 

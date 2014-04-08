@@ -331,7 +331,7 @@ std::string CIMInstance::tomofContent(const bp::object &value)
         }
         ss << '}';
     } else if (isbasestring(value)) {
-        ss << '"' << object_as_std_string(value) << '"';
+        ss << '\'' << object_as_std_string(value) << '\'';
     } else {
         ss << object_as_std_string(value);
     }
