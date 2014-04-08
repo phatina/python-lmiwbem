@@ -114,19 +114,17 @@ protected:
     }
 
     template <typename T>
-    static bp::object create(
-        const nocase_map_t::const_iterator &it,
-        const nocase_map_t::const_iterator &end)
+    static bp::object create(const nocase_map_t &dict)
     {
         bp::object inst = T::CIMBase::create();
         T &fake_this = lmi::extract<T&>(inst);
-        fake_this.m_iter = it;
-        fake_this.m_iter_end = end;
+        fake_this.m_dict = dict;
+        fake_this.m_iter = fake_this.m_dict.begin();
         return inst;
     }
 
+    nocase_map_t m_dict;
     nocase_map_t::const_iterator m_iter;
-    nocase_map_t::const_iterator m_iter_end;
 };
 
 class NocaseDictKeyIterator:
@@ -135,9 +133,7 @@ class NocaseDictKeyIterator:
 {
 public:
     static void init_type();
-    static bp::object create(
-        const nocase_map_t::const_iterator &it,
-        const nocase_map_t::const_iterator &end);
+    static bp::object create(const nocase_map_t &dict);
 
     virtual bp::object iter();
     virtual bp::object next();
@@ -152,9 +148,7 @@ class NocaseDictValueIterator:
 {
 public:
     static void init_type();
-    static bp::object create(
-        const nocase_map_t::const_iterator &it,
-        const nocase_map_t::const_iterator &end);
+    static bp::object create(const nocase_map_t &dict);
 
     virtual bp::object iter();
     virtual bp::object next();
@@ -169,9 +163,7 @@ class NocaseDictItemIterator:
 {
 public:
     static void init_type();
-    static bp::object create(
-        const nocase_map_t::const_iterator &it,
-        const nocase_map_t::const_iterator &end);
+    static bp::object create(const nocase_map_t &dict);
 
     virtual bp::object iter();
     virtual bp::object next();

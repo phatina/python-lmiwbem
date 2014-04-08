@@ -167,17 +167,17 @@ bp::list NocaseDict::items()
 
 bp::object NocaseDict::iterkeys()
 {
-    return NocaseDictKeyIterator::create(m_dict.begin(), m_dict.end());
+    return NocaseDictKeyIterator::create(m_dict);
 }
 
 bp::object NocaseDict::itervalues()
 {
-    return NocaseDictValueIterator::create(m_dict.begin(), m_dict.end());
+    return NocaseDictValueIterator::create(m_dict);
 }
 
 bp::object NocaseDict::iteritems()
 {
-    return NocaseDictItemIterator::create(m_dict.begin(), m_dict.end());
+    return NocaseDictItemIterator::create(m_dict);
 }
 
 bool NocaseDict::haskey(const bp::object &key)
@@ -287,21 +287,19 @@ void NocaseDictKeyIterator::init_type()
     NocaseDictIterator::init_type<NocaseDictKeyIterator>("NocaseDictKeyIterator");
 }
 
-bp::object NocaseDictKeyIterator::create(
-    const nocase_map_t::const_iterator &it,
-    const nocase_map_t::const_iterator &end)
+bp::object NocaseDictKeyIterator::create(const nocase_map_t &dict)
 {
-    return NocaseDictIterator::create<NocaseDictKeyIterator>(it, end);
+    return NocaseDictIterator::create<NocaseDictKeyIterator>(dict);
 }
 
 bp::object NocaseDictKeyIterator::iter()
 {
-    return create(m_iter, m_iter_end);
+    return create(m_dict);
 }
 
 bp::object NocaseDictKeyIterator::next()
 {
-    if (m_iter == m_iter_end)
+    if (m_iter == m_dict.end())
         throw_StopIteration("Stop iteration");
 
     bp::object key(std_string_as_pyunicode(m_iter->first.c_str()));
@@ -318,21 +316,19 @@ void NocaseDictValueIterator::init_type()
     NocaseDictIterator::init_type<NocaseDictValueIterator>("NocaseDictValueIterator");
 }
 
-bp::object NocaseDictValueIterator::create(
-    const nocase_map_t::const_iterator &it,
-    const nocase_map_t::const_iterator &end)
+bp::object NocaseDictValueIterator::create(const nocase_map_t &dict)
 {
-    return NocaseDictIterator::create<NocaseDictValueIterator>(it, end);
+    return NocaseDictIterator::create<NocaseDictValueIterator>(dict);
 }
 
 bp::object NocaseDictValueIterator::iter()
 {
-    return create(m_iter, m_iter_end);
+    return create(m_dict);
 }
 
 bp::object NocaseDictValueIterator::next()
 {
-    if (m_iter == m_iter_end)
+    if (m_iter == m_dict.end())
         throw_StopIteration("Stop iteration");
 
     bp::object value(m_iter->second);
@@ -349,21 +345,19 @@ void NocaseDictItemIterator::init_type()
     NocaseDictIterator::init_type<NocaseDictItemIterator>("NocaseDictItemIterator");
 }
 
-bp::object NocaseDictItemIterator::create(
-    const nocase_map_t::const_iterator &it,
-    const nocase_map_t::const_iterator &end)
+bp::object NocaseDictItemIterator::create(const nocase_map_t &dict)
 {
-    return NocaseDictIterator::create<NocaseDictItemIterator>(it, end);
+    return NocaseDictIterator::create<NocaseDictItemIterator>(dict);
 }
 
 bp::object NocaseDictItemIterator::iter()
 {
-    return create(m_iter, m_iter_end);
+    return create(m_dict);
 }
 
 bp::object NocaseDictItemIterator::next()
 {
-    if (m_iter == m_iter_end)
+    if (m_iter == m_dict.end())
         throw_StopIteration("Stop iteration");
 
     bp::object pair = bp::make_tuple(
