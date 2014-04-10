@@ -15,7 +15,7 @@ m4_include([m4/boost_python.m4])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_SILENT_RULES([yes])
-AM_PATH_PYTHON([2.7])
+AM_PATH_PYTHON([2.6])
 
 AC_CONFIG_HEADERS([config.h])
 AC_DISABLE_STATIC
@@ -109,7 +109,7 @@ dnl Check for python-devel
 AX_PYTHON_DEVEL
 
 dnl Check for Boost::Python
-AX_BOOST_BASE([1.50], [],
+AX_BOOST_BASE([1.40], [],
     [AC_MSG_ERROR([Boost not found; install boost-devel])])
 AX_BOOST_PYTHON
 if test x"$ac_cv_boost_python" = x"no"; then
