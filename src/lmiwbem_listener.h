@@ -75,11 +75,11 @@ private:
 class CIMIndicationListener: public CIMBase<CIMIndicationListener>
 {
 public:
-    CIMIndicationListener(Pegasus::Uint32 port);
+    CIMIndicationListener();
 
     static void init_type();
 
-    void start();
+    void start(const bp::object &port_);
     void stop();
 
     bool isAlive() const { return m_listener && m_listener->isAlive(); }
@@ -93,14 +93,11 @@ public:
     bp::object handlers() const;
 
 private:
-    static const Pegasus::Uint32 DEF_LISTENER_PORT = 10240;
-
     friend class CIMIndicationConsumer;
     void call(
         const std::string &name,
         const bp::object &indication);
 
-    Pegasus::Uint32 m_port;
     boost::shared_ptr<Pegasus::CIMListener> m_listener;
     CIMIndicationConsumer m_consumer;
 

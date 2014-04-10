@@ -96,9 +96,8 @@ void CIMIndicationConsumer::consumeIndication(
     PyGILState_Release(gstate);
 }
 
-CIMIndicationListener::CIMIndicationListener(Pegasus::Uint32 port)
-    : m_port(port)
-    , m_listener()
+CIMIndicationListener::CIMIndicationListener()
+    : m_listener()
     , m_consumer(this)
     , m_handlers()
 {
@@ -107,10 +106,8 @@ CIMIndicationListener::CIMIndicationListener(Pegasus::Uint32 port)
 void CIMIndicationListener::init_type()
 {
     CIMBase::init_type(
-        bp::class_<CIMIndicationListener>("CIMIndicationListener",
-            bp::init<Pegasus::Uint32>(
-                (bp::arg("port") = CIMIndicationListener::DEF_LISTENER_PORT)))
-            .def("start",  &CIMIndicationListener::start)
+        bp::class_<CIMIndicationListener>("CIMIndicationListener", bp::init<>())
+            .def("start",  &CIMIndicationListener::start, bp::arg("port"))
             .def("stop", &CIMIndicationListener::stop)
             .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
             .def("remove_handler", &CIMIndicationListener::removeHandler)
@@ -120,12 +117,13 @@ void CIMIndicationListener::init_type()
         );
 }
 
-void CIMIndicationListener::start()
+void CIMIndicationListener::start(const bp::object &port_)
 {
     if (m_listener)
         return;
 
-    m_listener.reset(new Pegasus::CIMListener(m_port));
+    Pegasus::Uint32 port = lmi::extract_or_throw<Pegasus::Uint32>(port_, "port");
+    m_listener.reset(new Pegasus::CIMListener(port));
     if (!m_listener)
         throw_RuntimeError("Can't create CIMListener");
 
