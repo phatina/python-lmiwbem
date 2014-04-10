@@ -98,7 +98,7 @@ Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
 {
     Pegasus::CIMPropertyList cim_property_list;
 
-    if (!property_list.is_none()) {
+    if (!isnone(property_list)) {
         bp::list py_property_list(lmi::get_or_throw<bp::list>(property_list, message));
         const int cnt = bp::len(py_property_list);
         Pegasus::Array<Pegasus::CIMName> property_arr(cnt);
@@ -185,6 +185,17 @@ bp::object incref(const bp::object &obj)
 {
     bp::incref(obj.ptr());
     return obj;
+}
+
+bool isnone(const bp::object &obj)
+{
+#ifdef BOOST_PYTHON_OBJECT_HAS_IS_NONE
+    return obj.is_none();
+#else
+    // Older boost implementations lack api::object_base::is_none(). We need
+    // to check for Py_None by empty boost::python::object().
+    return obj == bp::object();
+#endif
 }
 
 bool isinstance(const bp::object &inst, const bp::object &cls)

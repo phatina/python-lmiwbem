@@ -56,7 +56,7 @@ CIMInstance::CIMInstance(
     m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
 
     // We store properties in NocaseDict. Convert python's dict, if necessary.
-    if (properties.is_none())
+    if (isnone(properties))
         m_properties = NocaseDict::create();
     else if (lmi::extract<bp::dict>(properties).check())
         m_properties = NocaseDict::create(properties);
@@ -72,7 +72,7 @@ CIMInstance::CIMInstance(
     }
 
     // We store qualifiers in NocaseDict. Convert python's dict, if necessary.
-    if (qualifiers.is_none())
+    if (isnone(qualifiers))
         m_qualifiers = NocaseDict::create();
     else if (lmi::extract<bp::dict>(qualifiers).check())
         m_qualifiers = NocaseDict::create(qualifiers);
@@ -305,11 +305,11 @@ bp::object CIMInstance::copy()
     NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
 
     inst.m_classname = m_classname;
-    if (!m_path.is_none())
+    if (!isnone(m_path))
         inst.m_path = path.copy();
     inst.m_properties = properties.copy();
     inst.m_qualifiers = qualifiers.copy();
-    if (!m_property_list.is_none())
+    if (!isnone(m_property_list))
         inst.m_property_list = bp::list(getPropertyList());
 
     return obj;
@@ -319,7 +319,7 @@ std::string CIMInstance::tomofContent(const bp::object &value)
 {
     std::stringstream ss;
 
-    if (value.is_none()) {
+    if (isnone(value)) {
         ss << "NULL";
     } else if (PyList_Check(value.ptr())) {
         ss << '{';

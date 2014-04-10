@@ -56,7 +56,6 @@ namespace bp = boost::python;
     } \
     PyObject *name::convert(const type &value)
 
-
 DECL_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String);
 DECL_TO_CONVERTER(PegasusCIMNameToPythonString, Pegasus::CIMName);
 DECL_TO_CONVERTER(PegasusCIMDateteTimeToPythonDateTime, Pegasus::CIMDateTime);
@@ -119,6 +118,7 @@ bp::object  std_string_as_pyunicode(const std::string &str);
 
 bp::object incref(const bp::object &obj);
 
+bool isnone(const bp::object &obj);
 bool isinstance(const bp::object &inst, const bp::object &cls);
 bool isstring(const bp::object &obj);
 bool isunicode(const bp::object &obj);

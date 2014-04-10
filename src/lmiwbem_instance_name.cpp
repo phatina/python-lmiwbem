@@ -48,11 +48,11 @@ CIMInstanceName::CIMInstanceName(
 {
     m_classname = lmi::extract_or_throw<std::string>(cls, "classname");
     m_namespace = lmi::extract_or_throw<std::string>(ns, "namespace");
-    if (!host.is_none()) {
+    if (!isnone(host)) {
         // Host may be missing, other members (classname, namespace not)
         m_hostname  = lmi::extract_or_throw<std::string>(host, "host");
     }
-    if (keybindings.is_none())
+    if (isnone(keybindings))
         m_keybindings = NocaseDict::create();
     else if (lmi::extract<bp::dict>(keybindings).check())
         m_keybindings = NocaseDict::create(keybindings);

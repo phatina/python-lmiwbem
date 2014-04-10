@@ -211,7 +211,7 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
 Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
 {
     bool is_array = PyList_Check(value.ptr());
-    if (value.is_none() || (is_array && bp::len(value) == 0))
+    if (isnone(value) || (is_array && bp::len(value) == 0))
         return Pegasus::CIMValue();
 
     bp::object value_type_check = is_array ? value[0] : value;
@@ -266,7 +266,7 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
 
 std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
 {
-    if (value.is_none())
+    if (isnone(value))
         return std::string();
 
     bool is_array = PyList_Check(value.ptr());
