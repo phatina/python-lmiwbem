@@ -52,7 +52,7 @@ NocaseDict::NocaseDict(const bp::object &d)
 
 void NocaseDict::init_type()
 {
-    CIMBase::init_type(bp::class_<NocaseDict>("NocaseDict", bp::init<>())
+    CIMBase<NocaseDict>::init_type(bp::class_<NocaseDict>("NocaseDict", bp::init<>())
         .def(bp::init<const bp::object&>())
         .def("__getitem__", &NocaseDict::getitem)
         .def("__setitem__", &NocaseDict::setitem)
@@ -241,7 +241,7 @@ bp::object NocaseDict::pop(const bp::object &key, const bp::object &def)
 
 bp::object NocaseDict::copy()
 {
-    bp::object inst = CIMBase::create();
+    bp::object inst = CIMBase<NocaseDict>::create();
     NocaseDict &fake_this = lmi::extract<NocaseDict&>(inst);
     fake_this.m_dict = nocase_map_t(m_dict);
     return inst;

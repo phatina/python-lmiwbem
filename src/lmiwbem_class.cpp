@@ -60,7 +60,7 @@ CIMClass::CIMClass(
 
 void CIMClass::init_type()
 {
-    CIMBase::init_type(bp::class_<CIMClass>("CIMClass", bp::init<>())
+    CIMBase<CIMClass>::init_type(bp::class_<CIMClass>("CIMClass", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -116,7 +116,7 @@ void CIMClass::init_type()
 
 bp::object CIMClass::create(const Pegasus::CIMClass &cls)
 {
-    bp::object inst = CIMBase::create();
+    bp::object inst = CIMBase<CIMClass>::create();
     CIMClass &fake_this = lmi::extract<CIMClass&>(inst);
 
     // Store list of properties for lazy evaluation
@@ -208,7 +208,7 @@ std::string CIMClass::repr()
 
 bp::object CIMClass::copy()
 {
-    bp::object obj = CIMBase::create();
+    bp::object obj = CIMBase<CIMClass>::create();
     CIMClass &cls = lmi::extract<CIMClass&>(obj);
     NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
     NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());

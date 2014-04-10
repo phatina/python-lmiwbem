@@ -70,7 +70,7 @@ CIMMethod::CIMMethod(
 
 void CIMMethod::init_type()
 {
-    CIMBase::init_type(bp::class_<CIMMethod>("CIMMethod", bp::init<>())
+    CIMBase<CIMMethod>::init_type(bp::class_<CIMMethod>("CIMMethod", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -130,7 +130,7 @@ void CIMMethod::init_type()
 
 bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)
 {
-    bp::object inst = CIMBase::create();
+    bp::object inst = CIMBase<CIMMethod>::create();
     CIMMethod &fake_this = lmi::extract<CIMMethod&>(inst);
     fake_this.m_name = method.getName().getString().getCString();
     fake_this.m_return_type = CIMTypeConv::asStdString(method.getType());
@@ -231,7 +231,7 @@ std::string CIMMethod::tomof()
 
 bp::object CIMMethod::copy()
 {
-    bp::object obj = CIMBase::create();
+    bp::object obj = CIMBase<CIMMethod>::create();
     CIMMethod &method = lmi::extract<CIMMethod&>(obj);
     NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
     NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());

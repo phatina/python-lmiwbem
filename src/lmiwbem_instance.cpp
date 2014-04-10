@@ -85,7 +85,7 @@ CIMInstance::CIMInstance(
 
 void CIMInstance::init_type()
 {
-    CIMBase::init_type(bp::class_<CIMInstance>("CIMInstance", bp::init<>())
+    CIMBase<CIMInstance>::init_type(bp::class_<CIMInstance>("CIMInstance", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -152,7 +152,7 @@ void CIMInstance::init_type()
 
 bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)
 {
-    bp::object inst = CIMBase::create();
+    bp::object inst = CIMBase<CIMInstance>::create();
     CIMInstance &fake_this = lmi::extract<CIMInstance&>(inst);
     fake_this.m_classname = instance.getClassName().getString().getCString();
 
@@ -298,7 +298,7 @@ bp::object CIMInstance::iteritems()
 
 bp::object CIMInstance::copy()
 {
-    bp::object obj = CIMBase::create();
+    bp::object obj = CIMBase<CIMInstance>::create();
     CIMInstance &inst = lmi::extract<CIMInstance&>(obj);
     CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
     NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());

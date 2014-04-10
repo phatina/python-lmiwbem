@@ -105,7 +105,7 @@ CIMIndicationListener::CIMIndicationListener()
 
 void CIMIndicationListener::init_type()
 {
-    CIMBase::init_type(
+    CIMBase<CIMIndicationListener>::init_type(
         bp::class_<CIMIndicationListener>("CIMIndicationListener", bp::init<>())
             .def("start",  &CIMIndicationListener::start, bp::arg("port"))
             .def("stop", &CIMIndicationListener::stop)

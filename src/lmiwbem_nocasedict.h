@@ -53,7 +53,7 @@ public:
     NocaseDict(const bp::object &d);
 
     static void init_type();
-    static bp::object create() { return CIMBase::create(); }
+    static bp::object create() { return CIMBase<NocaseDict>::create(); }
     static bp::object create(const bp::object &d);
 
     nocase_map_t::iterator begin() { return m_dict.begin(); }
@@ -107,7 +107,7 @@ protected:
     template <typename T>
     static void init_type(const char *classname)
     {
-        T::CIMBase::init_type(bp::class_<T>(
+        CIMBase<T>::init_type(bp::class_<T>(
             classname, bp::init<>())
             .def("__iter__", &T::iter)
             .def("next", &T::next));
@@ -116,7 +116,7 @@ protected:
     template <typename T>
     static bp::object create(const nocase_map_t &dict)
     {
-        bp::object inst = T::CIMBase::create();
+        bp::object inst = CIMBase<T>::create();
         T &fake_this = lmi::extract<T&>(inst);
         fake_this.m_dict = dict;
         fake_this.m_iter = fake_this.m_dict.begin();

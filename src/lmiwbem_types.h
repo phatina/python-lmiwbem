@@ -34,16 +34,16 @@ namespace bp = boost::python;
     { \
     public: \
         static void init_type(); \
-        static bp::object create() { return CIMBase::create(); } \
+        static bp::object create() { return CIMBase<name>::create(); } \
         template <typename T> \
-        static bp::object create(const T &value) { return CIMBase::create(value); } \
+        static bp::object create(const T &value) { return CIMBase<name>::create(value); } \
     }
 
 #define DEF_CIMTYPE(name) \
     void name::init_type() \
     { \
-        CIMBase::init_type(bp::import("lmiwbem.lmiwbem_types").attr(#name)); \
-        bp::scope().attr(#name) = CIMBase::type(); \
+        CIMBase<name>::init_type(bp::import("lmiwbem.lmiwbem_types").attr(#name)); \
+        bp::scope().attr(#name) = CIMBase<name>::type(); \
     } \
 
 DECL_CIMTYPE(MinutesFromUTC);

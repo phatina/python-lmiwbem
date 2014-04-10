@@ -62,7 +62,8 @@ CIMInstanceName::CIMInstanceName(
 
 void CIMInstanceName::init_type()
 {
-    CIMBase::init_type(bp::class_<CIMInstanceName>("CIMInstanceName", bp::init<>())
+    CIMBase<CIMInstanceName>::init_type(
+        bp::class_<CIMInstanceName>("CIMInstanceName", bp::init<>())
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -125,7 +126,7 @@ bp::object CIMInstanceName::create(
     const std::string &ns,
     const std::string &hostname)
 {
-    bp::object inst = CIMBase::create();
+    bp::object inst = CIMBase<CIMInstanceName>::create();
     CIMInstanceName& fake_this = lmi::extract<CIMInstanceName&>(inst);
 
     fake_this.m_classname = obj_path.getClassName().getString().getCString();
@@ -239,7 +240,7 @@ int CIMInstanceName::cmp(const bp::object &other)
 
 bp::object CIMInstanceName::copy()
 {
-    bp::object obj = CIMBase::create();
+    bp::object obj = CIMBase<CIMInstanceName>::create();
     CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(obj);
     NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
     inst_name.m_classname = m_classname;
