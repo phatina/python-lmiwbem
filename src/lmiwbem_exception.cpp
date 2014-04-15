@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <sstream>
 #include <boost/python/object.hpp>
 #include <boost/python/str.hpp>

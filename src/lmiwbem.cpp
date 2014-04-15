@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <boost/python/docstring_options.hpp>
 #include <boost/python/exception_translator.hpp>
 #include <boost/python/handle.hpp>

@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <cerrno>
 #include "lmiwbem_addr.h"
 

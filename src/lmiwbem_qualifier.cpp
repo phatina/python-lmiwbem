@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <boost/python/class.hpp>
 #include "lmiwbem_extract.h"
 #include "lmiwbem_qualifier.h"

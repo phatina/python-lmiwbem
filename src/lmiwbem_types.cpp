@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include "lmiwbem_types.h"
 
 DEF_CIMTYPE(MinutesFromUTC)

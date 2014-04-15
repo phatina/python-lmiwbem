@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <Pegasus/Consumer/CIMIndicationConsumer.h>
 #include <boost/python/class.hpp>
 #include "lmiwbem_exception.h"

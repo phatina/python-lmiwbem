@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <sstream>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/python/class.hpp>

@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <string>
 #include <boost/python/object.hpp>
 #include "lmiwbem_extract.h"

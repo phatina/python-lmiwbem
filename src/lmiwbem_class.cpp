@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
 #include <Pegasus/Common/CIMProperty.h>

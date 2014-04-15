@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <boost/python/borrowed.hpp>
 #include <boost/python/handle.hpp>
 #include <boost/python/list.hpp>

@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <Pegasus/Common/SSLContext.h>
 #include "lmiwbem_client.h"
 #include "lmiwbem_addr.h"

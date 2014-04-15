@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/object_attributes.hpp>
