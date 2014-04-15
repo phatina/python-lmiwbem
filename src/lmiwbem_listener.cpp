@@ -132,6 +132,9 @@ void CIMIndicationListener::start(const bp::object &port_)
     try {
         m_listener->start();
     } catch (...) {
+        // We couldn't start CIMIndicationListener, free the instance
+        // before we process all the exceptions.
+        m_listener.reset();
         handle_all_exceptions();
     }
 }
