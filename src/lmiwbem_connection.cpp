@@ -47,6 +47,7 @@ std::string WBEMConnection::s_default_namespace = "root/cimv2";
 WBEMConnection::WBEMConnection(
     const bp::object &url,
     const bp::object &creds,
+    const bp::object &x509,
     const bp::object &default_namespace,
     const bp::object &verify_server_cert,
     const bool connect_locally)
@@ -55,6 +56,8 @@ WBEMConnection::WBEMConnection(
     , m_url()
     , m_username()
     , m_password()
+    , m_cert_file()
+    , m_key_file()
     , m_default_namespace(s_default_namespace)
     , m_client()
     , m_mutex()
@@ -73,6 +76,12 @@ WBEMConnection::WBEMConnection(
             throw_ValueError("creds must be tuple of 2 strings");
         m_username = lmi::extract_or_throw<std::string>(creds_tpl[0], "username");
         m_password = lmi::extract_or_throw<std::string>(creds_tpl[1], "password");
+    }
+
+    if (!isnone(x509)) {
+        bp::dict cert = lmi::extract_or_throw<bp::dict>(x509, "x509");
+        m_cert_file = lmi::extract_or_throw<std::string>(cert["cert_file"], "cert_file");
+        m_key_file  = lmi::extract_or_throw<std::string>(cert["key_file"], "key_file");
     }
 
     bool verify = lmi::extract_or_throw<bool>(
@@ -104,9 +113,11 @@ void WBEMConnection::init_type()
             const bp::object &,
             const bp::object &,
             const bp::object &,
+            const bp::object &,
             const bool>((
                 bp::arg("url") = bp::object(),
                 bp::arg("creds") = bp::object(),
+                bp::arg("x509") = bp::object(),
                 bp::arg("default_namespace") = bp::object(),
                 bp::arg("verify_server_cert") = true,
                 bp::arg("connect_locally") = false),
@@ -114,6 +125,10 @@ void WBEMConnection::init_type()
                 ":param str url: String containing URL of CIMOM instance\n"
                 ":param tuple creds: tuple containing two string, where the first\n"
                 "\tone stands for username, second for password\n"
+                ":param dict x509: dictionary containing keys 'cert_file' and 'key_file'\n"
+                "\tThe value of 'cert_file' must be string specifying a filename of\n"
+                "\tcertificate and the value of 'key_file' must be string specifying\n"
+                "\ta filename of private key belonging to the certificate.\n"
                 ":param bool verify_certificate: set to True, if CIMOM's X509 certificate\n"
                 "\t shall be verified; False otherwise. Default value is True.\n"
                 ":param bool connect_locally: if True, Unix socket will be\n"
@@ -122,6 +137,8 @@ void WBEMConnection::init_type()
             (bp::arg("url") = bp::object(),
              bp::arg("username") = bp::object(),
              bp::arg("password") = bp::object(),
+             bp::arg("cert_file") = bp::object(),
+             bp::arg("key_file") = bp::object(),
              bp::arg("verify_certificate") = bp::object()
             ),
             "Connects to CIMOM.\n\n"
@@ -511,6 +528,8 @@ void WBEMConnection::connect(
     const bp::object &url,
     const bp::object &username,
     const bp::object &password,
+    const bp::object &cert_file,
+    const bp::object &key_file,
     const bp::object &verify_cert)
 {
     // If we have local connection flag set, disregard other parameters and
@@ -525,6 +544,8 @@ void WBEMConnection::connect(
     std::string std_url(m_url);
     std::string std_username(m_username);
     std::string std_password(m_password);
+    std::string std_cert_file(m_cert_file);
+    std::string std_key_file(m_key_file);
 
     // Check, if provided parameters are None. If not, try to get a string value
     // out of them.
@@ -534,6 +555,10 @@ void WBEMConnection::connect(
         std_username = lmi::extract_or_throw<std::string>(username, "username");
     if (!isnone(password))
         std_password = lmi::extract_or_throw<std::string>(password, "password");
+    if (!isnone(cert_file))
+        std_cert_file = lmi::extract_or_throw<std::string>(cert_file, "cert_file");
+    if (!isnone(key_file))
+        std_key_file = lmi::extract_or_throw<std::string>(key_file, "key_file");
 
     // Check, if we have any url to connect to
     if (std_url.empty())
@@ -548,7 +573,9 @@ void WBEMConnection::connect(
         m_client.connect(
             Pegasus::String(std_url.c_str()),
             Pegasus::String(std_username.c_str()),
-            Pegasus::String(std_password.c_str()));
+            Pegasus::String(std_password.c_str()),
+            Pegasus::String(std_cert_file.c_str()),
+            Pegasus::String(std_key_file.c_str()));
         m_connect_locally = false;
     } catch (...) {
         handle_all_exceptions();
@@ -580,7 +607,9 @@ void WBEMConnection::connectTmp()
     m_client.connect(
         Pegasus::String(m_url.c_str()),
         Pegasus::String(m_username.c_str()),
-        Pegasus::String(m_password.c_str()));
+        Pegasus::String(m_password.c_str()),
+        Pegasus::String(m_cert_file.c_str()),
+        Pegasus::String(m_key_file.c_str()));
 
     m_connected_tmp = true;
 }

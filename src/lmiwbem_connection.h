@@ -42,6 +42,7 @@ public:
     WBEMConnection(
         const bp::object &url,
         const bp::object &creds,
+        const bp::object &x509,
         const bp::object &default_namespace,
         const bp::object &verify_server_cert,
         const bool connect_locally);
@@ -53,6 +54,8 @@ public:
         const bp::object &url,
         const bp::object &username,
         const bp::object &password,
+        const bp::object &cert_file,
+        const bp::object &key_file,
         const bp::object &verify_cert);
     void connectLocally();
     void disconnect();
@@ -167,6 +170,8 @@ protected:
     std::string m_url;
     std::string m_username;
     std::string m_password;
+    std::string m_cert_file;
+    std::string m_key_file;
     std::string m_default_namespace;
     CIMClient m_client;
     Mutex m_mutex;

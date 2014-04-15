@@ -39,6 +39,8 @@ void CIMClient::connect(
     const Pegasus::String &uri,
     const Pegasus::String &username,
     const Pegasus::String &password,
+    const Pegasus::String &cert_file,
+    const Pegasus::String &key_file,
     const Pegasus::String &trust_store)
 {
     if (!m_addr_info.set(uri)) {
@@ -53,13 +55,16 @@ void CIMClient::connect(
             username,
             password);
     } else {
-        Pegasus::SSLContext ctx(trust_store,
-            m_verify_cert ? verifyCertificate : NULL
+        Pegasus::SSLContext ctx(
+            trust_store,
+            cert_file,
+            key_file,
+            m_verify_cert ? verifyCertificate : NULL,
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
-            , this);
-#else
-            );
+            this,
 #endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
+            Pegasus::String::EMPTY
+        );
         Pegasus::CIMClient::connect(
             m_addr_info.hostname(),
             m_addr_info.port(),
