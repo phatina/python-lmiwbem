@@ -57,5 +57,5 @@ void CIMConstants::init_type()
     bp::scope().attr("CON_ERR_SSL_EXCEPTION") = CON_ERR_SSL_EXCEPTION;
     bp::scope().attr("CON_ERR_BIND") = CON_ERR_BIND;
 
-    bp::scope().attr("DEF_NAMESPACE") = DEF_NAMESPACE;
+    bp::scope().attr("DEFAULT_NAMESPACE") = DEF_NAMESPACE;
 }
