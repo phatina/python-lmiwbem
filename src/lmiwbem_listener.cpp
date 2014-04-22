@@ -119,6 +119,7 @@ void CIMIndicationListener::init_type()
             .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
             .def("remove_handler", &CIMIndicationListener::removeHandler)
             .def("is_alive", &CIMIndicationListener::isAlive)
+            .add_property("uses_ssl", &CIMIndicationListener::usesSSL)
             .add_property("port", &CIMIndicationListener::getPort)
             .add_property("handlers", &CIMIndicationListener::getHandlers)
         );
@@ -186,6 +187,15 @@ void CIMIndicationListener::stop()
 
     m_listener->stop();
     m_listener.reset();
+}
+
+bool CIMIndicationListener::usesSSL() const
+{
+    if (!m_listener)
+        return false;
+
+    Pegasus::SSLContext *ctx = m_listener->getSSLContext();
+    return ctx ? ctx->getCertPath() != Pegasus::String::EMPTY : false;
 }
 
 bp::object CIMIndicationListener::addHandler(

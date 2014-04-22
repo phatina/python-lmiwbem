@@ -87,6 +87,7 @@ public:
     void stop();
 
     bool isAlive() const { return m_listener && m_listener->isAlive(); }
+    bool usesSSL() const;
 
     int getPort() const { return m_listener ? m_listener->getPortNumber() : -1; }
 
