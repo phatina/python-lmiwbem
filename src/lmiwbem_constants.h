@@ -58,6 +58,7 @@ public:
     static const int CON_ERR_BIND                         = 8;
 
     static const std::string DEF_NAMESPACE;
+    static const std::string DEF_TRUST_STORE;
 };
 
 #endif // LMIWBEM_CONSTANTS_H

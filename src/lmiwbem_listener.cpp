@@ -20,8 +20,10 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <Pegasus/Common/SSLContext.h>
 #include <Pegasus/Consumer/CIMIndicationConsumer.h>
 #include <boost/python/class.hpp>
+#include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
@@ -108,7 +110,11 @@ void CIMIndicationListener::init_type()
 {
     CIMBase<CIMIndicationListener>::init_type(
         bp::class_<CIMIndicationListener>("CIMIndicationListener", bp::init<>())
-            .def("start",  &CIMIndicationListener::start, bp::arg("port"))
+            .def("start",  &CIMIndicationListener::start,
+                (bp::arg("port"),
+                 bp::arg("cert_file") = bp::object(),
+                 bp::arg("key_file") = bp::object()),
+                 bp::arg("trust_store") = bp::object())
             .def("stop", &CIMIndicationListener::stop)
             .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
             .def("remove_handler", &CIMIndicationListener::removeHandler)
@@ -118,7 +124,11 @@ void CIMIndicationListener::init_type()
         );
 }
 
-void CIMIndicationListener::start(const bp::object &port_)
+void CIMIndicationListener::start(
+    const bp::object &port_,
+    const bp::object &cert_file,
+    const bp::object &key_file,
+    const bp::object &trust_store)
 {
     if (m_listener)
         return;
@@ -127,6 +137,35 @@ void CIMIndicationListener::start(const bp::object &port_)
     m_listener.reset(new Pegasus::CIMListener(port));
     if (!m_listener)
         throw_RuntimeError("Can't create CIMListener");
+
+    std::string std_cert_file;
+    std::string std_key_file;
+    std::string std_trust_store = CIMConstants::DEF_TRUST_STORE;
+    if (!isnone(cert_file)) {
+        std_cert_file = lmi::extract_or_throw<std::string>(
+            cert_file, "cert_file");
+    }
+    if (!isnone(key_file)) {
+        std_key_file = lmi::extract_or_throw<std::string>(
+            key_file, "key_file");
+    }
+    if (!isnone(trust_store)) {
+        std_trust_store = lmi::extract_or_throw<std::string>(
+            trust_store, "trust_store");
+    }
+
+    if (!std_cert_file.empty()) {
+        // Pegasus::SSLContext will be freed by Pegasus::CIMListener
+        Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
+            Pegasus::String(std_trust_store.c_str()),
+            Pegasus::String(std_cert_file.c_str()),
+            Pegasus::String(std_key_file.c_str()),
+            Pegasus::String::EMPTY, // CRL path
+            NULL, // verification callback
+            Pegasus::String::EMPTY);
+
+        m_listener->setSSLContext(ctx);
+    }
 
     m_listener->addConsumer(&m_consumer);
 

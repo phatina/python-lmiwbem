@@ -26,6 +26,7 @@
 namespace bp = boost::python;
 
 const std::string CIMConstants::DEF_NAMESPACE = "root/cimv2";
+const std::string CIMConstants::DEF_TRUST_STORE = "/etc/pki/ca-trust/source/anchors/";
 
 void CIMConstants::init_type()
 {
@@ -58,4 +59,5 @@ void CIMConstants::init_type()
     bp::scope().attr("CON_ERR_BIND") = CON_ERR_BIND;
 
     bp::scope().attr("DEFAULT_NAMESPACE") = DEF_NAMESPACE;
+    bp::scope().attr("DEFAULT_TRUST_STORE") = DEF_TRUST_STORE;
 }

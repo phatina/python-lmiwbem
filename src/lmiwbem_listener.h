@@ -79,7 +79,11 @@ public:
 
     static void init_type();
 
-    void start(const bp::object &port_);
+    void start(
+        const bp::object &port_,
+        const bp::object &cert_file,
+        const bp::object &key_file,
+        const bp::object &trust_store);
     void stop();
 
     bool isAlive() const { return m_listener && m_listener->isAlive(); }
