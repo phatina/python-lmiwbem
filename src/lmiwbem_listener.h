@@ -90,7 +90,7 @@ public:
         const bp::tuple &args,
         const bp::dict  &kwds);
     void removeHandler(const bp::object &name);
-    bp::object handlers() const;
+    bp::object getHandlers() const;
 
 private:
     friend class CIMIndicationConsumer;

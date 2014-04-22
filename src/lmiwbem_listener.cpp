@@ -112,9 +112,9 @@ void CIMIndicationListener::init_type()
             .def("stop", &CIMIndicationListener::stop)
             .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
             .def("remove_handler", &CIMIndicationListener::removeHandler)
-            .def("handlers", &CIMIndicationListener::handlers)
             .def("is_alive", &CIMIndicationListener::isAlive)
             .add_property("port", &CIMIndicationListener::getPort)
+            .add_property("handlers", &CIMIndicationListener::getHandlers)
         );
 }
 
@@ -176,7 +176,7 @@ void CIMIndicationListener::removeHandler(const bp::object &name)
     m_handlers.erase(it);
 }
 
-bp::object CIMIndicationListener::handlers() const
+bp::object CIMIndicationListener::getHandlers() const
 {
     bp::list handlers;
     handler_map_t::const_iterator it;
