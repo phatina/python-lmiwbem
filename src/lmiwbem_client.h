@@ -39,7 +39,7 @@ public:
         const Pegasus::String &password,
         const Pegasus::String &cert_file,
         const Pegasus::String &key_file,
-        const Pegasus::String &trust_store = "/etc/pki/tls/certs");
+        const Pegasus::String &trust_store);
     void connectLocally();
     void disconnect();
     bool isConnected() const { return m_is_connected; }

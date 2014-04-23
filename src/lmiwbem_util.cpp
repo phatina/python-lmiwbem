@@ -188,6 +188,11 @@ bp::object incref(const bp::object &obj)
     return obj;
 }
 
+bp::object this_module()
+{
+    return bp::object(bp::handle<>(bp::borrowed(PyImport_AddModule(PACKAGE_NAME))));
+}
+
 bool isnone(const bp::object &obj)
 {
 #ifdef BOOST_PYTHON_OBJECT_HAS_IS_NONE

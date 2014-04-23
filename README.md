@@ -45,6 +45,12 @@ To install the module, follow these steps:
     $ make
     # make install
 
+It is possible to override default CIM namespace and trust store path by
+providing these options to ```configure``` script:
+
+    --with-default-namespace=NAMESPACE; default: root/cimv2
+    --with-default-trust-store=DIR;     default: /etc/pki/ca-trust/source/anchors/
+
 If you got the sources from git repository, first you have to run:
 
     $ ./autogen.sh

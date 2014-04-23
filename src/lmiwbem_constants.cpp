@@ -22,11 +22,13 @@
 #include <config.h>
 #include <boost/python/scope.hpp>
 #include "lmiwbem_constants.h"
+#include "lmiwbem_extract.h"
+#include "lmiwbem_util.h"
 
 namespace bp = boost::python;
 
-const std::string CIMConstants::DEF_NAMESPACE = "root/cimv2";
-const std::string CIMConstants::DEF_TRUST_STORE = "/etc/pki/ca-trust/source/anchors/";
+const std::string CIMConstants::DEF_NAMESPACE = DEFAULT_NAMESPACE;
+const std::string CIMConstants::DEF_TRUST_STORE = DEFAULT_TRUST_STORE;
 
 void CIMConstants::init_type()
 {
@@ -60,4 +62,22 @@ void CIMConstants::init_type()
 
     bp::scope().attr("DEFAULT_NAMESPACE") = DEF_NAMESPACE;
     bp::scope().attr("DEFAULT_TRUST_STORE") = DEF_TRUST_STORE;
+}
+
+std::string CIMConstants::defaultNamespace() try
+{
+    bp::object def_namespace(this_module().attr("DEFAULT_NAMESPACE"));
+    return lmi::extract_or_throw<std::string>(def_namespace, "DEFAULT_NAMESPACE");
+} catch (const bp::error_already_set &e) {
+    this_module().attr("DEFAULT_NAMESPACE") = DEF_NAMESPACE;
+    return DEF_NAMESPACE;
+}
+
+std::string CIMConstants::defaultTrustStore() try
+{
+    bp::object def_trust_store(this_module().attr("DEFAULT_TRUST_STORE"));
+    return lmi::extract_or_throw<std::string>(def_trust_store, "DEFAULT_TRUST_STORE");
+} catch (const bp::error_already_set &e) {
+    this_module().attr("DEFAULT_TRUST_STORE") = DEF_TRUST_STORE;
+    return DEF_TRUST_STORE;
 }

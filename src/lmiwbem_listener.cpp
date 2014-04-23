@@ -99,6 +99,8 @@ void CIMIndicationConsumer::consumeIndication(
     PyGILState_Release(gstate);
 }
 
+// ----------------------------------------------------------------------------
+
 CIMIndicationListener::CIMIndicationListener()
     : m_listener()
     , m_consumer(this)
@@ -141,7 +143,7 @@ void CIMIndicationListener::start(
 
     std::string std_cert_file;
     std::string std_key_file;
-    std::string std_trust_store = CIMConstants::DEF_TRUST_STORE;
+    std::string std_trust_store = CIMConstants::defaultTrustStore();
     if (!isnone(cert_file)) {
         std_cert_file = lmi::extract_or_throw<std::string>(
             cert_file, "cert_file");

@@ -71,6 +71,8 @@ public:
     void setConnectLocally(bool connect_locally) { m_connect_locally = connect_locally; }
     unsigned int getTimeout() const { return m_client.getTimeout(); }
     void setTimeout(unsigned int timeout) { m_client.setTimeout(timeout); }
+    std::string getDefaultNamespace() const { return m_default_namespace; }
+    void setDefaultNamespace(const bp::object &ns);
 
     bp::object createInstance(const bp::object &instance);
 
@@ -163,8 +165,6 @@ public:
         const bp::object &role);
 
 protected:
-    static std::string s_default_namespace;
-
     bool m_connected_tmp;
     bool m_connect_locally;
     std::string m_url;

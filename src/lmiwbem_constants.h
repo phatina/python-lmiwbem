@@ -57,6 +57,10 @@ public:
     // Non standard error codes
     static const int CON_ERR_BIND                         = 8;
 
+    static std::string defaultNamespace();
+    static std::string defaultTrustStore();
+
+private:
     static const std::string DEF_NAMESPACE;
     static const std::string DEF_TRUST_STORE;
 };

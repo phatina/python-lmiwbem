@@ -31,6 +31,7 @@
 #include "lmiwbem_make_method.h"
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
+#include "lmiwbem_constants.h"
 #include "lmiwbem_connection.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
@@ -41,8 +42,6 @@
 #include "lmiwbem_value.h"
 
 namespace bp = boost::python;
-
-std::string WBEMConnection::s_default_namespace = "root/cimv2";
 
 WBEMConnection::WBEMConnection(
     const bp::object &url,
@@ -58,7 +57,7 @@ WBEMConnection::WBEMConnection(
     , m_password()
     , m_cert_file()
     , m_key_file()
-    , m_default_namespace(s_default_namespace)
+    , m_default_namespace(CIMConstants::defaultNamespace())
     , m_client()
     , m_mutex()
 {
@@ -177,6 +176,10 @@ void WBEMConnection::init_type()
             &WBEMConnection::getTimeout,
             &WBEMConnection::setTimeout,
             "Property storing CIM operations timeout in milliseconds. Default value is 60000")
+        .add_property("default_namespace",
+            &WBEMConnection::getDefaultNamespace,
+            &WBEMConnection::setDefaultNamespace,
+            "Property storing default CIM namespace used for CIM operations.")
         .def("CreateInstance", &WBEMConnection::createInstance,
             (bp::arg("NewInstance")),
             "Creates a new CIM instance and returns its instance name.\n\n"
@@ -575,7 +578,8 @@ void WBEMConnection::connect(
             Pegasus::String(std_username.c_str()),
             Pegasus::String(std_password.c_str()),
             Pegasus::String(std_cert_file.c_str()),
-            Pegasus::String(std_key_file.c_str()));
+            Pegasus::String(std_key_file.c_str()),
+            Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
         m_connect_locally = false;
     } catch (...) {
         handle_all_exceptions();
@@ -609,7 +613,8 @@ void WBEMConnection::connectTmp()
         Pegasus::String(m_username.c_str()),
         Pegasus::String(m_password.c_str()),
         Pegasus::String(m_cert_file.c_str()),
-        Pegasus::String(m_key_file.c_str()));
+        Pegasus::String(m_key_file.c_str()),
+        Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
 
     m_connected_tmp = true;
 }
@@ -621,6 +626,11 @@ void WBEMConnection::disconnectTmp()
 
     m_client.disconnect();
     m_connected_tmp = false;
+}
+
+void WBEMConnection::setDefaultNamespace(const bp::object &ns)
+{
+    m_default_namespace = lmi::extract_or_throw<std::string>(ns, "default_namespace");
 }
 
 bp::object WBEMConnection::createInstance(const bp::object &instance)
@@ -658,7 +668,7 @@ void WBEMConnection::deleteInstance(const bp::object &object_path)
         object_path, "InstanceName");
     Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!cim_path.getNameSpace().isNull())
         std_ns = cim_path.getNameSpace().getString().getCString();
 
@@ -712,7 +722,7 @@ bp::list WBEMConnection::enumerateInstances(
     const bp::object &property_list)
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -752,7 +762,7 @@ bp::list WBEMConnection::enumerateInstanceNames(
     const bp::object &ns)
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -792,7 +802,7 @@ bp::tuple WBEMConnection::invokeMethod(
         args[1], "ObjectName");
     Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!cim_path.getNameSpace().isNull())
         std_ns = cim_path.getNameSpace().getString().getCString();
 
@@ -849,7 +859,7 @@ bp::object WBEMConnection::getInstance(
 {
     CIMInstanceName &cim_instance_name = lmi::extract_or_throw<CIMInstanceName&>(
         instance_name, "InstanceName");
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -888,7 +898,7 @@ bp::list WBEMConnection::enumerateClasses(
     const bool include_qualifiers,
     const bool include_class_origin)
 {
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -927,7 +937,7 @@ bp::list WBEMConnection::enumerateClassNames(
     const bp::object &cls,
     const bool deep_inheritance)
 {
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -966,7 +976,7 @@ bp::list WBEMConnection::execQuery(
 {
     std::string std_query_lang = lmi::extract_or_throw<std::string>(query_lang, "QueryLanguage");
     std::string std_query = lmi::extract_or_throw<std::string>(query, "Query");
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -1000,7 +1010,7 @@ bp::object WBEMConnection::getClass(
     const bp::object &property_list)
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "ClassName"));
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
@@ -1041,7 +1051,7 @@ bp::list WBEMConnection::getAssociators(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!cim_path.getNameSpace().isNull())
         std_ns = cim_path.getNameSpace().getString().getCString();
 
@@ -1114,7 +1124,7 @@ bp::list WBEMConnection::getAssociatorNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!cim_path.getNameSpace().isNull())
         std_ns = cim_path.getNameSpace().getString().getCString();
 
@@ -1181,7 +1191,7 @@ bp::list WBEMConnection::getReferences(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!cim_path.getNameSpace().isNull())
         std_ns = cim_path.getNameSpace().getString().getCString();
 
@@ -1237,7 +1247,7 @@ bp::list WBEMConnection::getReferenceNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(s_default_namespace);
+    std::string std_ns(m_default_namespace);
     if (!cim_path.getNameSpace().isNull())
         std_ns = cim_path.getNameSpace().getString().getCString();
 

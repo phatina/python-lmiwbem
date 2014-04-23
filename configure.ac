@@ -121,6 +121,34 @@ dnl and not the actual linker flag, so we must add the -l prefix manually
 BOOST_PYTHON_LIB=-l$BOOST_PYTHON_LIB
 AC_SUBST([BOOST_PYTHON_LIB])
 
+dnl --with-default-namespace
+AC_ARG_WITH(
+    [default-namespace],
+    [AS_HELP_STRING(
+        [--with-default-namespace=NAMESPACE],
+        [Default CIM namespace])],
+    [with_defns=$withval])
+
+if test x"$with_defns" = x; then
+    with_defns="root/cimv2"
+fi
+
+AC_DEFINE_UNQUOTED([DEFAULT_NAMESPACE], ["$with_defns"], [Default CIM namespace])
+
+dnl --with-default-trust-store
+AC_ARG_WITH(
+    [default-trust-store],
+    [AS_HELP_STRING(
+        [--with-default-trust-store=DIR],
+        [Default trust store])],
+    [with_defts=$withval])
+
+if test x"$with_defts" = x; then
+    with_defts="/etc/pki/ca-trust/source/anchors/"
+fi
+
+AC_DEFINE_UNQUOTED([DEFAULT_TRUST_STORE], ["$with_defts"], [Default trust store])
+
 AC_OUTPUT(
     [makefile
      src/makefile
@@ -131,6 +159,8 @@ AC_MSG_NOTICE([
 
     lmiwbem $VERSION
     =============
+    Default CIM namespace: $with_defns
+    Default trust store  : $with_defts
 
     Now type 'make' to build $PACKAGE
 ])

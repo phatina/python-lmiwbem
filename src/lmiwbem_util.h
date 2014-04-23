@@ -116,6 +116,7 @@ std::string object_as_std_string(const bp::object &obj);
 std::string pystring_as_std_string(const bp::object &obj);
 bp::object  std_string_as_pyunicode(const std::string &str);
 
+bp::object this_module();
 bp::object incref(const bp::object &obj);
 
 bool isnone(const bp::object &obj);
