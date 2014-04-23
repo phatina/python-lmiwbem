@@ -49,9 +49,9 @@ WBEMConnection::WBEMConnection(
     const bp::object &x509,
     const bp::object &default_namespace,
     const bp::object &verify_server_cert,
-    const bool connect_locally)
+    const bp::object &connect_locally)
     : m_connected_tmp(false)
-    , m_connect_locally(connect_locally)
+    , m_connect_locally(false)
     , m_url()
     , m_username()
     , m_password()
@@ -61,6 +61,9 @@ WBEMConnection::WBEMConnection(
     , m_client()
     , m_mutex()
 {
+    m_connect_locally = lmi::extract_or_throw<bool>(
+        connect_locally, "connect_locally");
+
     // We are constructing with local connection flag; disregard other
     // parameters.
     if (m_connect_locally)
@@ -79,8 +82,16 @@ WBEMConnection::WBEMConnection(
 
     if (!isnone(x509)) {
         bp::dict cert = lmi::extract_or_throw<bp::dict>(x509, "x509");
-        m_cert_file = lmi::extract_or_throw<std::string>(cert["cert_file"], "cert_file");
-        m_key_file  = lmi::extract_or_throw<std::string>(cert["key_file"], "key_file");
+        bp::object cert_file = cert["cert_file"];
+        bp::object key_file  = cert["key_file"];
+        if (!isnone(cert_file)) {
+            m_cert_file = lmi::extract_or_throw<std::string>(
+                cert["cert_file"], "cert_file");
+        }
+        if (!isnone(key_file)) {
+            m_key_file  = lmi::extract_or_throw<std::string>(
+                cert["key_file"], "key_file");
+        }
     }
 
     bool verify = lmi::extract_or_throw<bool>(
@@ -113,7 +124,7 @@ void WBEMConnection::init_type()
             const bp::object &,
             const bp::object &,
             const bp::object &,
-            const bool>((
+            const bp::object &>((
                 bp::arg("url") = bp::object(),
                 bp::arg("creds") = bp::object(),
                 bp::arg("x509") = bp::object(),

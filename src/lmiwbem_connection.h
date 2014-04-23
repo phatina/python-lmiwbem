@@ -45,7 +45,7 @@ public:
         const bp::object &x509,
         const bp::object &default_namespace,
         const bp::object &verify_server_cert,
-        const bool connect_locally);
+        const bp::object &connect_locally);
     ~WBEMConnection();
 
     static void init_type();
