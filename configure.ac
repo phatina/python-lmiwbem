@@ -15,7 +15,6 @@ m4_include([m4/boost_python.m4])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_SILENT_RULES([yes])
-AM_PATH_PYTHON([2.6])
 
 AC_CONFIG_HEADERS([config.h])
 AC_DISABLE_STATIC
@@ -105,13 +104,27 @@ AC_SUBST(PEGASUS_COMMON_LIB)
 AC_SUBST(PEGASUS_CLIENT_LIB)
 AC_SUBST(PEGASUS_LISTENER_LIB)
 
+dnl --with-python
+AC_ARG_WITH(
+    [python3],
+    [AS_HELP_STRING(
+        [--with-python3=@<:@yes/no@:>@],
+        [use Python 3 [default=no]])],
+    [with_python3=$withval])
+
+if test x"$with_python3" = x"yes"; then
+    AM_PATH_PYTHON([3.0])
+else
+    AM_PATH_PYTHON([2.6])
+fi
+
 dnl Check for python-devel
-AX_PYTHON_DEVEL
+AX_PYTHON_DEVEL([$PYTHON_VERSION])
 
 dnl Check for Boost::Python
 AX_BOOST_BASE([1.40], [],
     [AC_MSG_ERROR([Boost not found; install boost-devel])])
-AX_BOOST_PYTHON
+AX_BOOST_PYTHON([$PYTHON_VERSION])
 if test x"$ac_cv_boost_python" = x"no"; then
     AC_MSG_ERROR(Boost::Python not found; install boost-python)
 fi
@@ -159,6 +172,7 @@ AC_MSG_NOTICE([
 
     lmiwbem $VERSION
     =============
+    Python version       : $PYTHON_VERSION
     Default CIM namespace: $with_defns
     Default trust store  : $with_defts
 

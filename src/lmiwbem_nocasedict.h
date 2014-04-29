@@ -90,8 +90,16 @@ public:
         const bp::object &def = bp::object());
 
     bp::object copy();
-    bool equals(const bp::object &other);
-    int compare(const bp::object &other);
+
+#  if PY_MAJOR_VERSION < 3
+    int cmp(const bp::object &other);
+#  else
+    bool eq(const bp::object &other);
+    bool gt(const bp::object &other);
+    bool lt(const bp::object &other);
+    bool ge(const bp::object &other);
+    bool le(const bp::object &other);
+#  endif
 
 private:
     nocase_map_t m_dict;
@@ -110,7 +118,12 @@ protected:
         CIMBase<T>::init_type(bp::class_<T>(
             classname, bp::init<>())
             .def("__iter__", &T::iter)
-            .def("next", &T::next));
+#  if PY_MAJOR_VERSION < 3
+            .def("next", &T::next)
+#  else
+            .def("__next__", &T::next)
+#  endif
+        );
     }
 
     template <typename T>

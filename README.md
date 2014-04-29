@@ -51,6 +51,12 @@ providing these options to ```configure``` script:
     --with-default-namespace=NAMESPACE; default: root/cimv2
     --with-default-trust-store=DIR;     default: /etc/pki/ca-trust/source/anchors/
 
+By default, LMIWBEM is configured to work with Python 2.6+. It is possible to
+build the project with Python3 compatibility by running ```configure``` script
+with:
+
+    --with-python3=yes
+
 If you got the sources from git repository, first you have to run:
 
     $ ./autogen.sh

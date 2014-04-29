@@ -118,26 +118,40 @@ std::string object_as_std_string(const bp::object &obj)
     PyObject *str = PyObject_Str(obj.ptr());
     if (!str)
         return std::string();
+#  if PY_MAJOR_VERSION < 3
     return std::string(PyString_AsString(str));
+#  else
+    return std::string(PyUnicode_AsUTF8(str));
+#  endif
 }
 
-std::string pystring_as_std_string(const bp::object &obj)
+std::string pystring_as_std_string(const bp::object &obj, bool &good)
 {
+    good = true;
     if (isunicode(obj)) {
+#  if PY_MAJOR_VERSION < 3
         return std::string(
             PyString_AsString(
                 PyUnicode_EncodeUTF8(
                     PyUnicode_AsUnicode(obj.ptr()),
                     PyUnicode_GetSize(obj.ptr()),
-                    NULL
-                )
-            )
-        );
+                    NULL)));
     } else if (isstring(obj)) {
         return std::string(PyString_AsString(obj.ptr()));
+#  else
+        return std::string(PyUnicode_AsUTF8(obj.ptr()));
+#  endif
     }
 
+    good = false;
     return std::string();
+}
+
+// Compatibility function
+std::string pystring_as_std_string(const bp::object &obj)
+{
+    bool good;
+    return pystring_as_std_string(obj, good);
 }
 
 bp::object std_string_as_pyunicode(const std::string &str)
@@ -209,10 +223,12 @@ bool isinstance(const bp::object &inst, const bp::object &cls)
     return static_cast<bool>(PyObject_IsInstance(inst.ptr(), cls.ptr()));
 }
 
+#  if PY_MAJOR_VERSION < 3
 bool isstring(const bp::object &obj)
 {
     return static_cast<bool>(PyString_Check(obj.ptr()));
 }
+#  endif
 
 bool isunicode(const bp::object &obj)
 {
@@ -221,7 +237,11 @@ bool isunicode(const bp::object &obj)
 
 bool isbasestring(const bp::object &obj)
 {
+#  if PY_MAJOR_VERSION < 3
     return isstring(obj) || isunicode(obj);
+#  else
+    return isunicode(obj);
+#  endif
 }
 
 bool isbool(const bp::object &obj)
@@ -229,10 +249,12 @@ bool isbool(const bp::object &obj)
     return static_cast<bool>(PyBool_Check(obj.ptr()));
 }
 
+#  if PY_MAJOR_VERSION < 3
 bool isint(const bp::object &obj)
 {
     return static_cast<bool>(PyInt_Check(obj.ptr()));
 }
+#  endif
 
 bool islong(const bp::object &obj)
 {
@@ -249,9 +271,19 @@ bool iscallable(const bp::object &obj)
     return static_cast<bool>(PyCallable_Check(obj.ptr()));
 }
 
+#  if PY_MAJOR_VERSION < 3
 int compare(const bp::object &o1, const bp::object &o2)
 {
     int result = 1;
     PyObject_Cmp(o1.ptr(), o2.ptr(), &result);
     return result;
 }
+#  else
+bool compare(const bp::object &o1, const bp::object &o2, int cmp_type)
+{
+    int rval = PyObject_RichCompareBool(o1.ptr(), o2.ptr(), cmp_type);
+    if (rval == -1)
+        throw bp::error_already_set();
+    return static_cast<bool>(rval);
+}
+#  endif

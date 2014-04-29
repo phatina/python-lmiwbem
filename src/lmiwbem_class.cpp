@@ -81,7 +81,15 @@ void CIMClass::init_type()
                 "\tof the class\n"
                 ":param NocaseDict methods: Dictionary containing methods of the class\n"
                 ":param str superclass: String containing the name of super-class"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMClass::cmp)
+#  else
+        .def("__eq__", &CIMClass::eq)
+        .def("__gt__", &CIMClass::gt)
+        .def("__lt__", &CIMClass::lt)
+        .def("__ge__", &CIMClass::ge)
+        .def("__le__", &CIMClass::le)
+#  endif
         .def("__repr__", &CIMClass::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMClass::copy)
@@ -180,6 +188,7 @@ Pegasus::CIMClass CIMClass::asPegasusCIMClass()
     return cls;
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMClass::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMClass::type()))
@@ -199,6 +208,59 @@ int CIMClass::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMClass::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMClass::type()))
+        return false;
+
+    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+
+    return m_classname == other_class.m_classname &&
+        m_super_classname == other_class.m_super_classname &&
+        compare(getProperties(), other_class.getProperties(), Py_EQ) &&
+        compare(getQualifiers(), other_class.getQualifiers(), Py_EQ) &&
+        compare(getMethods(), other_class.getMethods(), Py_EQ);
+}
+
+bool CIMClass::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMClass::type()))
+        return false;
+
+    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+
+    return m_classname > other_class.m_classname ||
+        m_super_classname > other_class.m_super_classname ||
+        compare(getProperties(), other_class.getProperties(), Py_GT) ||
+        compare(getQualifiers(), other_class.getQualifiers(), Py_GT) ||
+        compare(getMethods(), other_class.getMethods(), Py_GT);
+}
+
+bool CIMClass::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMClass::type()))
+        return false;
+
+    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+
+    return m_classname < other_class.m_classname ||
+        m_super_classname < other_class.m_super_classname ||
+        compare(getProperties(), other_class.getProperties(), Py_LT) ||
+        compare(getQualifiers(), other_class.getQualifiers(), Py_LT) ||
+        compare(getMethods(), other_class.getMethods(), Py_LT);
+}
+
+bool CIMClass::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMClass::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMClass::repr()
 {

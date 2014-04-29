@@ -113,7 +113,15 @@ void CIMProperty::init_type()
                 ":param bool is_array: True, if the property's value is array;\n"
                 "\tFalse otherwise"
                 ":param str reference_class: String containing property's reference class"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMProperty::cmp)
+#  else
+        .def("__eq__", &CIMProperty::eq)
+        .def("__gt__", &CIMProperty::gt)
+        .def("__lt__", &CIMProperty::lt)
+        .def("__ge__", &CIMProperty::ge)
+        .def("__le__", &CIMProperty::le)
+#  endif
         .def("__repr__", &CIMProperty::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMProperty::copy)
@@ -210,6 +218,7 @@ Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()
         m_propagated);
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMProperty::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMProperty::type()))
@@ -236,6 +245,71 @@ int CIMProperty::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMProperty::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMProperty::type()))
+        return false;
+
+    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+
+    return m_name == other_property.m_name &&
+        m_type == other_property.m_type &&
+        m_class_origin == other_property.m_class_origin &&
+        m_reference_class == other_property.m_reference_class &&
+        m_is_array == other_property.m_is_array &&
+        m_propagated == other_property.m_propagated &&
+        m_array_size == other_property.m_array_size &&
+        compare(getValue(), other_property.getValue(), Py_EQ) &&
+        compare(getQualifiers(), other_property.getQualifiers(), Py_EQ);
+}
+
+bool CIMProperty::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMProperty::type()))
+        return false;
+
+    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+
+    return m_name > other_property.m_name ||
+        m_type > other_property.m_type ||
+        m_class_origin > other_property.m_class_origin ||
+        m_reference_class > other_property.m_reference_class ||
+        m_is_array > other_property.m_is_array ||
+        m_propagated > other_property.m_propagated ||
+        m_array_size > other_property.m_array_size ||
+        compare(getValue(), other_property.getValue(), Py_GT) ||
+        compare(getQualifiers(), other_property.getQualifiers(), Py_GT);
+}
+
+bool CIMProperty::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMProperty::type()))
+        return false;
+
+    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+
+    return m_name < other_property.m_name ||
+        m_type < other_property.m_type ||
+        m_class_origin < other_property.m_class_origin ||
+        m_reference_class < other_property.m_reference_class ||
+        m_is_array < other_property.m_is_array ||
+        m_propagated < other_property.m_propagated ||
+        m_array_size < other_property.m_array_size ||
+        compare(getValue(), other_property.getValue(), Py_LT) ||
+        compare(getQualifiers(), other_property.getQualifiers(), Py_LT);
+}
+
+bool CIMProperty::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMProperty::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMProperty::repr()
 {

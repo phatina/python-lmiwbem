@@ -83,7 +83,15 @@ void CIMParameter::init_type()
                 "\tis array\n"
                 ":param int array_size: Array size\n"
                 ":param NocaseDict qualifiers: Dictionary of :py:class:`CIMQualifier`"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMParameter::cmp)
+#  else
+        .def("__eq__", &CIMParameter::eq)
+        .def("__gt__", &CIMParameter::gt)
+        .def("__lt__", &CIMParameter::lt)
+        .def("__ge__", &CIMParameter::ge)
+        .def("__le__", &CIMParameter::le)
+#  endif
         .def("__repr__", &CIMParameter::repr,
             ":returns: pretty string of the object")
         .def("tomof", &CIMParameter::tomof)
@@ -173,6 +181,7 @@ Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
     return Pegasus::CIMParameter();
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMParameter::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMParameter::type()))
@@ -195,6 +204,62 @@ int CIMParameter::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMParameter::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMParameter::type()))
+        return false;
+
+    CIMParameter &other_parameter = lmi::extract<CIMParameter&>(other);
+
+    return m_name == other_parameter.m_name &&
+        m_type == other_parameter.m_type &&
+        m_reference_class == other_parameter.m_reference_class &&
+        m_is_array == other_parameter.m_is_array &&
+        m_array_size == other_parameter.m_array_size &&
+        compare(getQualifiers(), other_parameter.getQualifiers(), Py_EQ);
+}
+
+bool CIMParameter::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMParameter::type()))
+        return false;
+
+    CIMParameter &other_parameter = lmi::extract<CIMParameter&>(other);
+
+    return m_name > other_parameter.m_name ||
+        m_type > other_parameter.m_type ||
+        m_reference_class > other_parameter.m_reference_class ||
+        m_is_array > other_parameter.m_is_array ||
+        m_array_size > other_parameter.m_array_size ||
+        compare(getQualifiers(), other_parameter.getQualifiers(), Py_GT);
+}
+
+bool CIMParameter::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMParameter::type()))
+        return false;
+
+    CIMParameter &other_parameter = lmi::extract<CIMParameter&>(other);
+
+    return m_name < other_parameter.m_name ||
+        m_type < other_parameter.m_type ||
+        m_reference_class < other_parameter.m_reference_class ||
+        m_is_array < other_parameter.m_is_array ||
+        m_array_size < other_parameter.m_array_size ||
+        compare(getQualifiers(), other_parameter.getQualifiers(), Py_LT);
+}
+
+bool CIMParameter::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMParameter::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMParameter::repr()
 {

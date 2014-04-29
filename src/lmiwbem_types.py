@@ -29,6 +29,8 @@
 #
 # ##### END LICENSE BLOCK #####
 
+import sys
+
 from datetime import datetime
 from datetime import timedelta
 from datetime import tzinfo
@@ -168,7 +170,7 @@ class CIMDateTime(CIMType) :
                     self.__datetime.microsecond, sign, offset)
 
     def __repr__ (self):
-        return "%s(%s)"%(self.__class__.__name__, `str(self)`)
+        return "%s(%s)"%(self.__class__.__name__, str(self))
 
     def __getstate__(self):
         return str(self)
@@ -186,7 +188,12 @@ class CIMDateTime(CIMType) :
 
 
 # CIM integer types
-class CIMInt(CIMType, long):
+if sys.version_info >= (3, 0):
+    # Python3 no longer uses "long" type.
+    base = int
+else:
+    base = long
+class CIMInt(CIMType, base):
     pass
 
 class Uint8(CIMInt):

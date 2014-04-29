@@ -104,7 +104,15 @@ void CIMInstance::init_type()
                 ":param NocaseDict qualifiers: Dictionary containing :py:class:`CIMQualifier`\n"
                 ":param CIMInstanceName path: Object path\n"
                 ":param list property_list: List containing strings of properties"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMInstance::cmp)
+#  else
+        .def("__eq__", &CIMInstanceName::eq)
+        .def("__gt__", &CIMInstanceName::gt)
+        .def("__lt__", &CIMInstanceName::lt)
+        .def("__ge__", &CIMInstanceName::ge)
+        .def("__le__", &CIMInstanceName::le)
+#endif
         .def("__repr__", &CIMInstance::repr,
             ":returns: pretty string of the object")
         .def("__getitem__", &CIMInstance::getitem)
@@ -206,6 +214,7 @@ Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
     return instance;
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMInstance::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMInstance::type()))
@@ -224,6 +233,56 @@ int CIMInstance::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMInstance::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstance::type()))
+        return false;
+
+    CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
+
+    return m_classname == other_inst.m_classname &&
+        compare(getPath(), other_inst.getPath(), Py_EQ) &&
+        compare(getProperties(), other_inst.getProperties(), Py_EQ) &&
+        compare(getQualifiers(), other_inst.getQualifiers(), Py_EQ);
+}
+
+bool CIMInstance::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstance::type()))
+        return false;
+
+    CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
+
+    return m_classname > other_inst.m_classname ||
+        compare(getPath(), other_inst.getPath(), Py_GT) ||
+        compare(getProperties(), other_inst.getProperties(), Py_GT) ||
+        compare(getQualifiers(), other_inst.getQualifiers(), Py_GT);
+}
+
+bool CIMInstance::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstance::type()))
+        return false;
+
+    CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
+
+    return m_classname < other_inst.m_classname ||
+        compare(getPath(), other_inst.getPath(), Py_LT) ||
+        compare(getProperties(), other_inst.getProperties(), Py_LT) ||
+        compare(getQualifiers(), other_inst.getQualifiers(), Py_LT);
+}
+
+bool CIMInstance::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMInstance::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMInstance::repr()
 {

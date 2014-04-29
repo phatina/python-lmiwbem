@@ -59,7 +59,15 @@ void CIMClassName::init_type()
                 ":param str classname: String containing class name\n"
                 ":param str host: String containing host name\n"
                 ":param str namespace: String containing namespace name"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMClassName::cmp)
+#  else
+        .def("__eq__", &CIMClassName::eq)
+        .def("__gt__", &CIMClassName::gt)
+        .def("__lt__", &CIMClassName::lt)
+        .def("__ge__", &CIMClassName::ge)
+        .def("__le__", &CIMClassName::le)
+#  endif
         .def("__repr__", &CIMClassName::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMClassName::copy)
@@ -95,6 +103,7 @@ bp::object CIMClassName::create(
     return inst;
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMClassName::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMClassName::type()))
@@ -112,6 +121,53 @@ int CIMClassName::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMClassName::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMClassName::type()))
+        return false;
+
+    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+
+    return m_classname == other_classname.m_classname &&
+        m_namespace == other_classname.m_namespace &&
+        m_hostname  == other_classname.m_hostname;
+}
+
+bool CIMClassName::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMClassName::type()))
+        return false;
+
+    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+
+    return m_classname > other_classname.m_classname ||
+        m_namespace > other_classname.m_namespace ||
+        m_hostname  > other_classname.m_hostname;
+}
+
+bool CIMClassName::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMClassName::type()))
+        return false;
+
+    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+
+    return m_classname < other_classname.m_classname ||
+        m_namespace < other_classname.m_namespace ||
+        m_hostname  < other_classname.m_hostname;
+}
+
+bool CIMClassName::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMClassName::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMClassName::repr()
 {

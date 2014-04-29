@@ -89,7 +89,15 @@ void CIMMethod::init_type()
                 ":param str methodname: String containing the method's name\n"
                 ":param str return_type: String containing the method's return type\n"
                 ":param NocaseDict parameters: Dictionary containing method's parameters\n"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMMethod::cmp)
+#  else
+        .def("__eq__", &CIMMethod::eq)
+        .def("__gt__", &CIMMethod::gt)
+        .def("__lt__", &CIMMethod::lt)
+        .def("__ge__", &CIMMethod::ge)
+        .def("__le__", &CIMMethod::le)
+#  endif
         .def("__repr__", &CIMMethod::repr,
             ":returns: pretty string of the object")
         .def("tomof", &CIMMethod::tomof)
@@ -179,6 +187,7 @@ Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
     return method;
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMMethod::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMMethod::type()))
@@ -200,6 +209,62 @@ int CIMMethod::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMMethod::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMMethod::type()))
+        return false;
+
+    CIMMethod &other_method = lmi::extract<CIMMethod&>(other);
+
+    return m_name == other_method.m_name &&
+        m_return_type == other_method.m_return_type &&
+        m_class_origin == other_method.m_class_origin &&
+        m_propagated == other_method.m_propagated &&
+        compare(getParameters(), other_method.getParameters(), Py_EQ) &&
+        compare(getQualifiers(), other_method.getQualifiers(), Py_EQ);
+}
+
+bool CIMMethod::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMMethod::type()))
+        return false;
+
+    CIMMethod &other_method = lmi::extract<CIMMethod&>(other);
+
+    return m_name > other_method.m_name ||
+        m_return_type > other_method.m_return_type ||
+        m_class_origin > other_method.m_class_origin ||
+        m_propagated > other_method.m_propagated ||
+        compare(getParameters(), other_method.getParameters(), Py_GT) ||
+        compare(getQualifiers(), other_method.getQualifiers(), Py_GT);
+}
+
+bool CIMMethod::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMMethod::type()))
+        return false;
+
+    CIMMethod &other_method = lmi::extract<CIMMethod&>(other);
+
+    return m_name < other_method.m_name ||
+        m_return_type < other_method.m_return_type ||
+        m_class_origin < other_method.m_class_origin ||
+        m_propagated < other_method.m_propagated ||
+        compare(getParameters(), other_method.getParameters(), Py_LT) ||
+        compare(getQualifiers(), other_method.getQualifiers(), Py_LT);
+}
+
+bool CIMMethod::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMMethod::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMMethod::repr()
 {

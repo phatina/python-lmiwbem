@@ -92,7 +92,15 @@ void CIMQualifier::init_type()
                 "\tFalse otherwise"
                 ":param bool translatable: True, if the qualifier can be translated;\n"
                 "\tFalse otherwise"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMQualifier::cmp)
+#  else
+        .def("__eq__", &CIMQualifier::eq)
+        .def("__gt__", &CIMQualifier::gt)
+        .def("__lt__", &CIMQualifier::lt)
+        .def("__ge__", &CIMQualifier::ge)
+        .def("__le__", &CIMQualifier::le)
+#  endif
         .def("__repr__", &CIMQualifier::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMQualifier::copy)
@@ -181,6 +189,7 @@ Pegasus::CIMQualifier CIMQualifier::asPegasusCIMQualifier() const
         m_propagated);
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMQualifier::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMQualifier::type()))
@@ -208,6 +217,68 @@ int CIMQualifier::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMQualifier::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMQualifier::type()))
+        return false;
+
+    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+
+    return m_name == other_qualifier.m_name &&
+        m_type == other_qualifier.m_type &&
+        m_propagated == other_qualifier.m_propagated &&
+        m_overridable == other_qualifier.m_overridable &&
+        m_tosubclass == other_qualifier.m_tosubclass &&
+        m_toinstance == other_qualifier.m_toinstance &&
+        m_translatable == other_qualifier.m_translatable &&
+        compare(m_value, other_qualifier.m_value, Py_EQ);
+}
+
+bool CIMQualifier::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMQualifier::type()))
+        return false;
+
+    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+
+    return m_name > other_qualifier.m_name ||
+        m_type > other_qualifier.m_type ||
+        m_propagated > other_qualifier.m_propagated ||
+        m_overridable > other_qualifier.m_overridable ||
+        m_tosubclass > other_qualifier.m_tosubclass ||
+        m_toinstance > other_qualifier.m_toinstance ||
+        m_translatable > other_qualifier.m_translatable ||
+        compare(m_value, other_qualifier.m_value, Py_GT);
+}
+
+bool CIMQualifier::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMQualifier::type()))
+        return false;
+
+    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+
+    return m_name < other_qualifier.m_name ||
+        m_type < other_qualifier.m_type ||
+        m_propagated < other_qualifier.m_propagated ||
+        m_overridable < other_qualifier.m_overridable ||
+        m_tosubclass < other_qualifier.m_tosubclass ||
+        m_toinstance < other_qualifier.m_toinstance ||
+        m_translatable < other_qualifier.m_translatable ||
+        compare(m_value, other_qualifier.m_value, Py_LT);
+}
+
+bool CIMQualifier::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMQualifier::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 std::string CIMQualifier::repr()
 {

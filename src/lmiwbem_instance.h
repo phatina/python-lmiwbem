@@ -49,7 +49,15 @@ public:
 
     Pegasus::CIMInstance asPegasusCIMInstance();
 
+#  if PY_MAJOR_VERSION < 3
     int cmp(const bp::object &other);
+#  else
+    bool eq(const bp::object &other);
+    bool gt(const bp::object &other);
+    bool lt(const bp::object &other);
+    bool ge(const bp::object &other);
+    bool le(const bp::object &other);
+#  endif
 
     std::string repr();
     bp::object tomof();

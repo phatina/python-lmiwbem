@@ -59,8 +59,15 @@ void NocaseDict::init_type()
         .def("__setitem__", &NocaseDict::setitem)
         .def("__delitem__", &NocaseDict::delitem)
         .def("__contains__", &NocaseDict::haskey)
-        .def("__cmp__", &NocaseDict::compare)
-        .def("__eq__", &NocaseDict::equals)
+#  if PY_MAJOR_VERSION < 3
+        .def("__cmp__", &NocaseDict::cmp)
+#  else
+        .def("__eq__", &NocaseDict::eq)
+        .def("__gt__", &NocaseDict::gt)
+        .def("__lt__", &NocaseDict::lt)
+        .def("__ge__", &NocaseDict::ge)
+        .def("__le__", &NocaseDict::le)
+#  endif
         .def("__len__", &NocaseDict::len)
         .def("__repr__", &NocaseDict::repr)
         .def("keys", &NocaseDict::keys)
@@ -248,18 +255,8 @@ bp::object NocaseDict::copy()
     return inst;
 }
 
-bool NocaseDict::equals(const bp::object &other)
-{
-    lmi::extract<NocaseDict&> ext_dict(other);
-    if (!ext_dict.check())
-        return false;
-
-    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
-    return m_dict.size() == other_dict.size() &&
-        std::equal(m_dict.begin(), m_dict.end(), other_dict.begin());
-}
-
-int NocaseDict::compare(const bp::object &other)
+#  if PY_MAJOR_VERSION < 3
+int NocaseDict::cmp(const bp::object &other)
 {
     lmi::extract<NocaseDict&> ext_dict(other);
     if (!ext_dict.check())
@@ -280,6 +277,48 @@ int NocaseDict::compare(const bp::object &other)
 
     return m_dict.size() - other_dict.size();
 }
+#  else
+bool NocaseDict::eq(const bp::object &other)
+{
+    lmi::extract<NocaseDict&> ext_dict(other);
+    if (!ext_dict.check())
+        return false;
+
+    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    return m_dict.size() == other_dict.size() &&
+        std::equal(m_dict.begin(), m_dict.end(), other_dict.begin());
+}
+
+bool NocaseDict::gt(const bp::object &other)
+{
+    lmi::extract<NocaseDict&> ext_dict(other);
+    if (!ext_dict.check())
+        return false;
+
+    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    return m_dict > other_dict;
+}
+
+bool NocaseDict::lt(const bp::object &other)
+{
+    lmi::extract<NocaseDict&> ext_dict(other);
+    if (!ext_dict.check())
+        return false;
+
+    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    return m_dict < other_dict;
+}
+
+bool NocaseDict::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool NocaseDict::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 // ----------------------------------------------------------------------------
 

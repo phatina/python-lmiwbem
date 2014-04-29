@@ -80,7 +80,15 @@ void CIMInstanceName::init_type()
                 "\t of the object path\n"
                 ":param str host: String containing hostname of the object path\n"
                 ":param str namespace: String containing namespace of the object path"))
+#  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMInstanceName::cmp)
+#  else
+        .def("__eq__", &CIMInstanceName::eq)
+        .def("__gt__", &CIMInstanceName::gt)
+        .def("__lt__", &CIMInstanceName::lt)
+        .def("__ge__", &CIMInstanceName::ge)
+        .def("__le__", &CIMInstanceName::le)
+#  endif
         .def("__str__", &CIMInstanceName::str,
             ":returns: serialized object\n"
             ":rtype: str")
@@ -176,7 +184,12 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
             continue;
         }
 
-        if (islong(it->second) || isfloat(it->second) || isint(it->second)) {
+        if (isint(it->second) ||
+#  if PY_MAJOR_VERSION < 3
+            islong(it->second) ||
+#  endif
+            isfloat(it->second))
+        {
             // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
             // are derived from long or float, so we get here.
             arr_keybindings.append(
@@ -220,6 +233,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
         arr_keybindings);
 }
 
+#  if PY_MAJOR_VERSION < 3
 int CIMInstanceName::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMInstanceName::type()))
@@ -238,6 +252,56 @@ int CIMInstanceName::cmp(const bp::object &other)
 
     return 0;
 }
+#  else
+bool CIMInstanceName::eq(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstanceName::type()))
+        return false;
+
+    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+
+    return m_classname == other_inst_name.m_classname &&
+        m_namespace == other_inst_name.m_namespace &&
+        m_hostname  == other_inst_name.m_hostname  &&
+        compare(m_keybindings, other_inst_name.m_keybindings, Py_EQ);
+}
+
+bool CIMInstanceName::gt(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstanceName::type()))
+        return false;
+
+    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+
+    return m_classname > other_inst_name.m_classname ||
+        m_namespace > other_inst_name.m_namespace ||
+        m_hostname  > other_inst_name.m_hostname  ||
+        compare(m_keybindings, other_inst_name.m_keybindings, Py_GT);
+}
+
+bool CIMInstanceName::lt(const bp::object &other)
+{
+    if (!isinstance(other, CIMInstanceName::type()))
+        return false;
+
+    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+
+    return m_classname < other_inst_name.m_classname ||
+        m_namespace < other_inst_name.m_namespace ||
+        m_hostname  < other_inst_name.m_hostname  ||
+        compare(m_keybindings, other_inst_name.m_keybindings, Py_LT);
+}
+
+bool CIMInstanceName::ge(const bp::object &other)
+{
+    return gt(other) || eq(other);
+}
+
+bool CIMInstanceName::le(const bp::object &other)
+{
+    return lt(other) || eq(other);
+}
+#  endif
 
 bp::object CIMInstanceName::copy()
 {

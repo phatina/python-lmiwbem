@@ -114,6 +114,7 @@ private:
 std::string object_as_std_string(const bp::object &obj);
 
 std::string pystring_as_std_string(const bp::object &obj);
+std::string pystring_as_std_string(const bp::object &obj, bool &good);
 bp::object  std_string_as_pyunicode(const std::string &str);
 
 bp::object this_module();
@@ -121,15 +122,21 @@ bp::object incref(const bp::object &obj);
 
 bool isnone(const bp::object &obj);
 bool isinstance(const bp::object &inst, const bp::object &cls);
-bool isstring(const bp::object &obj);
 bool isunicode(const bp::object &obj);
 bool isbasestring(const bp::object &obj);
 bool isbool(const bp::object &obj);
+#  if PY_MAJOR_VERSION < 3
+bool isstring(const bp::object &obj);
 bool isint(const bp::object &obj);
+#  endif
 bool islong(const bp::object &obj);
 bool isfloat(const bp::object &obj);
 bool iscallable(const bp::object &obj);
 
+#  if PY_MAJOR_VERSION < 3
 int compare(const bp::object &o1, const bp::object &o2);
+#  else
+bool compare(const bp::object &o1, const bp::object &o2, int cmp_type);
+#  endif
 
 #endif // LMIWBEM_UTIL_H

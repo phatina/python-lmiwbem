@@ -47,21 +47,7 @@ extract<std::string>::extract(const bp::object &obj)
 
 void extract<std::string>::convert()
 {
-    if (isunicode(m_obj)) {
-        m_str = std::string(
-            PyString_AsString(
-                PyUnicode_EncodeUTF8(
-                    PyUnicode_AsUnicode(m_obj.ptr()),
-                    PyUnicode_GetSize(m_obj.ptr()),
-                    NULL
-                )
-            )
-        );
-    } else if (isstring(m_obj)) {
-        m_str = std::string(PyString_AsString(m_obj.ptr()));
-    } else {
-        m_good = false;
-    }
+    m_str = pystring_as_std_string(m_obj, m_good);
 }
 
 template <>
