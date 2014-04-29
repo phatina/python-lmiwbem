@@ -157,22 +157,22 @@ void CIMIndicationListener::start(
             trust_store, "trust_store");
     }
 
-    if (!std_cert_file.empty()) {
-        // Pegasus::SSLContext will be freed by Pegasus::CIMListener
-        Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
-            Pegasus::String(std_trust_store.c_str()),
-            Pegasus::String(std_cert_file.c_str()),
-            Pegasus::String(std_key_file.c_str()),
-            Pegasus::String::EMPTY, // CRL path
-            NULL, // verification callback
-            Pegasus::String::EMPTY);
-
-        m_listener->setSSLContext(ctx);
-    }
-
-    m_listener->addConsumer(&m_consumer);
-
     try {
+        if (!std_cert_file.empty()) {
+            // Pegasus::SSLContext will be freed by Pegasus::CIMListener
+            Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
+                Pegasus::String(std_trust_store.c_str()),
+                Pegasus::String(std_cert_file.c_str()),
+                Pegasus::String(std_key_file.c_str()),
+                Pegasus::String::EMPTY, // CRL path
+                NULL, // verification callback
+                Pegasus::String::EMPTY);
+
+            m_listener->setSSLContext(ctx);
+        }
+
+        m_listener->addConsumer(&m_consumer);
+
         m_listener->start();
     } catch (...) {
         // We couldn't start CIMIndicationListener, free the instance
