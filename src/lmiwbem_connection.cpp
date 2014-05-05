@@ -191,6 +191,9 @@ void WBEMConnection::init_type()
             &WBEMConnection::getDefaultNamespace,
             &WBEMConnection::setDefaultNamespace,
             "Property storing default CIM namespace used for CIM operations.")
+        .add_property("creds",
+            &WBEMConnection::getCredentials,
+            "Property returning user credentials")
         .def("CreateInstance", &WBEMConnection::createInstance,
             (bp::arg("NewInstance")),
             "Creates a new CIM instance and returns its instance name.\n\n"
@@ -642,6 +645,11 @@ void WBEMConnection::disconnectTmp()
 void WBEMConnection::setDefaultNamespace(const bp::object &ns)
 {
     m_default_namespace = lmi::extract_or_throw<std::string>(ns, "default_namespace");
+}
+
+bp::object WBEMConnection::getCredentials() const
+{
+    return bp::make_tuple(m_username, m_password);
 }
 
 bp::object WBEMConnection::createInstance(const bp::object &instance)
