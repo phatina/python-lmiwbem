@@ -55,10 +55,8 @@ CIMInstanceName::CIMInstanceName(
     }
     if (isnone(keybindings))
         m_keybindings = NocaseDict::create();
-    else if (lmi::extract<bp::dict>(keybindings).check())
-        m_keybindings = NocaseDict::create(keybindings);
     else
-        m_keybindings = lmi::get_or_throw<NocaseDict>(keybindings, "keybindings");
+        m_keybindings = NocaseDict::create(keybindings);
 }
 
 void CIMInstanceName::init_type()

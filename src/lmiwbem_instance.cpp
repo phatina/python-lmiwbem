@@ -59,10 +59,8 @@ CIMInstance::CIMInstance(
     // We store properties in NocaseDict. Convert python's dict, if necessary.
     if (isnone(properties))
         m_properties = NocaseDict::create();
-    else if (lmi::extract<bp::dict>(properties).check())
-        m_properties = NocaseDict::create(properties);
     else
-        m_properties = lmi::get_or_throw<NocaseDict>(properties, "properties");
+        m_properties = NocaseDict::create(properties);
 
     // Convert plain values
     NocaseDict &prop_dict = lmi::extract<NocaseDict&>(m_properties);
@@ -75,10 +73,8 @@ CIMInstance::CIMInstance(
     // We store qualifiers in NocaseDict. Convert python's dict, if necessary.
     if (isnone(qualifiers))
         m_qualifiers = NocaseDict::create();
-    else if (lmi::extract<bp::dict>(qualifiers).check())
-        m_qualifiers = NocaseDict::create(qualifiers);
     else
-        m_qualifiers = lmi::get_or_throw<NocaseDict>(qualifiers, "qualifiers");
+        m_qualifiers = NocaseDict::create(qualifiers);
 
     m_path = lmi::get_or_throw<CIMInstanceName, bp::object>(path, "path");
     m_property_list = lmi::get_or_throw<bp::list, bp::object>(property_list, "property_list");

@@ -56,17 +56,15 @@ CIMMethod::CIMMethod(
     m_class_origin = lmi::extract_or_throw<std::string>(class_origin, "class_origin");
     m_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
 
-    lmi::extract<bp::dict> ext_parameters(parameters);
-    if (ext_parameters.check())
+    if (isnone(parameters))
+        m_parameters = NocaseDict::create();
+    else
         m_parameters = NocaseDict::create(parameters);
-    else
-        m_parameters = lmi::get_or_throw<NocaseDict>(parameters, "parameters");
 
-    lmi::extract<bp::dict> ext_qualifiers(qualifiers);
-    if (ext_qualifiers.check())
-        m_qualifiers = NocaseDict::create(qualifiers);
+    if (isnone(qualifiers))
+        m_qualifiers = NocaseDict::create();
     else
-        m_qualifiers = lmi::get_or_throw<NocaseDict>(qualifiers, "qualifiers");
+        m_qualifiers = NocaseDict::create(qualifiers);
 }
 
 void CIMMethod::init_type()
