@@ -197,8 +197,8 @@ bool NocaseDict::haskey(const bp::object &key)
 void NocaseDict::update(const bp::object &d)
 {
     lmi::extract<NocaseDict&> ext_nocasedict(d);
-    if (ext_nocasedict.check()) {
-        NocaseDict &nocasedict = ext_nocasedict;
+    if (isinstance(d, NocaseDict::type())) {
+        NocaseDict &nocasedict = lmi::extract<NocaseDict&>(d);
         // Update from NocaseDict
         nocase_map_t::iterator it;
         for (it = nocasedict.m_dict.begin(); it != nocasedict.m_dict.end(); ++it) {
@@ -209,9 +209,9 @@ void NocaseDict::update(const bp::object &d)
                 ret.first->second = it->second;
             }
         }
-    } else {
+    } else if (isdict(d)) {
         // Update from boost::python::dict
-        bp::dict dict = lmi::extract_or_throw<bp::dict>(d, "d");
+        bp::dict dict = lmi::extract<bp::dict>(d);
         const bp::list &keys = dict.keys();
         const ssize_t len = bp::len(keys);
         for (int i = 0; i < len; ++i) {
@@ -219,6 +219,8 @@ void NocaseDict::update(const bp::object &d)
             std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
             m_dict[std_key] = dict[key];
         }
+    } else {
+        throw_TypeError("NocaseDict can be updated from NocaseDict or dict");
     }
 }
 

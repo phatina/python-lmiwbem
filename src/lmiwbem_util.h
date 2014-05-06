@@ -131,6 +131,7 @@ bool isint(const bp::object &obj);
 #  endif
 bool islong(const bp::object &obj);
 bool isfloat(const bp::object &obj);
+bool isdict(const bp::object &obj);
 bool iscallable(const bp::object &obj);
 
 #  if PY_MAJOR_VERSION < 3

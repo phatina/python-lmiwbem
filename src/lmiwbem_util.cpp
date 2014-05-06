@@ -266,6 +266,11 @@ bool isfloat(const bp::object &obj)
     return static_cast<bool>(PyFloat_Check(obj.ptr()));
 }
 
+bool isdict(const bp::object &obj)
+{
+    return PyDict_Check(obj.ptr());
+}
+
 bool iscallable(const bp::object &obj)
 {
     return static_cast<bool>(PyCallable_Check(obj.ptr()));
