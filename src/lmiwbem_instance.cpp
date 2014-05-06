@@ -187,10 +187,12 @@ bp::object CIMInstance::create(const Pegasus::CIMObject &object)
 Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
 {
     Pegasus::CIMInstance instance(Pegasus::CIMName(m_classname.c_str()));
-    const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
 
-    // Set CIMObjectPath
-    instance.setPath(path.asPegasusCIMObjectPath());
+    if (!isnone(getPath())) {
+        // Set CIMObjectPath
+        const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
+        instance.setPath(path.asPegasusCIMObjectPath());
+    }
 
     // Add all the properties
     const NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());

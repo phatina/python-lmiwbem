@@ -655,11 +655,17 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
 {
     CIMInstance &inst = lmi::extract_or_throw<CIMInstance&>(
         instance, "NewInstance");
-    CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(
-        inst.getPath());
+
+    std::string std_hostname;
+    std::string std_ns(m_default_namespace);
+    if (!isnone(inst.getPath())) {
+        CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(inst.getPath());
+        std_hostname = inst_name.getHostname();
+        std_ns = inst_name.getNamespace();
+    }
 
     Pegasus::CIMObjectPath new_inst_name;
-    Pegasus::CIMNamespaceName new_inst_name_ns(inst_name.getNamespace().c_str());
+    Pegasus::CIMNamespaceName new_inst_name_ns(std_ns.c_str());
     try {
         ScopedMutex sm(m_mutex);
         connectTmp();
@@ -674,8 +680,8 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
     // CIMClient::createInstance() does not set namespace and hostname
     // in newly created CIMInstanceName. We need to do that manually.
     new_inst_name.setNameSpace(
-        Pegasus::CIMNamespaceName(inst_name.getNamespace().c_str()));
-    new_inst_name.setHost(inst_name.getHostname().c_str());
+        Pegasus::CIMNamespaceName(std_ns.c_str()));
+    new_inst_name.setHost(std_hostname.c_str());
 
     return CIMInstanceName::create(new_inst_name);
 }
