@@ -140,6 +140,12 @@ bool isfloat(const bp::object &obj);
 bool isdict(const bp::object &obj);
 bool iscallable(const bp::object &obj);
 
+bool cim_issubclass(
+    const bp::object &ch,
+    const bp::object &ns,
+    const bp::object &superclass,
+    const bp::object &subclass);
+
 #  if PY_MAJOR_VERSION < 3
 int compare(const bp::object &o1, const bp::object &o2);
 #  else

@@ -20,6 +20,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <algorithm>
 #include <cstring>
 #include <boost/python/borrowed.hpp>
 #include <boost/python/handle.hpp>
@@ -28,7 +29,9 @@
 #include <Pegasus/Common/CIMType.h>
 #include "lmiwbem.h"
 #include "lmiwbem_class.h"
+#include "lmiwbem_connection.h"
 #include "lmiwbem_extract.h"
+#include "lmiwbem_class.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
 #include "lmiwbem_types.h"
@@ -304,6 +307,62 @@ bool isdict(const bp::object &obj)
 bool iscallable(const bp::object &obj)
 {
     return static_cast<bool>(PyCallable_Check(obj.ptr()));
+}
+
+bool cim_issubclass(
+    const bp::object &ch,
+    const bp::object &ns,
+    const bp::object &superclass,
+    const bp::object &subclass)
+{
+    WBEMConnection &conn = lmi::extract_or_throw<WBEMConnection&>(ch, "ch");
+    std::string std_ns = lmi::extract_or_throw<std::string>(ns, "ns");
+    std::string std_superclass = lmi::extract_or_throw<std::string>(
+        superclass, "superclass");
+
+    std::string std_subclass;
+    std::string std_subsuperclass;
+    std::string std_lsubclass;
+    std::string std_lsuperclass(std_superclass);
+    std::transform(std_lsuperclass.begin(), std_lsuperclass.end(),
+        std_lsuperclass.begin(), ::tolower);
+
+    if (isinstance(subclass, CIMClass::type())) {
+        const CIMClass &cim_subclass = lmi::extract<CIMClass&>(subclass);
+        std_subclass = cim_subclass.getClassname();
+        std_subsuperclass = cim_subclass.getSuperClassname();
+    } else {
+        std_subclass = lmi::extract_or_throw<std::string>(subclass, "subclass");
+    }
+
+    while (1) {
+        // Matching is case insensitive.
+        std_lsubclass = std_subclass;
+        std::transform(std_lsubclass.begin(), std_lsubclass.end(),
+            std_lsubclass.begin(), ::tolower);
+
+        if (std_lsubclass == std_lsuperclass) {
+            // Do subclass and superclass match?
+            return true;
+        } else if (std_subsuperclass.empty()) {
+            // Get minimal subclass.
+            bp::object cls = conn.getClass(bp::str(std_subclass.c_str()),
+                bp::str(std_ns.c_str()), true, false, false, bp::list());
+
+            const CIMClass &cim_subclass = lmi::extract<CIMClass&>(cls);
+            std_subsuperclass = cim_subclass.getSuperClassname();
+        }
+
+        if (std_subsuperclass.empty()) {
+            // We got a CIMClass without super class.
+            return false;
+        }
+
+        std_subclass = std_subsuperclass;
+        std_subsuperclass.clear();
+    }
+
+    return false;
 }
 
 #  if PY_MAJOR_VERSION < 3

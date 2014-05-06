@@ -33,6 +33,7 @@ BOOST_PYTHON_END
 class CIMInstance;
 class CIMInstanceName;
 class NocaseDict;
+class WBEMConnection;
 
 namespace bp = boost::python;
 
@@ -57,8 +58,10 @@ DEF_TYPE_NAME(bool);
 DEF_TYPE_NAME(int);
 DEF_TYPE_NAME(CIMInstance);
 DEF_TYPE_NAME(CIMInstanceName);
+DEF_TYPE_NAME(WBEMConnection);
 DEF_TYPE_NAME_TYPE(CIMInstance&, CIMInstance);
 DEF_TYPE_NAME_TYPE(CIMInstanceName&, CIMInstanceName);
+DEF_TYPE_NAME_TYPE(WBEMConnection&, WBEMConnection);
 DEF_TYPE_NAME(NocaseDict);
 DEF_TYPE_NAME_TYPE(bp::dict, dict);
 DEF_TYPE_NAME_TYPE(bp::list, list);

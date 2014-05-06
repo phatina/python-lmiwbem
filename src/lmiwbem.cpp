@@ -20,6 +20,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <boost/python/def.hpp>
 #include <boost/python/docstring_options.hpp>
 #include <boost/python/exception_translator.hpp>
 #include <boost/python/handle.hpp>
@@ -85,6 +86,16 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     PegasusCIMDateteTimeToPythonDateTime::register_converter();
     PegasusChar16ToPythonUint16::register_converter();
     PegasusCIMObjectPathToPythonCIMInstanceName::register_converter();
+
+    // Initialize module functions
+    def("is_subclass",
+        cim_issubclass,
+        "Determine if one class is a subclass of another one.\n\n"
+        ":param WBEMConnection ch: CIMOM handle\n"
+        ":param string ns: namespace where to look for :py:class:`CIMClass`-es\n"
+        ":param string superclass: super class name\n"
+        ":param subclass: either string containing sub class name of\n"
+        "\t:py:class:`CIMClass` instance");
 
     // Initialize Python classes
     MinutesFromUTC::init_type();
