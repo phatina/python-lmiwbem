@@ -94,12 +94,12 @@ void CIMClass::init_type()
             ":returns: pretty string of the object")
         .def("copy", &CIMClass::copy)
         .add_property("classname",
-            &CIMClass::m_classname,
+            &CIMClass::getClassname,
             &CIMClass::setClassname,
             "Property storing class name.\n\n"
             ":returns: string of the class name")
         .add_property("superclass",
-            &CIMClass::m_super_classname,
+            &CIMClass::getSuperClassname,
             &CIMClass::setSuperClassname,
             "Property storing super-class name.\n\n"
             ":returns: string containing super-class name")

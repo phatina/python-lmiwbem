@@ -62,6 +62,8 @@ public:
 
     bp::object copy();
 
+    std::string getClassname() const { return m_classname; }
+    std::string getSuperClassname() const { return m_super_classname; }
     bp::object getProperties();
     bp::object getQualifiers();
     bp::object getMethods();
