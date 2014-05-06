@@ -48,7 +48,7 @@ WBEMConnection::WBEMConnection(
     const bp::object &creds,
     const bp::object &x509,
     const bp::object &default_namespace,
-    const bp::object &verify_server_cert,
+    const bp::object &no_verification,
     const bp::object &connect_locally)
     : m_connected_tmp(false)
     , m_connect_locally(false)
@@ -94,9 +94,8 @@ WBEMConnection::WBEMConnection(
         }
     }
 
-    bool verify = lmi::extract_or_throw<bool>(
-        verify_server_cert,
-        "verify_server_cert");
+    bool verify = lmi::extract_or_throw<bool>(no_verification,
+        "no_verification");
     m_client.setVerifyCertificate(verify);
 
     if (!isnone(default_namespace)) {
@@ -129,7 +128,7 @@ void WBEMConnection::init_type()
                 bp::arg("creds") = bp::object(),
                 bp::arg("x509") = bp::object(),
                 bp::arg("default_namespace") = bp::object(),
-                bp::arg("verify_server_cert") = true,
+                bp::arg("no_verification") = false,
                 bp::arg("connect_locally") = false),
                 "Constructs :py:class:`WBEMConnection` object.\n\n"
                 ":param str url: String containing URL of CIMOM instance\n"
@@ -139,8 +138,8 @@ void WBEMConnection::init_type()
                 "\tThe value of 'cert_file' must be string specifying a filename of\n"
                 "\tcertificate and the value of 'key_file' must be string specifying\n"
                 "\ta filename of private key belonging to the certificate.\n"
-                ":param bool verify_certificate: set to True, if CIMOM's X509 certificate\n"
-                "\t shall be verified; False otherwise. Default value is True.\n"
+                ":param bool no_verification: set to True, if CIMOM's X509 certificate\n"
+                "\t shall not be verified; False otherwise. Default value is False.\n"
                 ":param bool connect_locally: if True, Unix socket will be\n"
                 "\tused. Default value is False.\n"))
         .def("connect", &WBEMConnection::connect,
@@ -149,14 +148,14 @@ void WBEMConnection::init_type()
              bp::arg("password") = bp::object(),
              bp::arg("cert_file") = bp::object(),
              bp::arg("key_file") = bp::object(),
-             bp::arg("verify_certificate") = bp::object()
+             bp::arg("no_verification") = bp::object()
             ),
             "Connects to CIMOM.\n\n"
             ":param str url: String containing url of remote CIMOM.\n"
             ":param str username: String containing username for authentication.\n"
             ":param str password: String containing password for authentication.\n"
-            ":param bool verify_certificate: set to True, if CIMOM's X509 certificate\n"
-            "\t shall be verified; False otherwise. Default value is True.\n"
+            ":param bool no_verification: set to True, if CIMOM's X509 certificate\n"
+            "\t shall not be verified; False otherwise. Default value is False.\n"
             ":raises: :py:exc:`ConnectionError`")
         .def("connectLocally", &WBEMConnection::connectLocally,
             "Connect to CIMOM using local Unix socket.\n\n"
@@ -172,7 +171,7 @@ void WBEMConnection::init_type()
             &WBEMConnection::getHostname,
             "Property returning CIMOM hostname.\n\n"
             ":rtype: str")
-        .add_property("verify_certificate",
+        .add_property("no_verification",
             &WBEMConnection::getVerifyCertificate,
             &WBEMConnection::setVerifyCertificate,
             "Property storing X509 certificate verification flag.\n\n"
@@ -547,7 +546,7 @@ void WBEMConnection::connect(
     const bp::object &password,
     const bp::object &cert_file,
     const bp::object &key_file,
-    const bp::object &verify_cert)
+    const bp::object &no_verification)
 {
     // If we have local connection flag set, disregard other parameters and
     // perform socket connection.
@@ -581,9 +580,9 @@ void WBEMConnection::connect(
     if (std_url.empty())
         throw_ValueError("url parameter missing");
 
-    if (!isnone(verify_cert)) {
-        bool verify = lmi::extract_or_throw<bool>(verify_cert, "verify_certificate");
-        m_client.setVerifyCertificate(verify);
+    if (!isnone(no_verification)) {
+        bool no_verify = lmi::extract_or_throw<bool>(no_verification, "no_verification");
+        m_client.setVerifyCertificate(!no_verify);
     }
 
     try {

@@ -44,7 +44,7 @@ public:
         const bp::object &creds,
         const bp::object &x509,
         const bp::object &default_namespace,
-        const bp::object &verify_server_cert,
+        const bp::object &no_verification,
         const bp::object &connect_locally);
     ~WBEMConnection();
 
@@ -56,7 +56,7 @@ public:
         const bp::object &password,
         const bp::object &cert_file,
         const bp::object &key_file,
-        const bp::object &verify_cert);
+        const bp::object &no_verification);
     void connectLocally();
     void disconnect();
     bool isConnected() const { return m_client.isConnected(); }
@@ -65,8 +65,8 @@ public:
     void connectTmp();
     void disconnectTmp();
 
-    bool getVerifyCertificate() { return m_client.getVerifyCertificate(); }
-    void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(verify_cert); }
+    bool getVerifyCertificate() { return !m_client.getVerifyCertificate(); }
+    void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(!verify_cert); }
     bool getConnectLocally() const { return m_connect_locally; }
     void setConnectLocally(bool connect_locally) { m_connect_locally = connect_locally; }
     unsigned int getTimeout() const { return m_client.getTimeout(); }
