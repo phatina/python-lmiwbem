@@ -20,6 +20,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <cstring>
 #include <boost/python/borrowed.hpp>
 #include <boost/python/handle.hpp>
 #include <boost/python/list.hpp>
@@ -159,6 +160,35 @@ bp::object std_string_as_pyunicode(const std::string &str)
     return bp::object(bp::handle<>(PyUnicode_FromString(str.c_str())));
 }
 
+bp::object std_string_as_pybool(const std::string &str)
+{
+    long int b = strtol(str.c_str(), NULL, 10);
+    return bp::object(bp::handle<>(PyBool_FromLong(b)));
+}
+
+bp::object std_string_as_pyint(const std::string &str)
+{
+    char *s = strdup(str.c_str());
+    bp::object pyint(bp::handle<>(PyInt_FromString(s, NULL, 10)));
+    free(static_cast<void*>(s));
+    return pyint;
+}
+
+bp::object std_string_as_pyfloat(const std::string &str)
+{
+    double d = strtod(str.c_str(), NULL);
+    return bp::object(bp::handle<>(PyFloat_FromDouble(d)));
+}
+
+#  if PY_MAJOR_VERSION < 3
+bp::object std_string_as_pylong(const std::string &str)
+{
+    char *s = strdup(str.c_str());
+    bp::object pylong(bp::handle<>(PyLong_FromString(s, NULL, 10)));
+    free(static_cast<void*>(s));
+    return pylong;
+}
+#  endif
 
 DEFINE_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String)
 {

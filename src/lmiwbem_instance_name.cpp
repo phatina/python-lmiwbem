@@ -128,6 +128,11 @@ void CIMInstanceName::init_type()
             ":rtype: :py:class:`NocaseDict`"));
 }
 
+bp::object CIMInstanceName::create(const Pegasus::String &obj_path)
+{
+    return create(Pegasus::CIMObjectPath(obj_path));
+}
+
 bp::object CIMInstanceName::create(
     const Pegasus::CIMObjectPath &obj_path,
     const std::string &ns,
@@ -151,9 +156,8 @@ bp::object CIMInstanceName::create(
             std_string_as_pyunicode(
                 std::string(keybinding.getName().getString().getCString()))
         );
-        bp::object value(
-            std_string_as_pyunicode(std::string(keybinding.getValue().getCString()))
-        );
+
+        bp::object value = keybindingToValue(keybinding);
 
         fake_this.m_keybindings[name] = value;
     }
@@ -412,4 +416,35 @@ void CIMInstanceName::setHostname(const bp::object &hostname)
 void CIMInstanceName::setKeybindings(const bp::object &keybindings)
 {
     m_keybindings = lmi::get_or_throw<NocaseDict, bp::dict>(keybindings);
+}
+
+bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keybinding)
+{
+    bp::object value;
+
+    const Pegasus::String cim_value = keybinding.getValue();
+    switch (keybinding.getType()) {
+    case Pegasus::CIMKeyBinding::BOOLEAN:
+        return std_string_as_pybool(std::string(cim_value.getCString()));
+    case Pegasus::CIMKeyBinding::STRING:
+        return std_string_as_pyunicode(std::string(cim_value.getCString()));
+    case Pegasus::CIMKeyBinding::NUMERIC: {
+        bp::object num;
+        if (!isnone(num = std_string_as_pyint(std::string(cim_value.getCString())))  ||
+#  if PY_MAJOR_VERSION < 3
+            !isnone(num = std_string_as_pylong(std::string(cim_value.getCString()))) ||
+#  endif
+            !isnone(num = std_string_as_pyfloat(std::string(cim_value.getCString()))))
+        {
+            return num;
+        }
+
+        throw_TypeError("Wrong keybinding numeric type");
+        return bp::object();
+    }
+    case Pegasus::CIMKeyBinding::REFERENCE:
+        return CIMInstanceName::create(cim_value);
+    }
+
+    return value;
 }

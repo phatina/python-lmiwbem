@@ -40,6 +40,7 @@ public:
         const bp::object &ns);
 
     static void init_type();
+    static bp::object create(const Pegasus::String &obj_path);
     static bp::object create(
         const Pegasus::CIMObjectPath &obj_path,
         const std::string &ns = std::string(),
@@ -87,6 +88,8 @@ public:
     void setKeybindings(const bp::object &keybindings);
 
 private:
+    static bp::object keybindingToValue(const Pegasus::CIMKeyBinding &keybinding);
+
     std::string m_classname;
     std::string m_namespace;
     std::string m_hostname;

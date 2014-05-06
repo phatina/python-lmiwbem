@@ -116,6 +116,12 @@ std::string object_as_std_string(const bp::object &obj);
 std::string pystring_as_std_string(const bp::object &obj);
 std::string pystring_as_std_string(const bp::object &obj, bool &good);
 bp::object  std_string_as_pyunicode(const std::string &str);
+bp::object  std_string_as_pybool(const std::string &str);
+bp::object  std_string_as_pyint(const std::string &str);
+bp::object  std_string_as_pyfloat(const std::string &str);
+#  if PY_MAJOR_VERSION < 3
+bp::object  std_string_as_pylong(const std::string &str);
+#  endif
 
 bp::object this_module();
 bp::object incref(const bp::object &obj);
