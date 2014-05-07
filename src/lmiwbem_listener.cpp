@@ -115,8 +115,8 @@ void CIMIndicationListener::init_type()
             .def("start",  &CIMIndicationListener::start,
                 (bp::arg("port"),
                  bp::arg("cert_file") = bp::object(),
-                 bp::arg("key_file") = bp::object()),
-                 bp::arg("trust_store") = bp::object())
+                 bp::arg("key_file") = bp::object(),
+                 bp::arg("trust_store") = bp::object()))
             .def("stop", &CIMIndicationListener::stop)
             .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
             .def("remove_handler", &CIMIndicationListener::removeHandler)
