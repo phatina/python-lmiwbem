@@ -46,6 +46,12 @@ bp::object getPegasusValueCore<Pegasus::CIMObject>(const Pegasus::CIMObject &val
     return incref(CIMInstance::create(value));
 }
 
+template<>
+bp::object getPegasusValueCore<Pegasus::String>(const Pegasus::String &value)
+{
+    return incref(std_string_as_pyunicode(std::string(value.getCString())));
+}
+
 // We could not use to_python converters here.
 #define DEF_PEGASUS_VALUE_CORE(type) \
     template<> \
