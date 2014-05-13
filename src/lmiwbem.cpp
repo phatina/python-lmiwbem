@@ -22,7 +22,6 @@
 #include <config.h>
 #include <boost/python/def.hpp>
 #include <boost/python/docstring_options.hpp>
-#include <boost/python/exception_translator.hpp>
 #include <boost/python/handle.hpp>
 #include <boost/python/module.hpp>
 #include <boost/python/object.hpp>
@@ -50,11 +49,6 @@ namespace bp = boost::python;
 bp::object CIMError;
 bp::object ConnectionError;
 
-inline void translatePegasusCannotConnectException(const Pegasus::CannotConnectException &e)
-{
-    PyErr_SetString(ConnectionError.ptr(), e.getMessage().getCString());
-}
-
 BOOST_PYTHON_MODULE(lmiwbem_core) {
     // Initialize Python threads
     PyEval_InitThreads();
@@ -74,11 +68,6 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     // Fill module's dictionary with exceptions
     bp::scope().attr("CIMError") = CIMError;
     bp::scope().attr("ConnectionError") = ConnectionError;
-
-    // Register exception translator
-    bp::register_exception_translator
-        <Pegasus::CannotConnectException>
-        (translatePegasusCannotConnectException);
 
     // Register type converts
     PegasusStringToPythonString::register_converter();

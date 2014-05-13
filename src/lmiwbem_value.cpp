@@ -217,7 +217,7 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
     case Pegasus::CIMTYPE_INSTANCE:
         return getPegasusValue<Pegasus::CIMInstance>(value);
     default:
-        PyErr_SetString(PyExc_TypeError, "Unknown CIMValue type");
+        throw_TypeError("Unknown CIMValue type");
         bp::throw_error_already_set();
         return bp::object();
     }
