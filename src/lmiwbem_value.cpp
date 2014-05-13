@@ -47,6 +47,12 @@ bp::object getPegasusValueCore<Pegasus::CIMObject>(const Pegasus::CIMObject &val
 }
 
 template<>
+bp::object getPegasusValueCore<Pegasus::CIMInstance>(const Pegasus::CIMInstance &value)
+{
+    return incref(CIMInstance::create(value));
+}
+
+template<>
 bp::object getPegasusValueCore<Pegasus::String>(const Pegasus::String &value)
 {
     return incref(std_string_as_pyunicode(std::string(value.getCString())));
@@ -208,6 +214,8 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
         return getPegasusValue<Pegasus::CIMObjectPath>(value);
     case Pegasus::CIMTYPE_OBJECT:
         return getPegasusValue<Pegasus::CIMObject>(value);
+    case Pegasus::CIMTYPE_INSTANCE:
+        return getPegasusValue<Pegasus::CIMInstance>(value);
     default:
         PyErr_SetString(PyExc_TypeError, "Unknown CIMValue type");
         bp::throw_error_already_set();
