@@ -43,6 +43,36 @@
 
 namespace bp = boost::python;
 
+WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
+    : m_conn(conn)
+    , m_conn_orig_state(m_conn->m_client.isConnected())
+{
+    if (m_conn_orig_state)
+        return;
+    else if (m_conn->m_connect_locally)
+        m_conn->m_client.connectLocally();
+    else if (m_conn->m_url.empty())
+        throw_ValueError("WBEMConnection constructed without url parameter");
+
+    try {
+        m_conn->m_client.connect(
+            Pegasus::String(m_conn->m_url.c_str()),
+            Pegasus::String(m_conn->m_username.c_str()),
+            Pegasus::String(m_conn->m_password.c_str()),
+            Pegasus::String(m_conn->m_cert_file.c_str()),
+            Pegasus::String(m_conn->m_key_file.c_str()),
+            Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
+    } catch (...) {
+        handle_all_exceptions();
+    }
+}
+
+WBEMConnection::ScopedConnection::~ScopedConnection()
+{
+    if (!m_conn_orig_state)
+        m_conn->m_client.disconnect();
+}
+
 WBEMConnection::WBEMConnection(
     const bp::object &url,
     const bp::object &creds,
@@ -612,35 +642,6 @@ void WBEMConnection::disconnect()
     m_client.disconnect();
 }
 
-void WBEMConnection::connectTmp()
-{
-    if (m_client.isConnected() || m_connected_tmp)
-        return;
-    else if (m_connect_locally)
-        m_client.connectLocally();
-    else if (m_url.empty())
-        throw_ValueError("WBEMConnection constructed without url parameter");
-
-    m_client.connect(
-        Pegasus::String(m_url.c_str()),
-        Pegasus::String(m_username.c_str()),
-        Pegasus::String(m_password.c_str()),
-        Pegasus::String(m_cert_file.c_str()),
-        Pegasus::String(m_key_file.c_str()),
-        Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
-
-    m_connected_tmp = true;
-}
-
-void WBEMConnection::disconnectTmp()
-{
-    if (!m_connected_tmp)
-        return;
-
-    m_client.disconnect();
-    m_connected_tmp = false;
-}
-
 void WBEMConnection::setDefaultNamespace(const bp::object &ns)
 {
     m_default_namespace = lmi::extract_or_throw<std::string>(ns, "default_namespace");
@@ -668,11 +669,10 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
     Pegasus::CIMNamespaceName new_inst_name_ns(std_ns.c_str());
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         new_inst_name = m_client.createInstance(
             new_inst_name_ns,
             inst.asPegasusCIMInstance());
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -698,11 +698,10 @@ void WBEMConnection::deleteInstance(const bp::object &object_path)
 
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         m_client.deleteInstance(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -724,13 +723,12 @@ void WBEMConnection::modifyInstance(
             "PropertyList"));
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         m_client.modifyInstance(
             Pegasus::CIMNamespaceName(inst_name.getNamespace().c_str()),
             inst.asPegasusCIMInstance(),
             include_qualifiers,
             cim_property_list);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -757,7 +755,7 @@ bp::list WBEMConnection::enumerateInstances(
             "PropertyList"));
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_instances = m_client.enumerateInstances(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             Pegasus::CIMName(std_cls.c_str()),
@@ -766,7 +764,6 @@ bp::list WBEMConnection::enumerateInstances(
             include_qualifiers,
             include_class_origin,
             cim_property_list);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -793,11 +790,10 @@ bp::list WBEMConnection::enumerateInstanceNames(
     Pegasus::Array<Pegasus::CIMObjectPath> cim_instance_names;
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_instance_names = m_client.enumerateInstanceNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             Pegasus::CIMName(std_cls.c_str()));
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -848,14 +844,13 @@ bp::tuple WBEMConnection::invokeMethod(
 
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_rval = m_client.invokeMethod(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path,
             Pegasus::CIMName(std_method.c_str()),
             cim_in_params,
             cim_out_params);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -894,7 +889,7 @@ bp::object WBEMConnection::getInstance(
         Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asPegasusCIMObjectPath();
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_instance = m_client.getInstance(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_object_path,
@@ -902,7 +897,6 @@ bp::object WBEMConnection::getInstance(
             include_qualifiers,
             include_class_origin,
             cim_property_list);
-        disconnectTmp();
 
         // CIMClient::getInstance() does not set the CIMObjectPath member in
         // CIMInstance. We need to do that manually.
@@ -935,7 +929,7 @@ bp::list WBEMConnection::enumerateClasses(
     Pegasus::Array<Pegasus::CIMClass> cim_classes;
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_classes = m_client.enumerateClasses(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             classname,
@@ -943,7 +937,6 @@ bp::list WBEMConnection::enumerateClasses(
             local_only,
             include_qualifiers,
             include_class_origin);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -974,12 +967,11 @@ bp::list WBEMConnection::enumerateClassNames(
     Pegasus::Array<Pegasus::CIMName> cim_classnames;
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_classnames = m_client.enumerateClassNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             classname,
             deep_inheritance);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -1007,12 +999,11 @@ bp::list WBEMConnection::execQuery(
     Pegasus::Array<Pegasus::CIMObject> cim_instances;
     try {
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_instances = m_client.execQuery(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             Pegasus::String(std_query_lang.c_str()),
             Pegasus::String(std_query.c_str()));
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -1045,7 +1036,7 @@ bp::object WBEMConnection::getClass(
             "PropertyList"));
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_class = m_client.getClass(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             Pegasus::CIMName(std_cls.c_str()),
@@ -1053,7 +1044,6 @@ bp::object WBEMConnection::getClass(
             include_qualifiers,
             include_class_origin,
             cim_property_list);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -1113,7 +1103,7 @@ bp::list WBEMConnection::getAssociators(
             cim_result_role = std_result_role.c_str();
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_associators = m_client.associators(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path,
@@ -1124,7 +1114,6 @@ bp::list WBEMConnection::getAssociators(
             include_qualifiers,
             include_class_origin,
             cim_property_list);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -1182,7 +1171,7 @@ bp::list WBEMConnection::getAssociatorNames(
             cim_result_role = std_result_role.c_str();
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_associator_names = m_client.associatorNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path,
@@ -1190,7 +1179,6 @@ bp::list WBEMConnection::getAssociatorNames(
             cim_result_class,
             cim_role,
             cim_result_role);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -1240,7 +1228,7 @@ bp::list WBEMConnection::getReferences(
             cim_role = Pegasus::String(std_role.c_str());
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_references = m_client.references(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path,
@@ -1249,7 +1237,6 @@ bp::list WBEMConnection::getReferences(
             include_qualifiers,
             include_class_origin,
             cim_property_list);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }
@@ -1292,13 +1279,12 @@ bp::list WBEMConnection::getReferenceNames(
             cim_role = Pegasus::String(std_role.c_str());
 
         ScopedMutex sm(m_mutex);
-        connectTmp();
+        ScopedConnection sc(this);
         cim_reference_names = m_client.referenceNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
             cim_path,
             cim_result_class,
             cim_role);
-        disconnectTmp();
     } catch (...) {
         handle_all_exceptions();
     }

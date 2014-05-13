@@ -38,6 +38,20 @@ namespace bp = boost::python;
 
 class WBEMConnection
 {
+private:
+    class ScopedConnection
+    {
+    public:
+        ScopedConnection(WBEMConnection *conn);
+        ~ScopedConnection();
+
+    private:
+        WBEMConnection *m_conn;
+        bool m_conn_orig_state;
+    };
+
+    friend class ScopedConnection;
+
 public:
     WBEMConnection(
         const bp::object &url,
@@ -61,9 +75,6 @@ public:
     void disconnect();
     bool isConnected() const { return m_client.isConnected(); }
     std::string getHostname() const { return m_client.hostname(); }
-
-    void connectTmp();
-    void disconnectTmp();
 
     bool getVerifyCertificate() { return !m_client.getVerifyCertificate(); }
     void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(!verify_cert); }
