@@ -66,12 +66,21 @@ USAGE
 
 Currently supported intrinsic methods:
 
+- Associators()
+- AssociatorNames()
+- CreateInstance()
+- DeleteInstance()
 - EnumerateClassNames()
 - EnumerateClasses()
 - EnumerateInstanceNames()
 - EnumerateInstances()
+- ExecQuery()
 - GetClass()
 - GetInstance()
+- InvokeMethod()
+- ModifyInstance()
+- References()
+- ReferenceNames()
 
 **NOTE:** See the directory `examples`.
 
@@ -99,11 +108,60 @@ conn = lmiwbem.WBEMConnection("hostname", ("username", "password"))
 **NOTE:** It is not necessary to call `.disconnect()`, when using such
 structure.
 
+PERFORMANCE
+===========
+
+[LMI Meta-Command][] uses "real" world constructions in LMIShell and
+was used for benchmarking purposes.
+
+SETUP
+-----
+
+- Managed system:
+  - openlmi-account-0.4.2-2.fc21
+  - openlmi-logicalfile-0.4.2-2.fc21
+  - openlmi-hardware-0.4.2-2.fc21
+  - openlmi-networking-0.2.2-3.fc21
+  - openlmi-service-0.4.2-2.fc21
+  - openlmi-storage-0.7.1-2.fc21
+
+- Client system:
+  - openlmi-scripts-account-0.0.1-7.fc20
+  - openlmi-scripts-logicalfile-0.0.3-7.fc20
+  - openlmi-scripts-hardware-0.0.3-7.fc20
+  - openlmi-scripts-networking-0.0.2-7.fc20
+  - openlmi-scripts-service-0.1.2-7.fc20
+  - openlmi-scripts-storage-0.0.4-7.fc20
+  - lmishell with pywbem/lmiwbem
+
+RESULTS
+-------
+
+|             Command                |       PyWBEM        |      LMIWBEM        |
+|------------------------------------|---------------------|---------------------|
+| `lmi file list <dir>`              | 21662.043ms (349MB) |  6837.136ms (273MB) |
+| `lmi group list`                   |   411.938ms (241MB) |   236.245ms (267MB) |
+| `lmi hwinfo`                       |  1699.851ms (246MB) |   631.720ms (267MB) |
+| `lmi net device list`              |   697.675ms (236MB) |   348.451ms (267MB) |
+| `lmi net device show`              |  3016.917ms (246MB) |  1147.636ms (267MB) |
+| `lmi net setting list`             |   417.707ms (235MB) |   248.474ms (267MB) |
+| `lmi service list`                 | 60996.685ms (269MB) | 58527.529ms (267MB) |
+| `lmi storage show /dev/vda`        |  1790.241ms (244MB) |   843.254ms (267MB) |
+| `lmi storage tree /dev/vda`        |  3069.120ms (246MB) |   973.947ms (267MB) |
+| `lmi storage fs list`              |   854.803ms (251MB) |   487.202ms (267MB) |
+| `lmi storage mount list`           |  1503.447ms (248MB) |  1063.852ms (267MB) |
+| `lmi storage partition list`       |   523.848ms (243MB) |   278.820ms (267MB) |
+| `lmi storage partition-table list` |  1861.788ms (246MB) |   935.674ms (267MB) |
+| `lmi user list`                    |  2510.069ms (232MB) |  2175.117ms (267MB) |
+
+**NOTE:** LMIWBEM uses Boost::Python, which brings a little overhead with the
+module itself.  This can be seen in memory results.
+
 BUG REPORTS
 ===========
 
-Report bugs to [phatina@redhat.com](mailto:phatina@redhat.com) or
-[lmiwbem issues][].
+Report bugs to [phatina@redhat.com](mailto:phatina@redhat.com) or [lmiwbem issues][].
 
 [lmiwbem]: https://github.com/phatina/lmiwbem "lmiwbem repository on github"
 [lmiwbem issues]: https://github.com/phatina/lmiwbem/issues "Report a bug"
+[LMI Meta-Command]: https://git.fedorahosted.org/git/openlmi-tools.git
