@@ -47,12 +47,15 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
     : m_conn(conn)
     , m_conn_orig_state(m_conn->m_client.isConnected())
 {
-    if (m_conn_orig_state)
+    if (m_conn_orig_state) {
+        // We are already connected, nothing to do here.
         return;
-    else if (m_conn->m_connect_locally)
+    } else if (m_conn->m_connect_locally) {
         m_conn->m_client.connectLocally();
-    else if (m_conn->m_url.empty())
+        return;
+    } else if (m_conn->m_url.empty()) {
         throw_ValueError("WBEMConnection constructed without url parameter");
+    }
 
     try {
         m_conn->m_client.connect(
