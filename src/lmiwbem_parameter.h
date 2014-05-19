@@ -64,6 +64,11 @@ public:
 
     bp::object copy();
 
+    std::string getName() const { return m_name; }
+    std::string getType() const { return m_type; }
+    std::string getReferenceClass() const { return m_reference_class; }
+    bool getIsArray() const { return m_is_array; }
+    int  getArraySize() const { return m_array_size; }
     bp::object getQualifiers();
 
     void setName(const bp::object &name);
@@ -72,7 +77,6 @@ public:
     void setIsArray(const bp::object &is_array);
     void setArraySize(const bp::object &array_size);
     void setQualifiers(const bp::object &qualifiers);
-    void setValue(const bp::object &value);
 
 private:
     std::string m_name;

@@ -97,28 +97,28 @@ void CIMParameter::init_type()
         .def("tomof", &CIMParameter::tomof)
         .def("copy", &CIMParameter::copy)
         .add_property("name",
-            &CIMParameter::m_name,
+            &CIMParameter::getName,
             &CIMParameter::setName,
             "Property storing name of the parameter.\n\n"
             ":returns: string containing the parameter's name")
         .add_property("type",
-            &CIMParameter::m_type,
+            &CIMParameter::getType,
             &CIMParameter::setType,
             "Property storing type of the parameter.\n\n"
             ":returns: string containing the parameter's type")
         .add_property("reference_class",
-            &CIMParameter::m_reference_class,
+            &CIMParameter::getReferenceClass,
             &CIMParameter::setReferenceClass,
             "Property storing reference class of the parameter.\n\n"
             ":returns: string containing the parameter's reference class")
         .add_property("is_array",
-            &CIMParameter::m_is_array,
+            &CIMParameter::getIsArray,
             &CIMParameter::setIsArray,
             "Property storing flag, which indicates, if the parameter is array.\n\n"
             ":returns: True, if the parameter is array"
             ":rtype: bool")
         .add_property("array_size",
-            &CIMParameter::m_array_size,
+            &CIMParameter::getArraySize,
             &CIMParameter::setArraySize,
             "Property storing array size of the parameter.\n\n"
             ":returns: parameter's array size\n"

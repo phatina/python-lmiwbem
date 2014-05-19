@@ -72,17 +72,17 @@ void CIMClassName::init_type()
             ":returns: pretty string of the object")
         .def("copy", &CIMClassName::copy)
         .add_property("classname",
-            &CIMClassName::m_classname,
+            &CIMClassName::getClassname,
             &CIMClassName::setClassname,
             "Property storing class name.\n\n"
             ":returns: string containing class name")
         .add_property("namespace",
-            &CIMClassName::m_namespace,
+            &CIMClassName::getNamespace,
             &CIMClassName::setNamespace,
             "Property storing namespace name.\n\n"
             ":returns: string containing namesapce name")
         .add_property("host",
-            &CIMClassName::m_hostname,
+            &CIMClassName::getHostname,
             &CIMClassName::setHostname,
             "Property storing host name.\n\n"
             ":returns: string containing host name"));
