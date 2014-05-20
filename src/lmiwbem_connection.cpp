@@ -147,9 +147,8 @@ WBEMConnection::~WBEMConnection()
 
 void WBEMConnection::init_type()
 {
-    bp::class_<WBEMConnection, boost::noncopyable>(
-        "WBEMConnection",
-        bp::no_init)
+    CIMBase<WBEMConnection>::init_type(
+        bp::class_<WBEMConnection, boost::noncopyable>("WBEMConnection", bp::no_init)
         .def(bp::init<
             const bp::object &,
             const bp::object &,
@@ -181,8 +180,7 @@ void WBEMConnection::init_type()
              bp::arg("password") = bp::object(),
              bp::arg("cert_file") = bp::object(),
              bp::arg("key_file") = bp::object(),
-             bp::arg("no_verification") = bp::object()
-            ),
+             bp::arg("no_verification") = bp::object()),
             "connect(url=None, username=None, password=None, cert_file=None, "
             "key_file=None, no_verification=None)\n\n"
             "Connects to CIMOM.\n\n"

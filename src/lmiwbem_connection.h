@@ -24,6 +24,7 @@
 
 #include <string>
 #include "lmiwbem.h"
+#include "lmiwbem_cimbase.h"
 #include "lmiwbem_client.h"
 #include "lmiwbem_mutex.h"
 
@@ -36,7 +37,7 @@ BOOST_PYTHON_END
 
 namespace bp = boost::python;
 
-class WBEMConnection
+class WBEMConnection: public CIMBase<WBEMConnection>
 {
 private:
     class ScopedConnection
