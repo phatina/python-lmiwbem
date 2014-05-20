@@ -163,7 +163,7 @@ void WBEMConnection::init_type()
                 bp::arg("default_namespace") = bp::object(),
                 bp::arg("no_verification") = false,
                 bp::arg("connect_locally") = false),
-                "Constructs :py:class:`WBEMConnection` object.\n\n"
+                "Constructs :py:class:`.WBEMConnection` object.\n\n"
                 ":param str url: String containing URL of CIMOM instance\n"
                 ":param tuple creds: tuple containing two string, where the first\n"
                 "\tone stands for username, second for password\n"
@@ -183,18 +183,24 @@ void WBEMConnection::init_type()
              bp::arg("key_file") = bp::object(),
              bp::arg("no_verification") = bp::object()
             ),
+            "connect(url=None, username=None, password=None, cert_file=None, "
+            "key_file=None, no_verification=None)\n\n"
             "Connects to CIMOM.\n\n"
             ":param str url: String containing url of remote CIMOM.\n"
             ":param str username: String containing username for authentication.\n"
             ":param str password: String containing password for authentication.\n"
             ":param bool no_verification: set to True, if CIMOM's X509 certificate\n"
             "\t shall not be verified; False otherwise. Default value is False.\n"
-            ":raises: :py:exc:`ConnectionError`")
+            ":raises: :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_connection`")
         .def("connectLocally", &WBEMConnection::connectLocally,
+            "connectLocally()\n\n"
             "Connect to CIMOM using local Unix socket.\n\n"
-            ":raises: :py:exc:`ConnectionError`")
+            ":raises: :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_connection_socket`")
         .def("disconnect",
             &WBEMConnection::disconnect,
+            "disconnect()\n\n"
             "Disconnects from CIMOM.")
         .add_property("is_connected",
             &WBEMConnection::isConnected,
@@ -208,39 +214,47 @@ void WBEMConnection::init_type()
             &WBEMConnection::getVerifyCertificate,
             &WBEMConnection::setVerifyCertificate,
             "Property storing X509 certificate verification flag.\n\n"
-            ":returns: True, if the X509 certificate shall be verified; False otherwise.\n"
             ":rtype: bool")
         .add_property("connect_locally",
             &WBEMConnection::getConnectLocally,
             &WBEMConnection::setConnectLocally,
             "Property storing flag means of connection. If set to True, local Unix socket\n"
-            "will be used; HTTP(S) otherwise.")
+            "will be used; HTTP(S) otherwise.\n\n"
+            ":rtype: bool")
         .add_property("timeout",
             &WBEMConnection::getTimeout,
             &WBEMConnection::setTimeout,
-            "Property storing CIM operations timeout in milliseconds. Default value is 60000")
+            "Property storing CIM operations timeout in milliseconds. Default value is 60000ms.\n\n"
+            ":rtype: int")
         .add_property("default_namespace",
             &WBEMConnection::getDefaultNamespace,
             &WBEMConnection::setDefaultNamespace,
-            "Property storing default CIM namespace used for CIM operations.")
+            "Property storing default CIM namespace used for CIM operations.\n\n"
+            ":rtype: str")
         .add_property("creds",
             &WBEMConnection::getCredentials,
-            "Property returning user credentials")
+            "Property returning user credentials.\n\n"
+            ":rtype: tuple containing username and password")
         .def("CreateInstance", &WBEMConnection::createInstance,
             (bp::arg("NewInstance")),
+            "CreateInstance(NewInstance)\n\n"
             "Creates a new CIM instance and returns its instance name.\n\n"
-            ":param CIMInstance NewInstance: new local CIMInstance\n"
+            ":param CIMInstance NewInstance: new local :py:class:`.CIMInstance`\n"
             ":returns: instance name of new CIM instance\n"
-            ":rtype: :py:class:`CIMInstanceName`")
+            ":rtype: :py:class:`.CIMInstanceName`\n\n"
+            "**Example:** :ref:`example_create_instance`")
         .def("DeleteInstance", &WBEMConnection::deleteInstance,
             (bp::arg("InstanceName")),
-            "Deletes a CIM instance identified by :py:class:`CIMInstanceName`.\n\n"
+            "DeleteInstance(InstanceName)\n\n"
+            "Deletes a CIM instance identified by :py:class:`.CIMInstanceName`.\n\n"
             ":param CIMInstanceName InstanceName: object path of CIM instance\n"
-            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`")
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_delete_instance`")
         .def("ModifyInstance", &WBEMConnection::modifyInstance,
             (bp::arg("ModifiedInstance"),
              bp::arg("IncludeQualifiers") = true,
              bp::arg("PropertyList") = bp::object()),
+            "ModifyInstance(ModifiedInstance, IncludeQualifiers=True, PropertyList=None)\n\n"
             "Modifies properties of a existing instance.\n\n"
             ":param CIMInstance ModifiedInstance: modified instance\n"
             ":param bool IncludeQualifiers: Indicates, if the qualifiers are modified as\n"
@@ -252,7 +266,9 @@ void WBEMConnection::init_type()
             "\tmissing from PropertyList are not designated to be modified. If PropertyList\n"
             "\tis an empty array, no properties are designated to be modified. If\n"
             "\tPropertyList is None, the properties of ModifiedInstance with values different\n"
-            "\tfrom the current values in the instance are designated to be modified.")
+            "\tfrom the current values in the instance are designated to be modified.\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_modify_instance`")
         .def("EnumerateInstances", &WBEMConnection::enumerateInstances,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object(),
@@ -261,42 +277,48 @@ void WBEMConnection::init_type()
              bp::arg("IncludeQualifiers") = false,
              bp::arg("IncludeClassOrigin") = false,
              bp::arg("PropertyList") = bp::object()),
-           "Enumerates instances of a given class name.\n\n"
-           ":param str ClassName: String containing class name of instances to be\n"
-           "\tretrieved.\n"
-           ":param str namespace: String containing namespace, from which the\n"
-           "\tinstances should be retrieved.\n"
-           ":param bool LocalOnly: Indicates, if any CIM elements (properties,\n"
-           "\tmethods, and qualifiers) except those added or" "overridden in the class as\n"
-           "\tspecified in the classname input parameter shall not be included in the\n"
-           "\treturned class.\n"
-           ":param bool IncludeQualifiers: Indicates, if all qualifiers for each class\n"
-           "\t(including qualifiers on the class and on any returned properties, methods,\n"
-           "\tor method parameters) shall be included as ``<QUALIFIER>`` elements in the\n"
-           "\tresponse.\n"
-           ":param bool IncludeClassOrigin: Indicates, if the ``CLASSORIGIN`` attribute\n"
-           "\tshall be present on all appropriate elements in each returned class.\n"
-           ":param list PropertyList: if present and not None, the members of the list\n"
-           "\tdefine one or more property names. The returned class shall not include\n"
-           "\telements for properties missing from this list. Note that if LocalOnly is\n"
-           "\tspecified as True, it acts as an additional filter on the set of properties\n"
-           "\treturned. For example, if property A is included in the PropertyList but\n"
-           "\tLocalOnly is set to True and A is not local to the requested class, it is not\n"
-           "\tincluded in the response. If the PropertyList input parameter is an empty\n"
-           "\tlist, no properties are included in the response. If the PropertyList input\n"
-           "\tparameter is None, no additional filtering is defined. Default value is None.\n"
-           ":returns: List of :py:class:`CIMInstance` objects.\n"
-           ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+            "EnumerateInstances(ClassName, namespace=None, LocalOnly=True, "
+            "DeepInheritance=True, IncludeQualifiers=False, IncludeClassOrigin=False, "
+            "PropertyList=None)\n\n"
+            "Enumerates instances of a given class name.\n\n"
+            ":param str ClassName: String containing class name of instances to be\n"
+            "\tretrieved.\n"
+            ":param str namespace: String containing namespace, from which the\n"
+            "\tinstances should be retrieved.\n"
+            ":param bool LocalOnly: Indicates, if any CIM elements (properties,\n"
+            "\tmethods, and qualifiers) except those added or" "overridden in the class as\n"
+            "\tspecified in the classname input parameter shall not be included in the\n"
+            "\treturned class.\n"
+            ":param bool IncludeQualifiers: Indicates, if all qualifiers for each class\n"
+            "\t(including qualifiers on the class and on any returned properties, methods,\n"
+            "\tor method parameters) shall be included as ``<QUALIFIER>`` elements in the\n"
+            "\tresponse.\n"
+            ":param bool IncludeClassOrigin: Indicates, if the ``CLASSORIGIN`` attribute\n"
+            "\tshall be present on all appropriate elements in each returned class.\n"
+            ":param list PropertyList: if present and not None, the members of the list\n"
+            "\tdefine one or more property names. The returned class shall not include\n"
+            "\telements for properties missing from this list. Note that if LocalOnly is\n"
+            "\tspecified as True, it acts as an additional filter on the set of properties\n"
+            "\treturned. For example, if property A is included in the PropertyList but\n"
+            "\tLocalOnly is set to True and A is not local to the requested class, it is not\n"
+            "\tincluded in the response. If the PropertyList input parameter is an empty\n"
+            "\tlist, no properties are included in the response. If the PropertyList input\n"
+            "\tparameter is None, no additional filtering is defined. Default value is None.\n"
+            ":returns: List of :py:class:`.CIMInstance` objects\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_enumerate_instances`")
         .def("EnumerateInstanceNames", &WBEMConnection::enumerateInstanceNames,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object()),
+            "EnumerateInstanceNames(ClassName, namespace=None)\n\n"
             "Enumerates instance names of a given class name.\n\n"
             ":param str ClassName: String containing class name of instance\n"
             "\tnames to be retrieved.\n"
             ":param str namespace: String containing namespace, from which the\n"
             "\tinstance names will be retrieved.\n"
-            ":returns: List of :py:class:`CIMInstanceName` objects."
-            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+            ":returns: List of :py:class:`.CIMInstanceName` objects\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_enumerate_instance_names`")
         .def("GetInstance", &WBEMConnection::getInstance,
             (bp::arg("InstanceName"),
              bp::arg("namespace") = bp::object(),
@@ -304,10 +326,12 @@ void WBEMConnection::init_type()
              bp::arg("IncludeQualifiers") = false,
              bp::arg("IncludeClassOrigin") = false,
              bp::arg("PropertyList") = bp::object()),
-            "Fetches a :py:class:`CIMInstance` from CIMOM identified by\n"
-            ":py:class:`CIMInstanceName`.\n\n"
-            ":param CIMInstanceName InstanceName: :py:class:`CIMInstanceName`,\n"
-            "\twhich identifies a :py:class:`CIMInstance`\n"
+            "GetInstance(InstanceName, namespace=None, LocalOnly=True, "
+            "IncludeQualifiers=False, IncludeClassOrigin=False, PropertyList=None)\n\n"
+            "Fetches a :py:class:`.CIMInstance` from CIMOM identified by\n"
+            ":py:class:`.CIMInstanceName`.\n\n"
+            ":param CIMInstanceName InstanceName: :py:class:`.CIMInstanceName`,\n"
+            "\twhich identifies a :py:class:`.CIMInstance`\n"
             ":param str namespace: string containing namespace, from which the\n"
             "\tinstance will be retrieved\n"
             ":param bool LocalOnly: indicates, if any CIM elements (properties,\n"
@@ -329,8 +353,9 @@ void WBEMConnection::init_type()
             "\tincluded in the response. If the PropertyList input parameter is an empty\n"
             "\tlist, no properties are included in the response. If the PropertyList input\n"
             "\tparameter is None, no additional filtering is defined. Default value is None.\n"
-            ":returns: :py:class:`CIMInstance` object."
-            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+            ":returns: :py:class:`.CIMInstance` object\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_get_instance`")
         .def("EnumerateClasses", &WBEMConnection::enumerateClasses,
             (bp::arg("namespace") = bp::object(),
              bp::arg("ClassName") = bp::object(),
@@ -338,6 +363,8 @@ void WBEMConnection::init_type()
              bp::arg("LocalOnly") = true,
              bp::arg("IncludeQualifiers") = true,
              bp::arg("IncludeClassOrigin") = false),
+            "EnumerateClasses(namespace=None, ClassName=None, DeepInheritance=False, "
+            "LocalOnly=True, IncludeQualifiers=True, IncludeClassOrigin=False)\n\n"
             "Enumerates classes managed by the CIMOM.\n\n"
             ":param str namespace: string containing namespace, from which the\n"
             "\tclasses  will be retrieved\n"
@@ -362,12 +389,14 @@ void WBEMConnection::init_type()
             ":param bool IncludeClassOrigin: indicates, if the CLASSORIGIN attribute shall\n"
             "\tbe present on all appropriate elements in each returned class. If it is false,\n"
             "\tno CLASSORIGIN attributes are present.\n"
-            ":returns: list of :py:class:`CIMClass` objects"
-            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+            ":returns: list of :py:class:`.CIMClass` objects\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_enumerate_classes`")
         .def("EnumerateClassNames", &WBEMConnection::enumerateClassNames,
             (bp::arg("namespace") = bp::object(),
              bp::arg("ClassName") = bp::object(),
              bp::arg("DeepInheritance") = false),
+            "EnumerateClassNames(namespace=None, ClassName=None, DeepInheritance=False)\n\n"
             "Enumerates class names managed by the CIMOM.\n\n"
             ":param str namespace: string containing namespace, from which the\n"
             "\tclasses  will be retrieved\n"
@@ -381,26 +410,32 @@ void WBEMConnection::init_type()
             "\t(that is, classes with no superclass) in the target namespace should be\n"
             "\treturned. This definition of DeepInheritance applies only to the\n"
             "\tEnumerateClasses and EnumerateClassName operations.\n"
-            ":returns: list of strings of class names"
-            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+            ":returns: list of strings of class names\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_enumerate_class_names`")
         .def("ExecQuery", &WBEMConnection::execQuery,
             (bp::arg("QueryLanguage"),
              bp::arg("Query"),
              bp::arg("namespace") = bp::object()),
-            "Executes a query and returns a list of :py:class:`CIMInstance` objects.\n\n"
+            "ExecQuery(QueryLanguage, Query, namespace=None)\n\n"
+            "Executes a query and returns a list of :py:class:`.CIMInstance` objects.\n\n"
             ":param str query_lang: query language\n"
             ":param str query: query to execute\n"
             ":param str namespace: target namespace for the query\n"
-            ":returns: list of instances\n"
-            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+            ":returns: list of :py:class:`.CIMInstance` objects\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_exec_query`")
         .def("InvokeMethod", lmi::raw_method<WBEMConnection>(&WBEMConnection::invokeMethod, 1),
+            "InvokeMethod(MethodName, ObjectName, **params)\n\n"
             "Executes a method within a given instance.\n\n"
             ":param CIMInstanceName ObjectName: specifies CIM object within which the method\n"
             "\twill be called\n"
-            ":param str method: string containing a method name\n"
+            ":param str MethodName: string containing a method name\n"
+            ":param CIMInstanceName ObjectName: object path\n"
             ":param dictionary params: parameters passed to the method call\n"
             ":returns: tuple containing method's return value and output parameters\n"
-            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionEerror`.")
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_invoke_method`")
         .def("GetClass", &WBEMConnection::getClass,
             (bp::arg("ClassName"),
              bp::arg("namespace") = bp::object(),
@@ -408,7 +443,9 @@ void WBEMConnection::init_type()
              bp::arg("IncludeQualifiers") = true,
              bp::arg("IncludeClassOrigin") = false,
              bp::arg("PropertyList") = bp::object()),
-            "Returns a :py:class:`CIMClass` representing the named class.\n\n"
+            "GetClass(ClassName, namespace=None, LocalOnly=True, IncludeQualifiers=True, "
+            "IncludeClassOrigin=False, PropertyList=None)\n\n"
+            "Returns a :py:class:`.CIMClass` representing the named class.\n\n"
             ":param str ClassName: defines the name of the class to be retrieved.\n"
             ":param str namespace: string containing namespace, from which the\n"
             "\tclass will be retrieved\n"
@@ -435,8 +472,9 @@ void WBEMConnection::init_type()
             "\tPropertyList input parameter is an empty array, no properties are included in\n"
             "\tthe response. If the PropertyList input parameter is None, no additional\n"
             "\tfiltering is defined.\n"
-            ":returns: :py:class:`CIMClass` object."
-            ":raises: :py:exc:`CIMError`, :py:exc:`ConnectionError`.")
+            ":returns: :py:class:`.CIMClass` object\n"
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_get_class`")
         .def("Associators", &WBEMConnection::getAssociators,
             (bp::arg("ObjectName"),
              bp::arg("AssocClass") = bp::object(),
@@ -446,7 +484,10 @@ void WBEMConnection::init_type()
              bp::arg("IncludeQualifiers") = false,
              bp::arg("IncludeClassOrigin") = false,
              bp::arg("PropertyList") = bp::object()),
-            "Returns a list of associated :py:class:`CIMInstance` objects with an input\n"
+            "Associators(ObjectName, AssocClass=None, ResultClass=None, Role=None, "
+            "ResultRole=None, IncludeQualifiers=False, IncludeClassOrigin=False, "
+            "PropertyList=None)\n\n"
+            "Returns a list of associated :py:class:`.CIMInstance` objects with an input\n"
             "instance name.\n\n"
             ":param CIMInstanceName ObjectName: specifies CIM object for which the associated\n"
             "\tinstances will be enumerated.\n"
@@ -481,16 +522,19 @@ void WBEMConnection::init_type()
             "\tproperties missing from this list. If PropertyList is an empty list, no\n"
             "\tproperties are included in each returned object. If it is None, no additional\n"
             "\tfiltering is defined. Default value is None.\n"
-            ":returns: list of associated :py:class:`CIMInstance` objects with an input\n"
+            ":returns: list of associated :py:class:`.CIMInstance` objects with an input\n"
             "\tinstance\n"
-            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_associators`")
         .def("AssociatorNames", &WBEMConnection::getAssociatorNames,
             (bp::arg("ObjectName"),
              bp::arg("AssocClass") = bp::object(),
              bp::arg("ResultClass") = bp::object(),
              bp::arg("Role") = bp::object(),
              bp::arg("ResultRole") = bp::object()),
-            "Returns a list of associated :py:class:`CIMInstanceName` objects with an input\n"
+            "AssociatorNames(ObjectName, AssocClass=None, ResultClass=None, Role=None, "
+            "ResultRole=None)\n\n"
+            "Returns a list of associated :py:class:`.CIMInstanceName` objects with an input\n"
             "instance name.\n\n"
             ":param CIMInstanceName ObjectName: specifies CIM object for which the associated\n"
             "\tinstance names will be enumerated.\n"
@@ -514,9 +558,10 @@ void WBEMConnection::init_type()
             "\tnamed returned object plays the specified role. That is, the name of the\n"
             "\tproperty in the association class that refers to the returned object shall\n"
             "\tmatch the value of this parameter.\n"
-            ":returns: list of associated :py:class:`CIMInstanceName` objects with\n"
+            ":returns: list of associated :py:class:`.CIMInstanceName` objects with\n"
             "\tan input instance\n"
-            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_associator_names`")
         .def("References", &WBEMConnection::getReferences,
             (bp::arg("ObjectName"),
              bp::arg("ResultClass") = bp::object(),
@@ -524,7 +569,9 @@ void WBEMConnection::init_type()
              bp::arg("IncludeQualifiers") = false,
              bp::arg("IncludeClassOrigin") = false,
              bp::arg("PropertyList") = bp::object()),
-            "Returns a list of association :py:class:`CIMInstance` objects with an input\n"
+            "References(ObjectName, ResultClass=None, Role=None, IncludeQualifiers=False, "
+            "IncludeClassOrigin=False, PropertyList=None)\n\n"
+            "Returns a list of association :py:class:`.CIMInstance` objects with an input\n"
             "instance name.\n\n"
             ":param CIMInstanceName ObjectName: specifies CIM object for which the association\n"
             "\tinstances will be enumerated.\n"
@@ -548,14 +595,16 @@ void WBEMConnection::init_type()
             "\tproperties missing from this list. If PropertyList is an empty list, no\n"
             "\tproperties are included in each returned object. If PropertyList is None, no\n"
             "\tadditional filtering is defined. Default value is None.\n"
-            ":returns: list of association :py:class:`CIMInstance` objects with an input\n"
+            ":returns: list of association :py:class:`.CIMInstance` objects with an input\n"
             "\tinstance\n"
-            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_references`")
         .def("ReferenceNames", &WBEMConnection::getReferenceNames,
             (bp::arg("ObjectName"),
              bp::arg("ResultClass") = bp::object(),
              bp::arg("Role") = bp::object()),
-            "Returns a list of association :py:class:`CIMInstanceName` objects with an\n"
+            "ReferenceNames(ObjectName, ResultClass=None, Role=None)\n\n"
+            "Returns a list of association :py:class:`.CIMInstanceName` objects with an\n"
             "input instance.\n\n"
             ":param CIMInstanceName ObjectName: specifies CIM object for which the association\n"
             "\tinstance names will be enumerated.\n"
@@ -567,10 +616,10 @@ void WBEMConnection::init_type()
             "\tof object names by mandating that each returned object name shall identify an\n"
             "\tobject that refers to the target instance through a property with a name that\n"
             "\tmatches the value of this parameter.\n"
-            ":returns: list of association :py:class:`CIMInstanceName` objects with an input\n"
+            ":returns: list of association :py:class:`.CIMInstanceName` objects with an input\n"
             "\tinstance\n"
-            ":raises: :py:exc:`pywbem.CIMError`, :py:exc:`pywbem.ConnectionError`.")
-    ;
+            ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
+            "**Example:** :ref:`example_reference_names`"));
 }
 
 void WBEMConnection::connect(

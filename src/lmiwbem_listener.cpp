@@ -116,15 +116,44 @@ void CIMIndicationListener::init_type()
                 (bp::arg("port"),
                  bp::arg("cert_file") = bp::object(),
                  bp::arg("key_file") = bp::object(),
-                 bp::arg("trust_store") = bp::object()))
-            .def("stop", &CIMIndicationListener::stop)
-            .def("add_handler",  lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1))
-            .def("remove_handler", &CIMIndicationListener::removeHandler)
-            .add_property("is_alive", &CIMIndicationListener::isAlive)
-            .add_property("uses_ssl", &CIMIndicationListener::usesSSL)
-            .add_property("port", &CIMIndicationListener::getPort)
-            .add_property("handlers", &CIMIndicationListener::getHandlers)
-        );
+                 bp::arg("trust_store") = bp::object()),
+                 "start(port, cert_file=None, key_file=None, trust_store=None)\n\n"
+                 "Starts indication listener.\n\n"
+                 ":param int port: listening port\n"
+                 ":param str cert_file: path to X509 certificate\n"
+                 ":param str key_file: path to X509 private key; may be None,\n"
+                 "\tif cert_file also contains private key\n"
+                 ":param str trust_store: path to trust store")
+            .def("stop", &CIMIndicationListener::stop,
+                "stop()\n\n"
+                "Stops indication listener.")
+            .def("add_handler",
+                lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1),
+                "add_handler(name, handler, *args, **kwargs)\n\n"
+                "Adds callback for specific indication.\n\n"
+                ":param str name: indication name\n"
+                ":param handler: callable for indication\n"
+                ":param args: positional arguments passed to handler\n"
+                ":param kwargs: keyword arguments passed to handler")
+            .def("remove_handler", &CIMIndicationListener::removeHandler,
+                "remove_handler(name)\n\n"
+                "Removes a specified handler from indication listener.\n\n"
+                ":param str name: indication name\n"
+                ":raises: :py:exc:`KeyError`")
+            .add_property("is_alive", &CIMIndicationListener::isAlive,
+                "Property storing flag, which indicates, if the indication\n"
+                "listener is running.\n\n"
+                ":rtype: bool")
+            .add_property("uses_ssl", &CIMIndicationListener::usesSSL,
+                "Property storing flag, which indicates, if the indication\n"
+                "listener uses secure connection.\n\n"
+                ":rtype: bool")
+            .add_property("port", &CIMIndicationListener::getPort,
+                "Property storing listening port.\n\n"
+                ":rtype: int")
+            .add_property("handlers", &CIMIndicationListener::getHandlers,
+                "Property storing list of strings of handlers.\n\n"
+                ":rtype: list"));
 }
 
 void CIMIndicationListener::start(

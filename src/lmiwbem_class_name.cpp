@@ -55,7 +55,7 @@ void CIMClassName::init_type()
                 bp::arg("classname"),
                 bp::arg("host") = std::string(),
                 bp::arg("namespace") = std::string()),
-                "Constructs a :py:class:`CIMClassName`.\n\n"
+                "Constructs a :py:class:`.CIMClassName`.\n\n"
                 ":param str classname: String containing class name\n"
                 ":param str host: String containing host name\n"
                 ":param str namespace: String containing namespace name"))
@@ -70,22 +70,25 @@ void CIMClassName::init_type()
 #  endif
         .def("__repr__", &CIMClassName::repr,
             ":returns: pretty string of the object")
-        .def("copy", &CIMClassName::copy)
+        .def("copy", &CIMClassName::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMClassName`")
         .add_property("classname",
             &CIMClassName::getClassname,
             &CIMClassName::setClassname,
             "Property storing class name.\n\n"
-            ":returns: string containing class name")
+            ":rtype: str")
         .add_property("namespace",
             &CIMClassName::getNamespace,
             &CIMClassName::setNamespace,
             "Property storing namespace name.\n\n"
-            ":returns: string containing namesapce name")
+            ":rtype: str")
         .add_property("host",
             &CIMClassName::getHostname,
             &CIMClassName::setHostname,
             "Property storing host name.\n\n"
-            ":returns: string containing host name"));
+            ":rtype: str"));
 }
 
 bp::object CIMClassName::create(

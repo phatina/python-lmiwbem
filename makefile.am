@@ -1,5 +1,9 @@
 SUBDIRS    = src
 
+if BUILDWITHDOC
+    SUBDIRS += doc
+endif
+
 EXTRA_DIST =         \
 	examples     \
 	lmiwbem.spec \

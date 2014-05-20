@@ -82,7 +82,7 @@ void CIMParameter::init_type()
                 ":param bool is_array: Flag, which indicates, if the parameter\n"
                 "\tis array\n"
                 ":param int array_size: Array size\n"
-                ":param NocaseDict qualifiers: Dictionary of :py:class:`CIMQualifier`"))
+                ":param NocaseDict qualifiers: Dictionary of :py:class:`.CIMQualifier`"))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMParameter::cmp)
 #  else
@@ -94,8 +94,14 @@ void CIMParameter::init_type()
 #  endif
         .def("__repr__", &CIMParameter::repr,
             ":returns: pretty string of the object")
-        .def("tomof", &CIMParameter::tomof)
-        .def("copy", &CIMParameter::copy)
+        .def("copy", &CIMParameter::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMParameter`")
+        .def("tomof", &CIMParameter::tomof,
+            "tomof()\n\n"
+            ":returns: MOF representation of the object itself\n"
+            ":rtype: str")
         .add_property("name",
             &CIMParameter::getName,
             &CIMParameter::setName,
@@ -105,30 +111,28 @@ void CIMParameter::init_type()
             &CIMParameter::getType,
             &CIMParameter::setType,
             "Property storing type of the parameter.\n\n"
-            ":returns: string containing the parameter's type")
+            ":rtype: str")
         .add_property("reference_class",
             &CIMParameter::getReferenceClass,
             &CIMParameter::setReferenceClass,
             "Property storing reference class of the parameter.\n\n"
-            ":returns: string containing the parameter's reference class")
+            ":rtype: str")
         .add_property("is_array",
             &CIMParameter::getIsArray,
             &CIMParameter::setIsArray,
             "Property storing flag, which indicates, if the parameter is array.\n\n"
-            ":returns: True, if the parameter is array"
+            ":returns: True, if the parameter is array; False otherwise\n"
             ":rtype: bool")
         .add_property("array_size",
             &CIMParameter::getArraySize,
             &CIMParameter::setArraySize,
             "Property storing array size of the parameter.\n\n"
-            ":returns: parameter's array size\n"
             ":rtype: int")
         .add_property("qualifiers",
             &CIMParameter::getQualifiers,
             &CIMParameter::setQualifiers,
             "Property storing qualifiers of the parameter.\n\n"
-            ":returns: dictionary containing parameter's qualifiers\n"
-            ":rtype: :py:class:`NocaseDict`"));
+            ":rtype: :py:class:`.NocaseDict`"));
 }
 
 bp::object CIMParameter::create(const Pegasus::CIMParameter &parameter)

@@ -73,7 +73,7 @@ void CIMClass::init_type()
                 bp::arg("qualifiers") = NocaseDict::create(),
                 bp::arg("methods") = NocaseDict::create(),
                 bp::arg("superclass") = std::string()),
-                "Constructs a :py:class:`CIMClass`.\n\n"
+                "Constructs a :py:class:`.CIMClass`.\n\n"
                 ":param str classname: String containing class name\n"
                 ":param NocaseDict properties: Dictionary containing properties\n"
                 "\tof the class\n"
@@ -92,35 +92,35 @@ void CIMClass::init_type()
 #  endif
         .def("__repr__", &CIMClass::repr,
             ":returns: pretty string of the object")
-        .def("copy", &CIMClass::copy)
+        .def("copy", &CIMClass::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMClass`")
         .add_property("classname",
             &CIMClass::getClassname,
             &CIMClass::setClassname,
             "Property storing class name.\n\n"
-            ":returns: string of the class name")
+            ":rtype: str")
         .add_property("superclass",
             &CIMClass::getSuperClassname,
             &CIMClass::setSuperClassname,
             "Property storing super-class name.\n\n"
-            ":returns: string containing super-class name")
+            ":rtype: str")
         .add_property("properties",
             &CIMClass::getProperties,
             &CIMClass::setProperties,
             "Property storing properties.\n\n"
-            ":returns: dictionary containing the properties\n"
-            ":rtype: :py:class:`NocaseDict`")
+            ":rtype: :py:class:`.NocaseDict`")
         .add_property("qualifiers",
             &CIMClass::getQualifiers,
             &CIMClass::setQualifiers,
             "Property storing qualifiers.\n\n"
-            ":returns: dictionary containing the qualifiers\n"
-            ":rtype: :py:class:`NocaseDict`")
+            ":rtype: :py:class:`.NocaseDict`")
         .add_property("methods",
             &CIMClass::getMethods,
             &CIMClass::setMethods,
             "Property storing methods.\n\n"
-            ":returns: dictionary containing the methods\n"
-            ":rtype: :py:class:`NocaseDict`"));
+            ":rtype: :py:class:`.NocaseDict`"));
 }
 
 bp::object CIMClass::create(const Pegasus::CIMClass &cls)

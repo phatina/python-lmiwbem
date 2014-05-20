@@ -1,0 +1,46 @@
+SPHINXBUILD     = sphinx-build
+
+BUILDDIR        = ${abs_top_builddir}
+DOCSRCDIR       = ${top_srcdir}/doc/src
+DOCLMIWBEMDIR   = $(DOCSRCDIR)/lmiwbem
+HTMLBUILDDIR    = $(BUILDDIR)/doc/html
+HTMLINSTALLDIR  = ${DESTDIR}/${htmldir}-${PACKAGE_VERSION}
+
+PAPEROPT_a4     = -D latex_paper_size=a4
+PAPEROPT_letter = -D latex_paper_size=letter
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doc/html/_doctrees $(PAPEROPT_$(PAPER)) $(DOCSRCDIR)
+
+EXTRA_DIST      =     \
+	$(DOCSRCDIR)/_api      \
+	$(DOCSRCDIR)/_examples \
+	$(DOCSRCDIR)/conf.py   \
+	$(DOCSRCDIR)/*.rst
+
+if BUILDWITHDOC
+all: buildhtml
+
+install: installhtml
+
+buildhtml:
+	mkdir -p $(DOCLMIWBEMDIR)
+	[ -L $(DOCLMIWBEMDIR)/__init__.py ] || ln -s $(BUILDDIR)/src/__init__.py $(DOCLMIWBEMDIR)/__init__.py
+	[ -L $(DOCLMIWBEMDIR)/lmiwbem_types.py ] || ln -s $(BUILDDIR)/src/lmiwbem_types.py $(DOCLMIWBEMDIR)/lmiwbem_types.py
+	[ -L $(DOCLMIWBEMDIR)/lmiwbem_core.so ] || ln -s $(BUILDDIR)/src/.libs/lmiwbem_core.so $(DOCLMIWBEMDIR)/lmiwbem_core.so
+	LMIWBEM_BUILDDIR=${abs_top_builddir} $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(HTMLBUILDDIR)
+	rm -fr $(DOCLMIWBEMDIR)
+
+installhtml: buildhtml
+	mkdir -p $(HTMLINSTALLDIR)
+	cp -r $(HTMLBUILDDIR) $(HTMLINSTALLDIR)
+	rm $(HTMLINSTALLDIR)/html/.buildinfo
+	rm $(HTMLINSTALLDIR)/html/objects.inv
+	rm -fr $(HTMLINSTALLDIR)/html/_doctrees
+endif
+
+clean: cleanhtml
+
+distclean: cleanhtml
+	rm -f makefile
+
+cleanhtml:
+	rm -fr $(HTMLBUILDDIR)

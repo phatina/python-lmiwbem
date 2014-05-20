@@ -124,12 +124,15 @@ void CIMProperty::init_type()
 #  endif
         .def("__repr__", &CIMProperty::repr,
             ":returns: pretty string of the object")
-        .def("copy", &CIMProperty::copy)
+        .def("copy", &CIMProperty::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMProperty`")
         .add_property("name",
             &CIMProperty::getName,
             &CIMProperty::setName,
             "Property storing name of the property.\n\n"
-            ":returns: string containing the property's name")
+            ":rtype: str")
         .add_property("value",
             &CIMProperty::getValue,
             &CIMProperty::setValue,
@@ -139,41 +142,37 @@ void CIMProperty::init_type()
             &CIMProperty::getType,
             &CIMProperty::setType,
             "Property storing type of the property.\n\n"
-            ":returns: string containing the property's type")
+            ":rtype: str")
         .add_property("class_origin",
             &CIMProperty::getClassOrigin,
             &CIMProperty::setClassOrigin,
             "Property storing class origin of the property.\n\n"
-            ":returns: string containing the property's class origin")
+            ":rtype: str")
         .add_property("array_size",
             &CIMProperty::getArraySize,
             &CIMProperty::setArraySize,
             "Property storing array size of the property.\n\n"
-            ":returns: property's array size\n"
             ":rtype: int")
         .add_property("propagated",
             &CIMProperty::getPropagated,
             &CIMProperty::setPropagated,
             "Property storing propagation flag of the property.\n\n"
-            ":returns: flag, which indicates, if the property is propagated\n"
             ":rtype: bool")
         .add_property("qualifiers",
             &CIMProperty::getQualifiers,
             &CIMProperty::setQualifiers,
             "Property storing qualifiers of the property.\n\n"
-            ":returns: dictionary containing the property's qualifiers"
-            ":rtype: :py:class:`NocaseDict`")
+            ":rtype: :py:class:`.NocaseDict`")
         .add_property("is_array",
             &CIMProperty::m_is_array,
             "Property storing flag, which indicates, if the property's value is\n"
             "\tarray.\n\n"
-            ":returns: True, if the property's value is array\n"
             ":rtype: bool")
         .add_property("reference_class",
             &CIMProperty::m_reference_class,
             &CIMProperty::setReferenceClass,
             "Property storing reference class of the property.\n\n"
-            ":returns: string containing the property's reference class"));
+            ":rtype: str"));
 }
 
 bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)

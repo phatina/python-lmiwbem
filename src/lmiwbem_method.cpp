@@ -83,7 +83,7 @@ void CIMMethod::init_type()
                 bp::arg("class_origin") = std::string(),
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create()),
-                "Constructs a :py:class:`CIMMethod`.\n\n"
+                "Constructs a :py:class:`.CIMMethod`.\n\n"
                 ":param str methodname: String containing the method's name\n"
                 ":param str return_type: String containing the method's return type\n"
                 ":param NocaseDict parameters: Dictionary containing method's parameters\n"))
@@ -98,29 +98,34 @@ void CIMMethod::init_type()
 #  endif
         .def("__repr__", &CIMMethod::repr,
             ":returns: pretty string of the object")
-        .def("tomof", &CIMMethod::tomof)
-        .def("copy", &CIMMethod::copy)
+        .def("copy", &CIMMethod::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMMethod`")
+        .def("tomof", &CIMMethod::tomof,
+            "tomof()\n\n"
+            ":returns: MOF representation of the object itself\n"
+            ":rtype: str")
         .add_property("name",
             &CIMMethod::getName,
             &CIMMethod::setName,
             "Property storing method's name.\n\n"
-            ":returns: string containing the method's name")
+            ":rtype: str")
         .add_property("return_type",
             &CIMMethod::getReturnType,
             &CIMMethod::setReturnType,
             "Property storing method's return type.\n\n"
-            ":returns: string containing the method's return type\n")
+            ":rtype: str")
         .add_property("parameters",
             &CIMMethod::getParameters,
             &CIMMethod::setParameters,
             "Property storing method's parameters.\n\n"
-            ":returns: dictionary containing the method's parameters\n"
-            ":rtype: :py:class:`NocaseDict`")
+            ":rtype: :py:class:`.NocaseDict`")
         .add_property("class_origin",
             &CIMMethod::getClassOrigin,
             &CIMMethod::setClassOrigin,
             "Property storing method's class origin.\n\n"
-            ":returns: string containing the method's class origin")
+            ":rtype: str")
         .add_property("propagated",
             &CIMMethod::getPropagated,
             &CIMMethod::setPropagated,
@@ -131,8 +136,7 @@ void CIMMethod::init_type()
             &CIMMethod::getQualifiers,
             &CIMMethod::setQualifiers,
             "Property storing method's qualifiers.\n\n"
-            ":returns: dictionary containing the method's qualifiers\n"
-            ":rtype: :py:class:`NocaseDict`"));
+            ":rtype: :py:class:`.NocaseDict`"));
 }
 
 bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)

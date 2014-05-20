@@ -78,7 +78,7 @@ void CIMQualifier::init_type()
                 bp::arg("tosubclass") = false,
                 bp::arg("toinstance") = false,
                 bp::arg("translatable") = false),
-                "Constructs a :py:class:`CIMQualifier`.\n\n"
+                "Constructs a :py:class:`.CIMQualifier`.\n\n"
                 ":param str name: String containing the qualifier's name\n"
                 ":param value: Qualifier's value\n"
                 ":param str type: String containing the qualifier's type\n"
@@ -103,50 +103,52 @@ void CIMQualifier::init_type()
 #  endif
         .def("__repr__", &CIMQualifier::repr,
             ":returns: pretty string of the object")
-        .def("copy", &CIMQualifier::copy)
-        .def("tomof", &CIMQualifier::tomof)
+        .def("copy", &CIMQualifier::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMQualifier`")
+        .def("tomof", &CIMQualifier::tomof,
+            "tomof()\n\n"
+            ":returns: MOF representation of the object itself\n"
+            ":rtype: str")
         .add_property("name",
             &CIMQualifier::getName,
             &CIMQualifier::setName,
             "Property storing qualifier's name.\n\n"
-            ":returns: string containing the qualifier's name")
+            ":rtype: str")
         .add_property("type",
             &CIMQualifier::getType,
             &CIMQualifier::setType,
             "Property storing qualifier's type.\n\n"
-            ":returns: string containing the qualifier's type")
+            ":rtype: str")
         .add_property("value",
             &CIMQualifier::m_value,
-            "Property storing qualifier's value.\n\n")
+            "Property storing qualifier's value.\n\n"
+            ":returns: qualifier's value")
         .add_property("propagated",
             &CIMQualifier::m_propagated,
             &CIMQualifier::setPropagated,
             "Property storing propagation flag of the qualifier.\n\n"
-            ":returns: True, if the qualifier is propagated; False otherwise\n"
             ":rtype: bool")
         .add_property("overridable",
             &CIMQualifier::m_overridable,
             &CIMQualifier::setOverridable,
             "Property storing overriding flag of the qualifier.\n\n"
-            ":returns: True, if the qualifier can be overridden; False otherwise\n"
             ":rtype: bool")
         .add_property("tosubclass",
             &CIMQualifier::m_tosubclass,
             &CIMQualifier::setToSubclass,
             "Property storing tosubclass flag.\n\n"
-            ":returns: True, if the qualifier shall appear in subclass; False otherwise\n"
             ":rtype: bool")
         .add_property("toinstance",
             &CIMQualifier::m_toinstance,
             &CIMQualifier::setToInstance,
             "Property storing toinstance flag.\n\n"
-            ":returns: True, if the qualifier shall appear in instance; False otherwise\n"
             ":rtype: bool")
         .add_property("translatable",
             &CIMQualifier::m_translatable,
             &CIMQualifier::setTranslatable,
             "Property storing qualifier's translation flag.\n\n"
-            ":returns: True, if the qualifier can be translated; False otherwise\n"
             ":rtype: bool"));
 }
 

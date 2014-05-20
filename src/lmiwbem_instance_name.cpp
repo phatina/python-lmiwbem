@@ -97,34 +97,59 @@ void CIMInstanceName::init_type()
         .def("__setitem__", &CIMInstanceName::setitem)
         .def("__contains__", &CIMInstanceName::haskey)
         .def("__len__", &CIMInstanceName::len)
-        .def("has_key", &CIMInstanceName::haskey)
-        .def("keys", &CIMInstanceName::keys)
-        .def("values", &CIMInstanceName::values)
-        .def("items", &CIMInstanceName::items)
-        .def("iterkeys", &CIMInstanceName::iterkeys)
-        .def("itervalues", &CIMInstanceName::itervalues)
-        .def("iteritems", &CIMInstanceName::iteritems)
-        .def("copy", &CIMInstanceName::copy)
+        .def("has_key", &CIMInstanceName::haskey,
+            "has_key(key)\n\n"
+            ":param str key: key to check for presence in object's keybindings\n"
+            ":returns: True, if the key is present in object's keybindings;\n"
+            "\tFalse otherwise\n"
+            ":rtype: bool")
+        .def("keys", &CIMInstanceName::keys,
+            "keys()\n\n"
+            ":returns: list of strings of keybinding names\n"
+            ":rtype: list")
+        .def("values", &CIMInstanceName::values,
+            "values()\n\n"
+            ":returns: list of keybinding values\n"
+            ":rtype: list")
+        .def("items", &CIMInstanceName::items,
+            "items()\n\n"
+            ":returns: list of tuples with keybinding name and value\n"
+            ":rtype: list")
+        .def("iterkeys", &CIMInstanceName::iterkeys,
+            "iterkeys()\n\n"
+            ":returns: iterator for keybinding names iteration\n"
+            ":rtype: iterator")
+        .def("itervalues", &CIMInstanceName::itervalues,
+            "itervalues()\n\n"
+            ":returns: iterator for keybinding values iteration\n"
+            ":rtype: iterator")
+        .def("iteritems", &CIMInstanceName::iteritems,
+            "iteritems()\n\n"
+            ":returns: iterator for keybinding name and value iteration\n"
+            ":rtype: iterator")
+        .def("copy", &CIMInstanceName::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMInstanceName`")
         .add_property("classname",
             &CIMInstanceName::getClassname,
             &CIMInstanceName::setClassname,
             "Property storing class name.\n\n"
-            ":returns: string containing the class name")
+            ":rtype: str")
         .add_property("namespace",
             &CIMInstanceName::getNamespace,
             &CIMInstanceName::setNamespace,
             "Property storing namespace.\n\n"
-            ":returns: string containing the namespace name")
+            ":rtype: str")
         .add_property("host",
             &CIMInstanceName::getHostname,
             &CIMInstanceName::setHostname,
             "Property storing hostname.\n\n"
-            ":returns: string containing the hostname")
+            ":rtype: str")
         .add_property("keybindings",
             &CIMInstanceName::getKeybindings,
             &CIMInstanceName::setKeybindings,
             "Property storing keybindings.\n\n"
-            ":returns: dictionary containing keybindings\n"
             ":rtype: :py:class:`NocaseDict`"));
 }
 

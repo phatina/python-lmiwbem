@@ -70,22 +70,24 @@ void NocaseDict::init_type()
 #  endif
         .def("__len__", &NocaseDict::len)
         .def("__repr__", &NocaseDict::repr)
-        .def("keys", &NocaseDict::keys)
-        .def("values", &NocaseDict::values)
-        .def("items", &NocaseDict::items)
-        .def("iterkeys", &NocaseDict::iterkeys)
-        .def("itervalues", &NocaseDict::itervalues)
-        .def("iteritems", &NocaseDict::iteritems)
-        .def("has_key", &NocaseDict::haskey)
-        .def("update", &NocaseDict::update)
-        .def("clear", &NocaseDict::clear)
+        .def("keys", &NocaseDict::keys, "keys()")
+        .def("values", &NocaseDict::values, "values()")
+        .def("items", &NocaseDict::items, "items()")
+        .def("iterkeys", &NocaseDict::iterkeys, "iterkeys()")
+        .def("itervalues", &NocaseDict::itervalues, "itervalues()")
+        .def("iteritems", &NocaseDict::iteritems, "iteritems()")
+        .def("has_key", &NocaseDict::haskey, "has_key()")
+        .def("update", &NocaseDict::update, "update()")
+        .def("clear", &NocaseDict::clear, "clear()")
         .def("get", &NocaseDict::get,
-            (bp::arg("key"), bp::arg("def") = bp::object())
-        )
+            (bp::arg("key"),
+             bp::arg("def") = bp::object()),
+            "get(key, default_value=None)")
         .def("pop", &NocaseDict::pop,
-            (bp::arg("key"), bp::arg("def") = bp::object())
-        )
-        .def("copy", &NocaseDict::copy));
+            (bp::arg("key"),
+             bp::arg("def") = bp::object()),
+            "pop(key, default_value)")
+        .def("copy", &NocaseDict::copy, "copy()"));
 }
 
 bp::object NocaseDict::create(const bp::object &d)

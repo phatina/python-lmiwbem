@@ -94,10 +94,10 @@ void CIMInstance::init_type()
                 bp::arg("qualifiers") = NocaseDict::create(),
                 bp::arg("path") = bp::object(),
                 bp::arg("property_list") = bp::object()),
-                "Constructs a :py:class:`CIMInstance`.\n\n"
+                "Constructs a :py:class:`.CIMInstance`.\n\n"
                 ":param str classname: String containing a class name\n"
-                ":param NocaseDict properties: Dictionary containing :py:class:`CIMProperty`\n"
-                ":param NocaseDict qualifiers: Dictionary containing :py:class:`CIMQualifier`\n"
+                ":param NocaseDict properties: Dictionary containing :py:class:`.CIMProperty`\n"
+                ":param NocaseDict qualifiers: Dictionary containing :py:class:`.CIMQualifier`\n"
                 ":param CIMInstanceName path: Object path\n"
                 ":param list property_list: List containing strings of properties"))
 #  if PY_MAJOR_VERSION < 3
@@ -115,44 +115,69 @@ void CIMInstance::init_type()
         .def("__setitem__", &CIMInstance::setitem)
         .def("__contains__", &CIMInstance::haskey)
         .def("__len__", &CIMInstance::len)
-        .def("has_key", &CIMInstance::haskey)
-        .def("keys", &CIMInstance::keys)
-        .def("values", &CIMInstance::values)
-        .def("items", &CIMInstance::items)
-        .def("iterkeys", &CIMInstance::iterkeys)
-        .def("itervalues", &CIMInstance::itervalues)
-        .def("iteritems", &CIMInstance::iteritems)
-        .def("copy", &CIMInstance::copy)
-        .def("tomof", &CIMInstance::tomof)
+        .def("has_key", &CIMInstance::haskey,
+            "has_key(key)\n\n"
+            ":param str key: key to check for presence in object's properties\n"
+            ":returns: True, if the key is present in object's properties;\n"
+            "\tFalse otherwise\n"
+            ":rtype: bool")
+        .def("keys", &CIMInstance::keys,
+            "keys()\n\n"
+            ":returns: list of strings of property names\n"
+            ":rtype: list")
+        .def("values", &CIMInstance::values,
+            "values()\n\n"
+            ":returns: list of property values\n"
+            ":rtype: list")
+        .def("items", &CIMInstance::items,
+            "items()\n\n"
+            ":returns: list of tuples with property name and value\n"
+            ":rtype: list")
+        .def("iterkeys", &CIMInstance::iterkeys,
+            "iterkeys()\n\n"
+            ":returns: iterator for property names iteration\n"
+            ":rtype: iterator")
+        .def("itervalues", &CIMInstance::itervalues,
+            "itervalues()\n\n"
+            ":returns: iterator for property values iteration\n"
+            ":rtype: iterator")
+        .def("iteritems", &CIMInstance::iteritems,
+            "iteritems()\n\n"
+            ":returns: iterator for property name and value iteration\n"
+            ":rtype: iterator")
+        .def("copy", &CIMInstance::copy,
+            "copy()\n\n"
+            ":returns: copy of the object itself\n"
+            ":rtype: :py:class:`.CIMInstance`")
+        .def("tomof", &CIMInstance::tomof,
+            "tomof()\n\n"
+            ":returns: MOF representation of the object itself\n"
+            ":rtype: str")
         .add_property("classname",
             &CIMInstance::getClassname,
             &CIMInstance::setClassname,
             "Property storing class name\n\n"
-            ":returns: class name\n"
-            ":rtype: string")
+            ":rtype: str")
         .add_property("path",
             &CIMInstance::getPath,
             &CIMInstance::setPath,
             "Property storing object path\n\n"
-            ":returns: object path\n"
-            ":rtype: :py:class:`CIMInstanceName`")
+            ":rtype: :py:class:`.CIMInstanceName`")
         .add_property("properties",
             &CIMInstance::getProperties,
             &CIMInstance::setProperties,
             "Property storing instance properties\n\n"
-            ":returns: dictionary containing instance properties\n"
-            ":rtype: :py:class:`NocaseDict`")
+            ":rtype: :py:class:`.NocaseDict`")
         .add_property("qualifiers",
             &CIMInstance::getQualifiers,
             &CIMInstance::setQualifiers,
             "Property storing instance qualifiers\n\n"
-            ":returns: dictionary containing instance qualifiers\n"
-            ":rtype: :py:class:`NocaseDict`")
+            ":rtype: :py:class:`.NocaseDict`")
         .add_property("property_list",
             &CIMInstance::getPropertyList,
             &CIMInstance::setPropertyList,
             "Property storing instance properties\n\n"
-            ":returns: list of instance properties\n"));
+            ":rtype: list of strings of instance properties\n"));
 }
 
 bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)

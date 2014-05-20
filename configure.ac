@@ -162,10 +162,25 @@ fi
 
 AC_DEFINE_UNQUOTED([DEFAULT_TRUST_STORE], ["$with_defts"], [Default trust store])
 
+dnl --with-doc
+AC_ARG_WITH(
+    [doc],
+    [AS_HELP_STRING(
+        [--with-doc=@<:@yes/no@:>@],
+        [Build documentation])],
+    [with_doc=$withval])
+
+if test x"$with_doc" != x"yes"; then
+    with_doc="no"
+fi
+AM_CONDITIONAL([BUILDWITHDOC], [test x"$with_doc" = x"yes"])
+
 AC_OUTPUT(
     [makefile
+     doc/makefile
      src/makefile
-     src/__init__.py]
+     src/__init__.py
+     src/lmiwbem_types.py]
 )
 
 AC_MSG_NOTICE([
@@ -175,6 +190,8 @@ AC_MSG_NOTICE([
     Python version       : $PYTHON_VERSION
     Default CIM namespace: $with_defns
     Default trust store  : $with_defts
+
+    Build documentation  : $with_doc
 
     Now type 'make' to build $PACKAGE
 ])
