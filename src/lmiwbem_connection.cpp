@@ -174,6 +174,7 @@ void WBEMConnection::init_type()
                 "\t shall not be verified; False otherwise. Default value is False.\n"
                 ":param bool connect_locally: if True, Unix socket will be\n"
                 "\tused. Default value is False.\n"))
+        .def("__repr__", &WBEMConnection::repr)
         .def("connect", &WBEMConnection::connect,
             (bp::arg("url") = bp::object(),
              bp::arg("username") = bp::object(),
@@ -618,6 +619,13 @@ void WBEMConnection::init_type()
             "\tinstance\n"
             ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
             "**Example:** :ref:`example_reference_names`"));
+}
+
+std::string WBEMConnection::repr() const
+{
+    std::stringstream ss;
+    ss << "WBEMConnection(url='" << m_url << "', ...)";
+    return ss.str();
 }
 
 void WBEMConnection::connect(

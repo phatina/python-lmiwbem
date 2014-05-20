@@ -65,6 +65,8 @@ public:
 
     static void init_type();
 
+    std::string repr() const;
+
     void connect(
         const bp::object &url,
         const bp::object &username,
