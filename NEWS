@@ -1,0 +1,29 @@
+New in version 0.2.0:
+* WBEMConnection:
+  - AssociatorNames()
+  - Associators()
+  - CreateInstance()
+  - DeleteInstance()
+  - ExecQuery()
+  - InvokeMethod()
+  - ModifyInstance()
+  - ReferenceNames()
+  - References()
+  - connectLocally()
+  - CIM operation timeout
+  - X509 authentication
+* CIMInstance(Name) classes: iteration methods
+* CIM* classes: cmp, copy, tomof
+* CIM constants
+  - CIMError constants
+  - ConnectionError constants
+  - default namespace
+  - default trust store path
+* CIMIndicationListener
+* is_subclass()
+* Python 2.6 and 3.x support
+* sphinx-based documentation
+* various fixes
+
+New in version 0.1.0:
+* initial release

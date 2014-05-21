@@ -7,4 +7,5 @@ endif
 EXTRA_DIST =         \
 	examples     \
 	lmiwbem.spec \
+	NEWS         \
 	README.md
