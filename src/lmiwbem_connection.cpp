@@ -937,6 +937,8 @@ bp::object WBEMConnection::getInstance(
     CIMInstanceName &cim_instance_name = lmi::extract_or_throw<CIMInstanceName&>(
         instance_name, "InstanceName");
     std::string std_ns(m_default_namespace);
+    if (!cim_instance_name.getNamespace().empty())
+        std_ns = cim_instance_name.getNamespace();
     if (!isnone(ns))
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
