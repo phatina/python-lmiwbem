@@ -302,7 +302,7 @@ std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
         return std::string("reference");
     else if (isinstance(value_type_check, CIMClassName::type()))
         throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
-    else if (isbasestring(value))
+    else if (isbasestring(value_type_check))
         return std::string("string");
     else if (isbool(value_type_check))
         return std::string("boolean");
