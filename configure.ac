@@ -36,8 +36,23 @@ case $host_os in
             x86_64)
                 PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_X86_64_GNU
                 ;;
+            ppc)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_PPC_GNU
+                ;;
+            ppc64*)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_PPC64_GNU
+                ;;
+            s390)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_ZSERIES_GNU
+                ;;
+            s390x)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_ZSERIES64_GNU
+                ;;
             arm*)
                 PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_XSCALE_GNU
+                ;;
+            aarch64)
+                PEGASUS_PLATFORM=PEGASUS_PLATFORM_LINUX_AARCH64_GNU
                 ;;
             *)
                 AC_MSG_ERROR([Your platform is not currently supported])
