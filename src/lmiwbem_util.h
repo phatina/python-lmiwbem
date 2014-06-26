@@ -145,6 +145,7 @@ bool cim_issubclass(
     const bp::object &ns,
     const bp::object &superclass,
     const bp::object &subclass);
+bool is_error(const bp::object &value);
 
 #  if PY_MAJOR_VERSION < 3
 int compare(const bp::object &o1, const bp::object &o2);

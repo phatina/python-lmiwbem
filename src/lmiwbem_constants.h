@@ -45,17 +45,17 @@ public:
     static const int CIM_ERR_METHOD_NOT_AVAILABLE         = 16;
     static const int CIM_ERR_METHOD_NOT_FOUND             = 17;
 
-    static const int CON_ERR_OTHER                        = 0;
-    static const int CON_ERR_ALREADY_CONNECTED            = 1;
-    static const int CON_ERR_NOT_CONNECTED                = 2;
-    static const int CON_ERR_INVALID_LOCATOR              = 3;
-    static const int CON_ERR_CANNOT_CREATE_SOCKET         = 4;
-    static const int CON_ERR_CANNOT_CONNECT               = 5;
-    static const int CON_ERR_CONNECTION_TIMEOUT           = 6;
-    static const int CON_ERR_SSL_EXCEPTION                = 7;
+    static const int CON_ERR_OTHER                        = 18;
+    static const int CON_ERR_ALREADY_CONNECTED            = 19;
+    static const int CON_ERR_NOT_CONNECTED                = 20;
+    static const int CON_ERR_INVALID_LOCATOR              = 21;
+    static const int CON_ERR_CANNOT_CREATE_SOCKET         = 22;
+    static const int CON_ERR_CANNOT_CONNECT               = 23;
+    static const int CON_ERR_CONNECTION_TIMEOUT           = 24;
+    static const int CON_ERR_SSL_EXCEPTION                = 25;
 
     // Non standard error codes
-    static const int CON_ERR_BIND                         = 8;
+    static const int CON_ERR_BIND                         = 26;
 
     static std::string defaultNamespace();
     static std::string defaultTrustStore();

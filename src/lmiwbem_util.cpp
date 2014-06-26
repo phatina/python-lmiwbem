@@ -30,6 +30,7 @@
 #include "lmiwbem.h"
 #include "lmiwbem_class.h"
 #include "lmiwbem_connection.h"
+#include "lmiwbem_constants.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_class.h"
 #include "lmiwbem_instance.h"
@@ -363,6 +364,43 @@ bool cim_issubclass(
     }
 
     return false;
+}
+
+bool is_error(const bp::object &value)
+{
+    int ivalue = lmi::extract_or_throw<int>(value, "value");
+
+    switch (ivalue) {
+    case CIMConstants::CIM_ERR_FAILED:
+    case CIMConstants::CIM_ERR_ACCESS_DENIED:
+    case CIMConstants::CIM_ERR_INVALID_NAMESPACE:
+    case CIMConstants::CIM_ERR_INVALID_PARAMETER:
+    case CIMConstants::CIM_ERR_INVALID_CLASS:
+    case CIMConstants::CIM_ERR_NOT_FOUND:
+    case CIMConstants::CIM_ERR_NOT_SUPPORTED:
+    case CIMConstants::CIM_ERR_CLASS_HAS_CHILDREN:
+    case CIMConstants::CIM_ERR_CLASS_HAS_INSTANCES:
+    case CIMConstants::CIM_ERR_INVALID_SUPERCLASS:
+    case CIMConstants::CIM_ERR_ALREADY_EXISTS:
+    case CIMConstants::CIM_ERR_NO_SUCH_PROPERTY:
+    case CIMConstants::CIM_ERR_TYPE_MISMATCH:
+    case CIMConstants::CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED:
+    case CIMConstants::CIM_ERR_INVALID_QUERY:
+    case CIMConstants::CIM_ERR_METHOD_NOT_AVAILABLE:
+    case CIMConstants::CIM_ERR_METHOD_NOT_FOUND:
+    case CIMConstants::CON_ERR_OTHER:
+    case CIMConstants::CON_ERR_ALREADY_CONNECTED:
+    case CIMConstants::CON_ERR_NOT_CONNECTED:
+    case CIMConstants::CON_ERR_INVALID_LOCATOR:
+    case CIMConstants::CON_ERR_CANNOT_CREATE_SOCKET:
+    case CIMConstants::CON_ERR_CANNOT_CONNECT:
+    case CIMConstants::CON_ERR_CONNECTION_TIMEOUT:
+    case CIMConstants::CON_ERR_SSL_EXCEPTION:
+    case CIMConstants::CON_ERR_BIND:
+        return true;
+    default:
+        return false;
+    }
 }
 
 #  if PY_MAJOR_VERSION < 3

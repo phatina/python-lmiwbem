@@ -85,6 +85,11 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
         ":param string superclass: super class name\n"
         ":param subclass: either string containing sub class name of\n"
         "\t:py:class:`CIMClass` instance");
+    def("is_error",
+        is_error,
+        "Checks, if the input value equals to a CIM or connection error code.\n\n"
+        ":param int value: integer to check\n"
+        ":returns: True, if value equals to a error code; False otherwise");
 
     // Initialize Python classes
     MinutesFromUTC::init_type();
