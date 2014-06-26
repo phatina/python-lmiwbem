@@ -82,13 +82,31 @@ AC_TRY_LINK([], [],
     [AC_MSG_ERROR([TOG-Pegasus client library not found; install tog-pegasus-libs])]
 )
 
-dnl Check for TOG-Pegasus Listener library
+dnl --with-listener
+AC_ARG_WITH(
+    [listener],
+    [AS_HELP_STRING(
+        [--with-listener=@<:@yes/no@:>@],
+        [support CIMIndicationListener [default=yes]])],
+    [with_listener=$withval])
+
 LIBS="-lpeglistener"
 AC_MSG_CHECKING([for libpeglistener])
-AC_TRY_LINK([], [],
-    [AC_MSG_RESULT([yes]); PEGASUS_LISTENER_LIB=-lpeglistener],
-    [AC_MSG_ERROR([TOG-Pegasus indication listener library not found; install tog-pegasus-libs])]
-)
+if test x"$with_listener" != x"no"; then
+    with_listener="yes"
+
+    dnl Check for TOG-Pegasus Listener library
+    AC_TRY_LINK([], [],
+        [AC_MSG_RESULT([yes])
+         AC_DEFINE([HAVE_PEGASUS_LISTENER], [1], [Pegasus CIMListener])
+         PEGASUS_LISTENER_LIB=-lpeglistener],
+        [AC_MSG_ERROR([TOG-Pegasus indication listener library not found; install tog-pegasus-libs])]
+    )
+else
+    AC_MSG_RESULT([skipped])
+fi
+
+AM_CONDITIONAL([BUILDWITHLISTENER], [test x"$with_listener" = x"yes"])
 
 dnl Check for TOG-Pegasus headers
 AC_MSG_CHECKING([for TOG-Pegasus headers])
@@ -202,11 +220,12 @@ AC_MSG_NOTICE([
 
     lmiwbem $VERSION
     =============
-    Python version       : $PYTHON_VERSION
-    Default CIM namespace: $with_defns
-    Default trust store  : $with_defts
+    Python version               : $PYTHON_VERSION
+    Default CIM namespace        : $with_defns
+    Default trust store          : $with_defts
+    Support CIMIndicationListener: $with_listener
 
-    Build documentation  : $with_doc
+    Build documentation          : $with_doc
 
     Now type 'make' to build $PACKAGE
 ])

@@ -20,7 +20,6 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem.h                 \
 	lmiwbem_instance.h        \
 	lmiwbem_instance_name.h   \
-	lmiwbem_listener.h        \
 	lmiwbem_make_method.h     \
 	lmiwbem_method.h          \
 	lmiwbem_mutex.h           \
@@ -44,7 +43,6 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_extract.cpp       \
 	lmiwbem_instance.cpp      \
 	lmiwbem_instance_name.cpp \
-	lmiwbem_listener.cpp      \
 	lmiwbem_method.cpp        \
 	lmiwbem_nocasedict.cpp    \
 	lmiwbem_parameter.cpp     \
@@ -53,6 +51,12 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_types.cpp         \
 	lmiwbem_util.cpp          \
 	lmiwbem_value.cpp
+
+if BUILDWITHLISTENER
+lmiwbem_core_la_SOURCES     +=    \
+	lmiwbem_listener.h        \
+	lmiwbem_listener.cpp
+endif
 
 lmiwbem_core_la_LDFLAGS      =    \
 	-module                   \

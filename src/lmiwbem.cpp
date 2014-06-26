@@ -118,5 +118,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     CIMClass::init_type();
     CIMClassName::init_type();
     CIMConstants::init_type();
+#  ifdef HAVE_PEGASUS_LISTENER
     CIMIndicationListener::init_type();
+#  endif
 }
