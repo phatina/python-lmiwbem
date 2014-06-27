@@ -31,7 +31,9 @@
 #include "lmiwbem_connection.h"
 #include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
-#include "lmiwbem_listener.h"
+#ifdef HAVE_PEGASUS_LISTENER
+#  include "lmiwbem_listener.h"
+#endif
 #include "lmiwbem_instance.h"
 #include "lmiwbem_method.h"
 #include "lmiwbem_instance_name.h"
