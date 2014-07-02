@@ -19,16 +19,16 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_MAKE_METHOD
-#define LMIWBEM_MAKE_METHOD
+#ifndef   LMIWBEM_MAKE_METHOD
+#  define LMIWBEM_MAKE_METHOD
 
-#include <boost/python/tuple.hpp>
-#include <boost/python/dict.hpp>
-#include <boost/python/object/py_function.hpp>
-#include <boost/python/raw_function.hpp>
-#include <boost/mpl/vector/vector10.hpp>
-#include <boost/limits.hpp>
-#include "lmiwbem_extract.h"
+#  include <boost/python/tuple.hpp>
+#  include <boost/python/dict.hpp>
+#  include <boost/python/object/py_function.hpp>
+#  include <boost/python/raw_function.hpp>
+#  include <boost/mpl/vector/vector10.hpp>
+#  include <boost/limits.hpp>
+#  include "lmiwbem_extract.h"
 
 namespace bp = boost::python;
 

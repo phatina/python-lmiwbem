@@ -19,12 +19,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_CLASS_NAME_H
-#define LMIWBEM_CLASS_NAME_H
+#ifndef   LMIWBEM_CLASS_NAME_H
+#  define LMIWBEM_CLASS_NAME_H
 
-#include <string>
-#include <boost/python/object.hpp>
-#include "lmiwbem_cimbase.h"
+#  include <string>
+#  include <boost/python/object.hpp>
+#  include "lmiwbem_cimbase.h"
 
 namespace bp = boost::python;
 
@@ -51,7 +51,7 @@ public:
     bool lt(const bp::object &other);
     bool ge(const bp::object &other);
     bool le(const bp::object &other);
-#  endif
+#  endif // PY_MAJOR_VERSION
 
     std::string repr();
 

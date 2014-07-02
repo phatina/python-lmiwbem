@@ -127,7 +127,7 @@ std::string object_as_std_string(const bp::object &obj)
     return std::string(PyString_AsString(str));
 #  else
     return std::string(PyUnicode_AsUTF8(str));
-#  endif
+#  endif // PY_MAJOR_VERSION
 }
 
 std::string pystring_as_std_string(const bp::object &obj, bool &good)
@@ -145,7 +145,7 @@ std::string pystring_as_std_string(const bp::object &obj, bool &good)
         return std::string(PyString_AsString(obj.ptr()));
 #  else
         return std::string(PyUnicode_AsUTF8(obj.ptr()));
-#  endif
+#  endif // PY_MAJOR_VERSION
     }
 
     good = false;
@@ -192,7 +192,7 @@ bp::object std_string_as_pylong(const std::string &str)
     free(static_cast<void*>(s));
     return pylong;
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 DEFINE_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String)
 {
@@ -249,7 +249,7 @@ bool isnone(const bp::object &obj)
     // Older boost implementations lack api::object_base::is_none(). We need
     // to check for Py_None by empty boost::python::object().
     return obj == bp::object();
-#endif
+#endif // BOOST_PYTHON_OBJECT_HAS_IS_NONE
 }
 
 bool isinstance(const bp::object &inst, const bp::object &cls)
@@ -262,7 +262,7 @@ bool isstring(const bp::object &obj)
 {
     return static_cast<bool>(PyString_Check(obj.ptr()));
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 bool isunicode(const bp::object &obj)
 {
@@ -275,7 +275,7 @@ bool isbasestring(const bp::object &obj)
     return isstring(obj) || isunicode(obj);
 #  else
     return isunicode(obj);
-#  endif
+#  endif // PY_MAJOR_VERSION
 }
 
 bool isbool(const bp::object &obj)
@@ -288,7 +288,7 @@ bool isint(const bp::object &obj)
 {
     return static_cast<bool>(PyInt_Check(obj.ptr()));
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 bool islong(const bp::object &obj)
 {
@@ -441,4 +441,4 @@ bool compare(const bp::object &o1, const bp::object &o2, int cmp_type)
         throw bp::error_already_set();
     return static_cast<bool>(rval);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION

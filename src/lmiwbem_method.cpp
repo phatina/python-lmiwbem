@@ -95,7 +95,7 @@ void CIMMethod::init_type()
         .def("__lt__", &CIMMethod::lt)
         .def("__ge__", &CIMMethod::ge)
         .def("__le__", &CIMMethod::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMMethod::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMMethod::copy,
@@ -266,7 +266,7 @@ bool CIMMethod::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 std::string CIMMethod::repr()
 {

@@ -19,14 +19,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_EXCEPTION_H
-#define LMIWBEM_EXCEPTION_H
+#ifndef   LMIWBEM_EXCEPTION_H
+#  define LMIWBEM_EXCEPTION_H
 
-#include <string>
-#include <boost/python/errors.hpp>
-#include <boost/python/object.hpp>
-#include <Pegasus/Common/Exception.h>
-#include "lmiwbem_traits.h"
+#  include <string>
+#  include <boost/python/errors.hpp>
+#  include <boost/python/object.hpp>
+#  include <Pegasus/Common/Exception.h>
+#  include "lmiwbem_traits.h"
 
 namespace bp = boost::python;
 

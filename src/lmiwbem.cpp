@@ -33,7 +33,7 @@
 #include "lmiwbem_exception.h"
 #ifdef HAVE_PEGASUS_LISTENER
 #  include "lmiwbem_listener.h"
-#endif
+#endif // HAVE_PEGASUS_LISTENER
 #include "lmiwbem_instance.h"
 #include "lmiwbem_method.h"
 #include "lmiwbem_instance_name.h"
@@ -132,7 +132,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     CIMConstants::init_type();
 #  ifdef HAVE_PEGASUS_LISTENER
     CIMIndicationListener::init_type();
-#  endif
+#  endif // HAVE_PEGASUS_LISTENER
 #  ifdef HAVE_SLP
     SLP::init_type();
     SLPResult::init_type();

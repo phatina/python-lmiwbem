@@ -19,14 +19,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_CLIENT_H
-#define LMIWBEM_CLIENT_H
+#ifndef   LMIWBEM_CLIENT_H
+#  define LMIWBEM_CLIENT_H
 
-#include <string>
-#include <Pegasus/Client/CIMClient.h>
-#include <Pegasus/Common/CIMType.h>
-#include <Pegasus/Common/SSLContext.h>
-#include "lmiwbem_addr.h"
+#  include <string>
+#  include <Pegasus/Client/CIMClient.h>
+#  include <Pegasus/Common/CIMType.h>
+#  include <Pegasus/Common/SSLContext.h>
+#  include "lmiwbem_addr.h"
 
 class CIMClient: public Pegasus::CIMClient
 {

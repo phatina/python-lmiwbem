@@ -19,20 +19,20 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_UTIL_H
-#define LMIWBEM_UTIL_H
+#ifndef   LMIWBEM_UTIL_H
+#  define LMIWBEM_UTIL_H
 
-#include <map>
-#include <string>
-#include <boost/shared_ptr.hpp>
-#include <Pegasus/Common/Char16.h>
-#include <Pegasus/Common/CIMDateTime.h>
-#include <Pegasus/Common/CIMName.h>
-#include <Pegasus/Common/CIMObjectPath.h>
-#include <Pegasus/Common/CIMPropertyList.h>
-#include <Pegasus/Common/CIMValue.h>
-#include <Pegasus/Common/String.h>
-#include "lmiwbem.h"
+#  include <map>
+#  include <string>
+#  include <boost/shared_ptr.hpp>
+#  include <Pegasus/Common/Char16.h>
+#  include <Pegasus/Common/CIMDateTime.h>
+#  include <Pegasus/Common/CIMName.h>
+#  include <Pegasus/Common/CIMObjectPath.h>
+#  include <Pegasus/Common/CIMPropertyList.h>
+#  include <Pegasus/Common/CIMValue.h>
+#  include <Pegasus/Common/String.h>
+#  include "lmiwbem.h"
 
 BOOST_PYTHON_BEGIN
 class object;
@@ -40,21 +40,21 @@ BOOST_PYTHON_END
 
 namespace bp = boost::python;
 
-#include <boost/python/to_python_converter.hpp>
+#  include <boost/python/to_python_converter.hpp>
 
-#define DECL_TO_CONVERTER(name, type) \
-    struct name \
-    { \
-        static PyObject *convert(const type &val); \
-        static void register_converter(); \
-    }
+#  define DECL_TO_CONVERTER(name, type) \
+       struct name \
+       { \
+           static PyObject *convert(const type &val); \
+           static void register_converter(); \
+       }
 
-#define DEFINE_TO_CONVERTER(name, type) \
-    void name::register_converter() \
-    { \
-        boost::python::to_python_converter<type, name>(); \
-    } \
-    PyObject *name::convert(const type &value)
+#  define DEFINE_TO_CONVERTER(name, type) \
+       void name::register_converter() \
+       { \
+           boost::python::to_python_converter<type, name>(); \
+       } \
+       PyObject *name::convert(const type &value)
 
 DECL_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String);
 DECL_TO_CONVERTER(PegasusCIMNameToPythonString, Pegasus::CIMName);
@@ -121,7 +121,7 @@ bp::object  std_string_as_pyint(const std::string &str);
 bp::object  std_string_as_pyfloat(const std::string &str);
 #  if PY_MAJOR_VERSION < 3
 bp::object  std_string_as_pylong(const std::string &str);
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 bp::object this_module();
 bp::object incref(const bp::object &obj);
@@ -134,7 +134,7 @@ bool isbool(const bp::object &obj);
 #  if PY_MAJOR_VERSION < 3
 bool isstring(const bp::object &obj);
 bool isint(const bp::object &obj);
-#  endif
+#  endif // PY_MAJOR_VERSION
 bool islong(const bp::object &obj);
 bool isfloat(const bp::object &obj);
 bool isdict(const bp::object &obj);
@@ -151,6 +151,6 @@ bool is_error(const bp::object &value);
 int compare(const bp::object &o1, const bp::object &o2);
 #  else
 bool compare(const bp::object &o1, const bp::object &o2, int cmp_type);
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 #endif // LMIWBEM_UTIL_H

@@ -89,7 +89,7 @@ void CIMClass::init_type()
         .def("__lt__", &CIMClass::lt)
         .def("__ge__", &CIMClass::ge)
         .def("__le__", &CIMClass::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMClass::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMClass::copy,
@@ -260,7 +260,7 @@ bool CIMClass::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 std::string CIMClass::repr()
 {

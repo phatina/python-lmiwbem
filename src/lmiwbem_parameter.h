@@ -19,15 +19,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_PARAMETER_H
-#define LMIWBEM_PARAMETER_H
+#ifndef   LMIWBEM_PARAMETER_H
+#  define LMIWBEM_PARAMETER_H
 
-#include <list>
-#include <string>
-#include <boost/python/object.hpp>
-#include <Pegasus/Common/CIMParameter.h>
-#include "lmiwbem_cimbase.h"
-#include "lmiwbem_refcountedptr.h"
+#  include <list>
+#  include <string>
+#  include <boost/python/object.hpp>
+#  include <Pegasus/Common/CIMParameter.h>
+#  include "lmiwbem_cimbase.h"
+#  include "lmiwbem_refcountedptr.h"
 
 namespace bp = boost::python;
 
@@ -57,7 +57,7 @@ public:
     bool lt(const bp::object &other);
     bool ge(const bp::object &other);
     bool le(const bp::object &other);
-#  endif
+#  endif // PY_MAJOR_VERSION
 
     std::string repr();
     std::string tomof();

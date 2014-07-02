@@ -19,14 +19,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_CONNECTION_H
-#define LMIWBEM_CONNECTION_H
+#ifndef   LMIWBEM_CONNECTION_H
+#  define LMIWBEM_CONNECTION_H
 
-#include <string>
-#include "lmiwbem.h"
-#include "lmiwbem_cimbase.h"
-#include "lmiwbem_client.h"
-#include "lmiwbem_mutex.h"
+#  include <string>
+#  include "lmiwbem.h"
+#  include "lmiwbem_cimbase.h"
+#  include "lmiwbem_client.h"
+#  include "lmiwbem_mutex.h"
 
 BOOST_PYTHON_BEGIN
     class dict;

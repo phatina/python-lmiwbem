@@ -19,10 +19,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_REFCOUNTEDPTR_H
-#define LMIWBEM_REFCOUNTEDPTR_H
+#ifndef   LMIWBEM_REFCOUNTEDPTR_H
+#  define LMIWBEM_REFCOUNTEDPTR_H
 
-#include "lmiwbem_mutex.h"
+#  include "lmiwbem_mutex.h"
 
 template <typename T>
 class RefCountedPtrValue

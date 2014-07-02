@@ -19,32 +19,32 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_TYPES_H
-#define LMIWBEM_TYPES_H
+#ifndef   LMIWBEM_TYPES_H
+#  define LMIWBEM_TYPES_H
 
-#include <boost/python/import.hpp>
-#include <boost/python/scope.hpp>
-#include <boost/python/object.hpp>
-#include "lmiwbem_cimbase.h"
+#  include <boost/python/import.hpp>
+#  include <boost/python/scope.hpp>
+#  include <boost/python/object.hpp>
+#  include "lmiwbem_cimbase.h"
 
 namespace bp = boost::python;
 
-#define DECL_CIMTYPE(name) \
-    class name: public CIMBase<name> \
-    { \
-    public: \
-        static void init_type(); \
-        static bp::object create() { return CIMBase<name>::create(); } \
-        template <typename T> \
-        static bp::object create(const T &value) { return CIMBase<name>::create(value); } \
-    }
+#  define DECL_CIMTYPE(name) \
+       class name: public CIMBase<name> \
+       { \
+       public: \
+           static void init_type(); \
+           static bp::object create() { return CIMBase<name>::create(); } \
+           template <typename T> \
+           static bp::object create(const T &value) { return CIMBase<name>::create(value); } \
+       }
 
-#define DEF_CIMTYPE(name) \
-    void name::init_type() \
-    { \
-        CIMBase<name>::init_type(bp::import("lmiwbem.lmiwbem_types").attr(#name)); \
-        bp::scope().attr(#name) = CIMBase<name>::type(); \
-    } \
+#  define DEF_CIMTYPE(name) \
+       void name::init_type() \
+       { \
+           CIMBase<name>::init_type(bp::import("lmiwbem.lmiwbem_types").attr(#name)); \
+           bp::scope().attr(#name) = CIMBase<name>::type(); \
+       } \
 
 DECL_CIMTYPE(MinutesFromUTC);
 DECL_CIMTYPE(CIMType);

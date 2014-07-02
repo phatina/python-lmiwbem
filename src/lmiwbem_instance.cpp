@@ -108,7 +108,7 @@ void CIMInstance::init_type()
         .def("__lt__", &CIMInstanceName::lt)
         .def("__ge__", &CIMInstanceName::ge)
         .def("__le__", &CIMInstanceName::le)
-#endif
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMInstance::repr,
             ":returns: pretty string of the object")
         .def("__getitem__", &CIMInstance::getitem)
@@ -305,7 +305,7 @@ bool CIMInstance::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 std::string CIMInstance::repr()
 {

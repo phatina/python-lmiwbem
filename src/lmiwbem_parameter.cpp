@@ -91,7 +91,7 @@ void CIMParameter::init_type()
         .def("__lt__", &CIMParameter::lt)
         .def("__ge__", &CIMParameter::ge)
         .def("__le__", &CIMParameter::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMParameter::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMParameter::copy,
@@ -263,7 +263,7 @@ bool CIMParameter::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 std::string CIMParameter::repr()
 {

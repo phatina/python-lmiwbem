@@ -19,15 +19,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_NOCASEDICT_H
-#define LMIWBEM_NOCASEDICT_H
+#ifndef   LMIWBEM_NOCASEDICT_H
+#  define LMIWBEM_NOCASEDICT_H
 
-#include <map>
-#include <boost/python/class.hpp>
-#include <boost/python/object.hpp>
-#include "lmiwbem.h"
-#include "lmiwbem_cimbase.h"
-#include "lmiwbem_extract.h"
+#  include <map>
+#  include <boost/python/class.hpp>
+#  include <boost/python/object.hpp>
+#  include "lmiwbem.h"
+#  include "lmiwbem_cimbase.h"
+#  include "lmiwbem_extract.h"
 
 namespace bp = boost::python;
 
@@ -99,7 +99,7 @@ public:
     bool lt(const bp::object &other);
     bool ge(const bp::object &other);
     bool le(const bp::object &other);
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 private:
     nocase_map_t m_dict;
@@ -122,7 +122,7 @@ protected:
             .def("next", &T::next)
 #  else
             .def("__next__", &T::next)
-#  endif
+#  endif // PY_MAJOR_VERSION
         );
     }
 

@@ -19,13 +19,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_CONSTANTS_H
-#define LMIWBEM_CONSTANTS_H
+#ifndef   LMIWBEM_CONSTANTS_H
+#  define LMIWBEM_CONSTANTS_H
 
-#include <config.h>
-#ifdef HAVE_SLP
-#  include <slp.h>
-#endif // HAVE_SLP
+#  include <config.h>
+#  ifdef HAVE_SLP
+#    include <slp.h>
+#  endif // HAVE_SLP
 
 class CIMConstants
 {
@@ -62,7 +62,7 @@ public:
     // Non standard error codes
     static const int CON_ERR_BIND                         = 26;
 
-#ifdef HAVE_SLP
+#  ifdef HAVE_SLP
     // SLP error codes
     static const int SLP_ERR_LANGUAGE_NOT_SUPPORTED       = SLP_LANGUAGE_NOT_SUPPORTED;
     static const int SLP_ERR_PARSE_ERROR                  = SLP_PARSE_ERROR;
@@ -82,10 +82,10 @@ public:
     static const int SLP_ERR_INTERNAL_SYSTEM_ERROR        = SLP_INTERNAL_SYSTEM_ERROR;
     static const int SLP_ERR_HANDLE_IN_USE                = SLP_HANDLE_IN_USE;
     static const int SLP_ERR_TYPE_ERROR                   = SLP_TYPE_ERROR;
-#  ifndef UNICAST_NOT_SUPPORTED
+#    ifndef UNICAST_NOT_SUPPORTED
     static const int SLP_ERR_RETRY_UNICAST                = SLP_RETRY_UNICAST;
-#  endif // UNICAST_NOT_SUPPORTED
-#endif // HAVE_SLP
+#    endif // UNICAST_NOT_SUPPORTED
+#  endif // HAVE_SLP
 
     static std::string defaultNamespace();
     static std::string defaultTrustStore();

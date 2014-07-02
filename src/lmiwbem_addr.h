@@ -19,11 +19,11 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef WBEM_CLIENT_ADDRESS_H
-#define WBEM_CLIENT_ADDRESS_H
+#ifndef   WBEM_CLIENT_ADDRESS_H
+#  define WBEM_CLIENT_ADDRESS_H
 
-#include <Pegasus/Common/CIMType.h>
-#include <Pegasus/Common/String.h>
+#  include <Pegasus/Common/CIMType.h>
+#  include <Pegasus/Common/String.h>
 
 class Address
 {

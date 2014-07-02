@@ -19,16 +19,16 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_LISTENER_H
-#define LMIWBEM_LISTENER_H
+#ifndef   LMIWBEM_LISTENER_H
+#  define LMIWBEM_LISTENER_H
 
-#include <map>
-#include <Pegasus/Consumer/CIMIndicationConsumer.h>
-#include <Pegasus/Listener/CIMListener.h>
-#include <boost/python/object.hpp>
-#include <boost/shared_ptr.hpp>
-#include "lmiwbem_cimbase.h"
-#include "lmiwbem_instance.h"
+#  include <map>
+#  include <Pegasus/Consumer/CIMIndicationConsumer.h>
+#  include <Pegasus/Listener/CIMListener.h>
+#  include <boost/python/object.hpp>
+#  include <boost/shared_ptr.hpp>
+#  include "lmiwbem_cimbase.h"
+#  include "lmiwbem_instance.h"
 
 namespace bp = boost::python;
 

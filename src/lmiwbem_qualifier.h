@@ -19,14 +19,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_QUALIFIER_H
-#define LMIWBEM_QUALIFIER_H
+#ifndef   LMIWBEM_QUALIFIER_H
+#  define LMIWBEM_QUALIFIER_H
 
-#include <string>
-#include <boost/python/object.hpp>
-#include <Pegasus/Common/CIMQualifier.h>
-#include "lmiwbem_cimbase.h"
-#include "lmiwbem.h"
+#  include <string>
+#  include <boost/python/object.hpp>
+#  include <Pegasus/Common/CIMQualifier.h>
+#  include "lmiwbem_cimbase.h"
+#  include "lmiwbem.h"
 
 namespace bp = boost::python;
 
@@ -58,7 +58,7 @@ public:
     bool lt(const bp::object &other);
     bool ge(const bp::object &other);
     bool le(const bp::object &other);
-#  endif
+#  endif // PY_MAJOR_VERSION
 
     std::string repr();
     std::string tomof();

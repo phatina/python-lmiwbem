@@ -19,10 +19,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_CIMBASE
-#define LMIWBEM_CIMBASE
+#ifndef   LMIWBEM_CIMBASE
+#  define LMIWBEM_CIMBASE
 
-#include <boost/python/object.hpp>
+#  include <boost/python/object.hpp>
 
 namespace bp = boost::python;
 

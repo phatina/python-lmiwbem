@@ -19,15 +19,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_EXTRACT_H
-#define LMIWBEM_EXTRACT_H
+#ifndef   LMIWBEM_EXTRACT_H
+#  define LMIWBEM_EXTRACT_H
 
-#include <string>
-#include <boost/python/dict.hpp>
-#include <boost/python/tuple.hpp>
-#include <boost/python/extract.hpp>
-#include "lmiwbem.h"
-#include "lmiwbem_exception.h"
+#  include <string>
+#  include <boost/python/dict.hpp>
+#  include <boost/python/tuple.hpp>
+#  include <boost/python/extract.hpp>
+#  include "lmiwbem.h"
+#  include "lmiwbem_exception.h"
 
 namespace bp = boost::python;
 

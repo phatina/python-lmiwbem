@@ -19,13 +19,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_H
-#define LMIWBEM_H
+#ifndef   LMIWBEM_H
+#  define LMIWBEM_H
 
-#define BOOST_PYTHON_BEGIN namespace boost { namespace python {
-#define BOOST_PYTHON_END } }
+#  define BOOST_PYTHON_BEGIN namespace boost { namespace python {
+#  define BOOST_PYTHON_END } }
 
-#define LMIWBEM_BEGIN namespace lmi {
-#define LMIWBEM_END }
+#  define LMIWBEM_BEGIN namespace lmi {
+#  define LMIWBEM_END }
 
 #endif // LMIWBEM_H

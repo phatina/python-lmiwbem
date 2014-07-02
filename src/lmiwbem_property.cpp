@@ -121,7 +121,7 @@ void CIMProperty::init_type()
         .def("__lt__", &CIMProperty::lt)
         .def("__ge__", &CIMProperty::ge)
         .def("__le__", &CIMProperty::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMProperty::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMProperty::copy,
@@ -308,7 +308,7 @@ bool CIMProperty::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 std::string CIMProperty::repr()
 {

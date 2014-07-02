@@ -67,7 +67,7 @@ void NocaseDict::init_type()
         .def("__lt__", &NocaseDict::lt)
         .def("__ge__", &NocaseDict::ge)
         .def("__le__", &NocaseDict::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__len__", &NocaseDict::len)
         .def("__repr__", &NocaseDict::repr)
         .def("keys", &NocaseDict::keys, "keys()")
@@ -322,7 +322,7 @@ bool NocaseDict::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 // ----------------------------------------------------------------------------
 

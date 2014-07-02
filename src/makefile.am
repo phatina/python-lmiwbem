@@ -56,13 +56,13 @@ if BUILDWITHLISTENER
 lmiwbem_core_la_SOURCES     +=    \
 	lmiwbem_listener.h        \
 	lmiwbem_listener.cpp
-endif
+endif # BUILDWITHLISTENER
 
 if BUILDWITHSLP
 lmiwbem_core_la_SOURCES     +=    \
 	lmiwbem_slp.h             \
 	lmiwbem_slp.cpp
-endif
+endif # BUILDWITHSLP
 
 lmiwbem_core_la_LDFLAGS      =    \
 	-module                   \

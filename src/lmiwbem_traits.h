@@ -19,10 +19,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_TRAITS_H
-#define LMIWBEM_TRAITS_H
+#ifndef   LMIWBEM_TRAITS_H
+#  define LMIWBEM_TRAITS_H
 
-#include "lmiwbem.h"
+#  include "lmiwbem.h"
 
 BOOST_PYTHON_BEGIN
 class dict;
@@ -39,14 +39,14 @@ namespace bp = boost::python;
 
 LMIWBEM_BEGIN
 
-#define DEF_TYPE_NAME_TYPE(type, value) \
-    template <> \
-    struct type_name<type> \
-    { \
-        static std::string get() { return std::string(#value); } \
-    }
+#  define DEF_TYPE_NAME_TYPE(type, value) \
+       template <> \
+       struct type_name<type> \
+       { \
+           static std::string get() { return std::string(#value); } \
+       }
 
-#define DEF_TYPE_NAME(type) DEF_TYPE_NAME_TYPE(type, type)
+#  define DEF_TYPE_NAME(type) DEF_TYPE_NAME_TYPE(type, type)
 
 template <typename T>
 struct type_name

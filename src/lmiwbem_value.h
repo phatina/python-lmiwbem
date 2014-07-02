@@ -19,12 +19,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_VALUE_H
-#define LMIWBEM_VALUE_H
+#ifndef   LMIWBEM_VALUE_H
+#  define LMIWBEM_VALUE_H
 
-#include <string>
-#include <boost/python/object.hpp>
-#include <Pegasus/Common/CIMValue.h>
+#  include <string>
+#  include <boost/python/object.hpp>
+#  include <Pegasus/Common/CIMValue.h>
 
 class CIMValue
 {

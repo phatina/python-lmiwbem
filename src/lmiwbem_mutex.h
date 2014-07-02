@@ -19,8 +19,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_MUTEX_H
-#define LMIWBEM_MUTEX_H
+#ifndef   LMIWBEM_MUTEX_H
+#  define LMIWBEM_MUTEX_H
 
 extern "C" {
 #  include <pthread.h>

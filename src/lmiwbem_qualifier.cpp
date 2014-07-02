@@ -100,7 +100,7 @@ void CIMQualifier::init_type()
         .def("__lt__", &CIMQualifier::lt)
         .def("__ge__", &CIMQualifier::ge)
         .def("__le__", &CIMQualifier::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMQualifier::repr,
             ":returns: pretty string of the object")
         .def("copy", &CIMQualifier::copy,
@@ -280,7 +280,7 @@ bool CIMQualifier::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 std::string CIMQualifier::repr()
 {

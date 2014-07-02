@@ -19,13 +19,13 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef LMIWBEM_SLP_H
-#define LMIWBEM_SLP_H
+#ifndef   LMIWBEM_SLP_H
+#  define LMIWBEM_SLP_H
 
-#include <slp.h>
-#include <string>
-#include <boost/python/object.hpp>
-#include "lmiwbem_cimbase.h"
+#  include <slp.h>
+#  include <string>
+#  include <boost/python/object.hpp>
+#  include "lmiwbem_cimbase.h"
 
 namespace bp = boost::python;
 

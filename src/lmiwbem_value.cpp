@@ -270,7 +270,7 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
 #  if PY_MAJOR_VERSION < 3
     } else if (isint(value_type_check)) {
         return setPegasusValueS<Pegasus::Sint32>(value, is_array);
-#  endif
+#  endif // PY_MAJOR_VERSION
     } else if (islong(value_type_check)) {
         return setPegasusValueS<Pegasus::Sint64>(value, is_array);
     } else if (isfloat(value_type_check)) {

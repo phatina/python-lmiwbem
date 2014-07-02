@@ -86,7 +86,7 @@ void CIMInstanceName::init_type()
         .def("__lt__", &CIMInstanceName::lt)
         .def("__ge__", &CIMInstanceName::ge)
         .def("__le__", &CIMInstanceName::le)
-#  endif
+#  endif // PY_MAJOR_VERSION
         .def("__str__", &CIMInstanceName::str,
             ":returns: serialized object\n"
             ":rtype: str")
@@ -214,7 +214,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
         if (isint(it->second) ||
 #  if PY_MAJOR_VERSION < 3
             islong(it->second) ||
-#  endif
+#  endif // PY_MAJOR_VERSION
             isfloat(it->second))
         {
             // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
@@ -328,7 +328,7 @@ bool CIMInstanceName::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif
+#  endif // PY_MAJOR_VERSION
 
 bp::object CIMInstanceName::copy()
 {
@@ -458,7 +458,7 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
         if (!isnone(num = std_string_as_pyint(std::string(cim_value.getCString())))  ||
 #  if PY_MAJOR_VERSION < 3
             !isnone(num = std_string_as_pylong(std::string(cim_value.getCString()))) ||
-#  endif
+#  endif // PY_MAJOR_VERSION
             !isnone(num = std_string_as_pyfloat(std::string(cim_value.getCString()))))
         {
             return num;
