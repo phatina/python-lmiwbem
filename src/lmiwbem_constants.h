@@ -32,6 +32,7 @@ class CIMConstants
 public:
     static void init_type();
 
+    // CIM error codes
     static const int CIM_ERR_FAILED                       = 1;
     static const int CIM_ERR_ACCESS_DENIED                = 2;
     static const int CIM_ERR_INVALID_NAMESPACE            = 3;
@@ -50,6 +51,7 @@ public:
     static const int CIM_ERR_METHOD_NOT_AVAILABLE         = 16;
     static const int CIM_ERR_METHOD_NOT_FOUND             = 17;
 
+    // Connection error codes
     static const int CON_ERR_OTHER                        = 18;
     static const int CON_ERR_ALREADY_CONNECTED            = 19;
     static const int CON_ERR_NOT_CONNECTED                = 20;
