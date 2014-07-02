@@ -1,7 +1,8 @@
 Source code examples
 ====================
 
-This section contains source code examples for all supported CIM operations.
+This section contains source code examples for all supported CIM operations
+and related functions.
 
 .. toctree::
    _examples/example_associator_names
@@ -19,3 +20,5 @@ This section contains source code examples for all supported CIM operations.
    _examples/example_modify_instance
    _examples/example_reference_names
    _examples/example_references
+
+   _examples/example_slp_discovery

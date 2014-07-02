@@ -397,6 +397,29 @@ bool is_error(const bp::object &value)
     case CIMConstants::CON_ERR_CONNECTION_TIMEOUT:
     case CIMConstants::CON_ERR_SSL_EXCEPTION:
     case CIMConstants::CON_ERR_BIND:
+#ifdef HAVE_SLP
+    case CIMConstants::SLP_ERR_LANGUAGE_NOT_SUPPORTED:
+    case CIMConstants::SLP_ERR_PARSE_ERROR:
+    case CIMConstants::SLP_ERR_INVALID_REGISTRATION:
+    case CIMConstants::SLP_ERR_SCOPE_NOT_SUPPORTED:
+    case CIMConstants::SLP_ERR_AUTHENTICATION_ABSENT:
+    case CIMConstants::SLP_ERR_AUTHENTICATION_FAILED:
+    case CIMConstants::SLP_ERR_INVALID_UPDATE:
+    case CIMConstants::SLP_ERR_REFRESH_REJECTED:
+    case CIMConstants::SLP_ERR_NOT_IMPLEMENTED:
+    case CIMConstants::SLP_ERR_BUFFER_OVERFLOW:
+    case CIMConstants::SLP_ERR_NETWORK_TIMED_OUT:
+    case CIMConstants::SLP_ERR_NETWORK_INIT_FAILED:
+    case CIMConstants::SLP_ERR_MEMORY_ALLOC_FAILED:
+    case CIMConstants::SLP_ERR_PARAMETER_BAD:
+    case CIMConstants::SLP_ERR_NETWORK_ERROR:
+    case CIMConstants::SLP_ERR_INTERNAL_SYSTEM_ERROR:
+    case CIMConstants::SLP_ERR_HANDLE_IN_USE:
+    case CIMConstants::SLP_ERR_TYPE_ERROR:
+#  ifndef UNICAST_NOT_SUPPORTED
+    case CIMConstants::SLP_ERR_RETRY_UNICAST:
+#  endif // UNICAST_NOT_SUPPORTED
+#endif // HAVE_SLP
         return true;
     default:
         return false;

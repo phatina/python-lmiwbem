@@ -17,5 +17,6 @@ Core package of LMIWBEM cotains connection class and CIM abstraction classes.
    api_lmiwbem_core_qualifier
    api_lmiwbem_core_exceptions
    api_lmiwbem_core_nocasedict
+   api_lmiwbem_core_slp_result
    api_lmiwbem_core_unclassified
    api_lmiwbem_core_connection

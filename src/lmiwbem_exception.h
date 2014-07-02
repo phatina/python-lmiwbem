@@ -34,6 +34,7 @@ void throw_Exception(const Pegasus::Exception &e);
 void throw_CIMError(const Pegasus::CIMException &e);
 void throw_CIMError(const std::string &message, int code = 0);
 void throw_ConnectionError(const std::string &message, int code = 0);
+void throw_SLPError(const std::string &message, int code = 0);
 
 void throw_ValueError(const std::string &message);
 void throw_KeyError(const std::string &message);

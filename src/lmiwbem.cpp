@@ -41,6 +41,9 @@
 #include "lmiwbem_parameter.h"
 #include "lmiwbem_property.h"
 #include "lmiwbem_qualifier.h"
+#ifdef HAVE_SLP
+#  include "lmiwbem_slp.h"
+#endif // HAVE_SLP
 #include "lmiwbem_types.h"
 #include "lmiwbem_util.h"
 
@@ -48,19 +51,20 @@
 
 namespace bp = boost::python;
 
-bp::object CIMError;
-bp::object ConnectionError;
+bp::object CIMErrorExc;
+bp::object ConnectionErrorExc;
+bp::object SLPErrorExc;
 
 BOOST_PYTHON_MODULE(lmiwbem_core) {
     // Initialize Python threads
     PyEval_InitThreads();
 
-    CIMError = bp::object(
-        bp::handle<>(PyErr_NewException((char*) "lmiwbem.CIMError", NULL, NULL))
-    );
-    ConnectionError = bp::object(
-        bp::handle<>(PyErr_NewException((char*) "lmiwbem.ConnectionError", NULL, NULL))
-    );
+    CIMErrorExc = bp::object(
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem.CIMError", NULL, NULL)));
+    ConnectionErrorExc = bp::object(
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem.ConnectionError", NULL, NULL)));
+    SLPErrorExc = bp::object(
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem.SLPError", NULL, NULL)));
 
     // Disable C++ signatures in Python's doc-strings
     bp::docstring_options doc_options;
@@ -68,8 +72,9 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     doc_options.disable_cpp_signatures();
 
     // Fill module's dictionary with exceptions
-    bp::scope().attr("CIMError") = CIMError;
-    bp::scope().attr("ConnectionError") = ConnectionError;
+    bp::scope().attr("CIMError") = CIMErrorExc;
+    bp::scope().attr("ConnectionError") = ConnectionErrorExc;
+    bp::scope().attr("SLPError") = SLPErrorExc;
 
     // Register type converts
     PegasusStringToPythonString::register_converter();
@@ -128,4 +133,8 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
 #  ifdef HAVE_PEGASUS_LISTENER
     CIMIndicationListener::init_type();
 #  endif
+#  ifdef HAVE_SLP
+    SLP::init_type();
+    SLPResult::init_type();
+#  endif // HAVE_SLP
 }

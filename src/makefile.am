@@ -58,6 +58,12 @@ lmiwbem_core_la_SOURCES     +=    \
 	lmiwbem_listener.cpp
 endif
 
+if BUILDWITHSLP
+lmiwbem_core_la_SOURCES     +=    \
+	lmiwbem_slp.h             \
+	lmiwbem_slp.cpp
+endif
+
 lmiwbem_core_la_LDFLAGS      =    \
 	-module                   \
 	-avoid-version
@@ -70,6 +76,15 @@ lmiwbem_core_la_CPPFLAGS     =    \
 lmiwbem_core_la_LIBADD       =    \
 	@PEGASUS_COMMON_LIB@      \
 	@PEGASUS_CLIENT_LIB@      \
-	@PEGASUS_LISTENER_LIB@    \
 	@PYTHON_LDFLAGS@          \
 	@BOOST_PYTHON_LIB@
+
+if BUILDWITHLISTENER
+lmiwbem_core_la_LIBADD      +=    \
+	@PEGASUS_LISTENER_LIB@
+endif # BUILDWITHLISTENER
+
+if BUILDWITHSLP
+lmiwbem_core_la_LIBADD      +=    \
+	@SLP_LIB@
+endif # BUILDWITHSLP

@@ -31,8 +31,9 @@
 
 namespace bp = boost::python;
 
-extern bp::object CIMError;
-extern bp::object ConnectionError;
+extern bp::object CIMErrorExc;
+extern bp::object ConnectionErrorExc;
+extern bp::object SLPErrorExc;
 
 namespace {
 
@@ -68,26 +69,32 @@ inline void throw_core(
 
 void throw_Exception(const Pegasus::Exception &e)
 {
-    throw_core(CIMError, std::string(
+    throw_core(CIMErrorExc, std::string(
         (Pegasus::String("Pegasus: ") + e.getMessage()).getCString()));
 }
 
 void throw_ConnectionError(const std::string &message, int code)
 {
-    throw_core(ConnectionError, message, code);
+    throw_core(ConnectionErrorExc, message, code);
 }
 
 void throw_CIMError(const Pegasus::CIMException &e)
 {
     throw_core(
-        CIMError,
+        CIMErrorExc,
         std::string(e.getMessage().getCString()),
         static_cast<int>(e.getCode()));
 }
 
 void throw_CIMError(const std::string &message, int code)
 {
-    throw_core(CIMError, message, code);
+    throw_core(CIMErrorExc, message, code);
+    bp::throw_error_already_set();
+}
+
+void throw_SLPError(const std::string &message, int code)
+{
+    throw_core(SLPErrorExc, message, code);
     bp::throw_error_already_set();
 }
 

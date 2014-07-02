@@ -132,10 +132,36 @@ AC_TRY_LINK(
     [AC_MSG_RESULT([no])]
 )
 
+dnl --with-slp
+AC_ARG_WITH(
+    [slp],
+    [AS_HELP_STRING(
+        [--with-slp=@<:@yes/no@:>@],
+        [Support SLP])],
+    [with_slp=$withval])
+
+LIBS="-lslp"
+AC_MSG_CHECKING([for SLP])
+if test x"$with_slp" != x"no"; then
+    with_slp="yes"
+
+    dnl Check for OpenSLP library.
+    AC_TRY_LINK([], [],
+        [AC_MSG_RESULT([yes])
+         AC_DEFINE([HAVE_SLP], [1], [Support SLP])
+         SLP_LIB=-lslp],
+        [AC_MSG_ERROR([OpenSLP library not found; install openslp])]
+    )
+else
+    AC_MSG_RESULT([skipping])
+fi
+AM_CONDITIONAL([BUILDWITHSLP], [test x"$with_slp" = x"yes"])
+
 LIBS=$SAVE_LIBS
 AC_SUBST(PEGASUS_COMMON_LIB)
 AC_SUBST(PEGASUS_CLIENT_LIB)
 AC_SUBST(PEGASUS_LISTENER_LIB)
+AC_SUBST(SLP_LIB)
 
 dnl --with-python
 AC_ARG_WITH(
@@ -223,6 +249,7 @@ AC_MSG_NOTICE([
     Python version               : $PYTHON_VERSION
     Default CIM namespace        : $with_defns
     Default trust store          : $with_defts
+    Support SLP                  : $with_slp
     Support CIMIndicationListener: $with_listener
 
     Build documentation          : $with_doc

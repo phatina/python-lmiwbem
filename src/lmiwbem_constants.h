@@ -22,6 +22,11 @@
 #ifndef LMIWBEM_CONSTANTS_H
 #define LMIWBEM_CONSTANTS_H
 
+#include <config.h>
+#ifdef HAVE_SLP
+#  include <slp.h>
+#endif // HAVE_SLP
+
 class CIMConstants
 {
 public:
@@ -56,6 +61,31 @@ public:
 
     // Non standard error codes
     static const int CON_ERR_BIND                         = 26;
+
+#ifdef HAVE_SLP
+    // SLP error codes
+    static const int SLP_ERR_LANGUAGE_NOT_SUPPORTED       = SLP_LANGUAGE_NOT_SUPPORTED;
+    static const int SLP_ERR_PARSE_ERROR                  = SLP_PARSE_ERROR;
+    static const int SLP_ERR_INVALID_REGISTRATION         = SLP_INVALID_REGISTRATION;
+    static const int SLP_ERR_SCOPE_NOT_SUPPORTED          = SLP_SCOPE_NOT_SUPPORTED;
+    static const int SLP_ERR_AUTHENTICATION_ABSENT        = SLP_AUTHENTICATION_ABSENT;
+    static const int SLP_ERR_AUTHENTICATION_FAILED        = SLP_AUTHENTICATION_FAILED;
+    static const int SLP_ERR_INVALID_UPDATE               = SLP_INVALID_UPDATE;
+    static const int SLP_ERR_REFRESH_REJECTED             = SLP_REFRESH_REJECTED;
+    static const int SLP_ERR_NOT_IMPLEMENTED              = SLP_NOT_IMPLEMENTED;
+    static const int SLP_ERR_BUFFER_OVERFLOW              = SLP_BUFFER_OVERFLOW;
+    static const int SLP_ERR_NETWORK_TIMED_OUT            = SLP_NETWORK_TIMED_OUT;
+    static const int SLP_ERR_NETWORK_INIT_FAILED          = SLP_NETWORK_INIT_FAILED;
+    static const int SLP_ERR_MEMORY_ALLOC_FAILED          = SLP_MEMORY_ALLOC_FAILED;
+    static const int SLP_ERR_PARAMETER_BAD                = SLP_PARAMETER_BAD;
+    static const int SLP_ERR_NETWORK_ERROR                = SLP_NETWORK_ERROR;
+    static const int SLP_ERR_INTERNAL_SYSTEM_ERROR        = SLP_INTERNAL_SYSTEM_ERROR;
+    static const int SLP_ERR_HANDLE_IN_USE                = SLP_HANDLE_IN_USE;
+    static const int SLP_ERR_TYPE_ERROR                   = SLP_TYPE_ERROR;
+#  ifndef UNICAST_NOT_SUPPORTED
+    static const int SLP_ERR_RETRY_UNICAST                = SLP_RETRY_UNICAST;
+#  endif // UNICAST_NOT_SUPPORTED
+#endif // HAVE_SLP
 
     static std::string defaultNamespace();
     static std::string defaultTrustStore();

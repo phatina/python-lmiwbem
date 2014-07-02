@@ -59,11 +59,14 @@ __all__ = [
     "Sint32",
     "Sint64",
     "Sint8",
+    "SLPError",
+    "SLPResult",
     "Uint16",
     "Uint32",
     "Uint64",
     "Uint8",
-    "WBEMConnection"
+    "WBEMConnection",
+    "slp_discover"
 ]
 
 from lmiwbem_core import *

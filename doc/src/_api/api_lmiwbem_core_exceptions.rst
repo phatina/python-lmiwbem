@@ -40,3 +40,27 @@ Exceptions
    .. autoattribute:: lmiwbem.lmiwbem_core.CON_ERR_SSL_EXCEPTION
    .. autoattribute:: lmiwbem.lmiwbem_core.CON_ERR_BIND
 
+.. autoexception:: lmiwbem.lmiwbem_core.SLPError
+
+   Raised when a SLP error occurs. Following constants may be used to
+   identify error type:
+
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_LANGUAGE_NOT_SUPPORTED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_PARSE_ERROR
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_INVALID_REGISTRATION
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_SCOPE_NOT_SUPPORTED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_AUTHENTICATION_ABSENT
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_AUTHENTICATION_FAILED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_INVALID_UPDATE
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_REFRESH_REJECTED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_NOT_IMPLEMENTED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_BUFFER_OVERFLOW
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_NETWORK_TIMED_OUT
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_NETWORK_INIT_FAILED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_MEMORY_ALLOC_FAILED
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_PARAMETER_BAD
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_NETWORK_ERROR
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_INTERNAL_SYSTEM_ERROR
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_HANDLE_IN_USE
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_TYPE_ERROR
+   .. autoattribute:: lmiwbem.lmiwbem_core.SLP_ERR_RETRY_UNICAST
