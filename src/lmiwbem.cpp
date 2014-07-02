@@ -60,11 +60,11 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     PyEval_InitThreads();
 
     CIMErrorExc = bp::object(
-        bp::handle<>(PyErr_NewException((char*) "lmiwbem.CIMError", NULL, NULL)));
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem_core.CIMError", NULL, NULL)));
     ConnectionErrorExc = bp::object(
-        bp::handle<>(PyErr_NewException((char*) "lmiwbem.ConnectionError", NULL, NULL)));
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem_core.ConnectionError", NULL, NULL)));
     SLPErrorExc = bp::object(
-        bp::handle<>(PyErr_NewException((char*) "lmiwbem.SLPError", NULL, NULL)));
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem_core.SLPError", NULL, NULL)));
 
     // Disable C++ signatures in Python's doc-strings
     bp::docstring_options doc_options;
