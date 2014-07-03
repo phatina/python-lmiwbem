@@ -66,6 +66,8 @@ __all__ = [
     "Uint64",
     "Uint8",
     "WBEMConnection",
+    "is_error",
+    "is_subclass",
     "slp_discover"
 ]
 
