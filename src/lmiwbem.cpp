@@ -88,10 +88,10 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
         cim_issubclass,
         "Determine if one class is a subclass of another one.\n\n"
         ":param WBEMConnection ch: CIMOM handle\n"
-        ":param string ns: namespace where to look for :py:class:`CIMClass`-es\n"
+        ":param string ns: namespace where to look for :py:class:`.CIMClass`-es\n"
         ":param string superclass: super class name\n"
         ":param subclass: either string containing sub class name of\n"
-        "\t:py:class:`CIMClass` instance");
+        "\t:py:class:`.CIMClass` instance");
     def("is_error",
         is_error,
         "Checks, if the input value equals to a CIM or connection error code.\n\n"

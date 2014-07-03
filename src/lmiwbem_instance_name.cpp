@@ -150,7 +150,7 @@ void CIMInstanceName::init_type()
             &CIMInstanceName::getKeybindings,
             &CIMInstanceName::setKeybindings,
             "Property storing keybindings.\n\n"
-            ":rtype: :py:class:`NocaseDict`"));
+            ":rtype: :py:class:`.NocaseDict`"));
 }
 
 bp::object CIMInstanceName::create(const Pegasus::String &obj_path)
