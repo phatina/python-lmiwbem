@@ -29,13 +29,47 @@ extern "C" {
 class Mutex
 {
 public:
-    Mutex() { pthread_mutex_init(&m_mutex, NULL); }
-    ~Mutex() { pthread_mutex_destroy(&m_mutex); }
+    Mutex()
+        : m_good(false)
+        , m_locked(false)
+    {
+        m_good = pthread_mutex_init(&m_mutex, NULL) == 0;
+    }
 
-    bool lock()   { return pthread_mutex_lock(&m_mutex) == 0; }
-    bool unlock() { return pthread_mutex_unlock(&m_mutex) == 0; }
+    ~Mutex()
+    {
+        pthread_mutex_destroy(&m_mutex);
+    }
+
+    bool lock()
+    {
+        // We can't lock the mutex, initialization failed.
+        if (!m_good)
+            return false;
+
+        if (pthread_mutex_lock(&m_mutex) == 0)
+            m_locked = true;
+
+        return m_locked;
+    }
+
+    bool unlock()
+    {
+        // We can't unlock the mutex, initialization failed.
+        if (!m_good)
+            return false;
+
+        if (pthread_mutex_unlock(&m_mutex) == 0)
+            m_locked = false;
+
+        return m_locked;
+    }
+
+    bool isLocked() const { return m_locked; }
 
 private:
+    bool m_good;
+    bool m_locked;
     pthread_mutex_t m_mutex;
 };
 
@@ -44,6 +78,10 @@ class ScopedMutex
 public:
     ScopedMutex(Mutex &m): m_mutex(m) { m_mutex.lock(); }
     ~ScopedMutex() { m_mutex.unlock(); }
+
+    bool lock()   { return m_mutex.lock(); }
+    bool unlock() { return m_mutex.unlock(); }
+    bool isLocked() const { return m_mutex.isLocked(); }
 
 private:
     Mutex &m_mutex;

@@ -48,6 +48,7 @@ void CIMClient::connect(
         return;
     }
 
+    ScopedMutex sm(m_mutex);
     if (!m_addr_info.isHttps()) {
         Pegasus::CIMClient::connect(
             m_addr_info.hostname(),
@@ -77,14 +78,22 @@ void CIMClient::connect(
 
 void CIMClient::connectLocally()
 {
+    ScopedMutex sm(m_mutex);
     Pegasus::CIMClient::connectLocal();
     m_is_connected = true;
 }
 
 void CIMClient::disconnect()
 {
+    ScopedMutex sm(m_mutex);
     Pegasus::CIMClient::disconnect();
     m_is_connected = false;
+}
+
+bool CIMClient::isConnected()
+{
+    ScopedMutex sm(m_mutex);
+    return m_is_connected;
 }
 
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA

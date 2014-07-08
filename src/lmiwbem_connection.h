@@ -26,7 +26,6 @@
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
 #  include "lmiwbem_client.h"
-#  include "lmiwbem_mutex.h"
 
 BOOST_PYTHON_BEGIN
     class dict;
@@ -76,7 +75,7 @@ public:
         const bp::object &no_verification);
     void connectLocally();
     void disconnect();
-    bool isConnected() const { return m_client.isConnected(); }
+    bool isConnected() { return m_client.isConnected(); }
     std::string getHostname() const { return m_client.hostname(); }
 
     bool getVerifyCertificate() { return !m_client.getVerifyCertificate(); }
@@ -189,7 +188,6 @@ protected:
     std::string m_key_file;
     std::string m_default_namespace;
     CIMClient m_client;
-    Mutex m_mutex;
 };
 
 #endif // LMIWBEM_CONNECTION_H

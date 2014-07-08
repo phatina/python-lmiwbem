@@ -92,7 +92,6 @@ WBEMConnection::WBEMConnection(
     , m_key_file()
     , m_default_namespace(CIMConstants::defaultNamespace())
     , m_client()
-    , m_mutex()
 {
     m_connect_locally = lmi::extract_or_throw<bool>(
         connect_locally, "connect_locally");
@@ -726,7 +725,6 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
     Pegasus::CIMObjectPath new_inst_name;
     Pegasus::CIMNamespaceName new_inst_name_ns(std_ns.c_str());
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         new_inst_name = m_client.createInstance(
             new_inst_name_ns,
@@ -755,7 +753,6 @@ void WBEMConnection::deleteInstance(const bp::object &object_path)
         std_ns = cim_path.getNameSpace().getString().getCString();
 
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         m_client.deleteInstance(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -780,7 +777,6 @@ void WBEMConnection::modifyInstance(
             ListConv::asPegasusPropertyList(property_list,
             "PropertyList"));
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         m_client.modifyInstance(
             Pegasus::CIMNamespaceName(inst_name.getNamespace().c_str()),
@@ -812,7 +808,6 @@ bp::list WBEMConnection::enumerateInstances(
             ListConv::asPegasusPropertyList(property_list,
             "PropertyList"));
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_instances = m_client.enumerateInstances(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -847,7 +842,6 @@ bp::list WBEMConnection::enumerateInstanceNames(
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_instance_names;
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_instance_names = m_client.enumerateInstanceNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -901,7 +895,6 @@ bp::tuple WBEMConnection::invokeMethod(
     }
 
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_rval = m_client.invokeMethod(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -948,7 +941,6 @@ bp::object WBEMConnection::getInstance(
             ListConv::asPegasusPropertyList(property_list, "PropertyList"));
         Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asPegasusCIMObjectPath();
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_instance = m_client.getInstance(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -988,7 +980,6 @@ bp::list WBEMConnection::enumerateClasses(
 
     Pegasus::Array<Pegasus::CIMClass> cim_classes;
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_classes = m_client.enumerateClasses(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1026,7 +1017,6 @@ bp::list WBEMConnection::enumerateClassNames(
 
     Pegasus::Array<Pegasus::CIMName> cim_classnames;
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_classnames = m_client.enumerateClassNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1058,7 +1048,6 @@ bp::list WBEMConnection::execQuery(
 
     Pegasus::Array<Pegasus::CIMObject> cim_instances;
     try {
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_instances = m_client.execQuery(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1095,7 +1084,6 @@ bp::object WBEMConnection::getClass(
             ListConv::asPegasusPropertyList(property_list,
             "PropertyList"));
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_class = m_client.getClass(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1162,7 +1150,6 @@ bp::list WBEMConnection::getAssociators(
         if (!std_result_role.empty())
             cim_result_role = std_result_role.c_str();
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_associators = m_client.associators(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1230,7 +1217,6 @@ bp::list WBEMConnection::getAssociatorNames(
         if (!std_result_role.empty())
             cim_result_role = std_result_role.c_str();
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_associator_names = m_client.associatorNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1287,7 +1273,6 @@ bp::list WBEMConnection::getReferences(
         if (!std_role.empty())
             cim_role = Pegasus::String(std_role.c_str());
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_references = m_client.references(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
@@ -1338,7 +1323,6 @@ bp::list WBEMConnection::getReferenceNames(
         if (!std_role.empty())
             cim_role = Pegasus::String(std_role.c_str());
 
-        ScopedMutex sm(m_mutex);
         ScopedConnection sc(this);
         cim_reference_names = m_client.referenceNames(
             Pegasus::CIMNamespaceName(std_ns.c_str()),
