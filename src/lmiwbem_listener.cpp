@@ -26,6 +26,7 @@
 #include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
+#include "lmiwbem_gil.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_listener.h"
 #include "lmiwbem_make_method.h"
@@ -88,15 +89,10 @@ void CIMIndicationConsumer::consumeIndication(
     const Pegasus::String &url,
     const Pegasus::CIMInstance &indication)
 {
-    // Acquire Python's GIL state
-    PyGILState_STATE gstate = PyGILState_Ensure();
-
+    ScopedGILAcquire sg;
     m_listener->call(
         std::string(url.subString(1).getCString()),
         CIMInstance::create(indication));
-
-    // Release the thread.
-    PyGILState_Release(gstate);
 }
 
 // ----------------------------------------------------------------------------
