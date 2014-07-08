@@ -79,7 +79,7 @@ void CIMConstants::init_type()
     bp::scope().attr("SLP_ERR_INTERNAL_SYSTEM_ERROR") = SLP_ERR_INTERNAL_SYSTEM_ERROR;
     bp::scope().attr("SLP_ERR_HANDLE_IN_USE") = SLP_ERR_HANDLE_IN_USE;
     bp::scope().attr("SLP_ERR_TYPE_ERROR") = SLP_ERR_TYPE_ERROR;
-#  ifndef UNICAST_NOT_SUPPORTED
+#  if !defined(UNICAST_NOT_SUPPORTED) && defined(SLP_RETRY_UNICAST)
     bp::scope().attr("SLP_ERR_RETRY_UNICAST") = SLP_ERR_RETRY_UNICAST;
 #  endif // UNICAST_NOT_SUPPORTED
 #endif // HAVE_SLP

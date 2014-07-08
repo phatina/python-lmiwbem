@@ -416,7 +416,7 @@ bool is_error(const bp::object &value)
     case CIMConstants::SLP_ERR_INTERNAL_SYSTEM_ERROR:
     case CIMConstants::SLP_ERR_HANDLE_IN_USE:
     case CIMConstants::SLP_ERR_TYPE_ERROR:
-#  ifndef UNICAST_NOT_SUPPORTED
+#  if !defined(UNICAST_NOT_SUPPORTED) && defined(SLP_RETRY_UNICAST)
     case CIMConstants::SLP_ERR_RETRY_UNICAST:
 #  endif // UNICAST_NOT_SUPPORTED
 #endif // HAVE_SLP

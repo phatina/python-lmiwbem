@@ -84,7 +84,7 @@ public:
     static const int SLP_ERR_INTERNAL_SYSTEM_ERROR        = SLP_INTERNAL_SYSTEM_ERROR;
     static const int SLP_ERR_HANDLE_IN_USE                = SLP_HANDLE_IN_USE;
     static const int SLP_ERR_TYPE_ERROR                   = SLP_TYPE_ERROR;
-#    ifndef UNICAST_NOT_SUPPORTED
+#    if !defined(UNICAST_NOT_SUPPORTED) && defined(SLP_RETRY_UNICAST)
     static const int SLP_ERR_RETRY_UNICAST                = SLP_RETRY_UNICAST;
 #    endif // UNICAST_NOT_SUPPORTED
 #  endif // HAVE_SLP
