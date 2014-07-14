@@ -39,6 +39,7 @@ __all__ = [
     "CIMDateTime",
     "CIMError",
     "CIMFloat",
+    "CIMIndicationListener",
     "CIMInstance",
     "CIMInstanceName",
     "CIMInt",
