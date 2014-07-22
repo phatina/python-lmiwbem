@@ -645,8 +645,6 @@ void WBEMConnection::connect(
     // All three parameters can be omitted, WBEMConnection was has been
     // with such parameters; WBEMConnection(url, (username, password)).
     std::string std_url(m_url);
-    std::string std_username(m_username);
-    std::string std_password(m_password);
     std::string std_cert_file(m_cert_file);
     std::string std_key_file(m_key_file);
 
@@ -655,9 +653,9 @@ void WBEMConnection::connect(
     if (!isnone(url))
         std_url = lmi::extract_or_throw<std::string>(url, "url");
     if (!isnone(username))
-        std_username = lmi::extract_or_throw<std::string>(username, "username");
+        m_username = lmi::extract_or_throw<std::string>(username, "username");
     if (!isnone(password))
-        std_password = lmi::extract_or_throw<std::string>(password, "password");
+        m_password = lmi::extract_or_throw<std::string>(password, "password");
     if (!isnone(cert_file))
         std_cert_file = lmi::extract_or_throw<std::string>(cert_file, "cert_file");
     if (!isnone(key_file))
@@ -675,8 +673,8 @@ void WBEMConnection::connect(
     try {
         m_client.connect(
             Pegasus::String(std_url.c_str()),
-            Pegasus::String(std_username.c_str()),
-            Pegasus::String(std_password.c_str()),
+            Pegasus::String(m_username.c_str()),
+            Pegasus::String(m_password.c_str()),
             Pegasus::String(std_cert_file.c_str()),
             Pegasus::String(std_key_file.c_str()),
             Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
