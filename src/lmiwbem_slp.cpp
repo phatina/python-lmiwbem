@@ -25,6 +25,7 @@
 #include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/def.hpp>
+#include <boost/python/dict.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
@@ -47,6 +48,17 @@ void SLP::init_type()
         "\texpressions in the form of an LDAPv3 search filter\n"
         ":returns: list of :py:class:`.SLPResult`\n"
         ":raises: :py:exc:`.SLPError`");
+    bp::def("slp_discover_attrs", SLP::discoverAttrs,
+        (bp::arg("srvurl"),
+         bp::arg("scopelist") = "",
+         bp::arg("attrids") = "",
+         bp::arg("async") = false),
+         "Performs SLP attributes discovery.\n\n"
+         ":param str srvurl: service URL\n"
+         ":param str scopelist: comma separated list of scope names\n"
+         ":param str attrids: comma separated list of attribute ids to return\n"
+         ":returns: dict containing attrs with values\n"
+         ":raises: :py:exc:`.SLPError`");
 }
 
 SLPBoolean SLP::urlCallback(
@@ -69,6 +81,39 @@ SLPBoolean SLP::urlCallback(
     return SLP_TRUE;
 }
 
+SLPBoolean SLP::attrCallback(
+    SLPHandle hslp,
+    const char *attrlist,
+    SLPError errcode,
+    void *cookie)
+{
+    if (errcode == SLP_OK) {
+        bp::dict &attrs = *static_cast<bp::dict *>(cookie);
+
+        std::stringstream ss(attrlist);
+        std::string item;
+
+        while (std::getline(ss, item, ',')) {
+            std::size_t pos = item.find("=", 0, 1);
+
+            // Basic check of the attribute's format.
+            if (item[0] != '(' ||
+                item[item.length() - 1] != ')' ||
+                pos == std::string::npos)
+            {
+                return SLP_FALSE;
+            }
+
+            // Cut the key and value of the attribute.
+            std::string key = item.substr(1, pos - 1);
+            std::string val = item.substr(pos + 1, item.length() - pos - 2);
+
+            attrs[key] = val;
+        }
+    }
+
+    return SLP_TRUE;
+}
 
 bp::object SLP::discover(
     const bp::object &srvtype,
@@ -103,6 +148,41 @@ bp::object SLP::discover(
     SLPClose(hslp);
 
     return srvs;
+}
+
+bp::object SLP::discoverAttrs(
+    const bp::object &srvurl,
+    const bp::object &scopelist,
+    const bp::object &attrids,
+    const bp::object &async)
+{
+    std::string std_srvurl = lmi::extract_or_throw<std::string>(
+        srvurl, "srvurl");
+    std::string std_scopelist = lmi::extract_or_throw<std::string>(
+        scopelist, "scopelist");
+    std::string std_attrids = lmi::extract_or_throw<std::string>(
+        attrids, "attrids");
+    bool std_async = lmi::extract_or_throw<bool>(async, "async");
+
+    SLPError  err;
+    SLPHandle hslp;
+
+    // Open SLP handle.
+    if ((err = SLPOpen(NULL, std_async ? SLP_TRUE : SLP_FALSE, &hslp)) != SLP_OK)
+        throw_SLPError("Can't open SLP handle", static_cast<int>(err));
+
+    // Discover the attrs.
+    bp::dict attrs;
+    if ((err = SLPFindAttrs(hslp, std_srvurl.c_str(), std_scopelist.c_str(),
+        std_attrids.c_str(), SLP::attrCallback, static_cast<void*>(&attrs))) != SLP_OK)
+    {
+        throw_SLPError("SLP attrs discovery failed", static_cast<int>(err));
+    }
+
+    // Close SLP handle.
+    SLPClose(hslp);
+
+    return attrs;
 }
 
 SLPResult::SLPResult()

@@ -69,7 +69,8 @@ __all__ = [
     "WBEMConnection",
     "is_error",
     "is_subclass",
-    "slp_discover"
+    "slp_discover",
+    "slp_discover_attrs"
 ]
 
 from lmiwbem_core import *

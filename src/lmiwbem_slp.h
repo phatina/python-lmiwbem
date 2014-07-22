@@ -41,10 +41,22 @@ public:
         SLPError errcode,
         void *cookie);
 
+    static SLPBoolean attrCallback(
+        SLPHandle hslp,
+        const char *attrlist,
+        SLPError errcode,
+        void *cookie);
+
     static bp::object discover(
         const bp::object &srvtype,
         const bp::object &scopelist,
         const bp::object &filter,
+        const bp::object &async);
+
+    static bp::object discoverAttrs(
+        const bp::object &srvurl,
+        const bp::object &scopelist,
+        const bp::object &attrids,
         const bp::object &async);
 };
 

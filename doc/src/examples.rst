@@ -22,3 +22,4 @@ and related functions.
    _examples/example_references
 
    _examples/example_slp_discovery
+   _examples/example_slp_discovery_attrs

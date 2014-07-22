@@ -5,6 +5,8 @@ Unclassified
 
 .. autofunction:: lmiwbem.lmiwbem_core.slp_discover
 
+.. autofunction:: lmiwbem.lmiwbem_core.slp_discover_attrs
+
 .. autoattribute:: lmiwbem.lmiwbem_core.DEFAULT_NAMESPACE
 
    This variable is used, when no namespace parameter is provided to
