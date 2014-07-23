@@ -97,29 +97,59 @@ void CIMIndicationConsumer::consumeIndication(
 
 // ----------------------------------------------------------------------------
 
-CIMIndicationListener::CIMIndicationListener()
+CIMIndicationListener::CIMIndicationListener(
+    const bp::object &hostname,
+    const bp::object &port,
+    const bp::object &certfile,
+    const bp::object &keyfile,
+    const bp::object &trust_store)
     : m_listener()
     , m_consumer(this)
     , m_handlers()
+    , m_port(0)
+    , m_hostname()
+    , m_certfile()
+    , m_keyfile()
+    , m_trust_store(CIMConstants::defaultTrustStore())
 {
+    // hostname is present due to compatibility. Pegasus::CIMListener doesn't
+    // provide an API to pass listening address for bind(), now.
+    m_hostname = lmi::extract_or_throw<std::string>(hostname, "hostname");
+    m_port = lmi::extract_or_throw<Pegasus::Uint32>(port, "port");
+
+    if (!isnone(certfile))
+        m_certfile = lmi::extract_or_throw<std::string>(certfile, "certfile");
+    if (!isnone(keyfile))
+        m_keyfile = lmi::extract_or_throw<std::string>(keyfile, "keyfile");
+    if (!isnone(trust_store))
+        m_trust_store = lmi::extract_or_throw<std::string>(trust_store, "trust_store");
 }
 
 void CIMIndicationListener::init_type()
 {
     CIMBase<CIMIndicationListener>::init_type(
-        bp::class_<CIMIndicationListener>("CIMIndicationListener", bp::init<>())
+        bp::class_<CIMIndicationListener>("CIMIndicationListener", bp::no_init)
+            .def(bp::init<
+                const bp::object &,
+                const bp::object &,
+                const bp::object &,
+                const bp::object &,
+                const bp::object &>((
+                    bp::arg("hostname"),
+                    bp::arg("port"),
+                    bp::arg("certfile") = bp::object(),
+                    bp::arg("keyfile") = bp::object(),
+                    bp::arg("trust_store") = bp::object()),
+                    "Constructs a :py:class:`.CIMIndicationListener` object.\n\n"
+                    ":param str hostname: bind hostname\n"
+                    ":param int port: listening port\n"
+                    ":param str certfile: path to X509 certificate\n"
+                    ":param str keyfile: path to X509 private key; may be None,\n"
+                    "\tif cert_file also contains private key\n"
+                    ":param str trust_store: path to trust store"))
             .def("start",  &CIMIndicationListener::start,
-                (bp::arg("port"),
-                 bp::arg("cert_file") = bp::object(),
-                 bp::arg("key_file") = bp::object(),
-                 bp::arg("trust_store") = bp::object()),
-                 "start(port, cert_file=None, key_file=None, trust_store=None)\n\n"
-                 "Starts indication listener.\n\n"
-                 ":param int port: listening port\n"
-                 ":param str cert_file: path to X509 certificate\n"
-                 ":param str key_file: path to X509 private key; may be None,\n"
-                 "\tif cert_file also contains private key\n"
-                 ":param str trust_store: path to trust store")
+                 "start()\n\n"
+                 "Starts indication listener.\n\n")
             .def("stop", &CIMIndicationListener::stop,
                 "stop()\n\n"
                 "Stops indication listener.")
@@ -144,6 +174,9 @@ void CIMIndicationListener::init_type()
                 "Property storing flag, which indicates, if the indication\n"
                 "listener uses secure connection.\n\n"
                 ":rtype: bool")
+            .add_property("hostname", &CIMIndicationListener::getHostname,
+                "Property storing bind hostname.\n\n"
+                ":rtype: str")
             .add_property("port", &CIMIndicationListener::getPort,
                 "Property storing listening port.\n\n"
                 ":rtype: int")
@@ -152,43 +185,23 @@ void CIMIndicationListener::init_type()
                 ":rtype: list"));
 }
 
-void CIMIndicationListener::start(
-    const bp::object &port_,
-    const bp::object &cert_file,
-    const bp::object &key_file,
-    const bp::object &trust_store)
+void CIMIndicationListener::start()
 {
     if (m_listener)
         return;
 
-    Pegasus::Uint32 port = lmi::extract_or_throw<Pegasus::Uint32>(port_, "port");
-    m_listener.reset(new Pegasus::CIMListener(port));
+    // TODO: Patch TOG-Pegasus client to accest bind hostname.
+    m_listener.reset(new Pegasus::CIMListener(m_port));
     if (!m_listener)
         throw_RuntimeError("Can't create CIMListener");
 
-    std::string std_cert_file;
-    std::string std_key_file;
-    std::string std_trust_store = CIMConstants::defaultTrustStore();
-    if (!isnone(cert_file)) {
-        std_cert_file = lmi::extract_or_throw<std::string>(
-            cert_file, "cert_file");
-    }
-    if (!isnone(key_file)) {
-        std_key_file = lmi::extract_or_throw<std::string>(
-            key_file, "key_file");
-    }
-    if (!isnone(trust_store)) {
-        std_trust_store = lmi::extract_or_throw<std::string>(
-            trust_store, "trust_store");
-    }
-
     try {
-        if (!std_cert_file.empty()) {
+        if (!m_certfile.empty()) {
             // Pegasus::SSLContext will be freed by Pegasus::CIMListener
             Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
-                Pegasus::String(std_trust_store.c_str()),
-                Pegasus::String(std_cert_file.c_str()),
-                Pegasus::String(std_key_file.c_str()),
+                Pegasus::String(m_trust_store.c_str()),
+                Pegasus::String(m_certfile.c_str()),
+                Pegasus::String(m_keyfile.c_str()),
                 Pegasus::String::EMPTY, // CRL path
                 NULL, // verification callback
                 Pegasus::String::EMPTY);
