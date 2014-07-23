@@ -26,6 +26,9 @@ extensions = [
     'sphinx.ext.viewcode'
 ]
 
+# Autodoc setup
+autoclass_content = 'init'
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
