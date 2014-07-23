@@ -170,6 +170,7 @@ bp::object std_string_as_pybool(const std::string &str)
     return bp::object(bp::handle<>(PyBool_FromLong(b)));
 }
 
+#  if PY_MAJOR_VERSION < 3
 bp::object std_string_as_pyint(const std::string &str)
 {
     char *s = strdup(str.c_str());
@@ -177,6 +178,7 @@ bp::object std_string_as_pyint(const std::string &str)
     free(static_cast<void*>(s));
     return pyint;
 }
+#  endif // PY_MAJOR_VERSION
 
 bp::object std_string_as_pyfloat(const std::string &str)
 {
@@ -184,7 +186,6 @@ bp::object std_string_as_pyfloat(const std::string &str)
     return bp::object(bp::handle<>(PyFloat_FromDouble(d)));
 }
 
-#  if PY_MAJOR_VERSION < 3
 bp::object std_string_as_pylong(const std::string &str)
 {
     char *s = strdup(str.c_str());
@@ -192,7 +193,6 @@ bp::object std_string_as_pylong(const std::string &str)
     free(static_cast<void*>(s));
     return pylong;
 }
-#  endif // PY_MAJOR_VERSION
 
 DEFINE_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String)
 {

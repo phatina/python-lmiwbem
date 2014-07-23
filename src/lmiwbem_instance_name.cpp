@@ -211,9 +211,9 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
             continue;
         }
 
-        if (isint(it->second) ||
+        if (islong(it->second) ||
 #  if PY_MAJOR_VERSION < 3
-            islong(it->second) ||
+            isint(it->second) ||
 #  endif // PY_MAJOR_VERSION
             isfloat(it->second))
         {
@@ -455,9 +455,11 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
         return std_string_as_pyunicode(std::string(cim_value.getCString()));
     case Pegasus::CIMKeyBinding::NUMERIC: {
         bp::object num;
-        if (!isnone(num = std_string_as_pyint(std::string(cim_value.getCString())))  ||
 #  if PY_MAJOR_VERSION < 3
+        if (!isnone(num = std_string_as_pyint(std::string(cim_value.getCString())))  ||
             !isnone(num = std_string_as_pylong(std::string(cim_value.getCString()))) ||
+#  else
+        if (!isnone(num = std_string_as_pylong(std::string(cim_value.getCString()))) ||
 #  endif // PY_MAJOR_VERSION
             !isnone(num = std_string_as_pyfloat(std::string(cim_value.getCString()))))
         {

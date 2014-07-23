@@ -73,5 +73,5 @@ __all__ = [
     "slp_discover_attrs"
 ]
 
-from lmiwbem_core import *
-from lmiwbem_types import *
+from lmiwbem.lmiwbem_core import *
+from lmiwbem.lmiwbem_types import *
