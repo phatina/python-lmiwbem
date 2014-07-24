@@ -346,7 +346,16 @@ bp::object CIMInstance::keys()
 bp::object CIMInstance::values()
 {
     NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
-    return properties.values();
+    nocase_map_t::const_iterator it;
+
+    bp::list values;
+    for (it = properties.begin(); it != properties.end(); ++it) {
+        CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
+            it->second, "property");
+        values.append(property.getValue());
+    }
+
+    return values;
 }
 
 bp::object CIMInstance::items()
@@ -355,8 +364,14 @@ bp::object CIMInstance::items()
     nocase_map_t::const_iterator it;
 
     bp::list items;
-    for (it = properties.begin(); it != properties.end(); ++it)
-        items.append(bp::make_tuple(bp::str(it->first), it->second));
+    for (it = properties.begin(); it != properties.end(); ++it) {
+        CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
+            it->second, "property");
+        items.append(
+            bp::make_tuple(
+                std_string_as_pyunicode(it->first),
+                property.getValue()));
+    }
 
     return items;
 }
