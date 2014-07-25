@@ -108,6 +108,21 @@ fi
 
 AM_CONDITIONAL([BUILDWITHLISTENER], [test x"$with_listener" = x"yes"])
 
+dnl Check if TOG-Pegasus CIMListener supports bind address.
+if test x"$with_listener" = x"yes"; then
+    LIBS="-lpeglistener"
+    AC_MSG_CHECKING([for TOG-Pegasus CIMListener with bind address])
+    AC_TRY_COMPILE(
+        [#define $PEGASUS_PLATFORM
+         #include <Pegasus/Listener/CIMListener.h>],
+        [Pegasus::CIMListener l(Pegasus::String("0.0.0.0"), 10240);],
+        [AC_MSG_RESULT([yes])
+         AC_DEFINE([HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS], [1],
+                   [Pegasus CIMListener with bind address])],
+        [AC_MSG_RESULT([no])])
+    LIBS=""
+fi
+
 dnl Check for TOG-Pegasus headers
 AC_MSG_CHECKING([for TOG-Pegasus headers])
 AC_TRY_COMPILE(

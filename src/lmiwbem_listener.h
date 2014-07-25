@@ -90,7 +90,7 @@ public:
     bool isAlive() const { return m_listener && m_listener->isAlive(); }
     bool usesSSL() const;
 
-    std::string getHostname() const { return m_hostname; }
+    std::string getListenAddress() const { return m_listen_address; }
     int getPort() const { return m_listener ? m_listener->getPortNumber() : -1; }
 
     bp::object addHandler(
@@ -111,7 +111,7 @@ private:
     handler_map_t m_handlers;
 
     Pegasus::Uint32 m_port;
-    std::string m_hostname;
+    std::string m_listen_address;
     std::string m_certfile;
     std::string m_keyfile;
     std::string m_trust_store;

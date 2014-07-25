@@ -98,7 +98,7 @@ void CIMIndicationConsumer::consumeIndication(
 // ----------------------------------------------------------------------------
 
 CIMIndicationListener::CIMIndicationListener(
-    const bp::object &hostname,
+    const bp::object &listen_address,
     const bp::object &port,
     const bp::object &certfile,
     const bp::object &keyfile,
@@ -107,14 +107,13 @@ CIMIndicationListener::CIMIndicationListener(
     , m_consumer(this)
     , m_handlers()
     , m_port(0)
-    , m_hostname()
+    , m_listen_address()
     , m_certfile()
     , m_keyfile()
     , m_trust_store(CIMConstants::defaultTrustStore())
 {
-    // hostname is present due to compatibility. Pegasus::CIMListener doesn't
-    // provide an API to pass listening address for bind(), now.
-    m_hostname = lmi::extract_or_throw<std::string>(hostname, "hostname");
+    m_listen_address = lmi::extract_or_throw<std::string>(
+        listen_address, "listen_address");
     m_port = lmi::extract_or_throw<Pegasus::Uint32>(port, "port");
 
     if (!isnone(certfile))
@@ -135,13 +134,13 @@ void CIMIndicationListener::init_type()
                 const bp::object &,
                 const bp::object &,
                 const bp::object &>((
-                    bp::arg("hostname"),
+                    bp::arg("listen_address"),
                     bp::arg("port"),
                     bp::arg("certfile") = bp::object(),
                     bp::arg("keyfile") = bp::object(),
                     bp::arg("trust_store") = bp::object()),
                     "Constructs a :py:class:`.CIMIndicationListener` object.\n\n"
-                    ":param str hostname: bind hostname\n"
+                    ":param str listen_address: bind address\n"
                     ":param int port: listening port\n"
                     ":param str certfile: path to X509 certificate\n"
                     ":param str keyfile: path to X509 private key; may be None,\n"
@@ -174,8 +173,8 @@ void CIMIndicationListener::init_type()
                 "Property storing flag, which indicates, if the indication\n"
                 "listener uses secure connection.\n\n"
                 ":rtype: bool")
-            .add_property("hostname", &CIMIndicationListener::getHostname,
-                "Property storing bind hostname.\n\n"
+            .add_property("listen_address", &CIMIndicationListener::getListenAddress,
+                "Property storing bind address.\n\n"
                 ":rtype: str")
             .add_property("port", &CIMIndicationListener::getPort,
                 "Property storing listening port.\n\n"
@@ -190,8 +189,12 @@ void CIMIndicationListener::start()
     if (m_listener)
         return;
 
-    // TODO: Patch TOG-Pegasus client to accest bind hostname.
-    m_listener.reset(new Pegasus::CIMListener(m_port));
+    m_listener.reset(new Pegasus::CIMListener(
+#ifdef HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS
+        Pegasus::String(m_listen_address.c_str()),
+#endif
+        m_port));
+
     if (!m_listener)
         throw_RuntimeError("Can't create CIMListener");
 
