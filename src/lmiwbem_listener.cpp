@@ -147,8 +147,10 @@ void CIMIndicationListener::init_type()
                     "\tif cert_file also contains private key\n"
                     ":param str trust_store: path to trust store"))
             .def("start",  &CIMIndicationListener::start,
-                 "start()\n\n"
-                 "Starts indication listener.\n\n")
+                (bp::arg("retries") = 1),
+                 "start(retries=1)\n\n"
+                 "Starts indication listener.\n\n"
+                 ":param int retries: number of bind retries.\n")
             .def("stop", &CIMIndicationListener::stop,
                 "stop()\n\n"
                 "Stops indication listener.")
@@ -184,42 +186,54 @@ void CIMIndicationListener::init_type()
                 ":rtype: list"));
 }
 
-void CIMIndicationListener::start()
+void CIMIndicationListener::start(const bp::object &retries)
 {
     if (m_listener)
         return;
 
-    m_listener.reset(new Pegasus::CIMListener(
+    // Extract retries count for port binding. By default, we try only once.
+    const int std_retries = lmi::extract_or_throw<int>(retries, "retries");
+    if (std_retries < 0)
+        throw_ValueError("retries must be positive number");
+
+    // Try to create a listener for retries-times.
+    for (int i = 0; !m_listener && i < std_retries; ++i) {
+        m_listener.reset(new Pegasus::CIMListener(
 #ifdef HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS
-        Pegasus::String(m_listen_address.c_str()),
+            Pegasus::String(m_listen_address.c_str()),
 #endif
-        m_port));
+            m_port));
 
-    if (!m_listener)
-        throw_RuntimeError("Can't create CIMListener");
+        if (!m_listener)
+            throw_RuntimeError("Can't create CIMListener");
 
-    try {
-        if (!m_certfile.empty()) {
-            // Pegasus::SSLContext will be freed by Pegasus::CIMListener
-            Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
-                Pegasus::String(m_trust_store.c_str()),
-                Pegasus::String(m_certfile.c_str()),
-                Pegasus::String(m_keyfile.c_str()),
-                Pegasus::String::EMPTY, // CRL path
-                NULL, // verification callback
-                Pegasus::String::EMPTY);
+        try {
+            if (!m_certfile.empty()) {
+                // Pegasus::SSLContext will be freed by Pegasus::CIMListener
+                Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
+                    Pegasus::String(m_trust_store.c_str()),
+                    Pegasus::String(m_certfile.c_str()),
+                    Pegasus::String(m_keyfile.c_str()),
+                    Pegasus::String::EMPTY, // CRL path
+                    NULL, // verification callback
+                    Pegasus::String::EMPTY);
 
-            m_listener->setSSLContext(ctx);
+                m_listener->setSSLContext(ctx);
+            }
+
+            m_listener->addConsumer(&m_consumer);
+
+            m_listener->start();
+        } catch (...) {
+            // We couldn't start CIMIndicationListener, free the instance
+            // before we process all the exceptions.
+            m_listener.reset();
+
+            // We raise the exception, when we run out of retries or TCP port
+            // is out of range.
+            if (i == std_retries - 1 || ++m_port >= 65536)
+                handle_all_exceptions();
         }
-
-        m_listener->addConsumer(&m_consumer);
-
-        m_listener->start();
-    } catch (...) {
-        // We couldn't start CIMIndicationListener, free the instance
-        // before we process all the exceptions.
-        m_listener.reset();
-        handle_all_exceptions();
     }
 }
 

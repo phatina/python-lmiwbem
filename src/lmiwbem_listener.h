@@ -84,7 +84,7 @@ public:
 
     static void init_type();
 
-    void start();
+    void start(const bp::object &retries);
     void stop();
 
     bool isAlive() const { return m_listener && m_listener->isAlive(); }
