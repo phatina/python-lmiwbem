@@ -22,8 +22,8 @@ Reasons, why the library was made:
   (construction) of nested objects helps to perform CIM operations faster and
   Python does not use additional space for such objects, when not needed.
 
-LASTEST VERSION
-===============
+LATEST VERSION
+==============
 
 Latest sources of the software can be found at: [lmiwbem][]
 
