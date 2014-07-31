@@ -11,11 +11,13 @@ BuildRequires:  automake
 BuildRequires:  python2-devel
 BuildRequires:  python-sphinx
 BuildRequires:  python-sphinx-theme-openlmi
-BuildRequires:  boost-devel > 1.50.0
+BuildRequires:  boost-devel >= 1.50.0
 BuildRequires:  boost-python >= 1.50.0
 BuildRequires:  tog-pegasus-devel >= 2.12.0
 BuildRequires:  tog-pegasus-libs >= 2.12.0
-Requires:       boost-python > 1.50.0
+Requires:       boost-python >= 1.50.0
+Requires:       python
+Requires:       tog-pegasus-libs >= 2.12.0
 
 %description
 %{name} is a Python library, which performs CIM operations using CIM-XML
@@ -48,6 +50,9 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %{_docdir}/%{name}-%{version}/html
 
 %changelog
+* Thu Jul 31 2014 Peter Hatina <phatina@redhat.com> - 0.2.0-2
+- fix (Build)Requires
+
 * Wed May 21 2014 Peter Hatina <phatina@redhat.com> - 0.2.0-1
 - upgrade to 0.2.0
 - introduce lmiwbem-doc package
