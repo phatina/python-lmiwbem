@@ -32,46 +32,5 @@ protocol. The library tries to mimic PyWBEM, but does things in different way:
 
 __version__ = "@VERSION@"
 
-# List all the classes, so they are all listed, when help(lmiwbem) is called
-__all__ = [
-    "CIMClass",
-    "CIMClassName",
-    "CIMDateTime",
-    "CIMError",
-    "CIMFloat",
-    "CIMIndicationListener",
-    "CIMInstance",
-    "CIMInstanceName",
-    "CIMInt",
-    "CIMMethod",
-    "CIMParameter",
-    "CIMProperty",
-    "CIMQualifier",
-    "CIMType",
-    "ConnectionError",
-    "MinutesFromUTC",
-    "NocaseDict",
-    "NocaseDictItemIterator",
-    "NocaseDictKeyIterator",
-    "NocaseDictValueIterator",
-    "Real32",
-    "Real64",
-    "Sint16",
-    "Sint32",
-    "Sint64",
-    "Sint8",
-    "SLPError",
-    "SLPResult",
-    "Uint16",
-    "Uint32",
-    "Uint64",
-    "Uint8",
-    "WBEMConnection",
-    "is_error",
-    "is_subclass",
-    "slp_discover",
-    "slp_discover_attrs"
-]
-
 from lmiwbem.lmiwbem_core import *
 from lmiwbem.lmiwbem_types import *
