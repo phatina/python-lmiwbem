@@ -89,10 +89,18 @@ void CIMIndicationConsumer::consumeIndication(
     const Pegasus::String &url,
     const Pegasus::CIMInstance &indication)
 {
+    ScopedMutex sm(m_listener->m_mutex);
+    if (m_listener->m_terminating) {
+        return;
+    }
+
+    /* We call python from inside a thread created by CIMOM. We need to acquire
+     * the GIL. */
     ScopedGILAcquire sg;
+    bp::object inst = CIMInstance::create(indication);
     m_listener->call(
         std::string(url.subString(1).getCString()),
-        CIMInstance::create(indication));
+        inst);
 }
 
 // ----------------------------------------------------------------------------
@@ -111,6 +119,7 @@ CIMIndicationListener::CIMIndicationListener(
     , m_certfile()
     , m_keyfile()
     , m_trust_store(CIMConstants::defaultTrustStore())
+    , m_terminating(false)
 {
     m_listen_address = lmi::extract_or_throw<std::string>(
         listen_address, "listen_address");
@@ -191,6 +200,7 @@ void CIMIndicationListener::start(const bp::object &retries)
     if (m_listener)
         return;
 
+    m_terminating = false;
     // Extract retries count for port binding. By default, we try only once.
     const int std_retries = lmi::extract_or_throw<int>(retries, "retries");
     if (std_retries < 0)
@@ -241,6 +251,17 @@ void CIMIndicationListener::stop()
 {
     if (!m_listener)
         return;
+
+    /* While terminating, new callbacks can still be invoked by indication
+     * dispatcher. We need to wait for them to finish (m_listener->stop() does
+     * that). Thus we need to release GIL to let these callbacks acquire it. */
+    ScopedGILRelease();
+    {   /* Indicate to newly spawned listener callbacks that we are
+         * terminating. This will prevent them from acquiring GIL and calling
+         * indication handlers. */
+        ScopedMutex sm(m_mutex);
+        m_terminating = true;
+    }
 
     m_listener->stop();
     m_listener.reset();
