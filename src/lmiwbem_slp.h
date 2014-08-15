@@ -29,6 +29,26 @@
 
 namespace bp = boost::python;
 
+class ScopedSLPHandle
+{
+public:
+    ScopedSLPHandle(
+        const bool is_async = false,
+        const std::string pc_lang = std::string());
+    ~ScopedSLPHandle();
+
+    SLPHandle handle() { return m_handle; }
+    SLPError error() const { return m_error; }
+    bool good() const { return m_error == SLP_OK; }
+
+    bool operator !() { return !good(); }
+    operator SLPHandle() { return m_handle; }
+
+private:
+    SLPHandle m_handle;
+    SLPError m_error;
+};
+
 class SLP
 {
 public:

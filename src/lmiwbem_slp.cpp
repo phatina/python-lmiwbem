@@ -34,6 +34,23 @@
 #include "lmiwbem_slp.h"
 #include "lmiwbem_util.h"
 
+ScopedSLPHandle::ScopedSLPHandle(
+    const bool is_async,
+    const std::string pc_lang)
+{
+    m_error = SLPOpen(
+        pc_lang.c_str(),
+        is_async ? SLP_TRUE : SLP_FALSE,
+        &m_handle);
+}
+
+ScopedSLPHandle::~ScopedSLPHandle()
+{
+    if (!good())
+        return;
+    SLPClose(m_handle);
+}
+
 void SLP::init_type()
 {
     bp::def("slp_discover", SLP::discover,
@@ -129,23 +146,24 @@ bp::object SLP::discover(
         filter, "filter");
     bool std_async = lmi::extract_or_throw<bool>(async, "async");
 
-    SLPError  err;
-    SLPHandle hslp;
-
     // Open SLP handle.
-    if ((err = SLPOpen(NULL, std_async ? SLP_TRUE : SLP_FALSE, &hslp)) != SLP_OK)
-        throw_SLPError("Can't open SLP handle", static_cast<int>(err));
+    ScopedSLPHandle hslp(std_async);
+    if (!hslp)
+        throw_SLPError("Can't open SLP handle", static_cast<int>(hslp.error()));
 
     // Discover the services.
+    SLPError err;
     bp::list srvs;
-    if ((err = SLPFindSrvs(hslp, std_srvtype.c_str(), std_scopelist.c_str(),
-        std_filter.c_str(), SLP::urlCallback, static_cast<void*>(&srvs))) != SLP_OK)
+    if ((err = SLPFindSrvs(
+            hslp,
+            std_srvtype.c_str(),
+            std_scopelist.c_str(),
+            std_filter.c_str(),
+            SLP::urlCallback,
+            static_cast<void*>(&srvs))) != SLP_OK)
     {
         throw_SLPError("SLP discovery failed", static_cast<int>(err));
     }
-
-    // Close SLP handle.
-    SLPClose(hslp);
 
     return srvs;
 }
@@ -164,23 +182,24 @@ bp::object SLP::discoverAttrs(
         attrids, "attrids");
     bool std_async = lmi::extract_or_throw<bool>(async, "async");
 
-    SLPError  err;
-    SLPHandle hslp;
-
     // Open SLP handle.
-    if ((err = SLPOpen(NULL, std_async ? SLP_TRUE : SLP_FALSE, &hslp)) != SLP_OK)
-        throw_SLPError("Can't open SLP handle", static_cast<int>(err));
+    ScopedSLPHandle hslp(std_async);
+    if (!hslp)
+        throw_SLPError("Can't open SLP handle", static_cast<int>(hslp.error()));
 
     // Discover the attrs.
+    SLPError err;
     bp::dict attrs;
-    if ((err = SLPFindAttrs(hslp, std_srvurl.c_str(), std_scopelist.c_str(),
-        std_attrids.c_str(), SLP::attrCallback, static_cast<void*>(&attrs))) != SLP_OK)
+    if ((err = SLPFindAttrs(
+            hslp,
+            std_srvurl.c_str(),
+            std_scopelist.c_str(),
+            std_attrids.c_str(),
+            SLP::attrCallback,
+            static_cast<void*>(&attrs))) != SLP_OK)
     {
         throw_SLPError("SLP attrs discovery failed", static_cast<int>(err));
     }
-
-    // Close SLP handle.
-    SLPClose(hslp);
 
     return attrs;
 }
