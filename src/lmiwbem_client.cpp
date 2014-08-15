@@ -24,6 +24,7 @@
 #include "lmiwbem_client.h"
 #include "lmiwbem_addr.h"
 #include "lmiwbem_exception.h"
+#include "lmiwbem_gil.h"
 
 #include <cctype>
 
@@ -49,6 +50,7 @@ void CIMClient::connect(
     }
 
     ScopedMutex sm(m_mutex);
+    ScopedGILRelease sr;
     if (!m_addr_info.isHttps()) {
         Pegasus::CIMClient::connect(
             m_addr_info.hostname(),
@@ -79,6 +81,7 @@ void CIMClient::connect(
 void CIMClient::connectLocally()
 {
     ScopedMutex sm(m_mutex);
+    ScopedGILRelease sr;
     Pegasus::CIMClient::connectLocal();
     m_is_connected = true;
 }
@@ -86,6 +89,7 @@ void CIMClient::connectLocally()
 void CIMClient::disconnect()
 {
     ScopedMutex sm(m_mutex);
+    ScopedGILRelease sr;
     Pegasus::CIMClient::disconnect();
     m_is_connected = false;
 }

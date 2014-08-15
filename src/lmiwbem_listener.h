@@ -115,6 +115,9 @@ private:
     std::string m_certfile;
     std::string m_keyfile;
     std::string m_trust_store;
+    Mutex m_mutex;          // A guard for m_terminating flag.
+    bool m_terminating;
+    
 };
 
 #endif // LMIWBEM_LISTENER_H
