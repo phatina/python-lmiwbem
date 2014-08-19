@@ -255,7 +255,7 @@ void CIMIndicationListener::stop()
     /* While terminating, new callbacks can still be invoked by indication
      * dispatcher. We need to wait for them to finish (m_listener->stop() does
      * that). Thus we need to release GIL to let these callbacks acquire it. */
-    ScopedGILRelease();
+    ScopedGILRelease sr;
     {   /* Indicate to newly spawned listener callbacks that we are
          * terminating. This will prevent them from acquiring GIL and calling
          * indication handlers. */
