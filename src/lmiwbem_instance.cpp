@@ -317,10 +317,10 @@ std::string CIMInstance::repr()
 bp::object CIMInstance::getitem(const bp::object &key)
 {
     evalProperties();
-    lmi::extract<CIMProperty> ext_property(m_properties[key]);
+    lmi::extract<CIMProperty&> ext_property(m_properties[key]);
 
     if (ext_property.check())
-        return static_cast<CIMProperty>(ext_property).getValue();
+        return static_cast<CIMProperty&>(ext_property).getValue();
     return m_properties[key];
 }
 
