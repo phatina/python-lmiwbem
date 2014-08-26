@@ -1,3 +1,11 @@
+New in version 0.3.0:
+* support ppc(64(le)), s390(x), aarch64
+* conditional support of CIMIndicationListener
+* is_error()
+* SLP discovery support
+* fixed deadlocks when used by multithreaded application
+* various fixes
+
 New in version 0.2.0:
 * WBEMConnection:
   - AssociatorNames()

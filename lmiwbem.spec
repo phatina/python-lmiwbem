@@ -1,5 +1,5 @@
 Name:           lmiwbem
-Version:        0.2.0
+Version:        0.3.0
 Release:        1%{?dist}
 Summary:        Python WBEM Client
 License:        LGPLv2+
@@ -13,9 +13,11 @@ BuildRequires:  python-sphinx
 BuildRequires:  python-sphinx-theme-openlmi
 BuildRequires:  boost-devel >= 1.50.0
 BuildRequires:  boost-python >= 1.50.0
+BuildRequires:  openslp-devel
 BuildRequires:  tog-pegasus-devel >= 2.12.0
 BuildRequires:  tog-pegasus-libs >= 2.12.0
 Requires:       boost-python >= 1.50.0
+Requires:       openslp
 Requires:       python
 Requires:       tog-pegasus-libs >= 2.12.0
 
@@ -50,6 +52,9 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %{_docdir}/%{name}-%{version}/html
 
 %changelog
+* Tue Aug 26 2014 Peter Hatina <phatina@redhat.com> - 0.3.0-1
+- upgrade to 0.3.0
+
 * Thu Jul 31 2014 Peter Hatina <phatina@redhat.com> - 0.2.0-2
 - fix (Build)Requires
 
