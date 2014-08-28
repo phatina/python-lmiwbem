@@ -833,7 +833,15 @@ bp::list WBEMConnection::enumerateInstances(
     bp::list instances;
     const Pegasus::Uint32 cnt = cim_instances.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        bp::object instance = CIMInstance::create(cim_instances[i]);
+        Pegasus::CIMInstance &cim_instance = cim_instances[i];
+
+        // XXX: Update Pegasus::CIMInstance namespace by setting a new
+        // Pegasus::CIMObjectPath to the instance with updated namespace.
+        // This needs to be done, because CIMClient doesn't set namespace
+        // property in Pegasus::CIMObjectPath.
+        CIMInstance::updatePegasusCIMInstanceNamespace(cim_instance, std_ns);
+
+        bp::object instance = CIMInstance::create(cim_instance);
         instances.append(instance);
     }
 

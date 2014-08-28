@@ -556,3 +556,17 @@ void CIMInstance::evalProperties()
     m_property_list = property_list;
     m_rc_inst_properties.release();
 }
+
+void CIMInstance::updatePegasusCIMInstanceNamespace(
+    Pegasus::CIMInstance &instance,
+    const std::string &ns)
+{
+    Pegasus::CIMObjectPath path = instance.getPath();
+    if (!path.getNameSpace().isNull()) {
+        // The namespace is already set. We have nothing to do.
+        return;
+    }
+
+    CIMInstanceName::updatePegasusCIMObjectPathNamespace(path, ns);
+    instance.setPath(path);
+}

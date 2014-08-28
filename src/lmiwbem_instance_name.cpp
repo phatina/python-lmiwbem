@@ -475,3 +475,15 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
 
     return value;
 }
+
+void CIMInstanceName::updatePegasusCIMObjectPathNamespace(
+    Pegasus::CIMObjectPath &path,
+    const std::string &ns)
+{
+    if (!path.getNameSpace().isNull()) {
+        // The namespace is already set. We have nothing to do.
+        return;
+    }
+
+    path.setNameSpace(Pegasus::CIMNamespaceName(ns.c_str()));
+}

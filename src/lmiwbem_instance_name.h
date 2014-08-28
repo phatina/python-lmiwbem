@@ -87,6 +87,10 @@ public:
     void setHostname(const bp::object &hostname);
     void setKeybindings(const bp::object &keybindings);
 
+    static void updatePegasusCIMObjectPathNamespace(
+        Pegasus::CIMObjectPath &path,
+        const std::string &ns);
+
 private:
     static bp::object keybindingToValue(const Pegasus::CIMKeyBinding &keybinding);
 

@@ -89,6 +89,10 @@ public:
     void setQualifiers(const bp::object &qualifiers);
     void setPropertyList(const bp::object &property_list);
 
+    static void updatePegasusCIMInstanceNamespace(
+        Pegasus::CIMInstance &instance,
+        const std::string &ns);
+
 private:
     void evalProperties();
 
