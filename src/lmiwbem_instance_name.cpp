@@ -193,64 +193,67 @@ bp::object CIMInstanceName::create(
 Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
 {
     Pegasus::Array<Pegasus::CIMKeyBinding> arr_keybindings;
-    NocaseDict &keybindings = lmi::extract_or_throw<NocaseDict&>(
-        m_keybindings, "self.keybindings");
 
-    // Create an array of keybindings. Allowed keybindings' types:
-    // bool, numeric, str or CIMInstanceName
-    nocase_map_t::const_iterator it;
-    for (it = keybindings.begin(); it != keybindings.end(); ++it) {
-        if (isbool(it->second)) {
-            // Create bool CIMKeyBinding
-            bool bval = lmi::extract<bool>(it->second);
-            Pegasus::CIMValue value = Pegasus::CIMValue(bval);
-            arr_keybindings.append(
-                Pegasus::CIMKeyBinding(
-                    Pegasus::CIMName(it->first.c_str()),
-                    value));
-            continue;
-        }
+    if (!isnone(m_keybindings)) {
+        NocaseDict &keybindings = lmi::extract_or_throw<NocaseDict&>(
+            m_keybindings, "self.keybindings");
 
-        if (islong(it->second) ||
+        // Create an array of keybindings. Allowed keybindings' types:
+        // bool, numeric, str or CIMInstanceName
+        nocase_map_t::const_iterator it;
+        for (it = keybindings.begin(); it != keybindings.end(); ++it) {
+            if (isbool(it->second)) {
+                // Create bool CIMKeyBinding
+                bool bval = lmi::extract<bool>(it->second);
+                Pegasus::CIMValue value = Pegasus::CIMValue(bval);
+                arr_keybindings.append(
+                    Pegasus::CIMKeyBinding(
+                        Pegasus::CIMName(it->first.c_str()),
+                        value));
+                continue;
+            }
+
+            if (islong(it->second) ||
 #  if PY_MAJOR_VERSION < 3
-            isint(it->second) ||
+                isint(it->second) ||
 #  endif // PY_MAJOR_VERSION
-            isfloat(it->second))
-        {
-            // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
-            // are derived from long or float, so we get here.
-            arr_keybindings.append(
-                Pegasus::CIMKeyBinding(
-                    Pegasus::CIMName(it->first.c_str()),
-                    Pegasus::String(object_as_std_string(it->second).c_str()),
-                    Pegasus::CIMKeyBinding::NUMERIC));
-            continue;
-        }
+                isfloat(it->second))
+            {
+                // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
+                // are derived from long or float, so we get here.
+                arr_keybindings.append(
+                    Pegasus::CIMKeyBinding(
+                        Pegasus::CIMName(it->first.c_str()),
+                        Pegasus::String(object_as_std_string(it->second).c_str()),
+                        Pegasus::CIMKeyBinding::NUMERIC));
+                continue;
+            }
 
-        lmi::extract<std::string> ext_string(it->second);
-        if (ext_string.check()) {
-            // Create str CIMKeyBinding
-            std::string std_string(ext_string);
-            Pegasus::CIMValue value = Pegasus::CIMValue(Pegasus::String(std_string.c_str()));
-            arr_keybindings.append(
-                Pegasus::CIMKeyBinding(
-                    Pegasus::CIMName(it->first.c_str()),
-                    value));
-            continue;
-        }
+            lmi::extract<std::string> ext_string(it->second);
+            if (ext_string.check()) {
+                // Create str CIMKeyBinding
+                std::string std_string(ext_string);
+                Pegasus::CIMValue value = Pegasus::CIMValue(Pegasus::String(std_string.c_str()));
+                arr_keybindings.append(
+                    Pegasus::CIMKeyBinding(
+                        Pegasus::CIMName(it->first.c_str()),
+                        value));
+                continue;
+            }
 
-        lmi::extract<CIMInstanceName&> ext_instance_name(it->second);
-        if (ext_instance_name.check()) {
-            // Create CIMInstanceName CIMKeyBinding
-            CIMInstanceName &instance_name = ext_instance_name;
-            arr_keybindings.append(
-                Pegasus::CIMKeyBinding(
-                    Pegasus::CIMName(it->first.c_str()),
-                    instance_name.asPegasusCIMObjectPath()));
-            continue;
-        }
+            lmi::extract<CIMInstanceName&> ext_instance_name(it->second);
+            if (ext_instance_name.check()) {
+                // Create CIMInstanceName CIMKeyBinding
+                CIMInstanceName &instance_name = ext_instance_name;
+                arr_keybindings.append(
+                    Pegasus::CIMKeyBinding(
+                        Pegasus::CIMName(it->first.c_str()),
+                        instance_name.asPegasusCIMObjectPath()));
+                continue;
+            }
 
-        throw_TypeError("Invalid keybinding type");
+            throw_TypeError("Invalid keybinding type");
+        }
     }
 
     return Pegasus::CIMObjectPath(
