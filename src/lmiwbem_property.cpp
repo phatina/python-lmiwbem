@@ -23,6 +23,7 @@
 #include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_property.h"
@@ -205,7 +206,7 @@ bp::object CIMProperty::create(
     return CIMBase<CIMProperty>::create(name, value);
 }
 
-Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()
+Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty() try
 {
     Pegasus::CIMValue value = CIMValue::asPegasusCIMValue(getValue());
     return Pegasus::CIMProperty(
@@ -215,6 +216,11 @@ Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty()
         m_reference_class.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_reference_class.c_str()),
         m_class_origin.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_class_origin.c_str()),
         m_propagated);
+} catch (const Pegasus::TypeMismatchException &e) {
+    std::stringstream ss;
+    ss << m_name << ": " << e.getMessage().getCString();
+    throw Pegasus::TypeMismatchException(Pegasus::String(ss.str().c_str()));
+    return Pegasus::CIMProperty();
 }
 
 #  if PY_MAJOR_VERSION < 3

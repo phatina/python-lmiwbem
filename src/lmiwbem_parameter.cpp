@@ -20,8 +20,10 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_parameter.h"
@@ -178,10 +180,9 @@ Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
 
     return parameter;
 } catch (const Pegasus::TypeMismatchException &e) {
-    throw_Exception(e);
-
-    // Return present not to make compiler complain about missing return
-    // statement.
+    std::stringstream ss;
+    ss << m_name << ": " << e.getMessage().getCString();
+    throw Pegasus::TypeMismatchException(Pegasus::String(ss.str().c_str()));
     return Pegasus::CIMParameter();
 }
 
