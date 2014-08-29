@@ -42,6 +42,16 @@
 #include "lmiwbem_util.h"
 #include "lmiwbem_value.h"
 
+/* NOTE: These macros need to be used around every CIM operation.
+ * ScopedConnectionBegin creates a temporary connection, if necessary and also
+ * releases Python's global interpret lock. ScopedConnectionEnd is defined due
+ * to semantics; to close the scope.
+ */
+#define ScopedConnectionBegin() { \
+    ScopedConnection sc(this); \
+    ScopedGILRelease sr;
+#define ScopedConnectionEnd() }
+
 namespace bp = boost::python;
 
 WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
@@ -708,7 +718,7 @@ bp::object WBEMConnection::getCredentials() const
     return bp::make_tuple(m_username, m_password);
 }
 
-bp::object WBEMConnection::createInstance(const bp::object &instance)
+bp::object WBEMConnection::createInstance(const bp::object &instance) try
 {
     CIMInstance &inst = lmi::extract_or_throw<CIMInstance&>(
         instance, "NewInstance");
@@ -724,15 +734,12 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
     Pegasus::CIMObjectPath new_inst_name;
     Pegasus::CIMNamespaceName new_inst_name_ns(std_ns.c_str());
     Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();
-    try {
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        new_inst_name = m_client.createInstance(
-            new_inst_name_ns,
-            cim_inst);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+
+    ScopedConnectionBegin();
+    new_inst_name = m_client.createInstance(
+        new_inst_name_ns,
+        cim_inst);
+    ScopedConnectionEnd();
 
     // CIMClient::createInstance() does not set namespace and hostname
     // in newly created CIMInstanceName. We need to do that manually.
@@ -741,9 +748,12 @@ bp::object WBEMConnection::createInstance(const bp::object &instance)
     new_inst_name.setHost(std_hostname.c_str());
 
     return CIMInstanceName::create(new_inst_name);
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-void WBEMConnection::deleteInstance(const bp::object &object_path)
+void WBEMConnection::deleteInstance(const bp::object &object_path) try
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName&>(
         object_path, "InstanceName");
@@ -754,54 +764,50 @@ void WBEMConnection::deleteInstance(const bp::object &object_path)
         std_ns = cim_path.getNameSpace().getString().getCString();
     Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
 
-    try {
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        m_client.deleteInstance(
-            cim_ns,
-            cim_path);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin()
+    m_client.deleteInstance(
+        cim_ns,
+        cim_path);
+    ScopedConnectionEnd();
+} catch (...) {
+    handle_all_exceptions();
 }
 
 void WBEMConnection::modifyInstance(
     const bp::object &instance,
     const bool include_qualifiers,
-    const bp::object &property_list)
+    const bp::object &property_list) try
 {
     CIMInstance &inst = lmi::extract_or_throw<CIMInstance&>(
         instance, "ModifiedInstance");
     CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(
         inst.getPath());
 
-    try {
-        Pegasus::CIMNamespaceName cim_ns(inst_name.getNamespace().c_str());
-        Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();
-        Pegasus::CIMPropertyList cim_property_list(
-            ListConv::asPegasusPropertyList(property_list,
-            "PropertyList"));
+    Pegasus::CIMNamespaceName cim_ns(inst_name.getNamespace().c_str());
+    Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();
+    Pegasus::CIMPropertyList cim_property_list(
+        ListConv::asPegasusPropertyList(property_list,
+        "PropertyList"));
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        m_client.modifyInstance(
-            cim_ns,
-            cim_inst,
-            include_qualifiers,
-            cim_property_list);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    m_client.modifyInstance(
+        cim_ns,
+        cim_inst,
+        include_qualifiers,
+        cim_property_list);
+    ScopedConnectionEnd();
+} catch (...) {
+    handle_all_exceptions();
 }
 
-bp::list WBEMConnection::enumerateInstances(
+bp::object WBEMConnection::enumerateInstances(
     const bp::object &cls,
     const bp::object &ns,
     const bool local_only,
     const bool deep_inheritance,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object &property_list)
+    const bp::object &property_list) try
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
     std::string std_ns(m_default_namespace);
@@ -809,26 +815,22 @@ bp::list WBEMConnection::enumerateInstances(
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::Array<Pegasus::CIMInstance> cim_instances;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_name(std_cls.c_str());
-        Pegasus::CIMPropertyList cim_property_list(
-            ListConv::asPegasusPropertyList(property_list,
-            "PropertyList"));
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_name(std_cls.c_str());
+    Pegasus::CIMPropertyList cim_property_list(
+        ListConv::asPegasusPropertyList(property_list,
+        "PropertyList"));
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_instances = m_client.enumerateInstances(
-            cim_ns,
-            cim_name,
-            deep_inheritance,
-            local_only,
-            include_qualifiers,
-            include_class_origin,
-            cim_property_list);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_instances = m_client.enumerateInstances(
+        cim_ns,
+        cim_name,
+        deep_inheritance,
+        local_only,
+        include_qualifiers,
+        include_class_origin,
+        cim_property_list);
+    ScopedConnectionEnd();
 
     bp::list instances;
     const Pegasus::Uint32 cnt = cim_instances.size();
@@ -846,11 +848,14 @@ bp::list WBEMConnection::enumerateInstances(
     }
 
     return instances;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::enumerateInstanceNames(
+bp::object WBEMConnection::enumerateInstanceNames(
     const bp::object &cls,
-    const bp::object &ns)
+    const bp::object &ns) try
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "cls"));
     std::string std_ns(m_default_namespace);
@@ -858,18 +863,14 @@ bp::list WBEMConnection::enumerateInstanceNames(
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_instance_names;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_name(std_cls.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_name(std_cls.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_instance_names = m_client.enumerateInstanceNames(
-            cim_ns,
-            cim_name);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_instance_names = m_client.enumerateInstanceNames(
+        cim_ns,
+        cim_name);
+    ScopedConnectionEnd();
 
     bp::list instance_names;
     const Pegasus::Uint32 cnt = cim_instance_names.size();
@@ -880,11 +881,14 @@ bp::list WBEMConnection::enumerateInstanceNames(
     }
 
     return instance_names;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::tuple WBEMConnection::invokeMethod(
+bp::object WBEMConnection::invokeMethod(
     const bp::tuple &args,
-    const bp::dict  &kwds)
+    const bp::dict  &kwds) try
 {
     if (bp::len(args) != 2)
         throw_TypeError("InvokeMethod() takes at least 2 arguments");
@@ -915,21 +919,17 @@ bp::tuple WBEMConnection::invokeMethod(
                 true /* isTyped */));
     }
 
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_name(std_method.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_name(std_method.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_rval = m_client.invokeMethod(
-            cim_ns,
-            cim_path,
-            cim_name,
-            cim_in_params,
-            cim_out_params);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_rval = m_client.invokeMethod(
+        cim_ns,
+        cim_path,
+        cim_name,
+        cim_in_params,
+        cim_out_params);
+    ScopedConnectionEnd();
 
     // Create a NocaseDict of method's return parameters
     bp::object rparams = NocaseDict::create();
@@ -942,6 +942,9 @@ bp::tuple WBEMConnection::invokeMethod(
     return bp::make_tuple(
         CIMValue::asLMIWbemCIMValue(cim_rval),
         rparams);
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
 bp::object WBEMConnection::getInstance(
@@ -950,7 +953,7 @@ bp::object WBEMConnection::getInstance(
     const bool local_only,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object &property_list)
+    const bp::object &property_list) try
 {
     CIMInstanceName &cim_instance_name = lmi::extract_or_throw<CIMInstanceName&>(
         instance_name, "InstanceName");
@@ -961,39 +964,38 @@ bp::object WBEMConnection::getInstance(
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::CIMInstance cim_instance;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asPegasusCIMObjectPath();
-        Pegasus::CIMPropertyList cim_property_list(
-            ListConv::asPegasusPropertyList(property_list, "PropertyList"));
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asPegasusCIMObjectPath();
+    Pegasus::CIMPropertyList cim_property_list(
+        ListConv::asPegasusPropertyList(property_list, "PropertyList"));
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_instance = m_client.getInstance(
-            cim_ns,
-            cim_object_path,
-            local_only,
-            include_qualifiers,
-            include_class_origin,
-            cim_property_list);
+    ScopedConnectionBegin();
+    cim_instance = m_client.getInstance(
+        cim_ns,
+        cim_object_path,
+        local_only,
+        include_qualifiers,
+        include_class_origin,
+        cim_property_list);
+    ScopedConnectionEnd();
 
-        // CIMClient::getInstance() does not set the CIMObjectPath member in
-        // CIMInstance. We need to do that manually.
-        cim_instance.setPath(cim_object_path);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    // CIMClient::getInstance() does not set the CIMObjectPath member in
+    // CIMInstance. We need to do that manually.
+    cim_instance.setPath(cim_object_path);
 
     return CIMInstance::create(cim_instance);
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::enumerateClasses(
+bp::object WBEMConnection::enumerateClasses(
     const bp::object &ns,
     const bp::object &cls,
     const bool deep_inheritance,
     const bool local_only,
     const bool include_qualifiers,
-    const bool include_class_origin)
+    const bool include_class_origin) try
 {
     std::string std_ns(m_default_namespace);
     if (!isnone(ns))
@@ -1006,21 +1008,17 @@ bp::list WBEMConnection::enumerateClasses(
     }
 
     Pegasus::Array<Pegasus::CIMClass> cim_classes;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_classes = m_client.enumerateClasses(
-            cim_ns,
-            classname,
-            deep_inheritance,
-            local_only,
-            include_qualifiers,
-            include_class_origin);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_classes = m_client.enumerateClasses(
+        cim_ns,
+        classname,
+        deep_inheritance,
+        local_only,
+        include_qualifiers,
+        include_class_origin);
+    ScopedConnectionEnd();
 
     bp::list classes;
     const Pegasus::Uint32 cnt = cim_classes.size();
@@ -1028,12 +1026,15 @@ bp::list WBEMConnection::enumerateClasses(
         classes.append(CIMClass::create(cim_classes[i]));
 
     return classes;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::enumerateClassNames(
+bp::object WBEMConnection::enumerateClassNames(
     const bp::object &ns,
     const bp::object &cls,
-    const bool deep_inheritance)
+    const bool deep_inheritance) try
 {
     std::string std_ns(m_default_namespace);
     if (!isnone(ns))
@@ -1046,18 +1047,14 @@ bp::list WBEMConnection::enumerateClassNames(
     }
 
     Pegasus::Array<Pegasus::CIMName> cim_classnames;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_classnames = m_client.enumerateClassNames(
-            cim_ns,
-            classname,
-            deep_inheritance);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_classnames = m_client.enumerateClassNames(
+        cim_ns,
+        classname,
+        deep_inheritance);
+    ScopedConnectionEnd();
 
     // We do not create lmiwbem.CIMClassName objects here; we try to mimic pywbem.
     bp::list classnames;
@@ -1066,12 +1063,16 @@ bp::list WBEMConnection::enumerateClassNames(
         classnames.append(bp::object(cim_classnames[i]));
 
     return classnames;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::execQuery(
+
+bp::object WBEMConnection::execQuery(
     const bp::object &query_lang,
     const bp::object &query,
-    const bp::object &ns)
+    const bp::object &ns) try
 {
     std::string std_query_lang = lmi::extract_or_throw<std::string>(query_lang, "QueryLanguage");
     std::string std_query = lmi::extract_or_throw<std::string>(query, "Query");
@@ -1080,20 +1081,16 @@ bp::list WBEMConnection::execQuery(
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::Array<Pegasus::CIMObject> cim_instances;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::String cim_query_lang(std_query_lang.c_str());
-        Pegasus::String cim_query(std_query.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::String cim_query_lang(std_query_lang.c_str());
+    Pegasus::String cim_query(std_query.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_instances = m_client.execQuery(
-            cim_ns,
-            cim_query_lang,
-            cim_query);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_instances = m_client.execQuery(
+        cim_ns,
+        cim_query_lang,
+        cim_query);
+    ScopedConnectionEnd();
 
     bp::list instances;
     const Pegasus::Uint32 cnt = cim_instances.size();
@@ -1101,6 +1098,9 @@ bp::list WBEMConnection::execQuery(
         instances.append(CIMInstance::create(cim_instances[i]));
 
     return instances;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
 bp::object WBEMConnection::getClass(
@@ -1109,7 +1109,7 @@ bp::object WBEMConnection::getClass(
     const bool local_only,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object &property_list)
+    const bp::object &property_list) try
 {
     std::string std_cls(lmi::extract_or_throw<std::string>(cls, "ClassName"));
     std::string std_ns(m_default_namespace);
@@ -1117,30 +1117,29 @@ bp::object WBEMConnection::getClass(
         std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
 
     Pegasus::CIMClass cim_class;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_name(std_cls.c_str());
-        Pegasus::CIMPropertyList cim_property_list(
-            ListConv::asPegasusPropertyList(property_list,
-            "PropertyList"));
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_name(std_cls.c_str());
+    Pegasus::CIMPropertyList cim_property_list(
+        ListConv::asPegasusPropertyList(property_list,
+        "PropertyList"));
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_class = m_client.getClass(
-            cim_ns,
-            cim_name,
-            local_only,
-            include_qualifiers,
-            include_class_origin,
-            cim_property_list);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin()
+    cim_class = m_client.getClass(
+        cim_ns,
+        cim_name,
+        local_only,
+        include_qualifiers,
+        include_class_origin,
+        cim_property_list);
+    ScopedConnectionEnd();
 
     return CIMClass::create(cim_class);
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::getAssociators(
+bp::object WBEMConnection::getAssociators(
     const bp::object &object_path,
     const bp::object &assoc_class,
     const bp::object &result_class,
@@ -1148,7 +1147,7 @@ bp::list WBEMConnection::getAssociators(
     const bp::object &result_role,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object property_list)
+    const bp::object property_list) try
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
@@ -1176,37 +1175,33 @@ bp::list WBEMConnection::getAssociators(
         "PropertyList"));
 
     Pegasus::Array<Pegasus::CIMObject> cim_associators;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_assoc_class;
-        Pegasus::CIMName cim_result_class;
-        Pegasus::String  cim_role = Pegasus::String::EMPTY;
-        Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_assoc_class;
+    Pegasus::CIMName cim_result_class;
+    Pegasus::String  cim_role = Pegasus::String::EMPTY;
+    Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
 
-        if (!std_assoc_class.empty())
-            cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
-        if (!std_result_class.empty())
-            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-        if (!std_role.empty())
-            cim_role = std_role.c_str();
-        if (!std_result_role.empty())
-            cim_result_role = std_result_role.c_str();
+    if (!std_assoc_class.empty())
+        cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
+    if (!std_result_class.empty())
+        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+    if (!std_role.empty())
+        cim_role = std_role.c_str();
+    if (!std_result_role.empty())
+        cim_result_role = std_result_role.c_str();
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_associators = m_client.associators(
-            cim_ns,
-            cim_path,
-            cim_assoc_class,
-            cim_result_class,
-            cim_role,
-            cim_result_role,
-            include_qualifiers,
-            include_class_origin,
-            cim_property_list);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_associators = m_client.associators(
+        cim_ns,
+        cim_path,
+        cim_assoc_class,
+        cim_result_class,
+        cim_role,
+        cim_result_role,
+        include_qualifiers,
+        include_class_origin,
+        cim_property_list);
+    ScopedConnectionEnd();
 
     bp::list associators;
     const Pegasus::Uint32 cnt = cim_associators.size();
@@ -1214,14 +1209,17 @@ bp::list WBEMConnection::getAssociators(
         associators.append(CIMInstance::create(cim_associators[i]));
 
     return associators;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::getAssociatorNames(
+bp::object WBEMConnection::getAssociatorNames(
     const bp::object &object_path,
     const bp::object &assoc_class,
     const bp::object &result_class,
     const bp::object &role,
-    const bp::object &result_role)
+    const bp::object &result_role) try
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
@@ -1245,34 +1243,30 @@ bp::list WBEMConnection::getAssociatorNames(
         std_result_role = lmi::extract_or_throw<std::string>(result_role, "ResultRole");
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_associator_names;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_assoc_class;
-        Pegasus::CIMName cim_result_class;
-        Pegasus::String  cim_role = Pegasus::String::EMPTY;
-        Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_assoc_class;
+    Pegasus::CIMName cim_result_class;
+    Pegasus::String  cim_role = Pegasus::String::EMPTY;
+    Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
 
-        if (!std_assoc_class.empty())
-            cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
-        if (!std_result_class.empty())
-            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-        if (!std_role.empty())
-            cim_role = std_role.c_str();
-        if (!std_result_role.empty())
-            cim_result_role = std_result_role.c_str();
+    if (!std_assoc_class.empty())
+        cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
+    if (!std_result_class.empty())
+        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+    if (!std_role.empty())
+        cim_role = std_role.c_str();
+    if (!std_result_role.empty())
+        cim_result_role = std_result_role.c_str();
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_associator_names = m_client.associatorNames(
-            cim_ns,
-            cim_path,
-            cim_assoc_class,
-            cim_result_class,
-            cim_role,
-            cim_result_role);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_associator_names = m_client.associatorNames(
+        cim_ns,
+        cim_path,
+        cim_assoc_class,
+        cim_result_class,
+        cim_role,
+        cim_result_role);
+    ScopedConnectionEnd();
 
     bp::list associator_names;
     const Pegasus::Uint32 cnt = cim_associator_names.size();
@@ -1280,15 +1274,18 @@ bp::list WBEMConnection::getAssociatorNames(
         associator_names.append(CIMInstanceName::create(cim_associator_names[i]));
 
     return associator_names;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::getReferences(
+bp::object WBEMConnection::getReferences(
     const bp::object &object_path,
     const bp::object &result_class,
     const bp::object &role,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object &property_list)
+    const bp::object &property_list) try
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
@@ -1310,28 +1307,24 @@ bp::list WBEMConnection::getReferences(
         "PropertyList"));
 
     Pegasus::Array<Pegasus::CIMObject> cim_references;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_result_class;
-        Pegasus::String  cim_role = Pegasus::String::EMPTY;
-        if (!std_result_class.empty())
-            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-        if (!std_role.empty())
-            cim_role = Pegasus::String(std_role.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_result_class;
+    Pegasus::String  cim_role = Pegasus::String::EMPTY;
+    if (!std_result_class.empty())
+        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+    if (!std_role.empty())
+        cim_role = Pegasus::String(std_role.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_references = m_client.references(
-            cim_ns,
-            cim_path,
-            cim_result_class,
-            cim_role,
-            include_qualifiers,
-            include_class_origin,
-            cim_property_list);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_references = m_client.references(
+        cim_ns,
+        cim_path,
+        cim_result_class,
+        cim_role,
+        include_qualifiers,
+        include_class_origin,
+        cim_property_list);
+    ScopedConnectionEnd();
 
     bp::list references;
     const Pegasus::Uint32 cnt = cim_references.size();
@@ -1339,12 +1332,15 @@ bp::list WBEMConnection::getReferences(
         references.append(CIMInstance::create(cim_references[i]));
 
     return references;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }
 
-bp::list WBEMConnection::getReferenceNames(
+bp::object WBEMConnection::getReferenceNames(
     const bp::object &object_path,
     const bp::object &result_class,
-    const bp::object &role)
+    const bp::object &role) try
 {
     const CIMInstanceName &inst_name = lmi::extract_or_throw<CIMInstanceName>(
         object_path, "ObjectName");
@@ -1362,25 +1358,21 @@ bp::list WBEMConnection::getReferenceNames(
         std_role = lmi::extract_or_throw<std::string>(role, "Role");
 
     Pegasus::Array<Pegasus::CIMObjectPath> cim_reference_names;
-    try {
-        Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-        Pegasus::CIMName cim_result_class;
-        Pegasus::String  cim_role = Pegasus::String::EMPTY;
-        if (!std_result_class.empty())
-            cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-        if (!std_role.empty())
-            cim_role = Pegasus::String(std_role.c_str());
+    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::CIMName cim_result_class;
+    Pegasus::String  cim_role = Pegasus::String::EMPTY;
+    if (!std_result_class.empty())
+        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
+    if (!std_role.empty())
+        cim_role = Pegasus::String(std_role.c_str());
 
-        ScopedConnection sc(this);
-        ScopedGILRelease sr;
-        cim_reference_names = m_client.referenceNames(
-            cim_ns,
-            cim_path,
-            cim_result_class,
-            cim_role);
-    } catch (...) {
-        handle_all_exceptions();
-    }
+    ScopedConnectionBegin();
+    cim_reference_names = m_client.referenceNames(
+        cim_ns,
+        cim_path,
+        cim_result_class,
+        cim_role);
+    ScopedConnectionEnd();
 
     bp::list reference_names;
     const Pegasus::Uint32 cnt = cim_reference_names.size();
@@ -1388,4 +1380,7 @@ bp::list WBEMConnection::getReferenceNames(
         reference_names.append(CIMInstanceName::create(cim_reference_names[i]));
 
     return reference_names;
+} catch (...) {
+    handle_all_exceptions();
+    return bp::object();
 }

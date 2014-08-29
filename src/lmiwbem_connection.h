@@ -29,7 +29,6 @@
 
 BOOST_PYTHON_BEGIN
     class dict;
-    class list;
     class object;
     class tuple;
 BOOST_PYTHON_END
@@ -97,7 +96,7 @@ public:
         const bool include_qualifiers,
         const bp::object &property_list);
 
-    bp::list enumerateInstances(
+    bp::object enumerateInstances(
         const bp::object &cls,
         const bp::object &ns,
         const bool local_only,
@@ -106,7 +105,7 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
-    bp::list enumerateInstanceNames(
+    bp::object enumerateInstanceNames(
         const bp::object &cls,
         const bp::object &ns);
 
@@ -118,7 +117,7 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
-    bp::list enumerateClasses(
+    bp::object enumerateClasses(
         const bp::object &ns,
         const bp::object &cls,
         const bool deep_inheritance,
@@ -126,17 +125,17 @@ public:
         const bool include_qualifiers,
         const bool include_class_origin);
 
-    bp::list enumerateClassNames(
+    bp::object enumerateClassNames(
         const bp::object &ns,
         const bp::object &cls,
         const bool deep_inheritance);
 
-    bp::list execQuery(
+    bp::object execQuery(
         const bp::object &query_lang,
         const bp::object &query,
         const bp::object &ns);
 
-    bp::tuple invokeMethod(
+    bp::object invokeMethod(
         const bp::tuple &args,
         const bp::dict  &kwds);
 
@@ -148,7 +147,7 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
-    bp::list getAssociators(
+    bp::object getAssociators(
         const bp::object &object_path,
         const bp::object &assoc_class,
         const bp::object &result_class,
@@ -158,14 +157,14 @@ public:
         const bool include_class_origin,
         const bp::object property_list);
 
-    bp::list getAssociatorNames(
+    bp::object getAssociatorNames(
         const bp::object &object_path,
         const bp::object &assoc_class,
         const bp::object &result_class,
         const bp::object &role,
         const bp::object &result_role);
 
-    bp::list getReferences(
+    bp::object getReferences(
         const bp::object &object_path,
         const bp::object &result_class,
         const bp::object &role,
@@ -173,7 +172,7 @@ public:
         const bool include_class_origin,
         const bp::object &property_list);
 
-    bp::list getReferenceNames(
+    bp::object getReferenceNames(
         const bp::object &object_path,
         const bp::object &result_class,
         const bp::object &role);
