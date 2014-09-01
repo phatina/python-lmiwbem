@@ -1,3 +1,9 @@
+New in version 0.3.1:
+* fixed missing namespace in CIMInstance returned from EnumerateInstances()
+* name of CIMProperty or CIMParameter is present in TypeError, when type
+  mismatch occurs
+* refactored exception handling in WBEMConnection
+
 New in version 0.3.0:
 * support ppc(64(le)), s390(x), aarch64
 * conditional support of CIMIndicationListener

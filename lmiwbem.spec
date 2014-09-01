@@ -1,5 +1,5 @@
 Name:           lmiwbem
-Version:        0.3.0
+Version:        0.3.1
 Release:        1%{?dist}
 Summary:        Python WBEM Client
 License:        LGPLv2+
@@ -52,6 +52,9 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %{_docdir}/%{name}-%{version}/html
 
 %changelog
+* Fro Aug 29 2014 Peter Hatina <phatina@redhat.com> - 0.3.1-1
+- upgrade to 0.3.1
+
 * Tue Aug 26 2014 Peter Hatina <phatina@redhat.com> - 0.3.0-1
 - upgrade to 0.3.0
 
