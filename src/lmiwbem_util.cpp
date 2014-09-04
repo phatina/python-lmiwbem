@@ -230,6 +230,11 @@ DEFINE_TO_CONVERTER(PegasusCIMObjectToPythonCIMObject, Pegasus::CIMObject)
         return bp::incref(CIMClass::create(value).ptr());
 }
 
+DEFINE_TO_CONVERTER(CIMConstantsCIMErrorToPythonInt, CIMConstants::CIMError)
+{
+    return bp::incref(bp::object(static_cast<int>(value)).ptr());
+}
+
 bp::object incref(const bp::object &obj)
 {
     bp::incref(obj.ptr());

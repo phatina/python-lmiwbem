@@ -82,6 +82,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     PegasusCIMDateteTimeToPythonDateTime::register_converter();
     PegasusChar16ToPythonUint16::register_converter();
     PegasusCIMObjectPathToPythonCIMInstanceName::register_converter();
+    CIMConstantsCIMErrorToPythonInt::register_converter();
 
     // Initialize module functions
     def("is_subclass",

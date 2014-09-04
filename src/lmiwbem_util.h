@@ -33,6 +33,7 @@
 #  include <Pegasus/Common/CIMValue.h>
 #  include <Pegasus/Common/String.h>
 #  include "lmiwbem.h"
+#  include "lmiwbem_constants.h"
 
 BOOST_PYTHON_BEGIN
 class object;
@@ -62,6 +63,7 @@ DECL_TO_CONVERTER(PegasusCIMDateteTimeToPythonDateTime, Pegasus::CIMDateTime);
 DECL_TO_CONVERTER(PegasusChar16ToPythonUint16, Pegasus::Char16);
 DECL_TO_CONVERTER(PegasusCIMObjectPathToPythonCIMInstanceName, Pegasus::CIMObjectPath);
 DECL_TO_CONVERTER(PegasusCIMObjectToPythonCIMObject, Pegasus::CIMObject);
+DECL_TO_CONVERTER(CIMConstantsCIMErrorToPythonInt, CIMConstants::CIMError);
 
 class CIMTypeConv
 {
