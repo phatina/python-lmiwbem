@@ -106,6 +106,7 @@ else
     AC_MSG_RESULT([skipped])
 fi
 
+AC_SUBST([WITH_LISTENER], ["$with_listener"])
 AM_CONDITIONAL([BUILD_WITH_LISTENER], [test x"$with_listener" = x"yes"])
 
 dnl Check if TOG-Pegasus CIMListener supports bind address.
@@ -171,6 +172,7 @@ else
     AC_MSG_RESULT([skipping])
 fi
 
+AC_SUBST([WITH_SLP], ["$with_slp"])
 AM_CONDITIONAL([BUILD_WITH_SLP], [test x"$with_slp" = x"yes"])
 
 LIBS=$SAVE_LIBS
@@ -222,6 +224,7 @@ if test x"$with_defns" = x; then
 fi
 
 AC_DEFINE_UNQUOTED([DEFAULT_NAMESPACE], ["$with_defns"], [Default CIM namespace])
+AC_SUBST([DEFAULT_NAMESPACE], ["$with_defns"])
 
 dnl --with-default-trust-store
 AC_ARG_WITH(
@@ -236,6 +239,7 @@ if test x"$with_defts" = x; then
 fi
 
 AC_DEFINE_UNQUOTED([DEFAULT_TRUST_STORE], ["$with_defts"], [Default trust store])
+AC_SUBST([DEFAULT_TRUST_STORE], ["$with_defts"])
 
 dnl --with-doc
 AC_ARG_WITH(
@@ -252,10 +256,12 @@ AM_CONDITIONAL([BUILD_WITH_DOC], [test x"$with_doc" = x"yes"])
 
 AC_OUTPUT(
     [makefile
+     setup.py
      doc/makefile
      src/makefile
-     src/__init__.py
-     src/lmiwbem_types.py]
+     src/lmiwbem/makefile
+     src/lmiwbem/__init__.py
+     src/lmiwbem/lmiwbem_types.py]
 )
 
 AC_MSG_NOTICE([

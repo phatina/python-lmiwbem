@@ -1,11 +1,9 @@
+SUBDIRS = lmiwbem
+
 lmiwbem_coreexecdir = $(pyexecdir)/lmiwbem
 
 lmiwbem_coreexec_LTLIBRARIES =   \
 	lmiwbem_core.la
-
-lmiwbem_coreexec_PYTHON      =   \
-	__init__.py              \
-	lmiwbem_types.py
 
 lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_addr.h            \

@@ -1,0 +1,6 @@
+lmiwbem_coreexecdir = $(pyexecdir)/lmiwbem
+
+lmiwbem_coreexec_PYTHON      =   \
+	__init__.py              \
+	lmiwbem_types.py
+

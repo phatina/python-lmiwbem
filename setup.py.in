@@ -1,0 +1,212 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+# TODO:
+# - default namespace
+# - default trust store
+# - pass configured values from configure script
+
+"""
+LMIWBEM setup script.
+
+Compared to configure script, it is possible to pass:
+  --with-listener - compile with CIMIndicationListener support,
+                    default is True
+  --without-listener - disable CIMIndicationListener support
+  --with-slp - compile with SLP support, default is True
+  --without-slp - disable SLP support
+
+Python version for compilation is set at runtime:
+
+  python2 setup.py [command] or
+  python3 setup.py [command]
+"""
+
+import argparse
+import os
+import os.path
+import sys
+from collections import namedtuple
+from distutils.core import setup
+from distutils.core import Extension
+from distutils.command.build import build
+
+
+# User defined values from configure script.
+with_listener = "@WITH_LISTENER@" == "yes"
+with_slp = "@WITH_SLP@" == "yes"
+default_namespace = "@DEFAULT_NAMESPACE@"
+default_trust_store = "@DEFAULT_TRUST_STORE@"
+
+Args = namedtuple("Args", ["name", "dest", "action", "default"])
+setup_args = [
+    Args("--with-listener", "with_listener", "store_true", with_listener),
+    Args("--without-listener", "with_listener", "store_false", False),
+    Args("--with-slp", "with_slp", "store_true", with_slp),
+    Args("--without-slp", "with_slp", "store_false", False),
+    Args("--with-default-namespace", "with_default_namespace", "store",
+         default_namespace),
+    Args("--with-default-trust-store", "with_defual_trust_store", "store",
+         default_trust_store)]
+
+
+class lmiwbem_build(build):
+    """
+    Helper class for build command. It creates a temporary Python module named
+    lmiwbem.
+    """
+    def run(self):
+        try:
+            os.symlink("src/lmiwbem", "lmiwbem")
+        except OSError as e:
+            raise OSError(e.args[0], "Can't create 'lmiwbem' module directory")
+        build.run(self)
+        os.unlink("lmiwbem")
+
+
+class LMIWBEMArgumentParser(argparse.ArgumentParser):
+    def error(self, message):
+        """
+        Overriden error handler, so we do not quit when unknown argument is
+        seen.
+        """
+        pass
+
+
+def parse_args(args):
+    """
+    Parses CLI arguments.
+    """
+    parser = LMIWBEMArgumentParser(usage="%(prog)s [options] [command]")
+    for arg in setup_args:
+        parser.add_argument(arg.name, dest=arg.dest, action=arg.action,
+                            default=arg.default)
+    return parser.parse_args(args)
+
+
+def filter_args(args):
+    """
+    Returns args without setup_args.
+    """
+    return [arg for arg in args if arg not in
+            [setup_arg.name for setup_arg in setup_args]]
+
+
+# Parse CLI options
+options = parse_args(sys.argv)
+sys.argv = filter_args(sys.argv)
+
+# LMIWBEM defines.
+lmiwbem_defines = [("@PEGASUS_PLATFORM@", None)]
+
+# LMIWBEM source files.
+lmiwbem_sources = [
+    "lmiwbem_addr.cpp",
+    "lmiwbem_class.cpp",
+    "lmiwbem_class_name.cpp",
+    "lmiwbem_client.cpp",
+    "lmiwbem_connection.cpp",
+    "lmiwbem_constants.cpp",
+    "lmiwbem.cpp",
+    "lmiwbem_exception.cpp",
+    "lmiwbem_extract.cpp",
+    "lmiwbem_instance.cpp",
+    "lmiwbem_instance_name.cpp",
+    "lmiwbem_method.cpp",
+    "lmiwbem_nocasedict.cpp",
+    "lmiwbem_parameter.cpp",
+    "lmiwbem_property.cpp",
+    "lmiwbem_qualifier.cpp",
+    "lmiwbem_types.cpp",
+    "lmiwbem_util.cpp",
+    "lmiwbem_value.cpp"]
+
+# LMIWBEM default libraries.
+lmiwbem_libraries = ["pegclient", "pegcommon"]
+
+# We do not provide --with-python3 CLI option. Proper boost::python library is
+# chosen at runtime.
+if sys.version_info.major == 2:
+    lmiwbem_libraries.append("boost_python")
+elif sys.version_info.major == 3:
+    lmiwbem_libraries.append("boost_python3")
+else:
+    raise RuntimeError("Unsupported Python version")
+
+# Build with indication listener.
+if options.with_listener:
+    lmiwbem_defines.append(("HAVE_PEGASUS_LISTENER", None))
+    lmiwbem_sources.append("lmiwbem_listener.cpp")
+    lmiwbem_libraries.append("peglistener")
+
+# Build with SLP support.
+if options.with_slp:
+    lmiwbem_defines.append(("HAVE_SLP", None))
+    lmiwbem_sources.append("lmiwbem_slp.cpp")
+    lmiwbem_libraries.append("slp")
+
+srcdir = os.path.normpath("@abs_srcdir@/src")
+
+# C++ extension
+lmiwbem_core = Extension(
+    "lmiwbem.lmiwbem_core",
+    define_macros=lmiwbem_defines,
+    include_dirs=["@top_builddir@"],
+    sources=[os.path.join(srcdir, source) for source in lmiwbem_sources],
+    libraries=lmiwbem_libraries)
+
+setup(
+    name="lmiwbem",
+    version="@VERSION@",
+    license="LGPLv2+",
+    author="Peter Hatina",
+    author_email="phatina@redhat.com",
+    url="https://github.com/phatina/lmiwbem",
+    description="LMIWBEM is a Python library, which performs CIM operations"
+                "using CIM-XML protocol.",
+    ext_modules=[lmiwbem_core],
+    packages=["lmiwbem"],
+    cmdclass={"build": lmiwbem_build},
+    classifiers=[
+        "License :: OSI Approved :: GNU Lesser General Public License v2 or"
+        "later (LGPLv2+)",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: System :: Systems Administration",
+        "Programming Language :: C++",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.2",
+        "Intended Audience :: Developers",
+        "Environment :: Console",
+    ],
+
+    long_description=\
+        """
+        LMIWBEM is a Python library, which performs CIM operations using
+        CIM-XML protocol. The library tries to mimic PyWBEM, but does things in
+        different way:
+
+        - TOG-Pegasus client's library is used for communication
+        - lazy evaluation of CIM objects is used
+        - some minor API was added for performance reasons
+        """)

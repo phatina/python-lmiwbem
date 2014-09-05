@@ -38,28 +38,55 @@ LMIWBEM has several dependencies:
 - python-devel
 - build tools (autoconf, automake, make, ...)
 
-To install the module, follow these steps:
+LMIWBEM supports 2 build systems:
+- Autotools (*must precede distutils*)
+- Python's distutils.
 
+AUTOTOOLS
+---------
+
+To install the module using ```configure``` script, follow these steps:
+
+    $ ./autogen.sh # if you got sources from git repository
     $ mkdir build && cd build
     $ ../configure
     $ make
     # make install
 
-It is possible to override default CIM namespace and trust store path by
-providing these options to ```configure``` script:
+
+DISTUTILS
+---------
+
+To install the module using Python's distutils, follow these steps:
+
+    $ ./autogen.sh # if you got sources from git repository
+    $ mkdir build && cd build
+    $ ../configure
+    # python setup.py install
+
+**NOTE:** It is necessary to run ```configure``` script, which generates
+Python's setup.py for build and installation.
+
+OPTIONS
+-------
+
+These options apply for ```configure``` and ```setup.py```:
 
     --with-default-namespace=NAMESPACE; default: root/cimv2
     --with-default-trust-store=DIR;     default: /etc/pki/ca-trust/source/anchors/
+    --with-listener=[yes/no];           default: yes
+    --with-slp=[yes/no];                default: yes
 
-By default, LMIWBEM is configured to work with Python 2.6+. It is possible to
-build the project with Python3 compatibility by running ```configure``` script
-with:
+By default, LMIWBEM is configured to work with Python 2.6.x and 2.7.x. It is
+possible to build the project with Python 3.x.x compatibility by running
+```configure``` script with:
 
     --with-python3=yes
 
-If you got the sources from git repository, first you have to run:
+If the module is built using distutils, Python version is determined at
+runtime. Setup with Python 3.x.x:
 
-    $ ./autogen.sh
+    $ python3 setup.py install
 
 USAGE
 =====
