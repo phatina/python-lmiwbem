@@ -224,7 +224,6 @@ if test x"$with_defns" = x; then
 fi
 
 AC_DEFINE_UNQUOTED([DEFAULT_NAMESPACE], ["$with_defns"], [Default CIM namespace])
-AC_SUBST([DEFAULT_NAMESPACE], ["$with_defns"])
 
 dnl --with-default-trust-store
 AC_ARG_WITH(
@@ -239,7 +238,6 @@ if test x"$with_defts" = x; then
 fi
 
 AC_DEFINE_UNQUOTED([DEFAULT_TRUST_STORE], ["$with_defts"], [Default trust store])
-AC_SUBST([DEFAULT_TRUST_STORE], ["$with_defts"])
 
 dnl --with-doc
 AC_ARG_WITH(

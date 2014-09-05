@@ -27,20 +27,12 @@
 """
 LMIWBEM setup script.
 
-Compared to configure script, it is possible to pass:
-  --with-listener - compile with CIMIndicationListener support,
-                    default is True
-  --without-listener - disable CIMIndicationListener support
-  --with-slp - compile with SLP support, default is True
-  --without-slp - disable SLP support
-
 Python version for compilation is set at runtime:
 
   python2 setup.py [command] or
   python3 setup.py [command]
 """
 
-import argparse
 import os
 import os.path
 import sys
@@ -48,24 +40,6 @@ from collections import namedtuple
 from distutils.core import setup
 from distutils.core import Extension
 from distutils.command.build import build
-
-
-# User defined values from configure script.
-with_listener = "@WITH_LISTENER@" == "yes"
-with_slp = "@WITH_SLP@" == "yes"
-default_namespace = "@DEFAULT_NAMESPACE@"
-default_trust_store = "@DEFAULT_TRUST_STORE@"
-
-Args = namedtuple("Args", ["name", "dest", "action", "default"])
-setup_args = [
-    Args("--with-listener", "with_listener", "store_true", with_listener),
-    Args("--without-listener", "with_listener", "store_false", False),
-    Args("--with-slp", "with_slp", "store_true", with_slp),
-    Args("--without-slp", "with_slp", "store_false", False),
-    Args("--with-default-namespace", "with_default_namespace", "store",
-         default_namespace),
-    Args("--with-default-trust-store", "with_defual_trust_store", "store",
-         default_trust_store)]
 
 
 class lmiwbem_build(build):
@@ -82,37 +56,9 @@ class lmiwbem_build(build):
         os.unlink("lmiwbem")
 
 
-class LMIWBEMArgumentParser(argparse.ArgumentParser):
-    def error(self, message):
-        """
-        Overriden error handler, so we do not quit when unknown argument is
-        seen.
-        """
-        pass
-
-
-def parse_args(args):
-    """
-    Parses CLI arguments.
-    """
-    parser = LMIWBEMArgumentParser(usage="%(prog)s [options] [command]")
-    for arg in setup_args:
-        parser.add_argument(arg.name, dest=arg.dest, action=arg.action,
-                            default=arg.default)
-    return parser.parse_args(args)
-
-
-def filter_args(args):
-    """
-    Returns args without setup_args.
-    """
-    return [arg for arg in args if arg not in
-            [setup_arg.name for setup_arg in setup_args]]
-
-
-# Parse CLI options
-options = parse_args(sys.argv)
-sys.argv = filter_args(sys.argv)
+# User defined values from configure script.
+with_listener = "@WITH_LISTENER@" == "yes"
+with_slp = "@WITH_SLP@" == "yes"
 
 # LMIWBEM defines.
 lmiwbem_defines = [("@PEGASUS_PLATFORM@", None)]
@@ -152,13 +98,13 @@ else:
     raise RuntimeError("Unsupported Python version")
 
 # Build with indication listener.
-if options.with_listener:
+if with_listener:
     lmiwbem_defines.append(("HAVE_PEGASUS_LISTENER", None))
     lmiwbem_sources.append("lmiwbem_listener.cpp")
     lmiwbem_libraries.append("peglistener")
 
 # Build with SLP support.
-if options.with_slp:
+if with_slp:
     lmiwbem_defines.append(("HAVE_SLP", None))
     lmiwbem_sources.append("lmiwbem_slp.cpp")
     lmiwbem_libraries.append("slp")
