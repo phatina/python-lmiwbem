@@ -63,7 +63,7 @@ case $host_os in
         AC_MSG_ERROR([Your platform is not currently supported])
         ;;
 esac
-AC_SUBST(PEGASUS_PLATFORM)
+AC_SUBST([PEGASUS_PLATFORM])
 
 dnl Check for TOG-Pegasus Client library
 SAVE_LIBS=$LIBS
@@ -106,7 +106,7 @@ else
     AC_MSG_RESULT([skipped])
 fi
 
-AM_CONDITIONAL([BUILDWITHLISTENER], [test x"$with_listener" = x"yes"])
+AM_CONDITIONAL([BUILD_WITH_LISTENER], [test x"$with_listener" = x"yes"])
 
 dnl Check if TOG-Pegasus CIMListener supports bind address.
 if test x"$with_listener" = x"yes"; then
@@ -170,13 +170,14 @@ if test x"$with_slp" != x"no"; then
 else
     AC_MSG_RESULT([skipping])
 fi
-AM_CONDITIONAL([BUILDWITHSLP], [test x"$with_slp" = x"yes"])
+
+AM_CONDITIONAL([BUILD_WITH_SLP], [test x"$with_slp" = x"yes"])
 
 LIBS=$SAVE_LIBS
-AC_SUBST(PEGASUS_COMMON_LIB)
-AC_SUBST(PEGASUS_CLIENT_LIB)
-AC_SUBST(PEGASUS_LISTENER_LIB)
-AC_SUBST(SLP_LIB)
+AC_SUBST([PEGASUS_COMMON_LIB])
+AC_SUBST([PEGASUS_CLIENT_LIB])
+AC_SUBST([PEGASUS_LISTENER_LIB])
+AC_SUBST([SLP_LIB])
 
 dnl --with-python
 AC_ARG_WITH(
@@ -247,7 +248,7 @@ AC_ARG_WITH(
 if test x"$with_doc" != x"yes"; then
     with_doc="no"
 fi
-AM_CONDITIONAL([BUILDWITHDOC], [test x"$with_doc" = x"yes"])
+AM_CONDITIONAL([BUILD_WITH_DOC], [test x"$with_doc" = x"yes"])
 
 AC_OUTPUT(
     [makefile

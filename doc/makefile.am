@@ -16,7 +16,7 @@ EXTRA_DIST      =     \
 	$(DOCSRCDIR)/conf.py   \
 	$(DOCSRCDIR)/*.rst
 
-if BUILDWITHDOC
+if BUILD_WITH_DOC
 all: buildhtml
 
 install: installhtml
@@ -35,7 +35,7 @@ installhtml: buildhtml
 	rm $(HTMLINSTALLDIR)/html/.buildinfo
 	rm $(HTMLINSTALLDIR)/html/objects.inv
 	rm -fr $(HTMLINSTALLDIR)/html/_doctrees
-endif
+endif # BUILD_WITH_DOC
 
 clean: cleanhtml
 

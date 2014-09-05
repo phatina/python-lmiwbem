@@ -53,17 +53,17 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_util.cpp          \
 	lmiwbem_value.cpp
 
-if BUILDWITHLISTENER
+if BUILD_WITH_LISTENER
 lmiwbem_core_la_SOURCES     +=    \
 	lmiwbem_listener.h        \
 	lmiwbem_listener.cpp
-endif # BUILDWITHLISTENER
+endif # BUILD_WITH_LISTENER
 
-if BUILDWITHSLP
+if BUILD_WITH_SLP
 lmiwbem_core_la_SOURCES     +=    \
 	lmiwbem_slp.h             \
 	lmiwbem_slp.cpp
-endif # BUILDWITHSLP
+endif # BUILD_WITH_SLP
 
 lmiwbem_core_la_LDFLAGS      =    \
 	-module                   \
@@ -80,12 +80,12 @@ lmiwbem_core_la_LIBADD       =    \
 	@PYTHON_LDFLAGS@          \
 	@BOOST_PYTHON_LIB@
 
-if BUILDWITHLISTENER
+if BUILD_WITH_LISTENER
 lmiwbem_core_la_LIBADD      +=    \
 	@PEGASUS_LISTENER_LIB@
-endif # BUILDWITHLISTENER
+endif # BUILD_WITH_LISTENER
 
-if BUILDWITHSLP
+if BUILD_WITH_SLP
 lmiwbem_core_la_LIBADD      +=    \
 	@SLP_LIB@
-endif # BUILDWITHSLP
+endif # BUILD_WITH_SLP

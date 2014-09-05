@@ -1,8 +1,8 @@
 SUBDIRS    = src
 
-if BUILDWITHDOC
+if BUILD_WITH_DOC
     SUBDIRS += doc
-endif
+endif # BUILD_WITH_DOC
 
 EXTRA_DIST =         \
 	examples     \
