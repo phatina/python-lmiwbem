@@ -87,7 +87,7 @@ public:
     void setDefaultNamespace(const bp::object &ns);
     bp::object getCredentials() const;
 
-    bp::object createInstance(const bp::object &instance);
+    bp::object createInstance(const bp::object &instance, const bp::object ns);
 
     void deleteInstance(const bp::object &object_path);
 
