@@ -83,6 +83,8 @@ public:
     void setConnectLocally(bool connect_locally) { m_connect_locally = connect_locally; }
     unsigned int getTimeout() const { return m_client.getTimeout(); }
     void setTimeout(unsigned int timeout) { m_client.setTimeout(timeout); }
+    bp::object getRequestAcceptLanguages() const;
+    void setRequestAcceptLanguages(const bp::object &langs);
     std::string getDefaultNamespace() const { return m_default_namespace; }
     void setDefaultNamespace(const bp::object &ns);
     bp::object getCredentials() const;
