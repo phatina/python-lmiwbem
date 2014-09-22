@@ -728,7 +728,7 @@ bp::object WBEMConnection::getRequestAcceptLanguages() const
 void WBEMConnection::setRequestAcceptLanguages(const bp::object &languages)
 {
     Pegasus::AcceptLanguageList al_list;
-    bp::list lang_list(lmi::get_or_throw<bp::list>(languages));
+    bp::list lang_list(lmi::get_or_throw<bp::list>(languages, "languages"));
     const int cnt = bp::len(lang_list);
     for (int i = 0; i < cnt; ++i) {
         bp::tuple lang_elem(lmi::extract_or_throw<bp::tuple>(lang_list[i]));
