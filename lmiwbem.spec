@@ -1,6 +1,8 @@
+%global with_doc 0
+
 Name:           lmiwbem
 Version:        0.3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python WBEM Client
 License:        LGPLv2+
 URL:            https://github.com/phatina/lmiwbem
@@ -9,8 +11,10 @@ Source0:        https://github.com/phatina/lmiwbem/releases/download/%{name}-%{v
 BuildRequires:  autoconf
 BuildRequires:  automake
 BuildRequires:  python2-devel
+%if %{with_doc}
 BuildRequires:  python-sphinx
 BuildRequires:  python-sphinx-theme-openlmi
+%endif
 BuildRequires:  boost-devel >= 1.40.0
 BuildRequires:  boost-python >= 1.40.0
 BuildRequires:  openslp-devel
@@ -25,18 +29,24 @@ Requires:       tog-pegasus-libs >= 2.12.0
 %{name} is a Python library, which performs CIM operations using CIM-XML
 protocol. The library tries to mimic PyWBEM.
 
+%if %{with_doc}
 %package doc
 Summary:        Documentation for %{name}
 Group:          Documentation
 
 %description doc
 %{summary}
+%endif
 
 %prep
 %setup -q -n %{name}-%{version}
 
 %build
-%configure --with-doc=yes
+%configure \
+%if %{with_doc}
+--with-doc=yes
+%endif
+
 make %{?_smp_mflags}
 
 %install
@@ -47,11 +57,16 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %doc COPYING README.md
 %{python_sitearch}/lmiwbem/
 
+%if %{with_doc}
 %files doc
 %dir %{_docdir}/%{name}-%{version}
 %{_docdir}/%{name}-%{version}/html
+%endif
 
 %changelog
+* Tue Sep 23 2014 Peter Hatina <phatina@redhat.com> - 0.3.1-3
+- introduce conditional documentation build
+
 * Tue Sep 23 2014 Devchandra <dlmeetei@gmail.com> - 0.3.1-2
 - fix (Build)Requires
 - spec typos
