@@ -70,7 +70,8 @@ Python's setup.py for build and installation.
 OPTIONS
 -------
 
-These options apply for ```configure``` and ```setup.py```:
+These options apply for ```configure``` and ```setup.py``` will be generated
+based on the options selected:
 
     --with-default-namespace=NAMESPACE; default: root/cimv2
     --with-default-trust-store=DIR;     default: /etc/pki/ca-trust/source/anchors/
