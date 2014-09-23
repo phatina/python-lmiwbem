@@ -235,6 +235,11 @@ void WBEMConnection::init_type()
             &WBEMConnection::setTimeout,
             "Property storing CIM operations timeout in milliseconds. Default value is 60000ms.\n\n"
             ":rtype: int")
+        .add_property("request_accept_languages",
+            &WBEMConnection::getRequestAcceptLanguages,
+            &WBEMConnection::setRequestAcceptLanguages,
+            "Property storing accept languages currently configured for this client.\n\n"
+            ":rtype: list of tuples (lang, q)")
         .add_property("default_namespace",
             &WBEMConnection::getDefaultNamespace,
             &WBEMConnection::setDefaultNamespace,
@@ -710,6 +715,37 @@ void WBEMConnection::connectLocally() try
 void WBEMConnection::disconnect()
 {
     m_client.disconnect();
+}
+
+bp::object WBEMConnection::getRequestAcceptLanguages() const
+{
+    Pegasus::AcceptLanguageList al_list = m_client.getRequestAcceptLanguages();
+    Pegasus::Uint32 cnt = al_list.size();
+    bp::list languages;
+    for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
+        languages.append(bp::make_tuple(
+            al_list.getLanguageTag(i).toString(),
+            al_list.getQualityValue(i)));
+    }
+
+    return languages;
+}
+
+void WBEMConnection::setRequestAcceptLanguages(const bp::object &languages)
+{
+    bp::list lang_list(lmi::get_or_throw<bp::list>(
+        languages, "request_accept_languages"));
+    const int cnt = bp::len(lang_list);
+    Pegasus::AcceptLanguageList al_list;
+    for (int i = 0; i < cnt; ++i) {
+        bp::tuple lang_elem = lmi::extract_or_throw<bp::tuple>(
+            lang_list[i], "request_accept_languages[i]");
+        std::string lang = lmi::extract_or_throw<std::string>(lang_elem[0]);
+        Pegasus::Real32 q = lmi::extract_or_throw<Pegasus::Real32>(lang_elem[1]);
+        al_list.insert(Pegasus::LanguageTag(lang.c_str()), q);
+    }
+
+    m_client.setRequestAcceptLanguages(al_list);
 }
 
 void WBEMConnection::setDefaultNamespace(const bp::object &ns)
