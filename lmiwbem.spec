@@ -1,6 +1,6 @@
 Name:           lmiwbem
 Version:        0.3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python WBEM Client
 License:        LGPLv2+
 URL:            https://github.com/phatina/lmiwbem
@@ -11,12 +11,12 @@ BuildRequires:  automake
 BuildRequires:  python2-devel
 BuildRequires:  python-sphinx
 BuildRequires:  python-sphinx-theme-openlmi
-BuildRequires:  boost-devel >= 1.50.0
-BuildRequires:  boost-python >= 1.50.0
+BuildRequires:  boost-devel >= 1.40.0
+BuildRequires:  boost-python >= 1.40.0
 BuildRequires:  openslp-devel
 BuildRequires:  tog-pegasus-devel >= 2.12.0
 BuildRequires:  tog-pegasus-libs >= 2.12.0
-Requires:       boost-python >= 1.50.0
+Requires:       boost-python >= 1.40.0
 Requires:       openslp
 Requires:       python
 Requires:       tog-pegasus-libs >= 2.12.0
@@ -52,7 +52,11 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %{_docdir}/%{name}-%{version}/html
 
 %changelog
-* Fro Aug 29 2014 Peter Hatina <phatina@redhat.com> - 0.3.1-1
+* Tue Sep 23 2014 Devchandra <dlmeetei@gmail.com> - 0.3.1-2
+- fix (Build)Requires
+- spec typos
+
+* Fri Aug 29 2014 Peter Hatina <phatina@redhat.com> - 0.3.1-1
 - upgrade to 0.3.1
 
 * Tue Aug 26 2014 Peter Hatina <phatina@redhat.com> - 0.3.0-1
