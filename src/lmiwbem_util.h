@@ -24,6 +24,7 @@
 
 #  include <map>
 #  include <string>
+#  include <cassert>
 #  include <boost/shared_ptr.hpp>
 #  include <Pegasus/Common/Char16.h>
 #  include <Pegasus/Common/CIMDateTime.h>
@@ -154,5 +155,22 @@ int compare(const bp::object &o1, const bp::object &o2);
 #  else
 bool compare(const bp::object &o1, const bp::object &o2, int cmp_type);
 #  endif // PY_MAJOR_VERSION
+
+
+#if defined(__GNUC__)
+#define GCC_VERSION (__GNUC__ * 10000 \
+                               + __GNUC_MINOR__ * 100 \
+                               + __GNUC_PATCHLEVEL__)
+#endif
+
+// In case __builtin_unreachable is not available, CODE like
+// assert( false && "Some explanation of situation") can be used as
+// LMIWBEM_UNREACHABLE( assert(false  && "explanation"));
+
+#if GCC_VERSION >= 40500 //supported only for gcc 4.5 and above
+#  define LMIWBEM_UNREACHABLE(CODE) __builtin_unreachable()
+#else
+#  define LMIWBEM_UNREACHABLE(CODE) CODE
+#endif
 
 #endif // LMIWBEM_UTIL_H
