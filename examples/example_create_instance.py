@@ -49,24 +49,39 @@ group_iname = lmiwbem.CIMInstanceName(
     hostname,
     "root/cimv2")
 
-# Prepare LMI_MemberOfGroup instance
-member_of_group = lmiwbem.CIMInstance(
-    "LMI_MemberOfGroup",
-    lmiwbem.NocaseDict({
-        "Member" : identity_iname,
-        "Collection" : group_iname}),
-    # No qualifiers
-    None,
-    lmiwbem.CIMInstanceName(
+if 1:
+    # Prepare LMI_MemberOfGroup instance
+    member_of_group = lmiwbem.CIMInstance(
         "LMI_MemberOfGroup",
-        # No keybindings; Member and Collection are not key properties in
-        # LMI_MemberOfGroup
+        lmiwbem.NocaseDict({
+            "Member" : identity_iname,
+            "Collection" : group_iname}),
+        # No qualifiers
         None,
-        hostname,
-        "root/cimv2"))
+        lmiwbem.CIMInstanceName(
+            "LMI_MemberOfGroup",
+            # No keybindings; Member and Collection are not key properties in
+            # LMI_MemberOfGroup
+            None,
+            hostname,
+            "root/cimv2"))
 
-# Create new instance of LMI_MemberOfGroup
-new_iname = conn.CreateInstance(member_of_group)
+    # Create new instance of LMI_MemberOfGroup
+    new_iname = conn.CreateInstance(member_of_group)
+else:
+    # CIMInstance can be constructed without CIMInstanceName.
+    member_of_group = lmiwbem.CIMInstance(
+        "LMI_MemberOfGroup",
+        lmiwbem.NocaseDict({
+            "Member" : identity_iname,
+            "Collection" : group_iname}),
+        # No qualifiers
+        None,
+        # No path
+        None)
+
+    # Create new instance of LMI_MemberOfGroup
+    new_iname = conn.CreateInstance(member_of_group, "root/cimv2")
 
 # Do something with new CIMInstanceName
 print new_iname

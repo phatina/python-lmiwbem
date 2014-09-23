@@ -245,10 +245,14 @@ void WBEMConnection::init_type()
             "Property returning user credentials.\n\n"
             ":rtype: tuple containing username and password")
         .def("CreateInstance", &WBEMConnection::createInstance,
-            (bp::arg("NewInstance")),
-            "CreateInstance(NewInstance)\n\n"
+            (bp::arg("NewInstance"),
+             bp::arg("ns") = bp::object()),
+            "CreateInstance(NewInstance, ns=None)\n\n"
             "Creates a new CIM instance and returns its instance name.\n\n"
             ":param CIMInstance NewInstance: new local :py:class:`.CIMInstance`\n"
+            ":param str ns: Namespace in which the :py:class:`.CIMInstance`\n"
+            "\twill be created. If `ns` is ``None``, namespace will be used from\n"
+            "\t``NewInstance.path.namespace``.\n"
             ":returns: instance name of new CIM instance\n"
             ":rtype: :py:class:`.CIMInstanceName`\n\n"
             "**Example:** :ref:`example_create_instance`")
@@ -718,17 +722,23 @@ bp::object WBEMConnection::getCredentials() const
     return bp::make_tuple(m_username, m_password);
 }
 
-bp::object WBEMConnection::createInstance(const bp::object &instance) try
+bp::object WBEMConnection::createInstance(
+    const bp::object &instance,
+    const bp::object &ns) try
 {
     CIMInstance &inst = lmi::extract_or_throw<CIMInstance&>(
         instance, "NewInstance");
 
-    std::string std_hostname;
     std::string std_ns(m_default_namespace);
+
     if (!isnone(inst.getPath())) {
+        // First, try to get creation namespace from CIMInstanceName.
         CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(inst.getPath());
-        std_hostname = inst_name.getHostname();
         std_ns = inst_name.getNamespace();
+    }
+    if (!isnone(ns)) {
+        // Override CIMInstanceName's namespace.
+        std_ns = lmi::extract_or_throw<std::string>(ns, "namespace");
     }
 
     Pegasus::CIMObjectPath new_inst_name;
@@ -745,7 +755,7 @@ bp::object WBEMConnection::createInstance(const bp::object &instance) try
     // in newly created CIMInstanceName. We need to do that manually.
     new_inst_name.setNameSpace(
         Pegasus::CIMNamespaceName(std_ns.c_str()));
-    new_inst_name.setHost(std_hostname.c_str());
+    new_inst_name.setHost(m_client.hostname().c_str());
 
     return CIMInstanceName::create(new_inst_name);
 } catch (...) {
