@@ -204,6 +204,10 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
         return getPegasusValue<Pegasus::Uint64>(value);
     case Pegasus::CIMTYPE_SINT64:
         return getPegasusValue<Pegasus::Sint64>(value);
+    case Pegasus::CIMTYPE_REAL32:
+        return getPegasusValue<Pegasus::Real32>(value);
+    case Pegasus::CIMTYPE_REAL64:
+        return getPegasusValue<Pegasus::Real64>(value);
     case Pegasus::CIMTYPE_CHAR16:
         return getPegasusValue<Pegasus::Char16>(value);
     case Pegasus::CIMTYPE_STRING:
