@@ -221,8 +221,8 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
     case Pegasus::CIMTYPE_INSTANCE:
         return getPegasusValue<Pegasus::CIMInstance>(value);
     default:
-        throw_TypeError("Unknown CIMValue type");
-        bp::throw_error_already_set();
+        // As we have covered all CIM types, we should never get here.
+        LMIWBEM_UNREACHABLE(assert(false && "Unknown CIM type value passed"));
         return bp::object();
     }
 }

@@ -24,6 +24,7 @@
 
 #  include <map>
 #  include <string>
+#  include <cassert>
 #  include <boost/shared_ptr.hpp>
 #  include <Pegasus/Common/Char16.h>
 #  include <Pegasus/Common/CIMDateTime.h>
@@ -42,6 +43,22 @@ BOOST_PYTHON_END
 namespace bp = boost::python;
 
 #  include <boost/python/to_python_converter.hpp>
+
+#  if defined(__GNUC__)
+#    define GCC_VERSION (__GNUC__ * 10000 + \
+                         __GNUC_MINOR__ * 100 + \
+                         __GNUC_PATCHLEVEL__)
+#  endif
+
+// In case __builtin_unreachable is not available, CODE like
+// assert( false && "Some explanation of situation") can be used as
+// LMIWBEM_UNREACHABLE( assert(false  && "explanation"));
+#  if GCC_VERSION >= 40500 //supported only for gcc 4.5 and above
+#    define LMIWBEM_UNREACHABLE(CODE) __builtin_unreachable()
+#  else
+#    define LMIWBEM_UNREACHABLE(CODE) CODE
+#  endif
+
 
 #  define DECL_TO_CONVERTER(name, type) \
        struct name \
