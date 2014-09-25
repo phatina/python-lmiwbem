@@ -1,38 +1,40 @@
 ABOUT
 =====
 
-LMIWBEM is a Python library, which performs CIM operations using CIM-XML
-protocol. The library tries to mimic PyWBEM, but does things in different way:
+LMIWBEM is a Python library that performs CIM operations using CIM-XML
+protocol.  The library tries to mimic PyWBEM, but does things in different way:
 
 - TOG-Pegasus client's library is used for communication
 - lazy evaluation of CIM objects is used
 - some minor API was added for performance reasons
 
-Reasons, why the library was made:
+Reasons why the library was created:
 
 - *Performance* - Using TOG-Pegasus client's library, Boost::Python and C++ STL,
   CIM operations are executed faster (e.g. ~60% faster Instance enumeration
   compared to PyWBEM).
 
   **NOTE:** performance gain depends on CIM operation; there
-  are CIM operations, where the percentage is even higher.
-- *Memory* - Using PyWBEM, the Python's interpreter can eat up several GB of
+  are CIM operations where the percentage is even higher.
+- *Memory* - Using PyWBEM, the Python's interpreter can eat up to several GB of
   memory. In LMIWBEM, C++ allocator for CIM objects is used and unnecessary
   memory blocks are properly freed and returned to OS. Lazy evaluation
   (construction) of nested objects helps to perform CIM operations faster and
-  Python does not use additional space for such objects, when not needed.
+  Python does not use additional space for such objects unless it's necessary.
+
 
 LATEST VERSION
 ==============
 
 Latest sources of the software can be found at: [lmiwbem][]
 
+
 INSTALLATION
 ============
 
 LMIWBEM has several dependencies:
 
-- C++ compiler, which supports C++98 standard
+- C++ compiler with support of C++98 standard
 - tog-pegasus-libs (2.12.0)
 - boost-python (1.50.0)
 - python-devel
@@ -42,10 +44,11 @@ LMIWBEM supports 2 build systems:
 - Autotools (*must precede distutils*)
 - Python's distutils.
 
+
 AUTOTOOLS
 ---------
 
-To install the module using ```configure``` script, follow these steps:
+To install the module using `configure` script, follow these steps:
 
     $ ./autogen.sh # if you got sources from git repository
     $ mkdir build && cd build
@@ -64,13 +67,14 @@ To install the module using Python's distutils, follow these steps:
     $ ../configure
     # python setup.py install
 
-**NOTE:** It is necessary to run ```configure``` script, which generates
+**NOTE:** It is necessary to run `configure` script, which generates
 Python's setup.py for build and installation.
+
 
 OPTIONS
 -------
 
-These options apply for ```configure``` and ```setup.py``` will be generated
+These options apply for `configure` and `setup.py` will be generated
 based on the options selected:
 
     --with-default-namespace=NAMESPACE; default: root/cimv2
@@ -80,7 +84,7 @@ based on the options selected:
 
 By default, LMIWBEM is configured to work with Python 2.6.x and 2.7.x. It is
 possible to build the project with Python 3.x.x compatibility by running
-```configure``` script with:
+`configure` script with:
 
     --with-python3=yes
 
@@ -88,6 +92,7 @@ If the module is built using distutils, Python version is determined at
 runtime. Setup with Python 3.x.x:
 
     $ python3 setup.py install
+
 
 USAGE
 =====
@@ -112,7 +117,7 @@ Currently supported intrinsic methods:
 
 **NOTE:** See the directory `examples`.
 
-There is major difference, when compared to PyWBEM: using LMIWBEM, it is
+There is major difference when compared to PyWBEM: using LMIWBEM, it is
 possible to create and maintain a connection with a CIMOM:
 
 ``` python
@@ -133,14 +138,16 @@ conn = lmiwbem.WBEMConnection("hostname", ("username", "password"))
 ...
 ```
 
-**NOTE:** It is not necessary to call `.disconnect()`, when using such
+**NOTE:** It is not necessary to call `.disconnect()` when using such
 structure.
+
 
 PERFORMANCE
 ===========
 
 [LMI Meta-Command][] uses "real" world constructions in LMIShell and
 was used for benchmarking purposes.
+
 
 SETUP
 -----
@@ -161,6 +168,7 @@ SETUP
   - openlmi-scripts-service-0.1.2-7.fc20
   - openlmi-scripts-storage-0.0.4-7.fc20
   - lmishell with pywbem/lmiwbem
+
 
 RESULTS
 -------
@@ -184,6 +192,7 @@ RESULTS
 
 **NOTE:** LMIWBEM uses Boost::Python, which brings a little overhead with the
 module itself.  This can be seen in memory results.
+
 
 BUG REPORTS
 ===========

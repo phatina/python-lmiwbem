@@ -8,7 +8,7 @@ This section describes common LMIWBEM use-cases.
 Connecting to CIMOM
 -------------------
 
-This section describes and demonstrates, how to create a connection object,
+This section describes and demonstrates how to create a connection object,
 through which all the CIM operations are performed.
 
 There are 3 means, how to create and use the connection object:
@@ -20,8 +20,8 @@ There are 3 means, how to create and use the connection object:
 Connection using username/password
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Major difference, when compared to PyWBEM, is, that it is possible to create
-and maintain a connection with the CIMOM. See the next example:
+Major difference when compared to PyWBEM, is that it is possible to create
+and maintain a connection with the CIMOM.  See the next example:
 
 .. code-block:: python
 
@@ -155,7 +155,7 @@ Following CIM operations are supported in :py:class:`.WBEMConnection`:
 Indication Listener
 -------------------
 
-This section briefly describes, how to create :py:class:`.CIMIndicationListener`
+This section briefly describes how to create :py:class:`.CIMIndicationListener`
 and start listening for incoming indications.
 
 .. code-block:: python
@@ -183,7 +183,7 @@ and start listening for incoming indications.
 
 **Break-down:**
 
-1. Define a indication handler:
+1. Define an indication handler:
 
     .. code-block:: python
 
@@ -193,9 +193,9 @@ and start listening for incoming indications.
     The handler needs to take at least 1 argument (`indication` in the example)
     and it can also accept any other positional and keyword arguments. Values
     of these optional arguments will be defined when registering the indication
-    handler in a indication listener.
+    handler in an indication listener.
 
-2. Create a indication listener and register the indication handler:
+2. Create an indication listener and register the indication handler:
 
     .. code-block:: python
 
