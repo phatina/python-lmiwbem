@@ -88,6 +88,7 @@ public:
     std::string getDefaultNamespace() const { return m_default_namespace; }
     void setDefaultNamespace(const bp::object &ns);
     bp::object getCredentials() const;
+    void setCredentials(const bp::object &creds);
 
     bp::object createInstance(
         const bp::object &instance,

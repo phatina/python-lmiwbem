@@ -115,13 +115,8 @@ WBEMConnection::WBEMConnection(
     if (!isnone(url))
         m_url = lmi::extract_or_throw<std::string>(url, "url");
 
-    if (!isnone(creds)) {
-        bp::tuple creds_tpl = lmi::extract_or_throw<bp::tuple>(creds, "creds");
-        if (bp::len(creds_tpl) != 2)
-            throw_ValueError("creds must be tuple of 2 strings");
-        m_username = lmi::extract_or_throw<std::string>(creds_tpl[0], "username");
-        m_password = lmi::extract_or_throw<std::string>(creds_tpl[1], "password");
-    }
+    if (!isnone(creds))
+        setCredentials(creds);
 
     if (!isnone(x509)) {
         bp::dict cert = lmi::extract_or_throw<bp::dict>(x509, "x509");
@@ -247,7 +242,8 @@ void WBEMConnection::init_type()
             ":rtype: str")
         .add_property("creds",
             &WBEMConnection::getCredentials,
-            "Property returning user credentials.\n\n"
+            &WBEMConnection::setCredentials,
+            "Property storing user credentials.\n\n"
             ":rtype: tuple containing username and password")
         .def("CreateInstance", &WBEMConnection::createInstance,
             (bp::arg("NewInstance"),
@@ -756,6 +752,17 @@ void WBEMConnection::setDefaultNamespace(const bp::object &ns)
 bp::object WBEMConnection::getCredentials() const
 {
     return bp::make_tuple(m_username, m_password);
+}
+
+void WBEMConnection::setCredentials(const bp::object &creds)
+{
+    bp::tuple creds_tpl(lmi::get_or_throw<bp::tuple>(creds, "creds"));
+
+    if (bp::len(creds_tpl) != 2)
+        throw_ValueError("creds must be tuple of 2 strings");
+
+    m_username = lmi::extract_or_throw<std::string>(creds_tpl[0], "username");
+    m_password = lmi::extract_or_throw<std::string>(creds_tpl[1], "password");
 }
 
 bp::object WBEMConnection::createInstance(
