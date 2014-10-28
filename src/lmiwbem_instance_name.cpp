@@ -176,11 +176,21 @@ bp::object CIMInstanceName::create(
     const Pegasus::Array<Pegasus::CIMKeyBinding> &keybindings = obj_path.getKeyBindings();
     const Pegasus::Uint32 cnt = keybindings.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        const Pegasus::CIMKeyBinding &keybinding = keybindings[i];
+        Pegasus::CIMKeyBinding keybinding = keybindings[i];
         bp::object name(
             std_string_as_pyunicode(
                 std::string(keybinding.getName().getString().getCString()))
         );
+
+        if (keybinding.getType() == Pegasus::CIMKeyBinding::REFERENCE) {
+            // We got a keybinding with CIMObjectPath value. Let's set its
+            // hostname which could be left out by Pegasus.
+            Pegasus::CIMObjectPath path(keybinding.getValue());
+            if (path.getHost() == Pegasus::String::EMPTY) {
+                path.setHost(fake_this.m_hostname.c_str());
+                keybinding.setValue(path.toString());
+            }
+        }
 
         bp::object value = keybindingToValue(keybinding);
 

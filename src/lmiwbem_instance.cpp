@@ -549,7 +549,23 @@ void CIMInstance::evalProperties()
     std::list<Pegasus::CIMConstProperty> &properties = *m_rc_inst_properties.get();
     for (it = properties.begin(); it != properties.end(); ++it) {
         bp::object prop_name(it->getName());
-        m_properties[prop_name] = CIMProperty::create(*it);
+        if (it->getValue().getType() == Pegasus::CIMTYPE_REFERENCE) {
+            // We got a property with CIMObjectPath value. Let's set its
+            // hostname which could be left out by Pegasus.
+            // FIXME: refactor using getHostname()
+            CIMInstanceName &this_iname = lmi::extract<CIMInstanceName&>(getPath());
+            Pegasus::CIMProperty property = it->clone();
+            Pegasus::CIMValue value = property.getValue();
+            Pegasus::CIMObjectPath iname;
+            value.get(iname);
+            iname.setHost(this_iname.getHostname().c_str());
+            value.set(iname);
+            property.setValue(value);
+
+            m_properties[prop_name] = CIMProperty::create(property);
+        } else {
+            m_properties[prop_name] = CIMProperty::create(*it);
+        }
         property_list.append(prop_name);
     }
 
