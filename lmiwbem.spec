@@ -1,8 +1,8 @@
 %global with_doc 0
 
 Name:           lmiwbem
-Version:        0.3.1
-Release:        3%{?dist}
+Version:        0.4.0
+Release:        1%{?dist}
 Summary:        Python WBEM Client
 License:        LGPLv2+
 URL:            https://github.com/phatina/lmiwbem
@@ -64,6 +64,9 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %endif
 
 %changelog
+* Wed Oct 29 2014 Peter Hatina <phatina@redhat.com> - 0.4.0-1
+- upgrade to 0.4.0
+
 * Tue Sep 23 2014 Peter Hatina <phatina@redhat.com> - 0.3.1-3
 - introduce conditional documentation build
 
