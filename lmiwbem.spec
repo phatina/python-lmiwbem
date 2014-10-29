@@ -2,7 +2,7 @@
 
 Name:           lmiwbem
 Version:        0.4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python WBEM Client
 License:        LGPLv2+
 URL:            https://github.com/phatina/lmiwbem
@@ -13,7 +13,7 @@ BuildRequires:  automake
 BuildRequires:  python2-devel
 %if %{with_doc}
 BuildRequires:  python-sphinx
-BuildRequires:  python-sphinx-theme-openlmi
+BuildRequires:  python-sphinx_rtd_theme
 %endif
 BuildRequires:  boost-devel >= 1.40.0
 BuildRequires:  boost-python >= 1.40.0
@@ -64,6 +64,9 @@ find %{buildroot} -name '*.la' | xargs rm -f
 %endif
 
 %changelog
+* Wed Oct 29 2014 Peter Hatina <phatina@redhat.com> - 0.4.0-2
+- doc: switch to rtd theme
+
 * Wed Oct 29 2014 Peter Hatina <phatina@redhat.com> - 0.4.0-1
 - upgrade to 0.4.0
 
