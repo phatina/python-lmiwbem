@@ -25,6 +25,7 @@
 #include <boost/python/object_attributes.hpp>
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
+#include "lmiwbem_convert.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
@@ -50,12 +51,6 @@ template<>
 bp::object getPegasusValueCore<Pegasus::CIMInstance>(const Pegasus::CIMInstance &value)
 {
     return incref(CIMInstance::create(value));
-}
-
-template<>
-bp::object getPegasusValueCore<Pegasus::String>(const Pegasus::String &value)
-{
-    return incref(std_string_as_pyunicode(std::string(value.getCString())));
 }
 
 // We could not use to_python converters here.
@@ -114,7 +109,7 @@ Pegasus::String setPegasusValueCore<
     Pegasus::CIMDateTime,
     Pegasus::String>(const bp::object &value)
 {
-    return Pegasus::String(object_as_std_string(value).c_str());
+    return Pegasus::String(ObjectConv::asStdString(value).c_str());
 }
 
 template <>

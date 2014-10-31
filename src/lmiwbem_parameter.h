@@ -59,24 +59,34 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string repr();
-    std::string tomof();
+    bp::object repr();
+    bp::object tomof();
 
     bp::object copy();
 
-    std::string getName() const { return m_name; }
-    std::string getType() const { return m_type; }
-    std::string getReferenceClass() const { return m_reference_class; }
-    bool getIsArray() const { return m_is_array; }
-    int  getArraySize() const { return m_array_size; }
-    bp::object getQualifiers();
+    std::string getName() const;
+    std::string getType() const;
+    std::string getReferenceClass() const;
+    bool getIsArray() const;
+    int  getArraySize() const;
+    bp::object getPyName() const;
+    bp::object getPyType() const;
+    bp::object getPyReferenceClass() const;
+    bp::object getPyIsArray() const;
+    bp::object getPyArraySize() const;
+    bp::object getPyQualifiers();
 
-    void setName(const bp::object &name);
-    void setType(const bp::object &type);
-    void setReferenceClass(const bp::object &reference_class);
-    void setIsArray(const bp::object &is_array);
-    void setArraySize(const bp::object &array_size);
-    void setQualifiers(const bp::object &qualifiers);
+    void setName(const std::string &name);
+    void setType(const std::string &type);
+    void setReferenceClass(const std::string &reference_class);
+    void setIsArray(bool is_array);
+    void setArraySize(int array_size);
+    void setPyName(const bp::object &name);
+    void setPyType(const bp::object &type);
+    void setPyReferenceClass(const bp::object &reference_class);
+    void setPyIsArray(const bp::object &is_array);
+    void setPyArraySize(const bp::object &array_size);
+    void setPyQualifiers(const bp::object &qualifiers);
 
 private:
     std::string m_name;

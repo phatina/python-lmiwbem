@@ -22,27 +22,14 @@
 #ifndef   LMIWBEM_UTIL_H
 #  define LMIWBEM_UTIL_H
 
-#  include <map>
-#  include <string>
 #  include <cassert>
-#  include <boost/shared_ptr.hpp>
-#  include <Pegasus/Common/Char16.h>
-#  include <Pegasus/Common/CIMDateTime.h>
-#  include <Pegasus/Common/CIMName.h>
-#  include <Pegasus/Common/CIMObjectPath.h>
-#  include <Pegasus/Common/CIMPropertyList.h>
-#  include <Pegasus/Common/CIMValue.h>
-#  include <Pegasus/Common/String.h>
 #  include "lmiwbem.h"
-#  include "lmiwbem_constants.h"
 
 BOOST_PYTHON_BEGIN
 class object;
 BOOST_PYTHON_END
 
 namespace bp = boost::python;
-
-#  include <boost/python/to_python_converter.hpp>
 
 #  if defined(__GNUC__)
 #    define GCC_VERSION (__GNUC__ * 10000 + \
@@ -58,89 +45,6 @@ namespace bp = boost::python;
 #  else
 #    define LMIWBEM_UNREACHABLE(CODE) CODE
 #  endif
-
-
-#  define DECL_TO_CONVERTER(name, type) \
-       struct name \
-       { \
-           static PyObject *convert(const type &val); \
-           static void register_converter(); \
-       }
-
-#  define DEFINE_TO_CONVERTER(name, type) \
-       void name::register_converter() \
-       { \
-           boost::python::to_python_converter<type, name>(); \
-       } \
-       PyObject *name::convert(const type &value)
-
-DECL_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String);
-DECL_TO_CONVERTER(PegasusCIMNameToPythonString, Pegasus::CIMName);
-DECL_TO_CONVERTER(PegasusCIMDateteTimeToPythonDateTime, Pegasus::CIMDateTime);
-DECL_TO_CONVERTER(PegasusChar16ToPythonUint16, Pegasus::Char16);
-DECL_TO_CONVERTER(PegasusCIMObjectPathToPythonCIMInstanceName, Pegasus::CIMObjectPath);
-DECL_TO_CONVERTER(PegasusCIMObjectToPythonCIMObject, Pegasus::CIMObject);
-DECL_TO_CONVERTER(CIMConstantsCIMErrorToPythonInt, CIMConstants::CIMError);
-
-class CIMTypeConv
-{
-public:
-    static std::string asStdString(Pegasus::CIMType type)
-    {
-        return CIMTypeConv::CIMTypeHolder::instance()->get(type);
-    }
-
-    static Pegasus::CIMType asCIMType(const std::string &type)
-    {
-        return CIMTypeConv::CIMTypeHolder::instance()->get(type);
-    }
-
-private:
-    CIMTypeConv();
-
-    class CIMTypeHolder
-    {
-    public:
-        static CIMTypeHolder *instance();
-
-        std::string get(Pegasus::CIMType type);
-        Pegasus::CIMType get(const std::string &type);
-
-    private:
-        CIMTypeHolder();
-        CIMTypeHolder(const CIMTypeHolder &copy) { }
-
-        static boost::shared_ptr<CIMTypeHolder> s_instance;
-
-        std::map<Pegasus::CIMType, std::string> m_type_string;
-        std::map<std::string, Pegasus::CIMType> m_string_type;
-    };
-
-    static CIMTypeHolder s_type_holder;
-};
-
-class ListConv
-{
-public:
-    static Pegasus::CIMPropertyList asPegasusPropertyList(
-        const bp::object &property_list,
-        const std::string &message);
-
-private:
-    ListConv();
-};
-
-std::string object_as_std_string(const bp::object &obj);
-
-std::string pystring_as_std_string(const bp::object &obj);
-std::string pystring_as_std_string(const bp::object &obj, bool &good);
-bp::object  std_string_as_pyunicode(const std::string &str);
-bp::object  std_string_as_pybool(const std::string &str);
-#  if PY_MAJOR_VERSION < 3
-bp::object  std_string_as_pyint(const std::string &str);
-#  endif // PY_MAJOR_VERSION
-bp::object  std_string_as_pyfloat(const std::string &str);
-bp::object  std_string_as_pylong(const std::string &str);
 
 bp::object this_module();
 bp::object incref(const bp::object &obj);

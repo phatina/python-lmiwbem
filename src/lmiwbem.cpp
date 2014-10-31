@@ -30,13 +30,14 @@
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_connection.h"
 #include "lmiwbem_constants.h"
+#include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
 #ifdef HAVE_PEGASUS_LISTENER
 #  include "lmiwbem_listener.h"
 #endif // HAVE_PEGASUS_LISTENER
 #include "lmiwbem_instance.h"
-#include "lmiwbem_method.h"
 #include "lmiwbem_instance_name.h"
+#include "lmiwbem_method.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_parameter.h"
 #include "lmiwbem_property.h"

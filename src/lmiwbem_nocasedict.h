@@ -76,8 +76,8 @@ public:
     bp::object itervalues();
     bp::object iteritems();
 
-    bool haskey(const bp::object &key);
-    std::size_t len() { return m_dict.size(); }
+    bp::object haskey(const bp::object &key) const;
+    bp::object len() const;
 
     void update(const bp::object &d);
     void clear() { m_dict.clear(); }

@@ -24,6 +24,7 @@
 #include <Pegasus/Consumer/CIMIndicationConsumer.h>
 #include <boost/python/class.hpp>
 #include "lmiwbem_constants.h"
+#include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_gil.h"
@@ -149,12 +150,12 @@ void CIMIndicationListener::init_type()
                     bp::arg("keyfile") = bp::object(),
                     bp::arg("trust_store") = bp::object()),
                     "Constructs a :py:class:`.CIMIndicationListener` object.\n\n"
-                    ":param str listen_address: bind address\n"
+                    ":param unicode listen_address: bind address\n"
                     ":param int port: listening port\n"
-                    ":param str certfile: path to X509 certificate\n"
-                    ":param str keyfile: path to X509 private key; may be None,\n"
+                    ":param unicode certfile: path to X509 certificate\n"
+                    ":param unicode keyfile: path to X509 private key; may be None,\n"
                     "\tif cert_file also contains private key\n"
-                    ":param str trust_store: path to trust store"))
+                    ":param unicode trust_store: path to trust store"))
             .def("start",  &CIMIndicationListener::start,
                 (bp::arg("retries") = 1),
                  "start(retries=1)\n\n"
@@ -164,33 +165,35 @@ void CIMIndicationListener::init_type()
                 "stop()\n\n"
                 "Stops indication listener.")
             .def("add_handler",
-                lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addHandler, 1),
+                lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addPyHandler, 1),
                 "add_handler(name, handler, *args, **kwargs)\n\n"
                 "Adds callback for specific indication.\n\n"
                 ":param str name: indication name\n"
                 ":param handler: callable for indication\n"
                 ":param args: positional arguments passed to handler\n"
                 ":param kwargs: keyword arguments passed to handler")
-            .def("remove_handler", &CIMIndicationListener::removeHandler,
+            .def("remove_handler", &CIMIndicationListener::removePyHandler,
                 "remove_handler(name)\n\n"
                 "Removes a specified handler from indication listener.\n\n"
                 ":param str name: indication name\n"
                 ":raises: :py:exc:`KeyError`")
-            .add_property("is_alive", &CIMIndicationListener::isAlive,
+            .add_property("is_alive", &CIMIndicationListener::getIsAlive,
                 "Property storing flag, which indicates, if the indication\n"
                 "listener is running.\n\n"
                 ":rtype: bool")
-            .add_property("uses_ssl", &CIMIndicationListener::usesSSL,
+            .add_property("uses_ssl",
+                &CIMIndicationListener::getUsesSSL,
                 "Property storing flag, which indicates, if the indication\n"
                 "listener uses secure connection.\n\n"
                 ":rtype: bool")
-            .add_property("listen_address", &CIMIndicationListener::getListenAddress,
+            .add_property("listen_address",
+                &CIMIndicationListener::getPyListenAddress,
                 "Property storing bind address.\n\n"
-                ":rtype: str")
-            .add_property("port", &CIMIndicationListener::getPort,
+                ":rtype: unicode")
+            .add_property("port", &CIMIndicationListener::getPyPort,
                 "Property storing listening port.\n\n"
                 ":rtype: int")
-            .add_property("handlers", &CIMIndicationListener::getHandlers,
+            .add_property("handlers", &CIMIndicationListener::getPyHandlers,
                 "Property storing list of strings of handlers.\n\n"
                 ":rtype: list"));
 }
@@ -267,7 +270,12 @@ void CIMIndicationListener::stop()
     m_listener.reset();
 }
 
-bool CIMIndicationListener::usesSSL() const
+bool CIMIndicationListener::getIsAlive() const
+{
+    return m_listener && m_listener->isAlive();
+}
+
+bool CIMIndicationListener::getUsesSSL() const
 {
     if (!m_listener)
         return false;
@@ -276,7 +284,27 @@ bool CIMIndicationListener::usesSSL() const
     return ctx ? ctx->getCertPath() != Pegasus::String::EMPTY : false;
 }
 
-bp::object CIMIndicationListener::addHandler(
+std::string CIMIndicationListener::getListenAddress() const
+{
+    return m_listen_address;
+}
+
+int CIMIndicationListener::getPort() const
+{
+    return m_listener ? m_listener->getPortNumber() : -1;
+}
+
+bp::object CIMIndicationListener::getPyListenAddress() const
+{
+    return StringConv::asPyUnicode(m_listen_address);
+}
+
+bp::object CIMIndicationListener::getPyPort() const
+{
+    return bp::object(m_port);
+}
+
+bp::object CIMIndicationListener::addPyHandler(
     const bp::tuple &args,
     const bp::dict  &kwds)
 {
@@ -294,7 +322,7 @@ bp::object CIMIndicationListener::addHandler(
     return bp::object();
 }
 
-void CIMIndicationListener::removeHandler(const bp::object &name)
+void CIMIndicationListener::removePyHandler(const bp::object &name)
 {
     std::string std_name = lmi::extract_or_throw<std::string>(name, "name");
     handler_map_t::iterator it = m_handlers.find(std_name);
@@ -303,7 +331,7 @@ void CIMIndicationListener::removeHandler(const bp::object &name)
     m_handlers.erase(it);
 }
 
-bp::object CIMIndicationListener::getHandlers() const
+bp::object CIMIndicationListener::getPyHandlers() const
 {
     bp::list handlers;
     handler_map_t::const_iterator it;

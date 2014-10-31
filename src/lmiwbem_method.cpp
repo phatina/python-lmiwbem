@@ -24,6 +24,7 @@
 #include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include "lmiwbem_convert.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_method.h"
 #include "lmiwbem_nocasedict.h"
@@ -35,7 +36,7 @@ CIMMethod::CIMMethod()
     : m_name()
     , m_return_type()
     , m_class_origin()
-    , m_propagated(false)
+    , m_is_propagated(false)
     , m_parameters()
     , m_qualifiers()
     , m_rc_meth_parameters()
@@ -54,7 +55,7 @@ CIMMethod::CIMMethod(
     m_name  = lmi::extract_or_throw<std::string>(name, "name");
     m_return_type = lmi::extract_or_throw<std::string>(return_type, "return_type");
     m_class_origin = lmi::extract_or_throw<std::string>(class_origin, "class_origin");
-    m_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+    m_is_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
 
     if (isnone(parameters))
         m_parameters = NocaseDict::create();
@@ -105,36 +106,36 @@ void CIMMethod::init_type()
         .def("tomof", &CIMMethod::tomof,
             "tomof()\n\n"
             ":returns: MOF representation of the object itself\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("name",
-            &CIMMethod::getName,
-            &CIMMethod::setName,
+            &CIMMethod::getPyName,
+            &CIMMethod::setPyName,
             "Property storing method's name.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("return_type",
-            &CIMMethod::getReturnType,
-            &CIMMethod::setReturnType,
+            &CIMMethod::getPyReturnType,
+            &CIMMethod::setPyReturnType,
             "Property storing method's return type.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("parameters",
-            &CIMMethod::getParameters,
-            &CIMMethod::setParameters,
+            &CIMMethod::getPyParameters,
+            &CIMMethod::setPyParameters,
             "Property storing method's parameters.\n\n"
             ":rtype: :py:class:`.NocaseDict`")
         .add_property("class_origin",
-            &CIMMethod::getClassOrigin,
-            &CIMMethod::setClassOrigin,
+            &CIMMethod::getPyClassOrigin,
+            &CIMMethod::setPyClassOrigin,
             "Property storing method's class origin.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("propagated",
-            &CIMMethod::getPropagated,
-            &CIMMethod::setPropagated,
+            &CIMMethod::getPyIsPropagated,
+            &CIMMethod::setPyIsPropagated,
             "Property storing flag, which indicates, if the method is propagated.\n\n"
             ":returns: True, if the method is propagated; False otherwise\n"
             ":rtype: bool")
         .add_property("qualifiers",
-            &CIMMethod::getQualifiers,
-            &CIMMethod::setQualifiers,
+            &CIMMethod::getPyQualifiers,
+            &CIMMethod::setPyQualifiers,
             "Property storing method's qualifiers.\n\n"
             ":rtype: :py:class:`.NocaseDict`"));
 }
@@ -146,7 +147,7 @@ bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)
     fake_this.m_name = method.getName().getString().getCString();
     fake_this.m_return_type = CIMTypeConv::asStdString(method.getType());
     fake_this.m_class_origin = method.getClassOrigin().getString().getCString();
-    fake_this.m_propagated = method.getPropagated();
+    fake_this.m_is_propagated = method.getPropagated();
 
     // Store list of parameters for lazy evaluation
     fake_this.m_rc_meth_parameters.set(std::list<Pegasus::CIMConstParameter>());
@@ -169,10 +170,10 @@ Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
         Pegasus::CIMName(m_name.c_str()),
         CIMTypeConv::asCIMType(m_return_type),
         Pegasus::CIMName(m_class_origin.c_str()),
-        m_propagated);
+        m_is_propagated);
 
     // Add all the parameters
-    NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
+    NocaseDict &parameters = lmi::extract<NocaseDict&>(getPyParameters());
     nocase_map_t::const_iterator it;
     for (it = parameters.begin(); it != parameters.end(); ++it) {
         CIMParameter &parameter = lmi::extract<CIMParameter&>(it->second);
@@ -180,7 +181,7 @@ Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
     }
 
     // Add all the qualifiers
-    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
     for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
         CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
         method.addQualifier(qualifier.asPegasusCIMQualifier());
@@ -201,10 +202,10 @@ int CIMMethod::cmp(const bp::object &other)
     if ((rval = m_name.compare(other_method.m_name)) != 0 ||
         (rval = m_return_type.compare(other_method.m_return_type)) != 0 ||
         (rval = m_class_origin.compare(other_method.m_class_origin)) != 0 ||
-        (rval = compare(bp::object(m_propagated),
-            bp::object(other_method.m_propagated))) != 0 ||
-        (rval = compare(getParameters(), other_method.getParameters())) != 0 ||
-        (rval = compare(getQualifiers(), other_method.getQualifiers())) != 0)
+        (rval = compare(bp::object(m_is_propagated),
+            bp::object(other_method.m_is_propagated))) != 0 ||
+        (rval = compare(getPyParameters(), other_method.getPyParameters())) != 0 ||
+        (rval = compare(getPyQualifiers(), other_method.getPyQualifiers())) != 0)
     {
         return rval;
     }
@@ -222,9 +223,9 @@ bool CIMMethod::eq(const bp::object &other)
     return m_name == other_method.m_name &&
         m_return_type == other_method.m_return_type &&
         m_class_origin == other_method.m_class_origin &&
-        m_propagated == other_method.m_propagated &&
-        compare(getParameters(), other_method.getParameters(), Py_EQ) &&
-        compare(getQualifiers(), other_method.getQualifiers(), Py_EQ);
+        m_is_propagated == other_method.m_is_propagated &&
+        compare(getPyParameters(), other_method.getPyParameters(), Py_EQ) &&
+        compare(getPyQualifiers(), other_method.getPyQualifiers(), Py_EQ);
 }
 
 bool CIMMethod::gt(const bp::object &other)
@@ -237,9 +238,9 @@ bool CIMMethod::gt(const bp::object &other)
     return m_name > other_method.m_name ||
         m_return_type > other_method.m_return_type ||
         m_class_origin > other_method.m_class_origin ||
-        m_propagated > other_method.m_propagated ||
-        compare(getParameters(), other_method.getParameters(), Py_GT) ||
-        compare(getQualifiers(), other_method.getQualifiers(), Py_GT);
+        m_is_propagated > other_method.m_is_propagated ||
+        compare(getPyParameters(), other_method.getPyParameters(), Py_GT) ||
+        compare(getPyQualifiers(), other_method.getPyQualifiers(), Py_GT);
 }
 
 bool CIMMethod::lt(const bp::object &other)
@@ -252,9 +253,9 @@ bool CIMMethod::lt(const bp::object &other)
     return m_name < other_method.m_name ||
         m_return_type < other_method.m_return_type ||
         m_class_origin < other_method.m_class_origin ||
-        m_propagated < other_method.m_propagated ||
-        compare(getParameters(), other_method.getParameters(), Py_LT) ||
-        compare(getQualifiers(), other_method.getQualifiers(), Py_LT);
+        m_is_propagated < other_method.m_is_propagated ||
+        compare(getPyParameters(), other_method.getPyParameters(), Py_LT) ||
+        compare(getPyQualifiers(), other_method.getPyQualifiers(), Py_LT);
 }
 
 bool CIMMethod::ge(const bp::object &other)
@@ -268,14 +269,14 @@ bool CIMMethod::le(const bp::object &other)
 }
 #  endif // PY_MAJOR_VERSION
 
-std::string CIMMethod::repr()
+bp::object CIMMethod::repr()
 {
     std::stringstream ss;
     ss << "CIMMethod(name='" << m_name << "', return_type='" << m_return_type << "', ...)";
-    return ss.str();
+    return StringConv::asPyUnicode(ss.str());
 }
 
-std::string CIMMethod::tomof()
+bp::object CIMMethod::tomof()
 {
     std::stringstream ss;
 
@@ -283,7 +284,7 @@ std::string CIMMethod::tomof()
         ss << m_return_type << ' ';
     ss << m_name << '(';
 
-    const NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
+    const NocaseDict &parameters = lmi::extract<NocaseDict&>(getPyParameters());
     nocase_map_t::const_iterator it;
     for (it = parameters.begin(); it != parameters.end(); ++it) {
         CIMParameter &parameter = lmi::extract_or_throw<CIMParameter&>(it->second);
@@ -294,35 +295,76 @@ std::string CIMMethod::tomof()
     }
     ss << ");";
 
-    return ss.str();
+    return StringConv::asPyUnicode(ss.str());
 }
 
 bp::object CIMMethod::copy()
 {
     bp::object obj = CIMBase<CIMMethod>::create();
     CIMMethod &method = lmi::extract<CIMMethod&>(obj);
-    NocaseDict &parameters = lmi::extract<NocaseDict&>(getParameters());
-    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    NocaseDict &parameters = lmi::extract<NocaseDict&>(getPyParameters());
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
 
     method.m_name = m_name;
     method.m_return_type = m_return_type;
     method.m_class_origin = m_class_origin;
-    method.m_propagated = m_propagated;
+    method.m_is_propagated = m_is_propagated;
     method.m_parameters = parameters.copy();
     method.m_qualifiers = qualifiers.copy();
 
     return obj;
 }
 
-bp::object CIMMethod::getParameters()
+std::string CIMMethod::getName() const
+{
+    return m_name;
+}
+
+std::string CIMMethod::getReturnType() const
+{
+    return m_return_type;
+}
+
+std::string CIMMethod::getClassOrigin() const
+{
+    return m_class_origin;
+}
+
+bool CIMMethod::getIsPropagated() const
+{
+    return m_is_propagated;
+}
+
+
+bp::object CIMMethod::getPyName() const
+{
+    return StringConv::asPyUnicode(m_name);
+}
+
+bp::object CIMMethod::getPyReturnType() const
+{
+    return StringConv::asPyUnicode(m_return_type);
+}
+
+bp::object CIMMethod::getPyClassOrigin() const
+{
+    return StringConv::asPyUnicode(m_class_origin);
+}
+
+bp::object CIMMethod::getPyIsPropagated() const
+{
+    return bp::object(m_is_propagated);
+}
+
+bp::object CIMMethod::getPyParameters()
 {
     if (!m_rc_meth_parameters.empty()) {
         m_parameters = NocaseDict::create();
         std::list<Pegasus::CIMConstParameter>::const_iterator it;
-        for (it = m_rc_meth_parameters.get()->begin(); it != m_rc_meth_parameters.get()->end(); ++it) {
-            bp::object name = std_string_as_pyunicode(
-                std::string(it->getName().getString().getCString()));
-            m_parameters[name] = CIMParameter::create(*it);
+        for (it = m_rc_meth_parameters.get()->begin();
+             it != m_rc_meth_parameters.get()->end(); ++it)
+        {
+            m_parameters[bp::object(it->getName())] = CIMParameter::create(*it);
         }
 
         m_rc_meth_parameters.release();
@@ -330,17 +372,15 @@ bp::object CIMMethod::getParameters()
     return m_parameters;
 }
 
-bp::object CIMMethod::getQualifiers()
+bp::object CIMMethod::getPyQualifiers()
 {
     if (!m_rc_meth_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         for (it = m_rc_meth_qualifiers.get()->begin();
-            it != m_rc_meth_qualifiers.get()->end(); ++it)
+             it != m_rc_meth_qualifiers.get()->end(); ++it)
         {
-            bp::object name = std_string_as_pyunicode(
-                std::string(it->getName().getString().getCString()));
-            m_qualifiers[name] = CIMQualifier::create(*it);
+            m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
         }
 
         m_rc_meth_qualifiers.release();
@@ -349,17 +389,47 @@ bp::object CIMMethod::getQualifiers()
     return m_qualifiers;
 }
 
-void CIMMethod::setName(const bp::object &name)
+void CIMMethod::setName(const std::string &name)
+{
+    m_name = name;
+}
+
+void CIMMethod::setReturnType(const std::string &return_type)
+{
+    m_return_type = return_type;
+}
+
+void CIMMethod::setClassOrigin(const std::string &class_origin)
+{
+    m_class_origin = class_origin;
+}
+
+void CIMMethod::setIsPropagated(bool is_propagated)
+{
+    m_is_propagated = is_propagated;
+}
+
+void CIMMethod::setPyName(const bp::object &name)
 {
     m_name = lmi::extract_or_throw<std::string>(name, "name");
 }
 
-void CIMMethod::setReturnType(const bp::object &rtype)
+void CIMMethod::setPyReturnType(const bp::object &rtype)
 {
     m_return_type = lmi::extract_or_throw<std::string>(rtype, "return_type");
 }
 
-void CIMMethod::setParameters(const bp::object &parameters)
+void CIMMethod::setPyClassOrigin(const bp::object &class_origin)
+{
+    m_class_origin = lmi::extract_or_throw<std::string>(class_origin, "class_origin");
+}
+
+void CIMMethod::setPyIsPropagated(const bp::object &propagated)
+{
+    m_is_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+}
+
+void CIMMethod::setPyParameters(const bp::object &parameters)
 {
     m_parameters = lmi::get_or_throw<NocaseDict, bp::dict>(parameters, "parameters");
 
@@ -367,17 +437,7 @@ void CIMMethod::setParameters(const bp::object &parameters)
     m_rc_meth_parameters.release();
 }
 
-void CIMMethod::setClassOrigin(const bp::object &class_origin)
-{
-    m_class_origin = lmi::extract_or_throw<std::string>(class_origin, "class_origin");
-}
-
-void CIMMethod::setPropagated(const bp::object &propagated)
-{
-    m_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
-}
-
-void CIMMethod::setQualifiers(const bp::object &qualifiers)
+void CIMMethod::setPyQualifiers(const bp::object &qualifiers)
 {
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 

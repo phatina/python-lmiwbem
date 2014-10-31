@@ -87,17 +87,17 @@ public:
     void start(const bp::object &retries);
     void stop();
 
-    bool isAlive() const { return m_listener && m_listener->isAlive(); }
-    bool usesSSL() const;
+    bool getIsAlive() const;
+    bool getUsesSSL() const;
 
-    std::string getListenAddress() const { return m_listen_address; }
-    int getPort() const { return m_listener ? m_listener->getPortNumber() : -1; }
+    std::string getListenAddress() const;
+    int getPort() const;
+    bp::object getPyListenAddress() const;
+    bp::object getPyPort() const;
 
-    bp::object addHandler(
-        const bp::tuple &args,
-        const bp::dict  &kwds);
-    void removeHandler(const bp::object &name);
-    bp::object getHandlers() const;
+    bp::object addPyHandler(const bp::tuple &args, const bp::dict &kwds);
+    void removePyHandler(const bp::object &name);
+    bp::object getPyHandlers() const;
 
 private:
     friend class CIMIndicationConsumer;
@@ -117,7 +117,6 @@ private:
     std::string m_trust_store;
     Mutex m_mutex;          // A guard for m_terminating flag.
     bool m_terminating;
-    
 };
 
 #endif // LMIWBEM_LISTENER_H

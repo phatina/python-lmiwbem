@@ -58,16 +58,14 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string str();
-    std::string repr();
+    bp::object str();
+    bp::object repr();
 
-    bp::object getitem(const bp::object &key) { return m_keybindings[key]; }
-    void delitem(const bp::object &key) { bp::delitem(m_keybindings, key); }
-    void setitem(
-        const bp::object &key,
-        const bp::object &value) { m_keybindings[key] = value; }
-    ssize_t len() { return bp::len(m_keybindings); }
-    bool haskey(const bp::object &key) { return m_keybindings.contains(key); }
+    bp::object getitem(const bp::object &key);
+    void delitem(const bp::object &key);
+    void setitem(const bp::object &key, const bp::object &value);
+    bp::object len() const;
+    bp::object haskey(const bp::object &key) const;
     bp::object keys();
     bp::object values();
     bp::object items();
@@ -77,15 +75,21 @@ public:
 
     bp::object copy();
 
-    std::string getClassname() const { return m_classname; }
-    std::string getNamespace() const { return m_namespace; }
-    std::string getHostname()  const { return m_hostname;  }
-    bp::object  getKeybindings() const { return m_keybindings; }
+    std::string getClassname() const;
+    std::string getNamespace() const;
+    std::string getHostname()  const;
+    bp::object getPyClassname() const;
+    bp::object getPyNamespace() const;
+    bp::object getPyHostname() const;
+    bp::object getPyKeybindings() const;
 
-    void setClassname(const bp::object &classname);
-    void setNamespace(const bp::object &namespace_);
-    void setHostname(const bp::object &hostname);
-    void setKeybindings(const bp::object &keybindings);
+    void setClassname(const std::string &classname);
+    void setNamespace(const std::string &namespace_);
+    void setHostname(const std::string &hostname);
+    void setPyClassname(const bp::object &classname);
+    void setPyNamespace(const bp::object &namespace_);
+    void setPyHostname(const bp::object &hostname);
+    void setPyKeybindings(const bp::object &keybindings);
 
     static void updatePegasusCIMObjectPathNamespace(
         Pegasus::CIMObjectPath &path,

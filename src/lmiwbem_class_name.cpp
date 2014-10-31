@@ -24,6 +24,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
 #include "lmiwbem_class_name.h"
+#include "lmiwbem_convert.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_util.h"
 
@@ -75,20 +76,20 @@ void CIMClassName::init_type()
             ":returns: copy of the object itself\n"
             ":rtype: :py:class:`.CIMClassName`")
         .add_property("classname",
-            &CIMClassName::getClassname,
-            &CIMClassName::setClassname,
+            &CIMClassName::getPyClassname,
+            &CIMClassName::setPyClassname,
             "Property storing class name.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("namespace",
-            &CIMClassName::getNamespace,
-            &CIMClassName::setNamespace,
+            &CIMClassName::getPyNamespace,
+            &CIMClassName::setPyNamespace,
             "Property storing namespace name.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("host",
-            &CIMClassName::getHostname,
-            &CIMClassName::setHostname,
+            &CIMClassName::getPyHostname,
+            &CIMClassName::setPyHostname,
             "Property storing host name.\n\n"
-            ":rtype: str"));
+            ":rtype: unicode"));
 }
 
 bp::object CIMClassName::create(
@@ -172,7 +173,7 @@ bool CIMClassName::le(const bp::object &other)
 }
 #  endif // PY_MAJOR_VERSION
 
-std::string CIMClassName::repr()
+bp::object CIMClassName::repr()
 {
     std::stringstream ss;
     ss << "CIMClassName(classname='" << m_classname << '\'';
@@ -181,7 +182,7 @@ std::string CIMClassName::repr()
     if (!m_namespace.empty())
         ss << ", namespace='" << m_namespace << '\'';
     ss << ')';
-    return ss.str();
+    return StringConv::asPyUnicode(ss.str());
 }
 
 bp::object CIMClassName::copy()
@@ -196,17 +197,62 @@ bp::object CIMClassName::copy()
     return obj;
 }
 
-void CIMClassName::setClassname(const bp::object &classname)
+std::string CIMClassName::getClassname() const
+{
+    return m_classname;
+}
+
+std::string CIMClassName::getNamespace() const
+{
+    return m_namespace;
+}
+
+std::string CIMClassName::getHostname() const
+{
+    return m_hostname;
+}
+
+bp::object CIMClassName::getPyClassname() const
+{
+    return StringConv::asPyUnicode(m_classname);
+}
+
+bp::object CIMClassName::getPyNamespace() const
+{
+    return StringConv::asPyUnicode(m_namespace);
+}
+
+bp::object CIMClassName::getPyHostname() const
+{
+    return StringConv::asPyUnicode(m_hostname);
+}
+
+void CIMClassName::setClassname(const std::string &classname)
+{
+    m_classname = classname;
+}
+
+void CIMClassName::setNamespace(const std::string &namespace_)
+{
+    m_namespace = namespace_;
+}
+
+void CIMClassName::setHostname(const std::string &hostname)
+{
+    m_hostname = hostname;
+}
+
+void CIMClassName::setPyClassname(const bp::object &classname)
 {
     m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
 }
 
-void CIMClassName::setNamespace(const bp::object &namespace_)
+void CIMClassName::setPyNamespace(const bp::object &namespace_)
 {
     m_namespace = lmi::extract_or_throw<std::string>(namespace_, "namespace");
 }
 
-void CIMClassName::setHostname(const bp::object &hostname)
+void CIMClassName::setPyHostname(const bp::object &hostname)
 {
     m_hostname = lmi::extract_or_throw<std::string>(hostname, "hostname");
 }

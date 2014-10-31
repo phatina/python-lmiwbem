@@ -67,27 +67,43 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string repr();
+    bp::object repr();
 
     bp::object copy();
 
-    std::string getName() const { return m_name; }
-    std::string getType() const { return m_type; }
-    bp::object getValue();
-    std::string getClassOrigin() const { return m_class_origin; }
-    int getArraySize() const { return m_array_size; }
-    bool getPropagated() const { return m_propagated; }
-    bp::object getQualifiers();
-    bool isArray() const { return m_is_array; }
+    std::string getName() const;
+    std::string getType() const;
+    std::string getClassOrigin() const;
+    std::string getReferenceClass() const;
+    int getArraySize() const;
+    bool getIsArray() const;
+    bool getIsPropagated() const;
+    bp::object getPyName() const;
+    bp::object getPyType() const;
+    bp::object getPyClassOrigin() const;
+    bp::object getPyReferenceClass() const;
+    bp::object getPyArraySize() const;
+    bp::object getPyIsArray() const;
+    bp::object getPyIsPropagated() const;
+    bp::object getPyValue();
+    bp::object getPyQualifiers();
 
-    void setName(const bp::object &name);
-    void setType(const bp::object &type);
-    void setValue(const bp::object &value);
-    void setClassOrigin(const bp::object &class_origin);
-    void setArraySize(const bp::object &array_size);
-    void setPropagated(const bp::object &propagated);
-    void setQualifiers(const bp::object &qualifiers);
-    void setReferenceClass(const bp::object &reference_class);
+    void setName(const std::string &name);
+    void setType(const std::string &type);
+    void setClassOrigin(const std::string &class_origin);
+    void setReferenceClass(const std::string &reference_class);
+    void setArraySize(int array_size);
+    void setIsArray(bool is_array);
+    void setIsPropagated(bool is_propagated);
+    void setPyName(const bp::object &name);
+    void setPyType(const bp::object &type);
+    void setPyValue(const bp::object &value);
+    void setPyClassOrigin(const bp::object &class_origin);
+    void setPyReferenceClass(const bp::object &reference_class);
+    void setPyArraySize(const bp::object &array_size);
+    void setPyIsArray(const bp::object &is_array);
+    void setPyIsPropagated(const bp::object &propagated);
+    void setPyQualifiers(const bp::object &qualifiers);
 
 private:
     static std::string propertyTypeAsString(const Pegasus::CIMType type);
@@ -97,7 +113,7 @@ private:
     std::string m_class_origin;
     std::string m_reference_class;
     bool m_is_array;
-    bool m_propagated;
+    bool m_is_propagated;
     int m_array_size;
     bp::object m_value;
     bp::object m_qualifiers;

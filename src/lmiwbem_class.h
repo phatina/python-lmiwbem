@@ -58,21 +58,25 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string repr();
+    bp::object repr();
 
     bp::object copy();
 
-    std::string getClassname() const { return m_classname; }
-    std::string getSuperClassname() const { return m_super_classname; }
-    bp::object getProperties();
-    bp::object getQualifiers();
-    bp::object getMethods();
+    std::string getClassname() const;
+    std::string getSuperClassname() const;
+    bp::object getPyClassname() const;
+    bp::object getPySuperClassname() const;
+    bp::object getPyProperties();
+    bp::object getPyQualifiers();
+    bp::object getPyMethods();
 
-    void setClassname(const bp::object &classname);
-    void setSuperClassname(const bp::object &superclassname);
-    void setProperties(const bp::object &properties);
-    void setQualifiers(const bp::object &qualifiers);
-    void setMethods(const bp::object &methods);
+    void setClassname(const std::string &classname);
+    void setSuperClassname(const std::string &super_classname);
+    void setPyClassname(const bp::object &classname);
+    void setPySuperClassname(const bp::object &super_classname);
+    void setPyProperties(const bp::object &properties);
+    void setPyQualifiers(const bp::object &qualifiers);
+    void setPyMethods(const bp::object &methods);
 
 private:
     std::string m_classname;

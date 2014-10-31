@@ -33,6 +33,7 @@
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_constants.h"
 #include "lmiwbem_connection.h"
+#include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_gil.h"
@@ -774,9 +775,9 @@ bp::object WBEMConnection::createInstance(
 
     std::string std_ns(m_default_namespace);
 
-    if (!isnone(inst.getPath())) {
+    if (!isnone(inst.getPyPath())) {
         // First, try to get creation namespace from CIMInstanceName.
-        CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(inst.getPath());
+        CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(inst.getPyPath());
         std_ns = inst_name.getNamespace();
     }
     if (!isnone(ns)) {
@@ -834,7 +835,7 @@ void WBEMConnection::modifyInstance(
     CIMInstance &inst = lmi::extract_or_throw<CIMInstance&>(
         instance, "ModifiedInstance");
     CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(
-        inst.getPath());
+        inst.getPyPath());
 
     Pegasus::CIMNamespaceName cim_ns(inst_name.getNamespace().c_str());
     Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();

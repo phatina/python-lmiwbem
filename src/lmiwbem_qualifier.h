@@ -60,32 +60,52 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string repr();
-    std::string tomof();
+    bp::object repr();
+    bp::object tomof();
 
     bp::object copy();
 
-    bp::object getName();
-    bp::object getType();
+    std::string getName() const;
+    std::string getType() const;
+    bool getIsPropagated()   const;
+    bool getIsOverridable()  const;
+    bool getIsToSubClass()   const;
+    bool getIsToInstance()   const;
+    bool getIsTranslatable() const;
+    bp::object getPyName()  const;
+    bp::object getPyType()  const;
+    bp::object getPyValue() const;
+    bp::object getPyIsPropagated()   const;
+    bp::object getPyIsOverridable()  const;
+    bp::object getPyIsToSubclass()   const;
+    bp::object getPyIsToInstance()   const;
+    bp::object getPyIsTranslatable() const;
 
-    void setName(const bp::object &name);
-    void setType(const bp::object &name);
-
-    void setPropagated(const bp::object &propagated);
-    void setOverridable(const bp::object &overridable);
-    void setToSubclass(const bp::object &tosubclass);
-    void setToInstance(const bp::object &toinstance);
-    void setTranslatable(const bp::object &translatable);
+    void setName(const std::string &name);
+    void setType(const std::string &type);
+    void setIsPropagated(bool is_propagated);
+    void setIsOverridable(bool is_overridable);
+    void setIsToSubclass(bool is_tosubclass);
+    void setIsToInstance(bool is_toinstance);
+    void setIsTranslatable(bool is_translatable);
+    void setPyName(const bp::object &name);
+    void setPyType(const bp::object &type);
+    void setPyValue(const bp::object &value);
+    void setPyIsPropagated(const bp::object &is_propagated);
+    void setPyIsOverridable(const bp::object &is_overridable);
+    void setPyIsToSubclass(const bp::object &is_tosubclass);
+    void setPyIsToInstance(const bp::object &is_toinstance);
+    void setPyIsTranslatable(const bp::object &is_translatable);
 
 private:
     std::string m_name;
     std::string m_type;
     bp::object m_value;
-    bool m_propagated;
-    bool m_overridable;
-    bool m_tosubclass;
-    bool m_toinstance;
-    bool m_translatable;
+    bool m_is_propagated;
+    bool m_is_overridable;
+    bool m_is_tosubclass;
+    bool m_is_toinstance;
+    bool m_is_translatable;
 };
 
 #endif // LMIWBEM_QUALIFIER_H

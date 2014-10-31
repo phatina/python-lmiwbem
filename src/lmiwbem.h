@@ -28,4 +28,7 @@
 #  define LMIWBEM_BEGIN namespace lmi {
 #  define LMIWBEM_END }
 
+#  define PEGASUS_BEGIN namespace Pegasus {
+#  define PEGASUS_END }
+
 #endif // LMIWBEM_H

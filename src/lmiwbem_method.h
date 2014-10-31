@@ -57,30 +57,38 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string repr();
-    std::string tomof();
+    bp::object repr();
+    bp::object tomof();
 
     bp::object copy();
 
-    std::string getName() const { return m_name; }
-    std::string getReturnType() const { return m_return_type; }
-    std::string getClassOrigin() const { return m_class_origin; }
-    bool getPropagated() const { return m_propagated; }
-    bp::object getParameters();
-    bp::object getQualifiers();
+    std::string getName() const;
+    std::string getReturnType() const;
+    std::string getClassOrigin() const;
+    bool getIsPropagated() const;
+    bp::object getPyName() const;
+    bp::object getPyReturnType() const;
+    bp::object getPyClassOrigin() const;
+    bp::object getPyIsPropagated() const;
+    bp::object getPyParameters();
+    bp::object getPyQualifiers();
 
-    void setName(const bp::object &name);
-    void setReturnType(const bp::object &rtype);
-    void setParameters(const bp::object &parameters);
-    void setClassOrigin(const bp::object &class_origin);
-    void setPropagated(const bp::object &propagated);
-    void setQualifiers(const bp::object &qualifiers);
+    void setName(const std::string &name);
+    void setReturnType(const std::string &return_type);
+    void setClassOrigin(const std::string &class_origin);
+    void setIsPropagated(bool is_propagated);
+    void setPyName(const bp::object &name);
+    void setPyReturnType(const bp::object &rtype);
+    void setPyClassOrigin(const bp::object &class_origin);
+    void setPyIsPropagated(const bp::object &propagated);
+    void setPyParameters(const bp::object &parameters);
+    void setPyQualifiers(const bp::object &qualifiers);
 
 private:
     std::string m_name;
     std::string m_return_type;
     std::string m_class_origin;
-    bool m_propagated;
+    bool m_is_propagated;
     bp::object m_parameters;
     bp::object m_qualifiers;
 

@@ -24,6 +24,8 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <Pegasus/Common/CIMValue.h>
+#include "lmiwbem_convert.h"
 #include "lmiwbem_instance_name.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
@@ -89,7 +91,7 @@ void CIMInstanceName::init_type()
 #  endif // PY_MAJOR_VERSION
         .def("__str__", &CIMInstanceName::str,
             ":returns: serialized object\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .def("__repr__", &CIMInstanceName::repr,
             ":returns: pretty string of the object")
         .def("__getitem__", &CIMInstanceName::getitem)
@@ -132,23 +134,23 @@ void CIMInstanceName::init_type()
             ":returns: copy of the object itself\n"
             ":rtype: :py:class:`.CIMInstanceName`")
         .add_property("classname",
-            &CIMInstanceName::getClassname,
-            &CIMInstanceName::setClassname,
+            &CIMInstanceName::getPyClassname,
+            &CIMInstanceName::setPyClassname,
             "Property storing class name.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("namespace",
-            &CIMInstanceName::getNamespace,
-            &CIMInstanceName::setNamespace,
+            &CIMInstanceName::getPyNamespace,
+            &CIMInstanceName::setPyNamespace,
             "Property storing namespace.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("host",
-            &CIMInstanceName::getHostname,
-            &CIMInstanceName::setHostname,
+            &CIMInstanceName::getPyHostname,
+            &CIMInstanceName::setPyHostname,
             "Property storing hostname.\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("keybindings",
-            &CIMInstanceName::getKeybindings,
-            &CIMInstanceName::setKeybindings,
+            &CIMInstanceName::getPyKeybindings,
+            &CIMInstanceName::setPyKeybindings,
             "Property storing keybindings.\n\n"
             ":rtype: :py:class:`.NocaseDict`"));
 }
@@ -177,10 +179,6 @@ bp::object CIMInstanceName::create(
     const Pegasus::Uint32 cnt = keybindings.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
         Pegasus::CIMKeyBinding keybinding = keybindings[i];
-        bp::object name(
-            std_string_as_pyunicode(
-                std::string(keybinding.getName().getString().getCString()))
-        );
 
         if (keybinding.getType() == Pegasus::CIMKeyBinding::REFERENCE) {
             // We got a keybinding with CIMObjectPath value. Let's set its
@@ -194,7 +192,7 @@ bp::object CIMInstanceName::create(
 
         bp::object value = keybindingToValue(keybinding);
 
-        fake_this.m_keybindings[name] = value;
+        fake_this.m_keybindings[bp::object(keybinding.getName())] = value;
     }
 
     return inst;
@@ -234,7 +232,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
                 arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
                         Pegasus::CIMName(it->first.c_str()),
-                        Pegasus::String(object_as_std_string(it->second).c_str()),
+                        Pegasus::String(ObjectConv::asStdString(it->second).c_str()),
                         Pegasus::CIMKeyBinding::NUMERIC));
                 continue;
             }
@@ -355,7 +353,7 @@ bp::object CIMInstanceName::copy()
     return obj;
 }
 
-std::string CIMInstanceName::str()
+bp::object CIMInstanceName::str()
 {
     std::stringstream ss;
 
@@ -370,14 +368,14 @@ std::string CIMInstanceName::str()
     for (it = keybindings.begin(); it != keybindings.end(); ++it) {
         ss << it->first << '=';
         if (isinstance(it->second, CIMInstanceName::type())) {
-            std::string iname_str = object_as_std_string(it->second);
+            std::string iname_str = ObjectConv::asStdString(it->second);
             boost::replace_all(iname_str, "\\", "\\\\");
             boost::replace_all(iname_str, "\"", "\\\"");
             ss << '"' << iname_str << '"';
         } else if (isbasestring(it->second)) {
-            ss << '"' << object_as_std_string(it->second) << '"';
+            ss << '"' << ObjectConv::asStdString(it->second) << '"';
         } else {
-            ss << object_as_std_string(it->second);
+            ss << ObjectConv::asStdString(it->second);
         }
 
         nocase_map_t::const_iterator tmp_it = it;
@@ -385,19 +383,44 @@ std::string CIMInstanceName::str()
             ss << ',';
     }
 
-    return ss.str();
+    return StringConv::asPyUnicode(ss.str());
 }
 
-std::string CIMInstanceName::repr()
+bp::object CIMInstanceName::repr()
 {
     std::stringstream ss;
     ss << "CIMInstanceName(classname='" << m_classname << "', keybindings="
-       << object_as_std_string(m_keybindings);
+       << ObjectConv::asStdString(m_keybindings);
     if (!m_hostname.empty())
         ss << ", host='" << m_hostname << '\'';
     ss <<  ", namespace='"
        << m_namespace << "')";
-    return ss.str();
+    return StringConv::asPyUnicode(ss.str());
+}
+
+bp::object CIMInstanceName::getitem(const bp::object &key)
+{
+    return m_keybindings[key];
+}
+
+void CIMInstanceName::delitem(const bp::object &key)
+{
+    bp::delitem(m_keybindings, key);
+}
+
+void CIMInstanceName::setitem(const bp::object &key, const bp::object &value)
+{
+    m_keybindings[key] = value;
+}
+
+bp::object CIMInstanceName::len() const
+{
+    return bp::object(bp::len(m_keybindings));
+}
+
+bp::object CIMInstanceName::haskey(const bp::object &key) const
+{
+    return m_keybindings.contains(key);
 }
 
 bp::object CIMInstanceName::keys()
@@ -436,22 +459,72 @@ bp::object CIMInstanceName::iteritems()
     return keybindings.iteritems();
 }
 
-void CIMInstanceName::setClassname(const bp::object &classname)
+std::string CIMInstanceName::getClassname() const
+{
+    return m_classname;
+}
+
+std::string CIMInstanceName::getNamespace() const
+{
+    return m_namespace;
+}
+
+std::string CIMInstanceName::getHostname()  const
+{
+    return m_hostname;
+}
+
+bp::object CIMInstanceName::getPyClassname() const
+{
+    return StringConv::asPyUnicode(m_classname);
+}
+
+bp::object CIMInstanceName::getPyNamespace() const
+{
+    return StringConv::asPyUnicode(m_namespace);
+}
+
+bp::object CIMInstanceName::getPyHostname() const
+{
+    return StringConv::asPyUnicode(m_hostname);
+}
+
+bp::object CIMInstanceName::getPyKeybindings() const
+{
+    return m_keybindings;
+}
+
+void CIMInstanceName::setClassname(const std::string &classname)
+{
+    m_classname = classname;
+}
+
+void CIMInstanceName::setNamespace(const std::string &namespace_)
+{
+    m_namespace = namespace_;
+}
+
+void CIMInstanceName::setHostname(const std::string &hostname)
+{
+    m_hostname = hostname;
+}
+
+void CIMInstanceName::setPyClassname(const bp::object &classname)
 {
     m_classname = lmi::extract_or_throw<std::string>(classname);
 }
 
-void CIMInstanceName::setNamespace(const bp::object &namespace_)
+void CIMInstanceName::setPyNamespace(const bp::object &namespace_)
 {
     m_namespace = lmi::extract_or_throw<std::string>(namespace_);
 }
 
-void CIMInstanceName::setHostname(const bp::object &hostname)
+void CIMInstanceName::setPyHostname(const bp::object &hostname)
 {
     m_hostname = lmi::extract_or_throw<std::string>(hostname);
 }
 
-void CIMInstanceName::setKeybindings(const bp::object &keybindings)
+void CIMInstanceName::setPyKeybindings(const bp::object &keybindings)
 {
     m_keybindings = lmi::get_or_throw<NocaseDict, bp::dict>(keybindings);
 }
@@ -463,18 +536,18 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
     const Pegasus::String cim_value = keybinding.getValue();
     switch (keybinding.getType()) {
     case Pegasus::CIMKeyBinding::BOOLEAN:
-        return std_string_as_pybool(std::string(cim_value.getCString()));
+        return StringConv::asPyBool(cim_value);
     case Pegasus::CIMKeyBinding::STRING:
-        return std_string_as_pyunicode(std::string(cim_value.getCString()));
+        return StringConv::asPyUnicode(cim_value);
     case Pegasus::CIMKeyBinding::NUMERIC: {
         bp::object num;
 #  if PY_MAJOR_VERSION < 3
-        if (!isnone(num = std_string_as_pyint(std::string(cim_value.getCString())))  ||
-            !isnone(num = std_string_as_pylong(std::string(cim_value.getCString()))) ||
+        if (!isnone(num = StringConv::asPyInt(cim_value))  ||
+            !isnone(num = StringConv::asPyLong(cim_value)) ||
 #  else
-        if (!isnone(num = std_string_as_pylong(std::string(cim_value.getCString()))) ||
+        if (!isnone(num = StringConv::asPyLong(cim_value)) ||
 #  endif // PY_MAJOR_VERSION
-            !isnone(num = std_string_as_pyfloat(std::string(cim_value.getCString()))))
+            !isnone(num = StringConv::asPyFloat(cim_value)))
         {
             return num;
         }

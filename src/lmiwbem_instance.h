@@ -32,6 +32,8 @@
 
 namespace bp = boost::python;
 
+class CIMInstanceName;
+
 class CIMInstance: public CIMBase<CIMInstance>
 {
 public:
@@ -59,15 +61,13 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string repr();
+    bp::object repr();
     bp::object tomof();
 
     bp::object getitem(const bp::object &key);
-    void setitem(
-        const bp::object &key,
-        const bp::object &value);
-    ssize_t len() { return bp::len(getProperties()); }
-    bool haskey(const bp::object &key) { return getProperties().contains(key); }
+    void setitem(const bp::object &key, const bp::object &value);
+    bp::object len();
+    bp::object haskey(const bp::object &key);
     bp::object keys();
     bp::object values();
     bp::object items();
@@ -77,17 +77,21 @@ public:
 
     bp::object copy();
 
-    bp::object getClassname();
-    bp::object getPath();
-    bp::object getProperties();
-    bp::object getQualifiers();
-    bp::object getPropertyList();
+    std::string getClassname() const;
+    CIMInstanceName getPath();
+    const CIMInstanceName &getPath() const;
+    bp::object getPyClassname() const;
+    bp::object getPyPath();
+    bp::object getPyProperties();
+    bp::object getPyQualifiers();
+    bp::object getPyPropertyList();
 
-    void setClassname(const bp::object &classname);
-    void setPath(const bp::object &path);
-    void setProperties(const bp::object &properties);
-    void setQualifiers(const bp::object &qualifiers);
-    void setPropertyList(const bp::object &property_list);
+    void setClassname(const std::string &classname);
+    void setPyClassname(const bp::object &classname);
+    void setPyPath(const bp::object &path);
+    void setPyProperties(const bp::object &properties);
+    void setPyQualifiers(const bp::object &qualifiers);
+    void setPyPropertyList(const bp::object &property_list);
 
     static void updatePegasusCIMInstanceNamespace(
         Pegasus::CIMInstance &instance,

@@ -27,6 +27,7 @@
 #include <boost/python/dict.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
+#include "lmiwbem_convert.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_util.h"
@@ -132,7 +133,7 @@ std::string NocaseDict::repr()
     ss << "NocaseDict({";
     nocase_map_t::const_iterator it;
     for (it = m_dict.begin(); it != m_dict.end(); ++it) {
-        std::string str_value = object_as_std_string(it->second);
+        std::string str_value = ObjectConv::asStdString(it->second);
         ss << '\'' << it->first << "': '" << str_value << '\'';
         if (it != --m_dict.end())
             ss << ", ";
@@ -147,7 +148,7 @@ bp::list NocaseDict::keys()
     bp::list keys;
     nocase_map_t::const_iterator it;
     for (it = m_dict.begin(); it != m_dict.end(); ++it)
-        keys.append(std_string_as_pyunicode(it->first));
+        keys.append(StringConv::asPyUnicode(it->first));
     return keys;
 }
 
@@ -167,7 +168,7 @@ bp::list NocaseDict::items()
     for (it = m_dict.begin(); it != m_dict.end(); ++it) {
         items.append(
             bp::make_tuple(
-                std_string_as_pyunicode(it->first.c_str()),
+                StringConv::asPyUnicode(it->first.c_str()),
                 it->second)
         );
     }
@@ -190,10 +191,15 @@ bp::object NocaseDict::iteritems()
     return NocaseDictItemIterator::create(m_dict);
 }
 
-bool NocaseDict::haskey(const bp::object &key)
+bp::object NocaseDict::haskey(const bp::object &key) const
 {
     std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
-    return m_dict.find(std_key) != m_dict.end();
+    return bp::object(m_dict.find(std_key) != m_dict.end());
+}
+
+bp::object NocaseDict::len() const
+{
+    return bp::object(m_dict.size());
 }
 
 void NocaseDict::update(const bp::object &d)
@@ -346,7 +352,7 @@ bp::object NocaseDictKeyIterator::next()
     if (m_iter == m_dict.end())
         throw_StopIteration("Stop iteration");
 
-    bp::object key(std_string_as_pyunicode(m_iter->first.c_str()));
+    bp::object key(StringConv::asPyUnicode(m_iter->first));
 
     ++m_iter;
 

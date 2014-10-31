@@ -22,6 +22,7 @@
 #include <config.h>
 #include <string>
 #include <boost/python/object.hpp>
+#include "lmiwbem_convert.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_util.h"
 
@@ -47,7 +48,7 @@ extract<std::string>::extract(const bp::object &obj)
 
 void extract<std::string>::convert()
 {
-    m_str = pystring_as_std_string(m_obj, m_good);
+    m_str = StringConv::asStdString(m_obj, m_good);
 }
 
 template <>

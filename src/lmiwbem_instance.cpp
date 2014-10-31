@@ -25,6 +25,7 @@
 #include <boost/python/dict.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
+#include "lmiwbem_convert.h"
 #include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
@@ -152,32 +153,32 @@ void CIMInstance::init_type()
         .def("tomof", &CIMInstance::tomof,
             "tomof()\n\n"
             ":returns: MOF representation of the object itself\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("classname",
-            &CIMInstance::getClassname,
-            &CIMInstance::setClassname,
+            &CIMInstance::getPyClassname,
+            &CIMInstance::setPyClassname,
             "Property storing class name\n\n"
-            ":rtype: str")
+            ":rtype: unicode")
         .add_property("path",
-            &CIMInstance::getPath,
-            &CIMInstance::setPath,
+            &CIMInstance::getPyPath,
+            &CIMInstance::setPyPath,
             "Property storing object path\n\n"
             ":rtype: :py:class:`.CIMInstanceName`")
         .add_property("properties",
-            &CIMInstance::getProperties,
-            &CIMInstance::setProperties,
+            &CIMInstance::getPyProperties,
+            &CIMInstance::setPyProperties,
             "Property storing instance properties\n\n"
             ":rtype: :py:class:`.NocaseDict`")
         .add_property("qualifiers",
-            &CIMInstance::getQualifiers,
-            &CIMInstance::setQualifiers,
+            &CIMInstance::getPyQualifiers,
+            &CIMInstance::setPyQualifiers,
             "Property storing instance qualifiers\n\n"
             ":rtype: :py:class:`.NocaseDict`")
         .add_property("property_list",
-            &CIMInstance::getPropertyList,
-            &CIMInstance::setPropertyList,
+            &CIMInstance::getPyPropertyList,
+            &CIMInstance::setPyPropertyList,
             "Property storing instance properties\n\n"
-            ":rtype: list of strings of instance properties\n"));
+            ":rtype: list of instance properties names\n"));
 }
 
 bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)
@@ -213,14 +214,14 @@ Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
 {
     Pegasus::CIMInstance instance(Pegasus::CIMName(m_classname.c_str()));
 
-    if (!isnone(getPath())) {
+    if (!isnone(getPyPath())) {
         // Set CIMObjectPath
-        const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
+        const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPyPath());
         instance.setPath(path.asPegasusCIMObjectPath());
     }
 
     // Add all the properties
-    const NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    const NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     nocase_map_t::const_iterator it;
     for (it = properties.begin(); it != properties.end(); ++it) {
         CIMProperty &property = lmi::extract<CIMProperty&>(it->second);
@@ -228,7 +229,7 @@ Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
     }
 
     // Add all the qualifiers
-    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
     for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
         CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
         instance.addQualifier(qualifier.asPegasusCIMQualifier());
@@ -247,9 +248,9 @@ int CIMInstance::cmp(const bp::object &other)
 
     int rval;
     if ((rval = m_classname.compare(other_inst.m_classname)) != 0 ||
-        (rval = compare(getPath(), other_inst.getPath())) != 0 ||
-        (rval = compare(getProperties(), other_inst.getProperties())) != 0 ||
-        (rval = compare(getQualifiers(), other_inst.getQualifiers())) != 0)
+        (rval = compare(getPyPath(), other_inst.getPyPath())) != 0 ||
+        (rval = compare(getPyProperties(), other_inst.getPyProperties())) != 0 ||
+        (rval = compare(getPyQualifiers(), other_inst.getPyQualifiers())) != 0)
     {
         return rval;
     }
@@ -265,9 +266,9 @@ bool CIMInstance::eq(const bp::object &other)
     CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
 
     return m_classname == other_inst.m_classname &&
-        compare(getPath(), other_inst.getPath(), Py_EQ) &&
-        compare(getProperties(), other_inst.getProperties(), Py_EQ) &&
-        compare(getQualifiers(), other_inst.getQualifiers(), Py_EQ);
+        compare(getPyPath(), other_inst.getPyPath(), Py_EQ) &&
+        compare(getPyProperties(), other_inst.getPyProperties(), Py_EQ) &&
+        compare(getPyQualifiers(), other_inst.getPyQualifiers(), Py_EQ);
 }
 
 bool CIMInstance::gt(const bp::object &other)
@@ -278,9 +279,9 @@ bool CIMInstance::gt(const bp::object &other)
     CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
 
     return m_classname > other_inst.m_classname ||
-        compare(getPath(), other_inst.getPath(), Py_GT) ||
-        compare(getProperties(), other_inst.getProperties(), Py_GT) ||
-        compare(getQualifiers(), other_inst.getQualifiers(), Py_GT);
+        compare(getPyPath(), other_inst.getPyPath(), Py_GT) ||
+        compare(getPyProperties(), other_inst.getPyProperties(), Py_GT) ||
+        compare(getPyQualifiers(), other_inst.getPyQualifiers(), Py_GT);
 }
 
 bool CIMInstance::lt(const bp::object &other)
@@ -291,9 +292,9 @@ bool CIMInstance::lt(const bp::object &other)
     CIMInstance &other_inst = lmi::extract<CIMInstance&>(other);
 
     return m_classname < other_inst.m_classname ||
-        compare(getPath(), other_inst.getPath(), Py_LT) ||
-        compare(getProperties(), other_inst.getProperties(), Py_LT) ||
-        compare(getQualifiers(), other_inst.getQualifiers(), Py_LT);
+        compare(getPyPath(), other_inst.getPyPath(), Py_LT) ||
+        compare(getPyProperties(), other_inst.getPyProperties(), Py_LT) ||
+        compare(getPyQualifiers(), other_inst.getPyQualifiers(), Py_LT);
 }
 
 bool CIMInstance::ge(const bp::object &other)
@@ -307,11 +308,11 @@ bool CIMInstance::le(const bp::object &other)
 }
 #  endif // PY_MAJOR_VERSION
 
-std::string CIMInstance::repr()
+bp::object CIMInstance::repr()
 {
     std::stringstream ss;
     ss << "CIMInstance(classname='" << m_classname << "', ...)";
-    return ss.str();
+    return StringConv::asPyUnicode(ss.str());
 }
 
 bp::object CIMInstance::getitem(const bp::object &key)
@@ -320,13 +321,11 @@ bp::object CIMInstance::getitem(const bp::object &key)
     lmi::extract<CIMProperty&> ext_property(m_properties[key]);
 
     if (ext_property.check())
-        return static_cast<CIMProperty&>(ext_property).getValue();
+        return static_cast<CIMProperty&>(ext_property).getPyValue();
     return m_properties[key];
 }
 
-void CIMInstance::setitem(
-    const bp::object &key,
-    const bp::object &value)
+void CIMInstance::setitem(const bp::object &key, const bp::object &value)
 {
     evalProperties();
     lmi::extract<CIMProperty> ext_property(value);
@@ -337,22 +336,32 @@ void CIMInstance::setitem(
         m_properties[key] = CIMProperty::create(key, value);
 }
 
+bp::object CIMInstance::len()
+{
+    return bp::object(bp::len(getPyProperties()));
+}
+
+bp::object CIMInstance::haskey(const bp::object &key)
+{
+    return getPyProperties().contains(key);
+}
+
 bp::object CIMInstance::keys()
 {
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     return properties.keys();
 }
 
 bp::object CIMInstance::values()
 {
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     nocase_map_t::const_iterator it;
 
     bp::list values;
     for (it = properties.begin(); it != properties.end(); ++it) {
         CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
             it->second, "property");
-        values.append(property.getValue());
+        values.append(property.getPyValue());
     }
 
     return values;
@@ -360,7 +369,7 @@ bp::object CIMInstance::values()
 
 bp::object CIMInstance::items()
 {
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     nocase_map_t::const_iterator it;
 
     bp::list items;
@@ -369,8 +378,8 @@ bp::object CIMInstance::items()
             it->second, "property");
         items.append(
             bp::make_tuple(
-                std_string_as_pyunicode(it->first),
-                property.getValue()));
+                StringConv::asPyUnicode(it->first),
+                property.getPyValue()));
     }
 
     return items;
@@ -378,19 +387,19 @@ bp::object CIMInstance::items()
 
 bp::object CIMInstance::iterkeys()
 {
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     return properties.iterkeys();
 }
 
 bp::object CIMInstance::itervalues()
 {
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     return properties.itervalues();
 }
 
 bp::object CIMInstance::iteritems()
 {
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     return properties.iteritems();
 }
 
@@ -398,9 +407,9 @@ bp::object CIMInstance::copy()
 {
     bp::object obj = CIMBase<CIMInstance>::create();
     CIMInstance &inst = lmi::extract<CIMInstance&>(obj);
-    CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPath());
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
-    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getQualifiers());
+    CIMInstanceName &path = lmi::extract<CIMInstanceName&>(getPyPath());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
+    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
 
     inst.m_classname = m_classname;
     if (!isnone(m_path))
@@ -408,7 +417,7 @@ bp::object CIMInstance::copy()
     inst.m_properties = properties.copy();
     inst.m_qualifiers = qualifiers.copy();
     if (!isnone(m_property_list))
-        inst.m_property_list = bp::list(getPropertyList());
+        inst.m_property_list = bp::list(getPyPropertyList());
 
     return obj;
 }
@@ -429,9 +438,9 @@ std::string CIMInstance::tomofContent(const bp::object &value)
         }
         ss << '}';
     } else if (isbasestring(value)) {
-        ss << '\'' << object_as_std_string(value) << '\'';
+        ss << '\'' << ObjectConv::asStdString(value) << '\'';
     } else {
-        ss << object_as_std_string(value);
+        ss << ObjectConv::asStdString(value);
     }
 
     return ss.str();
@@ -442,26 +451,42 @@ bp::object CIMInstance::tomof()
     std::stringstream ss;
     ss << "instance of " << m_classname << " {\n";
 
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getProperties());
+    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
     nocase_map_t::iterator it;
     for (it = properties.begin(); it != properties.end(); ++it) {
         CIMProperty &property = lmi::extract<CIMProperty&>(it->second);
         ss << "\t" << property.getName() << " = "
-           << tomofContent(property.getValue())
+           << tomofContent(property.getPyValue())
            << ";\n";
     }
 
     ss << "};\n";
 
-    return std_string_as_pyunicode(ss.str());
+    return StringConv::asPyUnicode(ss.str());
 }
 
-bp::object CIMInstance::getClassname()
+CIMInstanceName CIMInstance::getPath()
 {
-    return std_string_as_pyunicode(m_classname);
+    return lmi::extract<CIMInstanceName>(getPyPath());
 }
 
-bp::object CIMInstance::getPath()
+const CIMInstanceName &CIMInstance::getPath() const
+{
+    CIMInstance *fake_this = const_cast<CIMInstance*>(this);
+    return lmi::extract<CIMInstanceName&>(fake_this->getPyPath());
+}
+
+std::string CIMInstance::getClassname() const
+{
+    return m_classname;
+}
+
+bp::object CIMInstance::getPyClassname() const
+{
+    return StringConv::asPyUnicode(m_classname);
+}
+
+bp::object CIMInstance::getPyPath()
 {
     if (!m_rc_inst_path.empty()) {
         m_path = CIMInstanceName::create(*m_rc_inst_path.get());
@@ -471,13 +496,13 @@ bp::object CIMInstance::getPath()
     return m_path;
 }
 
-bp::object CIMInstance::getProperties()
+bp::object CIMInstance::getPyProperties()
 {
     evalProperties();
     return m_properties;
 }
 
-bp::object CIMInstance::getQualifiers()
+bp::object CIMInstance::getPyQualifiers()
 {
     if (!m_rc_inst_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
@@ -491,18 +516,23 @@ bp::object CIMInstance::getQualifiers()
     return m_qualifiers;
 }
 
-bp::object CIMInstance::getPropertyList()
+bp::object CIMInstance::getPyPropertyList()
 {
     evalProperties();
     return m_property_list;
 }
 
-void CIMInstance::setClassname(const bp::object &classname)
+void CIMInstance::setClassname(const std::string &classname)
+{
+    m_classname = classname;
+}
+
+void CIMInstance::setPyClassname(const bp::object &classname)
 {
     m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
 }
 
-void CIMInstance::setPath(const bp::object &path)
+void CIMInstance::setPyPath(const bp::object &path)
 {
     m_path = lmi::get_or_throw<CIMInstanceName>(path);
 
@@ -510,7 +540,7 @@ void CIMInstance::setPath(const bp::object &path)
     m_rc_inst_path.release();
 }
 
-void CIMInstance::setProperties(const bp::object &properties)
+void CIMInstance::setPyProperties(const bp::object &properties)
 {
     evalProperties();
 
@@ -520,7 +550,7 @@ void CIMInstance::setProperties(const bp::object &properties)
     m_rc_inst_properties.release();
 }
 
-void CIMInstance::setQualifiers(const bp::object &qualifiers)
+void CIMInstance::setPyQualifiers(const bp::object &qualifiers)
 {
     m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
@@ -528,7 +558,7 @@ void CIMInstance::setQualifiers(const bp::object &qualifiers)
     m_rc_inst_qualifiers.release();
 }
 
-void CIMInstance::setPropertyList(const bp::object &property_list)
+void CIMInstance::setPyPropertyList(const bp::object &property_list)
 {
     evalProperties();
 
@@ -553,7 +583,7 @@ void CIMInstance::evalProperties()
             // We got a property with CIMObjectPath value. Let's set its
             // hostname which could be left out by Pegasus.
             // FIXME: refactor using getHostname()
-            CIMInstanceName &this_iname = lmi::extract<CIMInstanceName&>(getPath());
+            const CIMInstanceName &this_iname = getPath();
             Pegasus::CIMProperty property = it->clone();
             Pegasus::CIMValue value = property.getValue();
             Pegasus::CIMObjectPath iname;
