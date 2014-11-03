@@ -46,6 +46,9 @@ namespace bp = boost::python;
 #    define LMIWBEM_UNREACHABLE(CODE) CODE
 #  endif
 
+// Declare a Python's equivalent of None
+extern const bp::object None;
+
 bp::object this_module();
 bp::object incref(const bp::object &obj);
 

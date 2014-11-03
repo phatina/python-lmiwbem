@@ -346,7 +346,7 @@ bp::object CIMIndicationListener::addPyHandler(
         throw_TypeError("object is not callable or list/tuple with callables");
     }
 
-    return bp::object();
+    return None;
 }
 
 void CIMIndicationListener::removePyHandler(const bp::object &name)

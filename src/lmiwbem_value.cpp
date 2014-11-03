@@ -78,7 +78,7 @@ bp::object getPegasusValue(const Pegasus::CIMValue &value)
     // We return None for every empty CIMValue except of lists,
     // so we can reconstruct CIMValue out of Python's objects.
     if (value.isNull() && !value.isArray())
-        return bp::object();
+        return None;
 
     if (!value.isArray()) {
         T raw_value;
@@ -218,7 +218,7 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
     default:
         // As we have covered all CIM types, we should never get here.
         LMIWBEM_UNREACHABLE(assert(false && "Unknown CIM type value passed"));
-        return bp::object();
+        return None;
     }
 }
 

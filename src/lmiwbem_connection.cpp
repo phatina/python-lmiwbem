@@ -804,7 +804,7 @@ bp::object WBEMConnection::createInstance(
     return CIMInstanceName::create(new_inst_name);
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 void WBEMConnection::deleteInstance(const bp::object &object_path) try
@@ -904,7 +904,7 @@ bp::object WBEMConnection::enumerateInstances(
     return instances;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::enumerateInstanceNames(
@@ -937,7 +937,7 @@ bp::object WBEMConnection::enumerateInstanceNames(
     return instance_names;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::invokeMethod(
@@ -998,7 +998,7 @@ bp::object WBEMConnection::invokeMethod(
         rparams);
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::getInstance(
@@ -1040,7 +1040,7 @@ bp::object WBEMConnection::getInstance(
     return CIMInstance::create(cim_instance);
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::enumerateClasses(
@@ -1082,7 +1082,7 @@ bp::object WBEMConnection::enumerateClasses(
     return classes;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::enumerateClassNames(
@@ -1119,7 +1119,7 @@ bp::object WBEMConnection::enumerateClassNames(
     return classnames;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 
@@ -1154,7 +1154,7 @@ bp::object WBEMConnection::execQuery(
     return instances;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::getClass(
@@ -1190,7 +1190,7 @@ bp::object WBEMConnection::getClass(
     return CIMClass::create(cim_class);
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::getAssociators(
@@ -1265,7 +1265,7 @@ bp::object WBEMConnection::getAssociators(
     return associators;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::getAssociatorNames(
@@ -1330,7 +1330,7 @@ bp::object WBEMConnection::getAssociatorNames(
     return associator_names;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::getReferences(
@@ -1388,7 +1388,7 @@ bp::object WBEMConnection::getReferences(
     return references;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }
 
 bp::object WBEMConnection::getReferenceNames(
@@ -1436,5 +1436,5 @@ bp::object WBEMConnection::getReferenceNames(
     return reference_names;
 } catch (...) {
     handle_all_exceptions();
-    return bp::object();
+    return None;
 }

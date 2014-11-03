@@ -34,6 +34,9 @@
 #include "lmiwbem_extract.h"
 #include "lmiwbem_util.h"
 
+// Define a Python's equivalent of None
+const bp::object None;
+
 bp::object incref(const bp::object &obj)
 {
     bp::incref(obj.ptr());

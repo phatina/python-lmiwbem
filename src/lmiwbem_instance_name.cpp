@@ -553,7 +553,7 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
         }
 
         throw_TypeError("Wrong keybinding numeric type");
-        return bp::object();
+        return None;
     }
     case Pegasus::CIMKeyBinding::REFERENCE:
         return CIMInstanceName::create(cim_value);
