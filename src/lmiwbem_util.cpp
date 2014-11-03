@@ -109,6 +109,16 @@ bool isdict(const bp::object &obj)
     return PyDict_Check(obj.ptr());
 }
 
+bool islist(const bp::object &obj)
+{
+    return PyList_Check(obj.ptr());
+}
+
+bool istuple(const bp::object &obj)
+{
+    return PyTuple_Check(obj.ptr());
+}
+
 bool iscallable(const bp::object &obj)
 {
     return static_cast<bool>(PyCallable_Check(obj.ptr()));

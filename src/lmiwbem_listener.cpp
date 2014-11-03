@@ -50,7 +50,7 @@ CallableWithParams::CallableWithParams(const CallableWithParams &copy)
 {
 }
 
-void CallableWithParams::call(const bp::object &indication)
+void CallableWithParams::call(const bp::object &indication) const
 {
     // We are called from non-Python thread, which holds a GIL lock only for
     // indication processing. We can't raise any exception here. Therefore
@@ -311,13 +311,30 @@ bp::object CIMIndicationListener::addPyHandler(
     bp::object name = args[0];
     bp::object callable = args[1];
     std::string std_name = lmi::extract_or_throw<std::string>(name, "name");
-    if (!iscallable(callable))
-        throw_TypeError("object is not callable");
 
-    m_handlers[std_name] = CallableWithParams(
-        callable,
-        args.slice(2, bp::len(args)),
-        kwds);
+    if (iscallable(callable)) {
+        m_handlers[std_name].push_back(
+            CallableWithParams(
+                callable,
+                args.slice(2, bp::len(args)),
+                kwds));
+    } else if (islist(callable) || istuple(callable)) {
+        const int cnt = bp::len(callable);
+        for (int i = 0; i < cnt; ++i) {
+            bp::object handler(callable[i]);
+
+            if (!iscallable(handler))
+                throw_TypeError("list/tuple with handlers contains non-callable");
+
+            m_handlers[std_name].push_back(
+                CallableWithParams(
+                    handler,
+                    args.slice(2, bp::len(args)),
+                    kwds));
+        }
+    } else {
+        throw_TypeError("object is not callable or list/tuple with callables");
+    }
 
     return bp::object();
 }
@@ -342,11 +359,14 @@ bp::object CIMIndicationListener::getPyHandlers() const
 
 void CIMIndicationListener::call(
     const std::string &name,
-    const bp::object &indication)
+    const bp::object &indication) const
 {
-    handler_map_t::iterator it = m_handlers.find(name);
+
+    const handler_map_t::const_iterator it = m_handlers.find(name);
     if (it == m_handlers.end())
         return;
 
-    it->second.call(indication);
+    std::list<CallableWithParams>::const_iterator it_cb;
+    for (it_cb = it->second.begin(); it_cb != it->second.end(); ++it_cb)
+        it_cb->call(indication);
 }

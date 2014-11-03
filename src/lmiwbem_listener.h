@@ -35,7 +35,10 @@ namespace bp = boost::python;
 class CallableWithParams;
 class CIMIndicationListener;
 
-typedef std::map<std::string, CallableWithParams> handler_map_t;
+typedef std::map<
+    std::string,
+    std::list<CallableWithParams>
+> handler_map_t;
 
 class CallableWithParams
 {
@@ -47,7 +50,7 @@ public:
         const bp::object &kwds);
     CallableWithParams(const CallableWithParams &copy);
 
-    void call(const bp::object &indication);
+    void call(const bp::object &indication) const;
 
     CallableWithParams &operator=(const CallableWithParams &rhs);
 
@@ -103,7 +106,7 @@ private:
     friend class CIMIndicationConsumer;
     void call(
         const std::string &name,
-        const bp::object &indication);
+        const bp::object &indication) const;
 
     boost::shared_ptr<Pegasus::CIMListener> m_listener;
     CIMIndicationConsumer m_consumer;
