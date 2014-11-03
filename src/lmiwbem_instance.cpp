@@ -361,9 +361,13 @@ bp::object CIMInstance::values()
 
     bp::list values;
     for (it = properties.begin(); it != properties.end(); ++it) {
-        CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
-            it->second, "property");
-        values.append(property.getPyValue());
+        if (isinstance(it->second, CIMProperty::type())) {
+            CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
+                it->second, "property");
+            values.append(property.getPyValue());
+        } else {
+            values.append(it->second);
+        }
     }
 
     return values;
@@ -376,12 +380,18 @@ bp::object CIMInstance::items()
 
     bp::list items;
     for (it = properties.begin(); it != properties.end(); ++it) {
-        CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
-            it->second, "property");
+        bp::object value;
+        if (isinstance(it->second, CIMProperty::type())) {
+            CIMProperty &property = lmi::extract_or_throw<CIMProperty&>(
+                it->second, "property");
+            value = property.getPyValue();
+        } else {
+            value = it->second;
+        }
+
         items.append(
             bp::make_tuple(
-                StringConv::asPyUnicode(it->first),
-                property.getPyValue()));
+                StringConv::asPyUnicode(it->first), value));
     }
 
     return items;
