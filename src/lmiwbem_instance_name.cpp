@@ -237,10 +237,10 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
                 continue;
             }
 
-            lmi::extract<std::string> ext_string(it->second);
-            if (ext_string.check()) {
+            if (isbasestring(it->second)) {
                 // Create str CIMKeyBinding
-                std::string std_string(ext_string);
+                std::string std_string(
+                    lmi::extract<std::string>(it->second));
                 Pegasus::CIMValue value = Pegasus::CIMValue(Pegasus::String(std_string.c_str()));
                 arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
@@ -249,10 +249,10 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
                 continue;
             }
 
-            lmi::extract<CIMInstanceName&> ext_instance_name(it->second);
-            if (ext_instance_name.check()) {
+            if (isinstance(it->second, CIMInstanceName::type())) {
                 // Create CIMInstanceName CIMKeyBinding
-                CIMInstanceName &instance_name = ext_instance_name;
+                CIMInstanceName &instance_name(
+                    lmi::extract<CIMInstanceName&>(it->second));
                 arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
                         Pegasus::CIMName(it->first.c_str()),

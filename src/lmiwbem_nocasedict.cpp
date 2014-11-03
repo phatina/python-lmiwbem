@@ -205,7 +205,7 @@ bp::object NocaseDict::len() const
 void NocaseDict::update(const bp::object &d)
 {
     lmi::extract<NocaseDict&> ext_nocasedict(d);
-    if (isinstance(d, NocaseDict::type())) {
+    if (isinstance(d, type())) {
         NocaseDict &nocasedict = lmi::extract<NocaseDict&>(d);
         // Update from NocaseDict
         nocase_map_t::iterator it;
@@ -268,11 +268,10 @@ bp::object NocaseDict::copy()
 #  if PY_MAJOR_VERSION < 3
 int NocaseDict::cmp(const bp::object &other)
 {
-    lmi::extract<NocaseDict&> ext_dict(other);
-    if (!ext_dict.check())
+    if (!isinstance(other, type()))
         return -1;
 
-    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
     nocase_map_t::const_iterator it;
     for (it = m_dict.begin(); it != m_dict.end(); ++it) {
         const nocase_map_t::const_iterator found = other_dict.find(it->first);
@@ -290,32 +289,29 @@ int NocaseDict::cmp(const bp::object &other)
 #  else
 bool NocaseDict::eq(const bp::object &other)
 {
-    lmi::extract<NocaseDict&> ext_dict(other);
-    if (!ext_dict.check())
+    if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
     return m_dict.size() == other_dict.size() &&
         std::equal(m_dict.begin(), m_dict.end(), other_dict.begin());
 }
 
 bool NocaseDict::gt(const bp::object &other)
 {
-    lmi::extract<NocaseDict&> ext_dict(other);
-    if (!ext_dict.check())
+    if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
     return m_dict > other_dict;
 }
 
 bool NocaseDict::lt(const bp::object &other)
 {
-    lmi::extract<NocaseDict&> ext_dict(other);
-    if (!ext_dict.check())
+    if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &other_dict = NocaseDict(ext_dict).m_dict;
+    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
     return m_dict < other_dict;
 }
 

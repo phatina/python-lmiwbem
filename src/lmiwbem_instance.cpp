@@ -318,19 +318,21 @@ bp::object CIMInstance::repr()
 bp::object CIMInstance::getitem(const bp::object &key)
 {
     evalProperties();
-    lmi::extract<CIMProperty&> ext_property(m_properties[key]);
 
-    if (ext_property.check())
-        return static_cast<CIMProperty&>(ext_property).getPyValue();
+    bp::object item = m_properties[key];
+    if (isinstance(item, CIMProperty::type())) {
+        CIMProperty &property = lmi::extract<CIMProperty&>(item);
+        return property.getPyValue();
+    }
+
     return m_properties[key];
 }
 
 void CIMInstance::setitem(const bp::object &key, const bp::object &value)
 {
     evalProperties();
-    lmi::extract<CIMProperty> ext_property(value);
 
-    if (ext_property.check())
+    if (isinstance(value, CIMProperty::type()))
         m_properties[key] = value;
     else
         m_properties[key] = CIMProperty::create(key, value);
