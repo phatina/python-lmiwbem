@@ -87,6 +87,8 @@ public:
 
     static void init_type();
 
+    bp::object repr();
+
     void start(const bp::object &retries);
     void stop();
 

@@ -156,6 +156,8 @@ void CIMIndicationListener::init_type()
                     ":param unicode keyfile: path to X509 private key; may be None,\n"
                     "\tif cert_file also contains private key\n"
                     ":param unicode trust_store: path to trust store"))
+            .def("__repr__", &CIMIndicationListener::repr,
+                 ":returns: pretty string of the object")
             .def("start",  &CIMIndicationListener::start,
                 (bp::arg("retries") = 1),
                  "start(retries=1)\n\n"
@@ -196,6 +198,14 @@ void CIMIndicationListener::init_type()
             .add_property("handlers", &CIMIndicationListener::getPyHandlers,
                 "Property storing list of strings of handlers.\n\n"
                 ":rtype: list"));
+}
+
+bp::object CIMIndicationListener::repr()
+{
+    std::stringstream ss;
+    ss << "CIMIndicationListener(listen_address='" << m_listen_address
+       << "', port=" << m_port << ")";
+    return StringConv::asPyUnicode(ss.str());
 }
 
 void CIMIndicationListener::start(const bp::object &retries)
