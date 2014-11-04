@@ -20,10 +20,11 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <sstream>
 #include <Pegasus/Common/SSLContext.h>
 #include <Pegasus/Consumer/CIMIndicationConsumer.h>
 #include <boost/python/class.hpp>
-#include "lmiwbem_constants.h"
+#include "lmiwbem_config.h"
 #include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_extract.h"
@@ -119,7 +120,7 @@ CIMIndicationListener::CIMIndicationListener(
     , m_listen_address()
     , m_certfile()
     , m_keyfile()
-    , m_trust_store(CIMConstants::defaultTrustStore())
+    , m_trust_store(Config::defaultTrustStore())
     , m_terminating(false)
 {
     m_listen_address = lmi::extract_or_throw<std::string>(
@@ -225,7 +226,7 @@ void CIMIndicationListener::start(const bp::object &retries)
 #ifdef HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS
             Pegasus::String(m_listen_address.c_str()),
 #endif
-            m_port));
+            m_port + static_cast<Pegasus::Uint32>(i)));
 
         if (!m_listener)
             throw_RuntimeError("Can't create CIMListener");
@@ -254,8 +255,16 @@ void CIMIndicationListener::start(const bp::object &retries)
 
             // We raise the exception, when we run out of retries or TCP port
             // is out of range.
-            if (i == std_retries - 1 || ++m_port >= 65536)
-                handle_all_exceptions();
+            if (i == std_retries - 1 || m_port + i >= 65536) {
+                std::stringstream ss;
+                if (Config::isVerbose()) {
+                    ss << "CIMIndicationListener.start(";
+                    if (Config::isVerboseMore())
+                        ss << "port=" << m_port << ", port_retries=+" << std_retries;
+                    ss << ')';
+                }
+                handle_all_exceptions(ss);
+            }
         }
     }
 }

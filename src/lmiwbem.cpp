@@ -29,6 +29,7 @@
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_connection.h"
+#include "lmiwbem_config.h"
 #include "lmiwbem_constants.h"
 #include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
@@ -123,6 +124,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     NocaseDictKeyIterator::init_type();
     NocaseDictValueIterator::init_type();
     NocaseDictItemIterator::init_type();
+    Config::init_type();
     CIMInstance::init_type();
     CIMInstanceName::init_type();
     CIMMethod::init_type();

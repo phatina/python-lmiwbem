@@ -12,6 +12,7 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_class_name.h      \
 	lmiwbem_client.h          \
 	lmiwbem_connection.h      \
+	lmiwbem_config.h          \
 	lmiwbem_constants.h       \
 	lmiwbem_convert.h         \
 	lmiwbem_exception.h       \
@@ -37,6 +38,7 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_class_name.cpp    \
 	lmiwbem_client.cpp        \
 	lmiwbem_connection.cpp    \
+	lmiwbem_config.cpp        \
 	lmiwbem_constants.cpp     \
 	lmiwbem_convert.cpp       \
 	lmiwbem.cpp               \

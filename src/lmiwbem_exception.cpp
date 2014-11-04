@@ -20,7 +20,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
-#include <sstream>
 #include <boost/python/object.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
@@ -73,6 +72,11 @@ void throw_Exception(const Pegasus::Exception &e)
         (Pegasus::String("Pegasus: ") + e.getMessage()).getCString()));
 }
 
+void throw_Exception(const std::string &message)
+{
+    throw_core(CIMErrorExc, std::string("Pegasus: ") + message);
+}
+
 void throw_ConnectionError(const std::string &message, int code)
 {
     throw_core(ConnectionErrorExc, message, code);
@@ -123,47 +127,71 @@ void throw_RuntimeError(const std::string &message)
     throw_core(PyExc_RuntimeError, message);
 }
 
-void handle_all_exceptions()
+
+std::ostream &operator <<(std::ostream &ss, const Pegasus::Exception &exc)
 {
+    return ss << exc.getMessage();
+}
+
+void handle_all_exceptions(const std::string &prefix)
+{
+    std::stringstream ss(prefix);
+    handle_all_exceptions(ss);
+}
+
+void handle_all_exceptions(std::stringstream &prefix)
+{
+    if (!prefix.str().empty())
+        prefix << ": ";
+
     try {
-        // Rethrow the exception and decide, which Python exception will be
-        // raised.
+        try {
+            // Re-throw. If we got Pegasus exception, we also append the
+            // exception's message to the Python's exception message.
+            throw;
+        } catch (const Pegasus::Exception &e) {
+            prefix << e;
+        }
+
+        // Re-throw to raise proper Python exception.
         throw;
     } catch (const Pegasus::AlreadyConnectedException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_ALREADY_CONNECTED);
     } catch (const Pegasus::NotConnectedException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_NOT_CONNECTED);
     } catch (const Pegasus::InvalidLocatorException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_INVALID_LOCATOR);
     } catch (const Pegasus::CannotCreateSocketException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_CANNOT_CREATE_SOCKET);
     } catch (const Pegasus::CannotConnectException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_CANNOT_CONNECT);
     } catch (const Pegasus::ConnectionTimeoutException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_CONNECTION_TIMEOUT);
     } catch (const Pegasus::CIMClientHTTPErrorException &e) {
         throw_ConnectionError(
-            std::string(e.getCIMErrorDetail().getCString()),
+            prefix.str(),
             static_cast<int>(e.getCode()));
     } catch (const Pegasus::CIMException &e) {
-        throw_CIMError(e);
+        throw_CIMError(
+            prefix.str(),
+            static_cast<int>(e.getCode()));
     } catch (const Pegasus::BindFailedException &e) {
         throw_ConnectionError(
-            std::string(e.getMessage().getCString()),
+            prefix.str(),
             CIMConstants::CON_ERR_BIND);
     } catch (const Pegasus::Exception &e) {
-        throw_Exception(e);
+        throw_Exception(prefix.str());
     }
 }

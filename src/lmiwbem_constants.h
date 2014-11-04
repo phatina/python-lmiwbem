@@ -90,13 +90,6 @@ public:
 #    endif // UNICAST_NOT_SUPPORTED
 #  endif // HAVE_SLP
     };
-
-    static std::string defaultNamespace();
-    static std::string defaultTrustStore();
-
-private:
-    static const std::string DEF_NAMESPACE;
-    static const std::string DEF_TRUST_STORE;
 };
 
 #endif // LMIWBEM_CONSTANTS_H

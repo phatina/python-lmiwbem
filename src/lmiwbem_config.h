@@ -19,36 +19,34 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef   WBEM_CLIENT_ADDRESS_H
-#  define WBEM_CLIENT_ADDRESS_H
+#ifndef   LMIWBEM_CONFIG_H
+#  define LMIWBEM_CINFIG_H
 
-#  include <Pegasus/Common/CIMType.h>
-#  include <Pegasus/Common/String.h>
+#  include <string>
 
-class Address
+class Config
 {
 public:
-    Address();
-    Address(const Address &copy);
+    static void init_type();
 
-    bool set(Pegasus::String url);
+    static std::string defaultNamespace();
+    static std::string defaultTrustStore();
 
-    Pegasus::String hostname() const { return m_hostname; }
-    Pegasus::Uint32 port() const { return m_port; }
-
-    bool isHttps() const { return m_is_https; }
-
-    std::string asStdString() const;
-
-    Address &operator =(const Address &rhs);
+    static int exceptionVerbosity();
+    static bool isVerbose();
+    static bool isVerboseCall();
+    static bool isVerboseMore();
 
 private:
-    static const Pegasus::Uint32 DEF_HTTPS_PORT = 5989;
-    static const Pegasus::Uint32 DEF_HTTP_PORT  = 5988;
+    enum {
+        EXC_VERB_NONE,
+        EXC_VERB_CALL,
+        EXC_VERB_MORE
+    };
 
-    Pegasus::String m_hostname;
-    Pegasus::Uint32 m_port;
-    bool m_is_https;
+    static const std::string DEF_NAMESPACE;
+    static const std::string DEF_TRUST_STORE;
+    static const int DEF_EXC_VERBOSITY;
 };
 
-#endif // WBEM_CLIENT_ADDRESS_H
+#endif // LMIWBEM_CONFIG_H

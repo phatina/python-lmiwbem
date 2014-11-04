@@ -23,6 +23,7 @@
 #  define LMIWBEM_EXCEPTION_H
 
 #  include <string>
+#  include <sstream>
 #  include <boost/python/errors.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/Exception.h>
@@ -31,6 +32,7 @@
 namespace bp = boost::python;
 
 void throw_Exception(const Pegasus::Exception &e);
+void throw_Exception(const std::string &message);
 void throw_CIMError(const Pegasus::CIMException &e);
 void throw_CIMError(const std::string &message, int code = 0);
 void throw_ConnectionError(const std::string &message, int code = 0);
@@ -52,6 +54,7 @@ void throw_TypeError_member(const std::string &member)
     throw_TypeError(msg);
 }
 
-void handle_all_exceptions();
+void handle_all_exceptions(const std::string &prefix = std::string());
+void handle_all_exceptions(std::stringstream &prefix);
 
 #endif // LMIWBEM_EXCEPTION_H

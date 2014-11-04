@@ -31,7 +31,7 @@
 #include "lmiwbem_make_method.h"
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
-#include "lmiwbem_constants.h"
+#include "lmiwbem_config.h"
 #include "lmiwbem_connection.h"
 #include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
@@ -76,9 +76,22 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
             Pegasus::String(m_conn->m_password.c_str()),
             Pegasus::String(m_conn->m_cert_file.c_str()),
             Pegasus::String(m_conn->m_key_file.c_str()),
-            Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
+            Pegasus::String(Config::defaultTrustStore().c_str()));
     } catch (...) {
-        handle_all_exceptions();
+        std::stringstream ss;
+        if (Config::isVerbose()) {
+            bool connect_locally = m_conn->m_connect_locally;
+            if (connect_locally)
+                ss << "connect_locally(";
+            else
+                ss << "connect(";
+
+            if (Config::isVerboseMore() && !connect_locally) {
+                ss << "url='" << m_conn->m_client.getAddressInfo().asStdString() << '\'';
+            }
+            ss << ')';
+        }
+        handle_all_exceptions(ss);
     }
 }
 
@@ -102,7 +115,7 @@ WBEMConnection::WBEMConnection(
     , m_password()
     , m_cert_file()
     , m_key_file()
-    , m_default_namespace(CIMConstants::defaultNamespace())
+    , m_default_namespace(Config::defaultNamespace())
     , m_client()
 {
     m_connect_locally = lmi::extract_or_throw<bool>(
@@ -694,10 +707,17 @@ void WBEMConnection::connect(
             Pegasus::String(m_password.c_str()),
             Pegasus::String(std_cert_file.c_str()),
             Pegasus::String(std_key_file.c_str()),
-            Pegasus::String(CIMConstants::defaultTrustStore().c_str()));
+            Pegasus::String(Config::defaultTrustStore().c_str()));
         m_connect_locally = false;
     } catch (...) {
-        handle_all_exceptions();
+        std::stringstream ss;
+        if (Config::isVerbose()) {
+            ss << "connect(";
+            if (Config::isVerboseMore())
+                ss << "url='" << m_client.getAddressInfo().asStdString() << '\'';
+            ss << ')';
+        }
+        handle_all_exceptions(ss);
     }
 }
 
@@ -706,7 +726,10 @@ void WBEMConnection::connectLocally() try
     m_client.connectLocally();
     m_connect_locally = true;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose())
+        ss << "connect_locally()";
+    handle_all_exceptions(ss);
 }
 
 void WBEMConnection::disconnect()
@@ -803,7 +826,16 @@ bp::object WBEMConnection::createInstance(
 
     return CIMInstanceName::create(new_inst_name);
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "CreateInstance(";
+        if (Config::isVerboseMore()) {
+            CIMInstance &inst = lmi::extract<CIMInstance&>(instance);
+            ss << '\'' << inst.getPath().asStdString() << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -824,7 +856,14 @@ void WBEMConnection::deleteInstance(const bp::object &object_path) try
         cim_path);
     ScopedConnectionEnd();
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "DeleteInstance(";
+        if (Config::isVerboseMore())
+            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
 }
 
 void WBEMConnection::modifyInstance(
@@ -851,7 +890,16 @@ void WBEMConnection::modifyInstance(
         cim_property_list);
     ScopedConnectionEnd();
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "ModifyInstance(";
+        if (Config::isVerboseMore()) {
+            CIMInstance &inst = lmi::extract<CIMInstance&>(instance);
+            ss << '\'' << inst.getPath().asStdString() << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
 }
 
 bp::object WBEMConnection::enumerateInstances(
@@ -903,7 +951,19 @@ bp::object WBEMConnection::enumerateInstances(
 
     return instances;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "EnumerateInstances(";
+        if (Config::isVerboseMore()) {
+            std::string std_ns(m_default_namespace);
+            if (!isnone(ns))
+                std_ns = StringConv::asStdString(ns);
+            ss << "classname=" << StringConv::asStdString(cls) << ", "
+               << "namespace=" << std_ns;
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -936,7 +996,19 @@ bp::object WBEMConnection::enumerateInstanceNames(
 
     return instance_names;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "EnumerateInstanceNames(";
+        if (Config::isVerboseMore()) {
+            std::string std_ns(m_default_namespace);
+            if (!isnone(ns))
+                std_ns = StringConv::asStdString(ns);
+            ss << "classname='" << StringConv::asStdString(cls) << "', "
+               << "namespace='" << std_ns << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -997,7 +1069,18 @@ bp::object WBEMConnection::invokeMethod(
         CIMValue::asLMIWbemCIMValue(cim_rval),
         rparams);
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "InvokeMethod(";
+        if (Config::isVerboseMore()) {
+            std::string method_name = StringConv::asStdString(args[0]);
+            const CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(
+                args[1]);
+            ss << '\'' << method_name << "', '" << inst_name.asStdString() << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1039,7 +1122,14 @@ bp::object WBEMConnection::getInstance(
 
     return CIMInstance::create(cim_instance);
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "GetInstance(";
+        if (Config::isVerboseMore())
+            ss << '\'' << ObjectConv::asStdString(instance_name) << '\'';
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1081,7 +1171,18 @@ bp::object WBEMConnection::enumerateClasses(
 
     return classes;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "EnumerateClasses(";
+        if (Config::isVerboseMore()) {
+            std::string std_ns(m_default_namespace);
+            if (!isnone(ns))
+                std_ns = StringConv::asStdString(ns);
+            ss << "namespace='" << std_ns << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1118,7 +1219,18 @@ bp::object WBEMConnection::enumerateClassNames(
 
     return classnames;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "EnumerateClasseNames(";
+        if (Config::isVerboseMore()) {
+            std::string std_ns(m_default_namespace);
+            if (!isnone(ns))
+                std_ns = StringConv::asStdString(ns);
+            ss << "namespace='" << std_ns << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1153,7 +1265,16 @@ bp::object WBEMConnection::execQuery(
 
     return instances;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "ExecQuery(";
+        if (Config::isVerboseMore()) {
+            ss << "lang='"  << StringConv::asStdString(query_lang) << "', "
+               << "query='" << StringConv::asStdString(query) << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1189,7 +1310,19 @@ bp::object WBEMConnection::getClass(
 
     return CIMClass::create(cim_class);
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "GetClass(";
+        if (Config::isVerboseMore()) {
+            std::string std_ns(m_default_namespace);
+            if (!isnone(ns))
+                std_ns = StringConv::asStdString(ns);
+            ss << "class='" << StringConv::asStdString(cls) << "', "
+               << "namespace='" << std_ns << '\'';
+        }
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1264,7 +1397,14 @@ bp::object WBEMConnection::getAssociators(
 
     return associators;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "Associators(";
+        if (Config::isVerboseMore())
+            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1329,7 +1469,14 @@ bp::object WBEMConnection::getAssociatorNames(
 
     return associator_names;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "AssociatorNames(";
+        if (Config::isVerboseMore())
+            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1387,7 +1534,14 @@ bp::object WBEMConnection::getReferences(
 
     return references;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "References(";
+        if (Config::isVerboseMore())
+            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }
 
@@ -1435,6 +1589,13 @@ bp::object WBEMConnection::getReferenceNames(
 
     return reference_names;
 } catch (...) {
-    handle_all_exceptions();
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "ReferenceNames(";
+        if (Config::isVerboseMore())
+            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+        ss << ')';
+    }
+    handle_all_exceptions(ss);
     return None;
 }

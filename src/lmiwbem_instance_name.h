@@ -58,8 +58,9 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    bp::object str();
-    bp::object repr();
+    std::string asStdString() const;
+    bp::object str() const;
+    bp::object repr() const;
 
     bp::object getitem(const bp::object &key);
     void delitem(const bp::object &key);

@@ -47,6 +47,7 @@ public:
 
     void setVerifyCertificate(bool verify = true) { m_verify_cert = verify; }
     bool getVerifyCertificate() const { return m_verify_cert; }
+    Address getAddressInfo() const { return m_addr_info; }
 
     std::string hostname() const
     {

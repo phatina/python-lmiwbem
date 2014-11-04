@@ -21,12 +21,20 @@
 
 #include <config.h>
 #include <cerrno>
+#include <sstream>
 #include "lmiwbem_addr.h"
 
 Address::Address()
     : m_hostname("unknown")
     , m_port(Address::DEF_HTTPS_PORT)
     , m_is_https(true)
+{
+}
+
+Address::Address(const Address &copy)
+    : m_hostname(copy.m_hostname)
+    , m_port(copy.m_port)
+    , m_is_https(copy.m_is_https)
 {
 }
 
@@ -57,4 +65,26 @@ bool Address::set(Pegasus::String url)
     }
 
     return true;
+}
+
+std::string Address::asStdString() const
+{
+    std::stringstream ss;
+
+    if (m_is_https)
+        ss << "https://";
+    else
+        ss << "http://";
+
+    ss << m_hostname << ':' << m_port;
+
+    return ss.str();
+}
+
+Address &Address::operator =(const Address &rhs)
+{
+    m_hostname = rhs.m_hostname;
+    m_port = rhs.m_port;
+    m_is_https = rhs.m_is_https;
+    return *this;
 }

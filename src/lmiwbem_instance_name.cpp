@@ -353,7 +353,7 @@ bp::object CIMInstanceName::copy()
     return obj;
 }
 
-bp::object CIMInstanceName::str()
+std::string CIMInstanceName::asStdString() const
 {
     std::stringstream ss;
 
@@ -383,10 +383,16 @@ bp::object CIMInstanceName::str()
             ss << ',';
     }
 
-    return StringConv::asPyUnicode(ss.str());
+    return ss.str();
 }
 
-bp::object CIMInstanceName::repr()
+bp::object CIMInstanceName::str() const
+{
+
+    return StringConv::asPyUnicode(asStdString());
+}
+
+bp::object CIMInstanceName::repr() const
 {
     std::stringstream ss;
     ss << "CIMInstanceName(classname='" << m_classname << "', keybindings="
