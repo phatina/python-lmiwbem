@@ -127,12 +127,6 @@ void throw_RuntimeError(const std::string &message)
     throw_core(PyExc_RuntimeError, message);
 }
 
-
-std::ostream &operator <<(std::ostream &ss, const Pegasus::Exception &exc)
-{
-    return ss << exc.getMessage();
-}
-
 void handle_all_exceptions(const std::string &prefix)
 {
     std::stringstream ss(prefix);
@@ -150,7 +144,7 @@ void handle_all_exceptions(std::stringstream &prefix)
             // exception's message to the Python's exception message.
             throw;
         } catch (const Pegasus::Exception &e) {
-            prefix << e;
+            prefix << e.getMessage();
         }
 
         // Re-throw to raise proper Python exception.
