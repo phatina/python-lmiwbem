@@ -24,7 +24,6 @@
 #include <boost/python/scope.hpp>
 #include "lmiwbem_config.h"
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_util.h"
 
 namespace {
@@ -56,7 +55,7 @@ void Config::init_type()
 std::string Config::defaultNamespace() try
 {
     bp::object def_namespace(this_module().attr(KEY_DEF_NAMESPACE));
-    return lmi::extract_or_throw<std::string>(def_namespace, KEY_DEF_NAMESPACE);
+    return StringConv::asStdString(def_namespace, KEY_DEF_NAMESPACE);
 } catch (const bp::error_already_set &e) {
     this_module().attr(KEY_DEF_NAMESPACE) = StringConv::asPyUnicode(DEF_NAMESPACE);
     return DEF_NAMESPACE;
@@ -65,7 +64,7 @@ std::string Config::defaultNamespace() try
 std::string Config::defaultTrustStore() try
 {
     bp::object def_trust_store(this_module().attr(KEY_DEF_TRUST_STORE));
-    return lmi::extract_or_throw<std::string>(def_trust_store, KEY_DEF_TRUST_STORE);
+    return StringConv::asStdString(def_trust_store, KEY_DEF_TRUST_STORE);
 } catch (const bp::error_already_set &e) {
     this_module().attr(KEY_DEF_TRUST_STORE) = StringConv::asPyUnicode(DEF_TRUST_STORE);
     return DEF_TRUST_STORE;
@@ -74,7 +73,7 @@ std::string Config::defaultTrustStore() try
 int Config::exceptionVerbosity() try
 {
     bp::object exc_verbosity(this_module().attr(KEY_EXC_VERBOSITY));
-    int verbosity = lmi::extract_or_throw<int>(exc_verbosity, KEY_EXC_VERBOSITY);
+    int verbosity = Conv::as<int>(exc_verbosity, KEY_EXC_VERBOSITY);
 
     switch (verbosity) {
     case EXC_VERB_NONE:

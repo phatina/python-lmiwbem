@@ -22,7 +22,6 @@
 #include <config.h>
 #include <boost/python/class.hpp>
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_qualifier.h"
 #include "lmiwbem_util.h"
 #include "lmiwbem_value.h"
@@ -49,14 +48,14 @@ CIMQualifier::CIMQualifier(
     const bp::object &toinstance,
     const bp::object &translatable)
 {
-    m_name = lmi::extract_or_throw<std::string>(name, "name");
-    m_type = lmi::extract_or_throw<std::string>(type, "type");
+    m_name = StringConv::asStdString(name, "name");
+    m_type = StringConv::asStdString(type, "type");
     m_value = value;
-    m_is_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
-    m_is_overridable = lmi::extract_or_throw<bool>(overridable, "overridable");
-    m_is_tosubclass = lmi::extract_or_throw<bool>(tosubclass, "tosubclass");
-    m_is_toinstance = lmi::extract_or_throw<bool>(toinstance, "toinstance");
-    m_is_translatable = lmi::extract_or_throw<bool>(translatable, "translatable");
+    m_is_propagated = Conv::as<bool>(propagated, "propagated");
+    m_is_overridable = Conv::as<bool>(overridable, "overridable");
+    m_is_tosubclass = Conv::as<bool>(tosubclass, "tosubclass");
+    m_is_toinstance = Conv::as<bool>(toinstance, "toinstance");
+    m_is_translatable = Conv::as<bool>(translatable, "translatable");
 }
 
 void CIMQualifier::init_type()
@@ -162,7 +161,7 @@ bp::object CIMQualifier::create(const Pegasus::CIMQualifier &qualifier)
 bp::object CIMQualifier::create(const Pegasus::CIMConstQualifier &qualifier)
 {
     bp::object inst = CIMBase<CIMQualifier>::create();
-    CIMQualifier &fake_this = lmi::extract<CIMQualifier&>(inst);
+    CIMQualifier &fake_this = CIMQualifier::asNative(inst);
     fake_this.m_name = std::string(qualifier.getName().getString().getCString());
     fake_this.m_type = CIMTypeConv::asStdString(qualifier.getType());
     fake_this.m_value = CIMValue::asLMIWbemCIMValue(qualifier.getValue());
@@ -199,7 +198,7 @@ int CIMQualifier::cmp(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return 1;
 
-    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
 
     int rval;
     if ((rval = m_name.compare(other_qualifier.m_name)) != 0 ||
@@ -227,7 +226,7 @@ bool CIMQualifier::eq(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return false;
 
-    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
 
     return m_name == other_qualifier.m_name &&
         m_type == other_qualifier.m_type &&
@@ -244,7 +243,7 @@ bool CIMQualifier::gt(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return false;
 
-    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
 
     return m_name > other_qualifier.m_name ||
         m_type > other_qualifier.m_type ||
@@ -261,7 +260,7 @@ bool CIMQualifier::lt(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return false;
 
-    CIMQualifier &other_qualifier = lmi::extract<CIMQualifier&>(other);
+    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
 
     return m_name < other_qualifier.m_name ||
         m_type < other_qualifier.m_type ||
@@ -323,7 +322,7 @@ bp::object CIMQualifier::tomof()
 bp::object CIMQualifier::copy()
 {
     bp::object obj = CIMBase<CIMQualifier>::create();
-    CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(obj);
+    CIMQualifier &qualifier = CIMQualifier::asNative(obj);
 
     qualifier.m_name = m_name;
     qualifier.m_type = m_type;
@@ -449,12 +448,12 @@ void CIMQualifier::setIsTranslatable(bool is_translatable)
 
 void CIMQualifier::setPyName(const bp::object &name)
 {
-    m_name = lmi::extract_or_throw<std::string>(name, "name");
+    m_name = StringConv::asStdString(name, "name");
 }
 
 void CIMQualifier::setPyType(const bp::object &type)
 {
-    m_type = lmi::extract_or_throw<std::string>(type, "type");
+    m_type = StringConv::asStdString(type, "type");
 }
 
 void CIMQualifier::setPyValue(const bp::object &value)
@@ -464,25 +463,25 @@ void CIMQualifier::setPyValue(const bp::object &value)
 
 void CIMQualifier::setPyIsPropagated(const bp::object &propagated)
 {
-    m_is_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+    m_is_propagated = Conv::as<bool>(propagated, "propagated");
 }
 
 void CIMQualifier::setPyIsOverridable(const bp::object &overridable)
 {
-    m_is_overridable = lmi::extract_or_throw<bool>(overridable, "overridable");
+    m_is_overridable = Conv::as<bool>(overridable, "overridable");
 }
 
 void CIMQualifier::setPyIsToSubclass(const bp::object &tosubclass)
 {
-    m_is_tosubclass = lmi::extract_or_throw<bool>(tosubclass, "tosubclass");
+    m_is_tosubclass = Conv::as<bool>(tosubclass, "tosubclass");
 }
 
 void CIMQualifier::setPyIsToInstance(const bp::object &toinstance)
 {
-    m_is_toinstance = lmi::extract_or_throw<bool>(toinstance, "toinstance");
+    m_is_toinstance = Conv::as<bool>(toinstance, "toinstance");
 }
 
 void CIMQualifier::setPyIsTranslatable(const bp::object &translatable)
 {
-    m_is_translatable = lmi::extract_or_throw<bool>(translatable, "translatable");
+    m_is_translatable = Conv::as<bool>(translatable, "translatable");
 }

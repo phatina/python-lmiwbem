@@ -26,7 +26,6 @@
 #include "lmiwbem_class.h"
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
 #include "lmiwbem_types.h"
@@ -101,7 +100,7 @@ bp::object getPegasusValue(const Pegasus::CIMValue &value)
 template <typename T, typename R>
 R setPegasusValueCore(const bp::object &value)
 {
-    return R(lmi::extract<T>(value));
+    return R(Conv::detail::extract<T>(value)());
 }
 
 template <>
@@ -117,7 +116,7 @@ Pegasus::CIMObjectPath setPegasusValueCore<
     Pegasus::CIMObjectPath,
     Pegasus::CIMObjectPath>(const bp::object &value)
 {
-    const CIMInstanceName &path = lmi::extract<CIMInstanceName&>(value);
+    const CIMInstanceName &path = CIMInstanceName::asNative(value);
     return path.asPegasusCIMObjectPath();
 }
 
@@ -126,7 +125,7 @@ Pegasus::CIMObject setPegasusValueCore<
     Pegasus::CIMClass,
     Pegasus::CIMObject>(const bp::object &value)
 {
-    CIMClass &cls = lmi::extract<CIMClass&>(value);
+    CIMClass &cls = CIMClass::asNative(value);
     return Pegasus::CIMObject(cls.asPegasusCIMClass());
 }
 
@@ -135,7 +134,7 @@ Pegasus::CIMObject setPegasusValueCore<
     Pegasus::CIMInstance,
     Pegasus::CIMObject>(const bp::object &value)
 {
-    CIMInstance &instance = lmi::extract<CIMInstance&>(value);
+    CIMInstance &instance = CIMInstance::asNative(value);
     return Pegasus::CIMObject(instance.asPegasusCIMInstance());
 }
 
@@ -144,7 +143,7 @@ Pegasus::String setPegasusValueCore<
     Pegasus::String,
     Pegasus::String>(const bp::object &value)
 {
-    std::string std_value = lmi::extract<std::string>(value);
+    std::string std_value = StringConv::asStdString(value);
     return Pegasus::String(std_value.c_str());
 }
 
@@ -231,7 +230,7 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
     bp::object value_type_check = is_array ? value[0] : value;
 
     if (isinstance(value_type_check, CIMType::type())) {
-        std::string type = lmi::extract<std::string>(value_type_check.attr("cimtype"));
+        std::string type = StringConv::asStdString(value_type_check.attr("cimtype"));
         if (type == "uint8")
             return setPegasusValueS<Pegasus::Uint8>(value, is_array);
         else if (type == "sint8")
@@ -292,7 +291,7 @@ std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
     bp::object value_type_check = is_array ? value[0] : value;
 
     if (isinstance(value_type_check, CIMType::type()))
-        return lmi::extract<std::string>(value_type_check.attr("cimtype"));
+        return StringConv::asStdString(value_type_check.attr("cimtype"));
     else if (isinstance(value_type_check, CIMInstance::type()))
         return std::string("string"); // XXX: instance?
     else if (isinstance(value_type_check, CIMClass::type()))

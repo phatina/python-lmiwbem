@@ -31,7 +31,7 @@
 #include "lmiwbem_class.h"
 #include "lmiwbem_connection.h"
 #include "lmiwbem_constants.h"
-#include "lmiwbem_extract.h"
+#include "lmiwbem_convert.h"
 #include "lmiwbem_util.h"
 
 // Define a Python's equivalent of None
@@ -133,9 +133,9 @@ bool cim_issubclass(
     const bp::object &superclass,
     const bp::object &subclass)
 {
-    WBEMConnection &conn = lmi::extract_or_throw<WBEMConnection&>(ch, "ch");
-    std::string std_ns = lmi::extract_or_throw<std::string>(ns, "ns");
-    std::string std_superclass = lmi::extract_or_throw<std::string>(
+    WBEMConnection &conn = WBEMConnection::asNative(ch, "ch");
+    std::string std_ns = StringConv::asStdString(ns, "ns");
+    std::string std_superclass = StringConv::asStdString(
         superclass, "superclass");
 
     std::string std_subclass;
@@ -146,11 +146,11 @@ bool cim_issubclass(
         std_lsuperclass.begin(), ::tolower);
 
     if (isinstance(subclass, CIMClass::type())) {
-        const CIMClass &cim_subclass = lmi::extract<CIMClass&>(subclass);
+        const CIMClass &cim_subclass = CIMClass::asNative(subclass);
         std_subclass = cim_subclass.getClassname();
         std_subsuperclass = cim_subclass.getSuperClassname();
     } else {
-        std_subclass = lmi::extract_or_throw<std::string>(subclass, "subclass");
+        std_subclass = StringConv::asStdString(subclass, "subclass");
     }
 
     while (1) {
@@ -167,7 +167,7 @@ bool cim_issubclass(
             bp::object cls = conn.getClass(bp::str(std_subclass.c_str()),
                 bp::str(std_ns.c_str()), true, false, false, bp::list());
 
-            const CIMClass &cim_subclass = lmi::extract<CIMClass&>(cls);
+            const CIMClass &cim_subclass = CIMClass::asNative(cls);
             std_subsuperclass = cim_subclass.getSuperClassname();
         }
 
@@ -185,7 +185,7 @@ bool cim_issubclass(
 
 bool is_error(const bp::object &value)
 {
-    int ivalue = lmi::extract_or_throw<int>(value, "value");
+    int ivalue = Conv::as<int>(value, "value");
 
     switch (ivalue) {
     case CIMConstants::CIM_ERR_FAILED:

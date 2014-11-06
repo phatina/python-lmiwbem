@@ -30,13 +30,42 @@
 #  include <Pegasus/Common/String.h>
 #include "lmiwbem_class.h"
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
 #include "lmiwbem_types.h"
 #include "lmiwbem_util.h"
 
 boost::shared_ptr<CIMTypeConv::CIMTypeHolder> CIMTypeConv::CIMTypeHolder::s_instance;
+
+namespace Conv {
+
+namespace detail {
+
+extract<std::string>::extract(const bp::object &obj)
+    : m_good(true)
+    , m_str()
+{
+    if (isunicode(obj)) {
+#  if PY_MAJOR_VERSION < 3
+        m_str = std::string(
+            PyString_AsString(
+                PyUnicode_EncodeUTF8(
+                    PyUnicode_AsUnicode(obj.ptr()),
+                    PyUnicode_GetSize(obj.ptr()),
+                    NULL)));
+    } else if (isstring(obj)) {
+        m_str = std::string(PyString_AsString(obj.ptr()));
+#  else
+        m_str = std::string(PyUnicode_AsUTF8(obj.ptr()));
+#  endif // PY_MAJOR_VERSION
+    } else {
+        m_good = false;
+    }
+}
+
+} // namespace detail
+
+} // namespace Conv
 
 std::string CIMTypeConv::asStdString(Pegasus::CIMType type)
 {
@@ -113,11 +142,11 @@ Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
     Pegasus::CIMPropertyList cim_property_list;
 
     if (!isnone(property_list)) {
-        bp::list py_property_list(lmi::get_or_throw<bp::list>(property_list, message));
+        bp::list py_property_list(Conv::get<bp::list>(property_list, message));
         const int cnt = bp::len(py_property_list);
         Pegasus::Array<Pegasus::CIMName> property_arr(cnt);
         for (int i = 0; i < cnt; ++i) {
-            std::string property = lmi::extract<std::string>(py_property_list[i]);
+            std::string property = StringConv::asStdString(py_property_list[i]);
             property_arr[i] = Pegasus::CIMName(property.c_str());
         }
         cim_property_list.set(property_arr);
@@ -143,32 +172,16 @@ bp::object ObjectConv::asPyUnicode(const bp::object &obj)
     return bp::object(bp::handle<>(PyObject_Unicode(obj.ptr())));
 }
 
-std::string StringConv::asStdString(const bp::object &obj, bool &good)
-{
-    good = true;
-    if (isunicode(obj)) {
-#  if PY_MAJOR_VERSION < 3
-        return std::string(
-            PyString_AsString(
-                PyUnicode_EncodeUTF8(
-                    PyUnicode_AsUnicode(obj.ptr()),
-                    PyUnicode_GetSize(obj.ptr()),
-                    NULL)));
-    } else if (isstring(obj)) {
-        return std::string(PyString_AsString(obj.ptr()));
-#  else
-        return std::string(PyUnicode_AsUTF8(obj.ptr()));
-#  endif // PY_MAJOR_VERSION
-    }
-
-    good = false;
-    return std::string();
-}
-
 std::string StringConv::asStdString(const bp::object &obj)
 {
-    bool good;
-    return asStdString(obj, good);
+    return Conv::as<std::string>(obj);
+}
+
+std::string StringConv::asStdString(
+    const bp::object &obj,
+    const std::string &member)
+{
+    return Conv::as<std::string>(obj, member);
 }
 
 bp::object StringConv::asPyUnicode(const char *str)

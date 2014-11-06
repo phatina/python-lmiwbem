@@ -28,7 +28,7 @@
 #  include <boost/python/raw_function.hpp>
 #  include <boost/mpl/vector/vector10.hpp>
 #  include <boost/limits.hpp>
-#  include "lmiwbem_extract.h"
+#  include "lmiwbem_convert.h"
 
 namespace bp = boost::python;
 
@@ -48,7 +48,7 @@ public:
         bp::object args_obj(rargs);
 
         // Extract a C++ reference to object, which is about to call raw method
-        C &fake_this = lmi::extract<C&>(bp::object(args_obj[0]));
+        C &fake_this = Conv::as<C&>(bp::object(args_obj[0]));
 
         // Return boost::python object containing the raw method call
         return bp::incref(

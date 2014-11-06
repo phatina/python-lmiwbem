@@ -25,7 +25,6 @@
 #include <boost/python/dict.hpp>
 #include "lmiwbem_class_name.h"
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_util.h"
 
 CIMClassName::CIMClassName()
@@ -40,9 +39,9 @@ CIMClassName::CIMClassName(
     const bp::object &namespace_,
     const bp::object &hostname)
 {
-    m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
-    m_namespace = lmi::extract_or_throw<std::string>(namespace_, "namespace");
-    m_hostname  = lmi::extract_or_throw<std::string>(hostname, "hostname");
+    m_classname = StringConv::asStdString(classname, "classname");
+    m_namespace = StringConv::asStdString(namespace_, "namespace");
+    m_hostname  = StringConv::asStdString(hostname, "hostname");
 }
 
 void CIMClassName::init_type()
@@ -98,7 +97,7 @@ bp::object CIMClassName::create(
     const std::string &hostname)
 {
     bp::object inst = CIMBase<CIMClassName>::create();
-    CIMClassName &classname = lmi::extract<CIMClassName&>(inst);
+    CIMClassName &classname = CIMClassName::asNative(inst);
 
     classname.m_classname = classname_;
     classname.m_namespace = namespace_;
@@ -113,7 +112,7 @@ int CIMClassName::cmp(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return 1;
 
-    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+    CIMClassName &other_classname = CIMClassName::asNative(other);
 
     int rval;
     if ((rval = m_classname.compare(other_classname.m_classname)) != 0 ||
@@ -131,7 +130,7 @@ bool CIMClassName::eq(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return false;
 
-    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+    CIMClassName &other_classname = CIMClassName::asNative(other);
 
     return m_classname == other_classname.m_classname &&
         m_namespace == other_classname.m_namespace &&
@@ -143,7 +142,7 @@ bool CIMClassName::gt(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return false;
 
-    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+    CIMClassName &other_classname = CIMClassName::asNative(other);
 
     return m_classname > other_classname.m_classname ||
         m_namespace > other_classname.m_namespace ||
@@ -155,7 +154,7 @@ bool CIMClassName::lt(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return false;
 
-    CIMClassName &other_classname = lmi::extract<CIMClassName&>(other);
+    CIMClassName &other_classname = CIMClassName::asNative(other);
 
     return m_classname < other_classname.m_classname ||
         m_namespace < other_classname.m_namespace ||
@@ -188,7 +187,7 @@ bp::object CIMClassName::repr()
 bp::object CIMClassName::copy()
 {
     bp::object obj = CIMBase<CIMClassName>::create();
-    CIMClassName &classname = lmi::extract<CIMClassName&>(obj);
+    CIMClassName &classname = CIMClassName::asNative(obj);
 
     classname.m_classname = m_classname;
     classname.m_namespace = m_namespace;
@@ -244,15 +243,15 @@ void CIMClassName::setHostname(const std::string &hostname)
 
 void CIMClassName::setPyClassname(const bp::object &classname)
 {
-    m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
+    m_classname = StringConv::asStdString(classname, "classname");
 }
 
 void CIMClassName::setPyNamespace(const bp::object &namespace_)
 {
-    m_namespace = lmi::extract_or_throw<std::string>(namespace_, "namespace");
+    m_namespace = StringConv::asStdString(namespace_, "namespace");
 }
 
 void CIMClassName::setPyHostname(const bp::object &hostname)
 {
-    m_hostname = lmi::extract_or_throw<std::string>(hostname, "hostname");
+    m_hostname = StringConv::asStdString(hostname, "hostname");
 }

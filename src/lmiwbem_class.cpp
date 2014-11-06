@@ -27,7 +27,6 @@
 #include <Pegasus/Common/CIMMethod.h>
 #include "lmiwbem_class.h"
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_method.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_property.h"
@@ -53,11 +52,11 @@ CIMClass::CIMClass(
     const bp::object &methods,
     const bp::object &superclass)
 {
-    m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
-    m_super_classname = lmi::extract_or_throw<std::string>(superclass, "superclass");
-    m_properties = lmi::get_or_throw<NocaseDict, bp::dict>(properties, "properties");
-    m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
-    m_methods = lmi::get_or_throw<NocaseDict, bp::dict>(methods, "methods");
+    m_classname = StringConv::asStdString(classname, "classname");
+    m_super_classname = StringConv::asStdString(superclass, "superclass");
+    m_properties = Conv::get<NocaseDict, bp::dict>(properties, "properties");
+    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_methods = Conv::get<NocaseDict, bp::dict>(methods, "methods");
 }
 
 void CIMClass::init_type()
@@ -127,7 +126,7 @@ void CIMClass::init_type()
 bp::object CIMClass::create(const Pegasus::CIMClass &cls)
 {
     bp::object inst = CIMBase<CIMClass>::create();
-    CIMClass &fake_this = lmi::extract<CIMClass&>(inst);
+    CIMClass &fake_this = CIMClass::asNative(inst);
 
     // Store list of properties for lazy evaluation
     fake_this.m_rc_class_properties.set(std::list<Pegasus::CIMConstProperty>());
@@ -165,24 +164,24 @@ Pegasus::CIMClass CIMClass::asPegasusCIMClass()
         Pegasus::CIMName(m_super_classname.c_str()));
 
     // Add all the properties
-    const NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
+    const NocaseDict &properties = NocaseDict::asNative(getPyProperties());
     nocase_map_t::const_iterator it;
     for (it = properties.begin(); it != properties.end(); ++it) {
-        CIMProperty &property = lmi::extract<CIMProperty&>(it->second);
+        CIMProperty &property = CIMProperty::asNative(it->second);
         cls.addProperty(property.asPegasusCIMProperty());
     }
 
     // Add all the qualifiers
-    const NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
+    const NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
     for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
-        CIMQualifier &qualifier = lmi::extract<CIMQualifier&>(it->second);
+        CIMQualifier &qualifier = CIMQualifier::asNative(it->second);
         cls.addQualifier(qualifier.asPegasusCIMQualifier());
     }
 
     // Add all the methods
-    const NocaseDict &methods = lmi::extract<NocaseDict&>(getPyMethods());
+    const NocaseDict &methods = NocaseDict::asNative(getPyMethods());
     for (it = methods.begin(); it != methods.end(); ++it) {
-        CIMMethod &method = lmi::extract<CIMMethod&>(it->second);
+        CIMMethod &method = CIMMethod::asNative(it->second);
         cls.addMethod(method.asPegasusCIMMethod());
     }
 
@@ -195,7 +194,7 @@ int CIMClass::cmp(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return 1;
 
-    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+    CIMClass &other_class = CIMClass::asNative(other);
 
     int rval;
     if ((rval = m_classname.compare(other_class.m_classname)) != 0 ||
@@ -215,7 +214,7 @@ bool CIMClass::eq(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return false;
 
-    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+    CIMClass &other_class = CIMClass::asNative(other);
 
     return m_classname == other_class.m_classname &&
         m_super_classname == other_class.m_super_classname &&
@@ -229,7 +228,7 @@ bool CIMClass::gt(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return false;
 
-    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+    CIMClass &other_class = CIMClass::asNative(other);
 
     return m_classname > other_class.m_classname ||
         m_super_classname > other_class.m_super_classname ||
@@ -243,7 +242,7 @@ bool CIMClass::lt(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return false;
 
-    CIMClass &other_class = lmi::extract<CIMClass&>(other);
+    CIMClass &other_class = CIMClass::asNative(other);
 
     return m_classname < other_class.m_classname ||
         m_super_classname < other_class.m_super_classname ||
@@ -273,10 +272,10 @@ bp::object CIMClass::repr()
 bp::object CIMClass::copy()
 {
     bp::object obj = CIMBase<CIMClass>::create();
-    CIMClass &cls = lmi::extract<CIMClass&>(obj);
-    NocaseDict &properties = lmi::extract<NocaseDict&>(getPyProperties());
-    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
-    NocaseDict &methods    = lmi::extract<NocaseDict&>(getPyMethods());
+    CIMClass &cls = CIMClass::asNative(obj);
+    NocaseDict &properties = NocaseDict::asNative(getPyProperties());
+    NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
+    NocaseDict &methods    = NocaseDict::asNative(getPyMethods());
 
     cls.m_classname = m_classname;
     cls.m_super_classname = m_super_classname;
@@ -367,17 +366,17 @@ void CIMClass::setSuperClassname(const std::string &super_classname)
 
 void CIMClass::setPyClassname(const bp::object &classname)
 {
-    m_classname = lmi::extract_or_throw<std::string>(classname, "classname");
+    m_classname = StringConv::asStdString(classname, "classname");
 }
 
 void CIMClass::setPySuperClassname(const bp::object &super_classname)
 {
-    m_super_classname = lmi::extract_or_throw<std::string>(super_classname, "superclass");
+    m_super_classname = StringConv::asStdString(super_classname, "superclass");
 }
 
 void CIMClass::setPyProperties(const bp::object &properties)
 {
-    m_properties = lmi::get_or_throw<NocaseDict, bp::dict>(properties, "properties");
+    m_properties = Conv::get<NocaseDict, bp::dict>(properties, "properties");
 
     // Unref cached resource, it will never be used
     m_rc_class_properties.release();
@@ -385,7 +384,7 @@ void CIMClass::setPyProperties(const bp::object &properties)
 
 void CIMClass::setPyQualifiers(const bp::object &qualifiers)
 {
-    m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
     m_rc_class_qualifiers.release();
@@ -393,7 +392,7 @@ void CIMClass::setPyQualifiers(const bp::object &qualifiers)
 
 void CIMClass::setPyMethods(const bp::object &methods)
 {
-    m_methods = lmi::get_or_throw<NocaseDict, bp::dict>(methods, "methods");
+    m_methods = Conv::get<NocaseDict, bp::dict>(methods, "methods");
 
     // Unref cached resource, it will never be used
     m_rc_class_methods.release();

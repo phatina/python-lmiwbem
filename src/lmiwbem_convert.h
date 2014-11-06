@@ -21,10 +21,12 @@
 
 #  include <map>
 #  include <string>
+#  include <boost/python/extract.hpp>
 #  include <boost/python/to_python_converter.hpp>
 #  include <Pegasus/Common/CIMType.h>
 #  include "lmiwbem.h"
 #  include "lmiwbem_constants.h"
+#  include "lmiwbem_exception.h"
 
 BOOST_PYTHON_BEGIN
 class object;
@@ -67,6 +69,92 @@ DECL_TO_CONVERTER(PegasusChar16ToPythonUint16, Pegasus::Char16);
 DECL_TO_CONVERTER(PegasusCIMObjectPathToPythonCIMInstanceName, Pegasus::CIMObjectPath);
 DECL_TO_CONVERTER(PegasusCIMObjectToPythonCIMObject, Pegasus::CIMObject);
 DECL_TO_CONVERTER(CIMConstantsCIMErrorToPythonInt, CIMConstants::CIMError);
+
+namespace Conv {
+
+namespace detail {
+
+template <typename T>
+class extract: public bp::extract<T>
+{
+public:
+    extract(PyObject *pyobj): bp::extract<T>(pyobj) { }
+    extract(const bp::object &obj): bp::extract<T>(obj) { }
+};
+
+template <>
+class extract<std::string>
+{
+public:
+    extract(const bp::object &obj);
+    bool check() const { return m_good; }
+    operator std::string() { return m_str; }
+    std::string operator ()() { return m_str; }
+
+private:
+    bool m_good;
+    std::string m_str;
+};
+
+template <typename T>
+class get
+{
+public:
+    get(const bp::object &obj): m_ext(obj) { }
+    bool check() const { return m_ext.check(); }
+    operator T() { return T(m_ext); }
+private:
+    extract<T> m_ext;
+};
+
+template <typename T>
+void throw_if_fail(
+    const extract<T> &ext_obj,
+    const std::string &obj_name)
+{
+    if (ext_obj.check())
+        return;
+    throw_TypeError_member<T>(obj_name);
+}
+
+} // namespace detail
+
+template<typename T>
+T as(
+    const bp::object &obj,
+    const std::string &obj_name = std::string("variable"))
+{
+    detail::extract<T> ext_obj(obj);
+    //if (!ext_obj.check())
+    //    throw_TypeError_member<T>(obj_name);
+    detail::throw_if_fail<T>(ext_obj, obj_name);
+    return ext_obj();
+}
+
+template <typename T>
+bp::object get(
+    const bp::object &obj,
+    const std::string &obj_name = std::string("variable"))
+{
+    detail::get<T> get_obj(obj);
+    if (!get_obj.check())
+        throw_TypeError_member<T>(obj_name);
+    return obj;
+}
+
+template <typename T, typename U>
+bp::object get(
+    const bp::object &obj,
+    const std::string &obj_name = std::string("variable"))
+{
+    detail::get<T> get_objT(obj);
+    detail::get<U> get_objU(obj);
+    if (!get_objT.check() && !get_objU.check())
+        throw_TypeError_member<T>(obj_name);
+    return obj;
+}
+
+} // namespace Conv
 
 class CIMTypeConv
 {
@@ -119,8 +207,8 @@ public:
 class StringConv
 {
 public:
-    static std::string asStdString(const bp::object &obj, bool &good);
     static std::string asStdString(const bp::object &obj);
+    static std::string asStdString(const bp::object &obj, const std::string &member);
     static bp::object  asPyUnicode(const char *str);
     static bp::object  asPyUnicode(const std::string &str);
     static bp::object  asPyUnicode(const Pegasus::String &str);

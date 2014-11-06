@@ -25,7 +25,6 @@
 #include <boost/python/dict.hpp>
 #include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_property.h"
 #include "lmiwbem_qualifier.h"
@@ -58,27 +57,24 @@ CIMProperty::CIMProperty(
     const bp::object &is_array,
     const bp::object &reference_class)
 {
-    m_name = lmi::extract_or_throw<std::string>(name, "name");
+    m_name = StringConv::asStdString(name, "name");
     if (!isnone(type)) {
-        m_type = lmi::extract_or_throw<std::string>(type, "type");
+        m_type = StringConv::asStdString(type, "type");
         m_is_array = isnone(is_array) ?
             static_cast<bool>(PyList_Check(value.ptr())) :
-            lmi::extract_or_throw<bool>(is_array, "is_array");
-        m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
+            Conv::as<bool>(is_array, "is_array");
+        m_array_size = Conv::as<int>(array_size, "array_size");
     } else {
         // Deduce the value type
         m_type = CIMValue::LMIWbemCIMValueType(value);
         m_is_array = static_cast<bool>(PyList_Check(value.ptr()));
         m_array_size = m_is_array ? bp::len(value) : 0;
     }
-    m_class_origin = lmi::extract_or_throw<std::string>(
-        class_origin, "class_origin");
-    m_reference_class = lmi::extract_or_throw<std::string>(
-        reference_class, "reference_class");
-    m_is_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+    m_class_origin = StringConv::asStdString(class_origin, "class_origin");
+    m_reference_class = StringConv::asStdString(reference_class, "reference_class");
+    m_is_propagated = Conv::as<bool>(propagated, "propagated");
     m_value = value;
-    m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(
-        qualifiers, "qualifiers");
+    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 }
 
 void CIMProperty::init_type()
@@ -181,7 +177,7 @@ void CIMProperty::init_type()
 bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
 {
     bp::object inst = CIMBase<CIMProperty>::create();
-    CIMProperty &fake_this = lmi::extract<CIMProperty&>(inst);
+    CIMProperty &fake_this = CIMProperty::asNative(inst);
     fake_this.m_name = property.getName().getString().getCString();
     fake_this.m_type = CIMTypeConv::asStdString(property.getType());
     fake_this.m_class_origin = property.getClassOrigin().getString().getCString();
@@ -231,7 +227,7 @@ int CIMProperty::cmp(const bp::object &other)
     if (!isinstance(other, CIMProperty::type()))
         return 1;
 
-    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+    CIMProperty &other_property = CIMProperty::asNative(other);
 
     int rval;
     if ((rval = m_name.compare(other_property.m_name)) != 0 ||
@@ -258,7 +254,7 @@ bool CIMProperty::eq(const bp::object &other)
     if (!isinstance(other, CIMProperty::type()))
         return false;
 
-    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+    CIMProperty &other_property = CIMProperty::asNative(other);
 
     return m_name == other_property.m_name &&
         m_type == other_property.m_type &&
@@ -276,7 +272,7 @@ bool CIMProperty::gt(const bp::object &other)
     if (!isinstance(other, CIMProperty::type()))
         return false;
 
-    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+    CIMProperty &other_property = CIMProperty::asNative(other);
 
     return m_name > other_property.m_name ||
         m_type > other_property.m_type ||
@@ -294,7 +290,7 @@ bool CIMProperty::lt(const bp::object &other)
     if (!isinstance(other, CIMProperty::type()))
         return false;
 
-    CIMProperty &other_property = lmi::extract<CIMProperty&>(other);
+    CIMProperty &other_property = CIMProperty::asNative(other);
 
     return m_name < other_property.m_name ||
         m_type < other_property.m_type ||
@@ -331,8 +327,8 @@ bp::object CIMProperty::repr()
 bp::object CIMProperty::copy()
 {
     bp::object obj = CIMBase<CIMProperty>::create();
-    CIMProperty &property = lmi::extract<CIMProperty&>(obj);
-    NocaseDict &qualifiers = lmi::extract<NocaseDict&>(getPyQualifiers());
+    CIMProperty &property = CIMProperty::asNative(obj);
+    NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
 
     property.m_name = m_name;
     property.m_type = m_type;
@@ -481,12 +477,12 @@ void CIMProperty::setIsPropagated(bool is_propagated)
 
 void CIMProperty::setPyName(const bp::object &name)
 {
-    m_name = lmi::extract_or_throw<std::string>(name, "name");
+    m_name = StringConv::asStdString(name, "name");
 }
 
 void CIMProperty::setPyType(const bp::object &type)
 {
-    m_type = lmi::extract_or_throw<std::string>(type, "type");
+    m_type = StringConv::asStdString(type, "type");
 }
 
 void CIMProperty::setPyValue(const bp::object &value)
@@ -499,34 +495,34 @@ void CIMProperty::setPyValue(const bp::object &value)
 
 void CIMProperty::setPyClassOrigin(const bp::object &class_origin)
 {
-    m_class_origin = lmi::extract_or_throw<std::string>(class_origin,
+    m_class_origin = StringConv::asStdString(class_origin,
         "class_origin");
 }
 
 void CIMProperty::setPyReferenceClass(const bp::object &reference_class)
 {
-    m_reference_class = lmi::extract_or_throw<std::string>(reference_class,
+    m_reference_class = StringConv::asStdString(reference_class,
         "reference_class");
 }
 
 void CIMProperty::setPyArraySize(const bp::object &array_size)
 {
-    m_array_size = lmi::extract_or_throw<int>(array_size, "array_size");
+    m_array_size = Conv::as<int>(array_size, "array_size");
 }
 
 void CIMProperty::setPyIsArray(const bp::object &is_array)
 {
-    m_is_array = lmi::extract_or_throw<bool>(is_array, "is_array");
+    m_is_array = Conv::as<bool>(is_array, "is_array");
 }
 
 void CIMProperty::setPyIsPropagated(const bp::object &propagated)
 {
-    m_is_propagated = lmi::extract_or_throw<bool>(propagated, "propagated");
+    m_is_propagated = Conv::as<bool>(propagated, "propagated");
 }
 
 void CIMProperty::setPyQualifiers(const bp::object &qualifiers)
 {
-    m_qualifiers = lmi::get_or_throw<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
     m_rc_prop_qualifiers.release();

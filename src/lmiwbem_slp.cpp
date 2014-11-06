@@ -29,8 +29,8 @@
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
+#include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_slp.h"
 #include "lmiwbem_util.h"
 
@@ -138,13 +138,10 @@ bp::object SLP::discover(
     const bp::object &filter,
     const bp::object &async)
 {
-    std::string std_srvtype = lmi::extract_or_throw<std::string>(
-        srvtype, "srvtype");
-    std::string std_scopelist = lmi::extract_or_throw<std::string>(
-        scopelist, "scopelist");
-    std::string std_filter = lmi::extract_or_throw<std::string>(
-        filter, "filter");
-    bool std_async = lmi::extract_or_throw<bool>(async, "async");
+    std::string std_srvtype = StringConv::asStdString(srvtype, "srvtype");
+    std::string std_scopelist = StringConv::asStdString(scopelist, "scopelist");
+    std::string std_filter = StringConv::asStdString(filter, "filter");
+    bool std_async = Conv::as<bool>(async, "async");
 
     // Open SLP handle.
     ScopedSLPHandle hslp(std_async);
@@ -174,13 +171,10 @@ bp::object SLP::discoverAttrs(
     const bp::object &attrids,
     const bp::object &async)
 {
-    std::string std_srvurl = lmi::extract_or_throw<std::string>(
-        srvurl, "srvurl");
-    std::string std_scopelist = lmi::extract_or_throw<std::string>(
-        scopelist, "scopelist");
-    std::string std_attrids = lmi::extract_or_throw<std::string>(
-        attrids, "attrids");
-    bool std_async = lmi::extract_or_throw<bool>(async, "async");
+    std::string std_srvurl = StringConv::asStdString(srvurl, "srvurl");
+    std::string std_scopelist = StringConv::asStdString(scopelist, "scopelist");
+    std::string std_attrids = StringConv::asStdString(attrids, "attrids");
+    bool std_async = Conv::as<bool>(async, "async");
 
     // Open SLP handle.
     ScopedSLPHandle hslp(std_async);
@@ -220,11 +214,11 @@ SLPResult::SLPResult(
     const bp::object &family,
     const bp::object &srvpart)
 {
-    m_srvtype = lmi::extract_or_throw<std::string>(srvtype, "srvtype");
-    m_host = lmi::extract_or_throw<std::string>(host, "host");
-    m_port = lmi::extract_or_throw<int>(port, "port");
-    m_family = lmi::extract_or_throw<std::string>(family, "family");
-    m_srvpart = lmi::extract_or_throw<std::string>(srvpart, "srvpart");
+    m_srvtype = StringConv::asStdString(srvtype, "srvtype");
+    m_host = StringConv::asStdString(host, "host");
+    m_port = Conv::as<int>(port, "port");
+    m_family = StringConv::asStdString(family, "family");
+    m_srvpart = StringConv::asStdString(srvpart, "srvpart");
 }
 
 void SLPResult::init_type()
@@ -279,7 +273,7 @@ void SLPResult::init_type()
 bp::object SLPResult::create(const SLPSrvURL *url)
 {
     bp::object inst = CIMBase<SLPResult>::create();
-    SLPResult &fake_this = lmi::extract<SLPResult&>(inst);
+    SLPResult &fake_this = SLPResult::asNative(inst);
 
     fake_this.m_srvtype = std::string(url->s_pcSrvType);
     fake_this.m_host = std::string(url->s_pcHost);
@@ -301,25 +295,25 @@ std::string SLPResult::repr()
 
 void SLPResult::setSrvType(const bp::object &srvtype)
 {
-    m_srvtype = lmi::extract_or_throw<std::string>(srvtype, "srvtype");
+    m_srvtype = StringConv::asStdString(srvtype, "srvtype");
 }
 
 void SLPResult::setHost(const bp::object &host)
 {
-    m_host = lmi::extract_or_throw<std::string>(host, "host");
+    m_host = StringConv::asStdString(host, "host");
 }
 
 void SLPResult::setFamily(const bp::object &family)
 {
-    m_family = lmi::extract_or_throw<std::string>(family, "family");
+    m_family = StringConv::asStdString(family, "family");
 }
 
 void SLPResult::setSrvPart(const bp::object &srvpart)
 {
-    m_srvpart = lmi::extract_or_throw<std::string>(srvpart, "srvpart");
+    m_srvpart = StringConv::asStdString(srvpart, "srvpart");
 }
 
 void SLPResult::setPort(const bp::object &port)
 {
-    m_port = lmi::extract_or_throw<int>(port, "port");
+    m_port = Conv::as<int>(port, "port");
 }

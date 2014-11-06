@@ -67,6 +67,7 @@ DEF_TYPE_NAME_TYPE(bp::dict, dict);
 DEF_TYPE_NAME_TYPE(bp::list, list);
 DEF_TYPE_NAME_TYPE(bp::tuple, tuple);
 DEF_TYPE_NAME_TYPE(std::string, string);
+DEF_TYPE_NAME_TYPE(std::string&, string);
 
 LMIWBEM_END
 

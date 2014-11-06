@@ -27,7 +27,7 @@
 #  include <boost/python/object.hpp>
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
-#  include "lmiwbem_extract.h"
+#  include "lmiwbem_convert.h"
 
 namespace bp = boost::python;
 
@@ -130,7 +130,7 @@ protected:
     static bp::object create(const nocase_map_t &dict)
     {
         bp::object inst = CIMBase<T>::create();
-        T &fake_this = lmi::extract<T&>(inst);
+        T &fake_this = Conv::as<T&>(inst);
         fake_this.m_dict = dict;
         fake_this.m_iter = fake_this.m_dict.begin();
         return inst;

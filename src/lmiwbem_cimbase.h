@@ -23,6 +23,7 @@
 #  define LMIWBEM_CIMBASE
 
 #  include <boost/python/object.hpp>
+#  include "lmiwbem_convert.h"
 
 namespace bp = boost::python;
 
@@ -44,6 +45,18 @@ public:
         const V &param2)
     {
         return s_class(param1, param2);
+    }
+
+    static T &asNative(const bp::object &obj)
+    {
+        return Conv::as<T&>(obj);
+    }
+
+    static T &asNative(
+        const bp::object &obj,
+        const std::string &member)
+    {
+        return Conv::as<T&>(obj, member);
     }
 
 private:

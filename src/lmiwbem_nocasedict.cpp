@@ -28,7 +28,6 @@
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
 #include "lmiwbem_convert.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_util.h"
 
@@ -94,14 +93,14 @@ void NocaseDict::init_type()
 bp::object NocaseDict::create(const bp::object &d)
 {
     bp::object inst = create();
-    NocaseDict& nocase_dict = lmi::extract<NocaseDict&>(inst);
+    NocaseDict& nocase_dict = NocaseDict::asNative(inst);
     nocase_dict.update(d);
     return inst;
 }
 
 void NocaseDict::delitem(const bp::object &key)
 {
-    std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+    std::string std_key = StringConv::asStdString(key, "key");
 
     nocase_map_t::iterator found = m_dict.find(std_key);
     if (found == m_dict.end())
@@ -112,13 +111,13 @@ void NocaseDict::delitem(const bp::object &key)
 
 void NocaseDict::setitem(const bp::object &key, const bp::object &value)
 {
-    std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+    std::string std_key = StringConv::asStdString(key, "key");
     m_dict[std_key] = value;
 }
 
 bp::object NocaseDict::getitem(const bp::object &key)
 {
-    std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+    std::string std_key = StringConv::asStdString(key, "key");
 
     nocase_map_t::const_iterator found = m_dict.find(std_key);
     if (found == m_dict.end())
@@ -193,7 +192,7 @@ bp::object NocaseDict::iteritems()
 
 bp::object NocaseDict::haskey(const bp::object &key) const
 {
-    std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+    std::string std_key = StringConv::asStdString(key, "key");
     return bp::object(m_dict.find(std_key) != m_dict.end());
 }
 
@@ -204,9 +203,8 @@ bp::object NocaseDict::len() const
 
 void NocaseDict::update(const bp::object &d)
 {
-    lmi::extract<NocaseDict&> ext_nocasedict(d);
     if (isinstance(d, type())) {
-        NocaseDict &nocasedict = lmi::extract<NocaseDict&>(d);
+        NocaseDict &nocasedict = NocaseDict::asNative(d);
         // Update from NocaseDict
         nocase_map_t::iterator it;
         for (it = nocasedict.m_dict.begin(); it != nocasedict.m_dict.end(); ++it) {
@@ -219,12 +217,12 @@ void NocaseDict::update(const bp::object &d)
         }
     } else if (isdict(d)) {
         // Update from boost::python::dict
-        bp::dict dict = lmi::extract<bp::dict>(d);
+        bp::dict dict(Conv::as<bp::dict>(d));
         const bp::list &keys = dict.keys();
         const ssize_t len = bp::len(keys);
         for (int i = 0; i < len; ++i) {
             bp::object key(keys[i]);
-            std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+            std::string std_key = StringConv::asStdString(key, "key");
             m_dict[std_key] = dict[key];
         }
     } else {
@@ -234,7 +232,7 @@ void NocaseDict::update(const bp::object &d)
 
 bp::object NocaseDict::get(const bp::object &key, const bp::object &def)
 {
-    std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+    std::string std_key = StringConv::asStdString(key, "key");
 
     nocase_map_t::const_iterator found = m_dict.find(std_key);
     if (found == m_dict.end())
@@ -245,7 +243,7 @@ bp::object NocaseDict::get(const bp::object &key, const bp::object &def)
 
 bp::object NocaseDict::pop(const bp::object &key, const bp::object &def)
 {
-    std::string std_key = lmi::extract_or_throw<std::string>(key, "key");
+    std::string std_key = StringConv::asStdString(key, "key");
 
     nocase_map_t::iterator found = m_dict.find(std_key);
     if (found == m_dict.end())
@@ -260,7 +258,7 @@ bp::object NocaseDict::pop(const bp::object &key, const bp::object &def)
 bp::object NocaseDict::copy()
 {
     bp::object inst = CIMBase<NocaseDict>::create();
-    NocaseDict &fake_this = lmi::extract<NocaseDict&>(inst);
+    NocaseDict &fake_this = NocaseDict::asNative(inst);
     fake_this.m_dict = nocase_map_t(m_dict);
     return inst;
 }
@@ -271,7 +269,7 @@ int NocaseDict::cmp(const bp::object &other)
     if (!isinstance(other, type()))
         return -1;
 
-    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
+    const nocase_map_t &other_dict = NocaseDict::asNative(other).m_dict;
     nocase_map_t::const_iterator it;
     for (it = m_dict.begin(); it != m_dict.end(); ++it) {
         const nocase_map_t::const_iterator found = other_dict.find(it->first);
@@ -292,7 +290,7 @@ bool NocaseDict::eq(const bp::object &other)
     if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
+    const nocase_map_t &other_dict = NocaseDict::asNative(other).m_dict;
     return m_dict.size() == other_dict.size() &&
         std::equal(m_dict.begin(), m_dict.end(), other_dict.begin());
 }
@@ -302,7 +300,7 @@ bool NocaseDict::gt(const bp::object &other)
     if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
+    const nocase_map_t &other_dict = NocaseDict::asNative(other).m_dict;
     return m_dict > other_dict;
 }
 
@@ -311,7 +309,7 @@ bool NocaseDict::lt(const bp::object &other)
     if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &other_dict = lmi::extract<NocaseDict&>(other)().m_dict;
+    const nocase_map_t &other_dict = NocaseDict::asNative(other).m_dict;
     return m_dict < other_dict;
 }
 

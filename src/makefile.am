@@ -16,7 +16,6 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_constants.h       \
 	lmiwbem_convert.h         \
 	lmiwbem_exception.h       \
-	lmiwbem_extract.h         \
 	lmiwbem.h                 \
 	lmiwbem_instance.h        \
 	lmiwbem_instance_name.h   \
@@ -43,7 +42,6 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_convert.cpp       \
 	lmiwbem.cpp               \
 	lmiwbem_exception.cpp     \
-	lmiwbem_extract.cpp       \
 	lmiwbem_instance.cpp      \
 	lmiwbem_instance_name.cpp \
 	lmiwbem_method.cpp        \

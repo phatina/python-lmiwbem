@@ -27,7 +27,6 @@
 #include "lmiwbem_config.h"
 #include "lmiwbem_convert.h"
 #include "lmiwbem_exception.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_gil.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_listener.h"
@@ -123,16 +122,16 @@ CIMIndicationListener::CIMIndicationListener(
     , m_trust_store(Config::defaultTrustStore())
     , m_terminating(false)
 {
-    m_listen_address = lmi::extract_or_throw<std::string>(
+    m_listen_address = StringConv::asStdString(
         listen_address, "listen_address");
-    m_port = lmi::extract_or_throw<Pegasus::Uint32>(port, "port");
+    m_port = Conv::as<Pegasus::Uint32>(port, "port");
 
     if (!isnone(certfile))
-        m_certfile = lmi::extract_or_throw<std::string>(certfile, "certfile");
+        m_certfile = StringConv::asStdString(certfile, "certfile");
     if (!isnone(keyfile))
-        m_keyfile = lmi::extract_or_throw<std::string>(keyfile, "keyfile");
+        m_keyfile = StringConv::asStdString(keyfile, "keyfile");
     if (!isnone(trust_store))
-        m_trust_store = lmi::extract_or_throw<std::string>(trust_store, "trust_store");
+        m_trust_store = StringConv::asStdString(trust_store, "trust_store");
 }
 
 void CIMIndicationListener::init_type()
@@ -215,8 +214,8 @@ void CIMIndicationListener::start(const bp::object &retries)
         return;
 
     m_terminating = false;
-    // Extract retries count for port binding. By default, we try only once.
-    const int std_retries = lmi::extract_or_throw<int>(retries, "retries");
+    // Get retries count for port binding. By default, we try only once.
+    const int std_retries = Conv::as<int>(retries, "retries");
     if (std_retries < 0)
         throw_ValueError("retries must be positive number");
 
@@ -329,7 +328,7 @@ bp::object CIMIndicationListener::addPyHandler(
 {
     bp::object name = args[0];
     bp::object callable = args[1];
-    std::string std_name = lmi::extract_or_throw<std::string>(name, "name");
+    std::string std_name = StringConv::asStdString(name, "name");
 
     if (iscallable(callable)) {
         m_handlers[std_name].push_back(
@@ -360,7 +359,7 @@ bp::object CIMIndicationListener::addPyHandler(
 
 void CIMIndicationListener::removePyHandler(const bp::object &name)
 {
-    std::string std_name = lmi::extract_or_throw<std::string>(name, "name");
+    std::string std_name = StringConv::asStdString(name, "name");
     handler_map_t::iterator it = m_handlers.find(std_name);
     if (it == m_handlers.end())
         throw_KeyError("No such handler registered: " + std_name);

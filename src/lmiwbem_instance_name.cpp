@@ -27,7 +27,6 @@
 #include <Pegasus/Common/CIMValue.h>
 #include "lmiwbem_convert.h"
 #include "lmiwbem_instance_name.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_nocasedict.h"
 #include "lmiwbem_util.h"
 
@@ -49,11 +48,11 @@ CIMInstanceName::CIMInstanceName(
     , m_hostname()
     , m_keybindings()
 {
-    m_classname = lmi::extract_or_throw<std::string>(cls, "classname");
-    m_namespace = lmi::extract_or_throw<std::string>(ns, "namespace");
+    m_classname = StringConv::asStdString(cls, "classname");
+    m_namespace = StringConv::asStdString(ns, "namespace");
     if (!isnone(host)) {
         // Host may be missing, other members (classname, namespace not)
-        m_hostname  = lmi::extract_or_throw<std::string>(host, "host");
+        m_hostname  = StringConv::asStdString(host, "host");
     }
     if (isnone(keybindings))
         m_keybindings = NocaseDict::create();
@@ -166,7 +165,7 @@ bp::object CIMInstanceName::create(
     const std::string &hostname)
 {
     bp::object inst = CIMBase<CIMInstanceName>::create();
-    CIMInstanceName& fake_this = lmi::extract<CIMInstanceName&>(inst);
+    CIMInstanceName& fake_this = CIMInstanceName::asNative(inst);
 
     fake_this.m_classname = obj_path.getClassName().getString().getCString();
     fake_this.m_namespace = obj_path.getNameSpace().isNull() ? ns :
@@ -203,7 +202,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
     Pegasus::Array<Pegasus::CIMKeyBinding> arr_keybindings;
 
     if (!isnone(m_keybindings)) {
-        NocaseDict &keybindings = lmi::extract_or_throw<NocaseDict&>(
+        NocaseDict &keybindings = NocaseDict::asNative(
             m_keybindings, "self.keybindings");
 
         // Create an array of keybindings. Allowed keybindings' types:
@@ -212,7 +211,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
         for (it = keybindings.begin(); it != keybindings.end(); ++it) {
             if (isbool(it->second)) {
                 // Create bool CIMKeyBinding
-                bool bval = lmi::extract<bool>(it->second);
+                bool bval = Conv::as<bool>(it->second);
                 Pegasus::CIMValue value = Pegasus::CIMValue(bval);
                 arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
@@ -240,7 +239,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
             if (isbasestring(it->second)) {
                 // Create str CIMKeyBinding
                 std::string std_string(
-                    lmi::extract<std::string>(it->second));
+                    StringConv::asStdString(it->second));
                 Pegasus::CIMValue value = Pegasus::CIMValue(Pegasus::String(std_string.c_str()));
                 arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
@@ -251,8 +250,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
 
             if (isinstance(it->second, CIMInstanceName::type())) {
                 // Create CIMInstanceName CIMKeyBinding
-                CIMInstanceName &instance_name(
-                    lmi::extract<CIMInstanceName&>(it->second));
+                CIMInstanceName &instance_name = CIMInstanceName::asNative(it->second);
                 arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
                         Pegasus::CIMName(it->first.c_str()),
@@ -277,7 +275,7 @@ int CIMInstanceName::cmp(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return 1;
 
-    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
 
     int rval;
     if ((rval = m_classname.compare(other_inst_name.m_classname)) != 0 ||
@@ -296,7 +294,7 @@ bool CIMInstanceName::eq(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return false;
 
-    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
 
     return m_classname == other_inst_name.m_classname &&
         m_namespace == other_inst_name.m_namespace &&
@@ -309,7 +307,7 @@ bool CIMInstanceName::gt(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return false;
 
-    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
 
     return m_classname > other_inst_name.m_classname ||
         m_namespace > other_inst_name.m_namespace ||
@@ -322,7 +320,7 @@ bool CIMInstanceName::lt(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return false;
 
-    CIMInstanceName &other_inst_name = lmi::extract<CIMInstanceName&>(other);
+    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
 
     return m_classname < other_inst_name.m_classname ||
         m_namespace < other_inst_name.m_namespace ||
@@ -344,8 +342,8 @@ bool CIMInstanceName::le(const bp::object &other)
 bp::object CIMInstanceName::copy()
 {
     bp::object obj = CIMBase<CIMInstanceName>::create();
-    CIMInstanceName &inst_name = lmi::extract<CIMInstanceName&>(obj);
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    CIMInstanceName &inst_name = CIMInstanceName::asNative(obj);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     inst_name.m_classname = m_classname;
     inst_name.m_namespace = m_namespace;
     inst_name.m_hostname = m_hostname;
@@ -363,7 +361,7 @@ std::string CIMInstanceName::asStdString() const
         ss << m_namespace << ':';
     ss << m_classname << '.';
 
-    const NocaseDict &keybindings = lmi::extract<const NocaseDict&>(m_keybindings);
+    const NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     nocase_map_t::const_iterator it;
     for (it = keybindings.begin(); it != keybindings.end(); ++it) {
         ss << it->first << '=';
@@ -431,37 +429,37 @@ bp::object CIMInstanceName::haskey(const bp::object &key) const
 
 bp::object CIMInstanceName::keys()
 {
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     return keybindings.keys();
 }
 
 bp::object CIMInstanceName::values()
 {
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     return keybindings.values();
 }
 
 bp::object CIMInstanceName::items()
 {
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     return keybindings.items();
 }
 
 bp::object CIMInstanceName::iterkeys()
 {
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     return keybindings.iterkeys();
 }
 
 bp::object CIMInstanceName::itervalues()
 {
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     return keybindings.itervalues();
 }
 
 bp::object CIMInstanceName::iteritems()
 {
-    NocaseDict &keybindings = lmi::extract<NocaseDict&>(m_keybindings);
+    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
     return keybindings.iteritems();
 }
 
@@ -517,22 +515,22 @@ void CIMInstanceName::setHostname(const std::string &hostname)
 
 void CIMInstanceName::setPyClassname(const bp::object &classname)
 {
-    m_classname = lmi::extract_or_throw<std::string>(classname);
+    m_classname = StringConv::asStdString(classname);
 }
 
 void CIMInstanceName::setPyNamespace(const bp::object &namespace_)
 {
-    m_namespace = lmi::extract_or_throw<std::string>(namespace_);
+    m_namespace = StringConv::asStdString(namespace_);
 }
 
 void CIMInstanceName::setPyHostname(const bp::object &hostname)
 {
-    m_hostname = lmi::extract_or_throw<std::string>(hostname);
+    m_hostname = StringConv::asStdString(hostname);
 }
 
 void CIMInstanceName::setPyKeybindings(const bp::object &keybindings)
 {
-    m_keybindings = lmi::get_or_throw<NocaseDict, bp::dict>(keybindings);
+    m_keybindings = Conv::get<NocaseDict, bp::dict>(keybindings);
 }
 
 bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keybinding)

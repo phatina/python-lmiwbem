@@ -75,7 +75,7 @@ public:
     void connectLocally();
     void disconnect();
     bool isConnected() { return m_client.isConnected(); }
-    std::string getHostname() const { return m_client.hostname(); }
+    bp::object getHostname() const;
 
     bool getVerifyCertificate() { return !m_client.getVerifyCertificate(); }
     void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(!verify_cert); }
@@ -85,7 +85,7 @@ public:
     void setTimeout(unsigned int timeout) { m_client.setTimeout(timeout); }
     bp::object getRequestAcceptLanguages() const;
     void setRequestAcceptLanguages(const bp::object &langs);
-    std::string getDefaultNamespace() const { return m_default_namespace; }
+    bp::object getDefaultNamespace() const;
     void setDefaultNamespace(const bp::object &ns);
     bp::object getCredentials() const;
     void setCredentials(const bp::object &creds);

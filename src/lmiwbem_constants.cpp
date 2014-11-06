@@ -22,7 +22,6 @@
 #include <config.h>
 #include <boost/python/scope.hpp>
 #include "lmiwbem_constants.h"
-#include "lmiwbem_extract.h"
 #include "lmiwbem_util.h"
 
 namespace bp = boost::python;
