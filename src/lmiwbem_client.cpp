@@ -22,7 +22,6 @@
 #include <config.h>
 #include <Pegasus/Common/SSLContext.h>
 #include "lmiwbem_client.h"
-#include "lmiwbem_addr.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_gil.h"
 
@@ -30,7 +29,7 @@
 
 CIMClient::CIMClient()
     : Pegasus::CIMClient()
-    , m_addr_info()
+    , m_url_info()
     , m_is_connected(false)
     , m_verify_cert(true)
 {
@@ -44,17 +43,17 @@ void CIMClient::connect(
     const Pegasus::String &key_file,
     const Pegasus::String &trust_store)
 {
-    if (!m_addr_info.set(uri)) {
+    if (!m_url_info.set(uri)) {
         throw_CIMError("Invalid host address");
         return;
     }
 
     ScopedMutex sm(m_mutex);
     ScopedGILRelease sr;
-    if (!m_addr_info.isHttps()) {
+    if (!m_url_info.isHttps()) {
         Pegasus::CIMClient::connect(
-            m_addr_info.hostname(),
-            m_addr_info.port(),
+            m_url_info.hostname(),
+            m_url_info.port(),
             username,
             password);
     } else {
@@ -69,8 +68,8 @@ void CIMClient::connect(
             Pegasus::String::EMPTY
         );
         Pegasus::CIMClient::connect(
-            m_addr_info.hostname(),
-            m_addr_info.port(),
+            m_url_info.hostname(),
+            m_url_info.port(),
             ctx,
             username,
             password);
@@ -137,7 +136,7 @@ Pegasus::Boolean CIMClient::verifyCertificate(Pegasus::SSLCertificateInfo &ci, v
     }
 
     CIMClient *fake_this = reinterpret_cast<CIMClient*>(data);
-    Pegasus::String hostname(fake_this->m_addr_info.hostname());
+    Pegasus::String hostname(fake_this->m_url_info.hostname());
 
     // Verify against DNS names
     Pegasus::Array<Pegasus::String> dnsNames = ci.getSubjectAltNames().getDnsNames();

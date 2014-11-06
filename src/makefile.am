@@ -6,7 +6,7 @@ lmiwbem_coreexec_LTLIBRARIES =   \
 	lmiwbem_core.la
 
 lmiwbem_core_la_SOURCES      =    \
-	lmiwbem_addr.h            \
+	lmiwbem_urlinfo.h         \
 	lmiwbem_cimbase.h         \
 	lmiwbem_class.h           \
 	lmiwbem_class_name.h      \
@@ -32,7 +32,7 @@ lmiwbem_core_la_SOURCES      =    \
 	lmiwbem_types.h           \
 	lmiwbem_util.h            \
 	lmiwbem_value.h           \
-	lmiwbem_addr.cpp          \
+	lmiwbem_urlinfo.cpp       \
 	lmiwbem_class.cpp         \
 	lmiwbem_class_name.cpp    \
 	lmiwbem_client.cpp        \

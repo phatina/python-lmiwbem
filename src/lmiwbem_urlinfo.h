@@ -25,11 +25,11 @@
 #  include <Pegasus/Common/CIMType.h>
 #  include <Pegasus/Common/String.h>
 
-class Address
+class URLInfo
 {
 public:
-    Address();
-    Address(const Address &copy);
+    URLInfo();
+    URLInfo(const URLInfo &copy);
 
     bool set(Pegasus::String url);
 
@@ -40,7 +40,7 @@ public:
 
     std::string asStdString() const;
 
-    Address &operator =(const Address &rhs);
+    URLInfo &operator =(const URLInfo &rhs);
 
 private:
     static const Pegasus::Uint32 DEF_HTTPS_PORT = 5989;

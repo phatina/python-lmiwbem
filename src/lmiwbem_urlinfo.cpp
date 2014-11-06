@@ -22,31 +22,31 @@
 #include <config.h>
 #include <cerrno>
 #include <sstream>
-#include "lmiwbem_addr.h"
+#include "lmiwbem_urlinfo.h"
 
-Address::Address()
+URLInfo::URLInfo()
     : m_hostname("unknown")
-    , m_port(Address::DEF_HTTPS_PORT)
+    , m_port(URLInfo::DEF_HTTPS_PORT)
     , m_is_https(true)
 {
 }
 
-Address::Address(const Address &copy)
+URLInfo::URLInfo(const URLInfo &copy)
     : m_hostname(copy.m_hostname)
     , m_port(copy.m_port)
     , m_is_https(copy.m_is_https)
 {
 }
 
-bool Address::set(Pegasus::String url)
+bool URLInfo::set(Pegasus::String url)
 {
     if (url.subString(0, 7) == "http://") {
         url.remove(0, 7);
-        m_port = Address::DEF_HTTP_PORT;
+        m_port = URLInfo::DEF_HTTP_PORT;
         m_is_https = false;
     } else if (url.subString(0, 8) == "https://") {
         url.remove(0, 8);
-        m_port = Address::DEF_HTTPS_PORT;
+        m_port = URLInfo::DEF_HTTPS_PORT;
         m_is_https = true;
     } else {
         return false;
@@ -67,7 +67,7 @@ bool Address::set(Pegasus::String url)
     return true;
 }
 
-std::string Address::asStdString() const
+std::string URLInfo::asStdString() const
 {
     std::stringstream ss;
 
@@ -81,7 +81,7 @@ std::string Address::asStdString() const
     return ss.str();
 }
 
-Address &Address::operator =(const Address &rhs)
+URLInfo &URLInfo::operator =(const URLInfo &rhs)
 {
     m_hostname = rhs.m_hostname;
     m_port = rhs.m_port;
