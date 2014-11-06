@@ -76,8 +76,11 @@ CIMInstance::CIMInstance(
     else
         m_qualifiers = NocaseDict::create(qualifiers);
 
-    m_path = Conv::get<CIMInstanceName, bp::object>(path, "path");
-    m_property_list = Conv::get<bp::list, bp::object>(property_list, "property_list");
+    if (!isnone(path))
+        m_path = Conv::get<CIMInstanceName>(path, "path");
+
+    if (!isnone(property_list))
+        m_property_list = Conv::get<bp::list>(property_list, "property_list");
 }
 
 void CIMInstance::init_type()
