@@ -104,11 +104,11 @@ R setPegasusValueCore(const bp::object &value)
 }
 
 template <>
-Pegasus::String setPegasusValueCore<
+Pegasus::CIMDateTime setPegasusValueCore<
     Pegasus::CIMDateTime,
-    Pegasus::String>(const bp::object &value)
+    Pegasus::CIMDateTime>(const bp::object &value)
 {
-    return Pegasus::String(ObjectConv::asStdString(value).c_str());
+    return Pegasus::CIMDateTime(ObjectConv::asStdString(value).c_str());
 }
 
 template <>
@@ -252,7 +252,7 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
         else if (type == "real64")
             return setPegasusValueS<Pegasus::Real32>(value, is_array);
         else if (type == "datetime")
-            return setPegasusValue<Pegasus::CIMDateTime, Pegasus::String>(value, is_array);
+            return setPegasusValueS<Pegasus::CIMDateTime>(value, is_array);
     } else if (isinstance(value_type_check, CIMInstance::type())) {
         return setPegasusValue<Pegasus::CIMInstance, Pegasus::CIMObject>(value, is_array);
     } else if (isinstance(value_type_check, CIMClass::type())) {
