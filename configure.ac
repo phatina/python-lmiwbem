@@ -109,21 +109,6 @@ fi
 AC_SUBST([WITH_LISTENER], ["$with_listener"])
 AM_CONDITIONAL([BUILD_WITH_LISTENER], [test x"$with_listener" = x"yes"])
 
-dnl Check if TOG-Pegasus CIMListener supports bind address.
-if test x"$with_listener" = x"yes"; then
-    LIBS="-lpeglistener"
-    AC_MSG_CHECKING([for TOG-Pegasus CIMListener with bind address])
-    AC_TRY_COMPILE(
-        [#define $PEGASUS_PLATFORM
-         #include <Pegasus/Listener/CIMListener.h>],
-        [Pegasus::CIMListener l(Pegasus::String("0.0.0.0"), 10240);],
-        [AC_MSG_RESULT([yes])
-         AC_DEFINE([HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS], [1],
-                   [Pegasus CIMListener with bind address])],
-        [AC_MSG_RESULT([no])])
-    LIBS=""
-fi
-
 dnl Check for TOG-Pegasus headers
 AC_MSG_CHECKING([for TOG-Pegasus headers])
 AC_TRY_COMPILE(
@@ -134,6 +119,25 @@ AC_TRY_COMPILE(
      AC_MSG_ERROR([TOG-Pegasus headers not found; install tog-pegasus-devel])]
 )
 
+dnl Check if TOG-Pegasus CIMListener supports bind address.
+if test x"$with_listener" = x"yes"; then
+    LIBS="-lpeglistener"
+    AC_MSG_CHECKING([for TOG-Pegasus CIMListener with bind address])
+    AC_TRY_COMPILE(
+        [#define $PEGASUS_PLATFORM
+         #include <Pegasus/Listener/CIMListener.h>],
+        [Pegasus::CIMListener l(Pegasus::String("0.0.0.0"), 10240);],
+        [with_listener_bind_addr="yes"
+         AC_MSG_RESULT([yes])
+         AC_DEFINE([HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS], [1],
+                   [Pegasus CIMListener with bind address])],
+        [with_listener_bind_addr="no"
+         AC_MSG_RESULT([no])])
+    LIBS=""
+else
+    with_listener_bind_addr="no"
+fi
+
 dnl Check for Pegasus verification callback capabilities
 LIBS="-lpegcommon"
 AC_MSG_CHECKING([for TOG-Pegasus X509 verification capabilities])
@@ -141,11 +145,13 @@ AC_TRY_LINK(
     [#define $PEGASUS_PLATFORM
      #include <Pegasus/Common/SSLContext.h>],
     [Pegasus::SSLCertificateVerifyFunctionWithData cb;],
-    [AC_MSG_RESULT([yes]);
+    [with_x509_verif_cap="yes"
+     AC_MSG_RESULT([yes]);
      AC_DEFINE(
         [HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA], [1],
         [TOG-Pegasus supports X509 verification])],
-    [AC_MSG_RESULT([no])]
+    [with_x509_verif_cap="no"
+     AC_MSG_RESULT([no])]
 )
 
 dnl --with-slp
@@ -269,13 +275,15 @@ AC_MSG_NOTICE([
     lmiwbem $VERSION:
     ========$VERSION_RULE
 
-    Python version               : $PYTHON_VERSION
-    Default CIM namespace        : $with_defns
-    Default trust store          : $with_defts
-    Support SLP                  : $with_slp
-    Support CIMIndicationListener: $with_listener
+    Python version                         : $PYTHON_VERSION
+    Default CIM namespace                  : $with_defns
+    Default trust store                    : $with_defts
+    Support SLP                            : $with_slp
+    Support CIMIndicationListener          : $with_listener
+    Support CIMListener bind Address       : $with_listener_bind_addr
+    Support X509 Verification Capabilities : $with_x509_verif_cap
 
-    Build documentation          : $with_doc
+    Build documentation                    : $with_doc
 
     Now type 'make' to build $PACKAGE
 ])
