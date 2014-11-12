@@ -65,7 +65,7 @@ case $host_os in
 esac
 AC_SUBST([PEGASUS_PLATFORM])
 
-dnl Check for TOG-Pegasus Client library
+dnl Check for TOG-Pegasus Common library
 SAVE_LIBS=$LIBS
 LIBS="-lpegcommon"
 AC_MSG_CHECKING([for libpegcommon])
@@ -74,7 +74,7 @@ AC_TRY_LINK([], [],
     [AC_MSG_ERROR([TOG-Pegasus common library not found; install tog-pegasus-libs])]
 )
 
-dnl Check for TOG-Pegasus Common library
+dnl Check for TOG-Pegasus Client library
 LIBS="$LIBS -lpegclient"
 AC_MSG_CHECKING([for libpegclient])
 AC_TRY_LINK([], [],
