@@ -29,10 +29,11 @@
 class CIMValue
 {
 public:
-    static bp::object asLMIWbemCIMValue(const Pegasus::CIMValue &value);
-    static Pegasus::CIMValue asPegasusCIMValue(const bp::object &value);
-
-    static std::string LMIWbemCIMValueType(const bp::object &value);
+    static bp::object asLMIWbemCIMValue(
+        const Pegasus::CIMValue &value);
+    static Pegasus::CIMValue asPegasusCIMValue(
+        const bp::object &value,
+        const std::string &def_type = std::string());
 };
 
 #endif // LMIWBEM_VALUE_H

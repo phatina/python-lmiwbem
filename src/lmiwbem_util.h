@@ -66,6 +66,7 @@ bool isfloat(const bp::object &obj);
 bool isdict(const bp::object &obj);
 bool islist(const bp::object &obj);
 bool istuple(const bp::object &obj);
+bool isarray(const bp::object &obj);
 bool iscallable(const bp::object &obj);
 
 bool cim_issubclass(

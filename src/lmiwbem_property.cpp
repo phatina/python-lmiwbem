@@ -66,8 +66,10 @@ CIMProperty::CIMProperty(
         m_array_size = Conv::as<int>(array_size, "array_size");
     } else {
         // Deduce the value type
-        m_type = CIMValue::LMIWbemCIMValueType(value);
-        m_is_array = static_cast<bool>(PyList_Check(value.ptr()));
+        std::string value_type(CIMTypeConv::asStdString(value));
+        if (!value_type.empty())
+            m_type = value_type;
+        m_is_array = static_cast<bool>(isarray(value));
         m_array_size = m_is_array ? bp::len(value) : 0;
     }
     m_class_origin = StringConv::asStdString(class_origin, "class_origin");
@@ -206,7 +208,8 @@ bp::object CIMProperty::create(
 
 Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty() try
 {
-    Pegasus::CIMValue value = CIMValue::asPegasusCIMValue(getPyValue());
+    Pegasus::CIMValue value(CIMValue::asPegasusCIMValue(getPyValue(), m_type));
+
     return Pegasus::CIMProperty(
         Pegasus::CIMName(m_name.c_str()),
         value,

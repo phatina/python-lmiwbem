@@ -32,6 +32,7 @@
 #include "lmiwbem_property.h"
 #include "lmiwbem_qualifier.h"
 #include "lmiwbem_util.h"
+#include "lmiwbem_value.h"
 
 namespace bp = boost::python;
 
@@ -334,10 +335,25 @@ void CIMInstance::setitem(const bp::object &key, const bp::object &value)
 {
     evalProperties();
 
-    if (isinstance(value, CIMProperty::type()))
+    if (isinstance(value, CIMProperty::type())) {
         m_properties[key] = value;
-    else
+    } else if (m_properties.contains(key) &&
+        isinstance(m_properties[key], CIMProperty::type()))
+    {
+        CIMProperty &prop = CIMProperty::asNative(m_properties[key]);
+        prop.setPyValue(value);
+
+        std::string type(CIMTypeConv::asStdString(value));
+        if (!type.empty())
+            prop.setType(type);
+
+        bool is_array = isarray(value);
+        prop.setIsArray(is_array);
+        if (is_array)
+            prop.setArraySize(bp::len(value));
+    } else {
         m_properties[key] = CIMProperty::create(key, value);
+    }
 }
 
 bp::object CIMInstance::len()

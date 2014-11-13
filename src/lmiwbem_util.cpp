@@ -122,6 +122,11 @@ bool istuple(const bp::object &obj)
     return PyTuple_Check(obj.ptr());
 }
 
+bool isarray(const bp::object &obj)
+{
+    return islist(obj) || istuple(obj);
+}
+
 bool iscallable(const bp::object &obj)
 {
     return static_cast<bool>(PyCallable_Check(obj.ptr()));

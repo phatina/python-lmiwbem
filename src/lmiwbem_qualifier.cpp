@@ -187,7 +187,7 @@ Pegasus::CIMQualifier CIMQualifier::asPegasusCIMQualifier() const
         flavor.addFlavor(Pegasus::CIMFlavor::TRANSLATABLE);
     return Pegasus::CIMQualifier(
         Pegasus::CIMName(m_name.c_str()),
-        CIMValue::asPegasusCIMValue(m_value),
+        CIMValue::asPegasusCIMValue(m_value, m_type),
         flavor,
         m_is_propagated);
 }

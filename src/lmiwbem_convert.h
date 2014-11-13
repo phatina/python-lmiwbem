@@ -156,9 +156,14 @@ bp::object get(
 
 } // namespace Conv
 
+// -----------------------------------------------------------------------------
+// Converters
+// -----------------------------------------------------------------------------
+
 class CIMTypeConv
 {
 public:
+    static std::string asStdString(const bp::object &obj);
     static std::string asStdString(Pegasus::CIMType type);
     static Pegasus::CIMType asCIMType(const std::string &type);
 

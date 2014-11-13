@@ -29,6 +29,7 @@
 #  include <Pegasus/Common/CIMValue.h>
 #  include <Pegasus/Common/String.h>
 #include "lmiwbem_class.h"
+#include "lmiwbem_class_name.h"
 #include "lmiwbem_convert.h"
 #include "lmiwbem_instance.h"
 #include "lmiwbem_instance_name.h"
@@ -66,6 +67,36 @@ extract<std::string>::extract(const bp::object &obj)
 } // namespace detail
 
 } // namespace Conv
+
+std::string CIMTypeConv::asStdString(const bp::object &obj)
+{
+    if (isnone(obj))
+        return std::string();
+
+    bool is_array = isarray(obj);
+    if (is_array && !bp::len(obj))
+        return std::string();
+
+    bp::object value_type_check = is_array ? obj[0] : obj;
+
+    if (isinstance(value_type_check, CIMType::type()))
+        return StringConv::asStdString(value_type_check.attr("cimtype"));
+    else if (isinstance(value_type_check, CIMInstance::type()))
+        return std::string("string"); // XXX: instance?
+    else if (isinstance(value_type_check, CIMClass::type()))
+        return std::string("object");
+    else if (isinstance(value_type_check, CIMInstanceName::type()))
+        return std::string("reference");
+    else if (isinstance(value_type_check, CIMClassName::type()))
+        throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
+    else if (isbasestring(value_type_check))
+        return std::string("string");
+    else if (isbool(value_type_check))
+        return std::string("boolean");
+    // CIM types for numeric values can't be easily determined.
+
+    return std::string();
+}
 
 std::string CIMTypeConv::asStdString(Pegasus::CIMType type)
 {

@@ -221,11 +221,13 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
     }
 }
 
-Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
+Pegasus::CIMValue CIMValue::asPegasusCIMValue(
+    const bp::object &value,
+    const std::string &def_type)
 {
-    bool is_array = PyList_Check(value.ptr());
+    bool is_array = isarray(value);
     if (isnone(value) || (is_array && bp::len(value) == 0))
-        return Pegasus::CIMValue();
+        return Pegasus::CIMValue(CIMTypeConv::asCIMType(def_type), true);
 
     bp::object value_type_check = is_array ? value[0] : value;
 
@@ -277,34 +279,4 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(const bp::object &value)
 
     throw_TypeError("CIMValue: Unsupported TOG-Pegasus type");
     return Pegasus::CIMValue();
-}
-
-std::string CIMValue::LMIWbemCIMValueType(const bp::object &value)
-{
-    if (isnone(value))
-        return std::string();
-
-    bool is_array = PyList_Check(value.ptr());
-    if (is_array && !bp::len(value))
-        throw_TypeError("CIMValue: empty array must have a type");
-
-    bp::object value_type_check = is_array ? value[0] : value;
-
-    if (isinstance(value_type_check, CIMType::type()))
-        return StringConv::asStdString(value_type_check.attr("cimtype"));
-    else if (isinstance(value_type_check, CIMInstance::type()))
-        return std::string("string"); // XXX: instance?
-    else if (isinstance(value_type_check, CIMClass::type()))
-        return std::string("object");
-    else if (isinstance(value_type_check, CIMInstanceName::type()))
-        return std::string("reference");
-    else if (isinstance(value_type_check, CIMClassName::type()))
-        throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
-    else if (isbasestring(value_type_check))
-        return std::string("string");
-    else if (isbool(value_type_check))
-        return std::string("boolean");
-
-    throw_TypeError("CIMValue: Invalid CIM type");
-    return std::string();
 }
