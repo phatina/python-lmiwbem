@@ -207,6 +207,9 @@ class ObjectConv
 public:
     static std::string asStdString(const bp::object &obj);
     static bp::object  asPyUnicode(const bp::object &obj);
+
+private:
+    ObjectConv();
 };
 
 class StringConv
@@ -232,6 +235,8 @@ public:
     static bp::object  asPyLong(const std::string &str);
     static bp::object  asPyLong(const Pegasus::String &str);
 
+private:
+    StringConv();
 };
 
 #endif // LMIWBEM_CONVERT_H
