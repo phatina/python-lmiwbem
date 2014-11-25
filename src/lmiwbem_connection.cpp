@@ -43,14 +43,14 @@
 #include "lmiwbem_value.h"
 
 /* NOTE: These macros need to be used around every CIM operation.
- * ScopedConnectionBegin creates a temporary connection, if necessary and also
- * releases Python's global interpret lock. ScopedConnectionEnd is defined due
- * to semantics; to close the scope.
+ * ScopedTransactionBegin creates a temporary connection, if necessary and also
+ * it ensures that CIMClient can enter a critical section.
+ * ScopedTransactionEnd is defined due to semantics; to close the scope.
  */
-#define ScopedConnectionBegin() { \
-    ScopedConnection sc(this); \
-    ScopedGILRelease sr;
-#define ScopedConnectionEnd() }
+#define ScopedTransactionBegin() { \
+    ScopedTransaction _st(this);   \
+    ScopedConnection  _sc(this);
+#define ScopedTransactionEnd() }
 
 namespace bp = boost::python;
 
@@ -98,6 +98,11 @@ WBEMConnection::ScopedConnection::~ScopedConnection()
 {
     if (!m_conn_orig_state)
         m_conn->m_client.disconnect();
+}
+
+WBEMConnection::ScopedTransaction::ScopedTransaction(WBEMConnection *conn)
+    : m_sct(conn->m_client)
+{
 }
 
 WBEMConnection::WBEMConnection(
@@ -821,11 +826,11 @@ bp::object WBEMConnection::createInstance(
     Pegasus::CIMNamespaceName new_inst_name_ns(std_ns.c_str());
     Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     new_inst_name = m_client.createInstance(
         new_inst_name_ns,
         cim_inst);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     // CIMClient::createInstance() does not set namespace and hostname
     // in newly created CIMInstanceName. We need to do that manually.
@@ -859,11 +864,11 @@ void WBEMConnection::deleteInstance(const bp::object &object_path) try
         std_ns = cim_path.getNameSpace().getString().getCString();
     Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
 
-    ScopedConnectionBegin()
+    ScopedTransactionBegin()
     m_client.deleteInstance(
         cim_ns,
         cim_path);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -891,13 +896,13 @@ void WBEMConnection::modifyInstance(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     m_client.modifyInstance(
         cim_ns,
         cim_inst,
         include_qualifiers,
         cim_property_list);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -932,7 +937,7 @@ bp::object WBEMConnection::enumerateInstances(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_instances = m_client.enumerateInstances(
         cim_ns,
         cim_name,
@@ -941,7 +946,7 @@ bp::object WBEMConnection::enumerateInstances(
         include_qualifiers,
         include_class_origin,
         cim_property_list);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list instances;
     const Pegasus::Uint32 cnt = cim_instances.size();
@@ -989,11 +994,11 @@ bp::object WBEMConnection::enumerateInstanceNames(
     Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
     Pegasus::CIMName cim_name(std_cls.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_instance_names = m_client.enumerateInstanceNames(
         cim_ns,
         cim_name);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list instance_names;
     const Pegasus::Uint32 cnt = cim_instance_names.size();
@@ -1057,14 +1062,14 @@ bp::object WBEMConnection::invokeMethod(
     Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
     Pegasus::CIMName cim_name(std_method.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_rval = m_client.invokeMethod(
         cim_ns,
         cim_path,
         cim_name,
         cim_in_params,
         cim_out_params);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     // Create a NocaseDict of method's return parameters
     bp::object rparams = NocaseDict::create();
@@ -1115,7 +1120,7 @@ bp::object WBEMConnection::getInstance(
     Pegasus::CIMPropertyList cim_property_list(
         ListConv::asPegasusPropertyList(property_list, "PropertyList"));
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_instance = m_client.getInstance(
         cim_ns,
         cim_object_path,
@@ -1123,7 +1128,7 @@ bp::object WBEMConnection::getInstance(
         include_qualifiers,
         include_class_origin,
         cim_property_list);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     // CIMClient::getInstance() does not set the CIMObjectPath member in
     // CIMInstance. We need to do that manually.
@@ -1163,7 +1168,7 @@ bp::object WBEMConnection::enumerateClasses(
     Pegasus::Array<Pegasus::CIMClass> cim_classes;
     Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_classes = m_client.enumerateClasses(
         cim_ns,
         classname,
@@ -1171,7 +1176,7 @@ bp::object WBEMConnection::enumerateClasses(
         local_only,
         include_qualifiers,
         include_class_origin);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list classes;
     const Pegasus::Uint32 cnt = cim_classes.size();
@@ -1213,12 +1218,12 @@ bp::object WBEMConnection::enumerateClassNames(
     Pegasus::Array<Pegasus::CIMName> cim_classnames;
     Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_classnames = m_client.enumerateClassNames(
         cim_ns,
         classname,
         deep_inheritance);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     // We do not create lmiwbem.CIMClassName objects here; we try to mimic pywbem.
     bp::list classnames;
@@ -1260,12 +1265,12 @@ bp::object WBEMConnection::execQuery(
     Pegasus::String cim_query_lang(std_query_lang.c_str());
     Pegasus::String cim_query(std_query.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_instances = m_client.execQuery(
         cim_ns,
         cim_query_lang,
         cim_query);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list instances;
     const Pegasus::Uint32 cnt = cim_instances.size();
@@ -1307,7 +1312,7 @@ bp::object WBEMConnection::getClass(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    ScopedConnectionBegin()
+    ScopedTransactionBegin()
     cim_class = m_client.getClass(
         cim_ns,
         cim_name,
@@ -1315,7 +1320,7 @@ bp::object WBEMConnection::getClass(
         include_qualifiers,
         include_class_origin,
         cim_property_list);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     return CIMClass::create(cim_class);
 } catch (...) {
@@ -1386,7 +1391,7 @@ bp::object WBEMConnection::getAssociators(
     if (!std_result_role.empty())
         cim_result_role = std_result_role.c_str();
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_associators = m_client.associators(
         cim_ns,
         cim_path,
@@ -1397,7 +1402,7 @@ bp::object WBEMConnection::getAssociators(
         include_qualifiers,
         include_class_origin,
         cim_property_list);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list associators;
     const Pegasus::Uint32 cnt = cim_associators.size();
@@ -1461,7 +1466,7 @@ bp::object WBEMConnection::getAssociatorNames(
     if (!std_result_role.empty())
         cim_result_role = std_result_role.c_str();
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_associator_names = m_client.associatorNames(
         cim_ns,
         cim_path,
@@ -1469,7 +1474,7 @@ bp::object WBEMConnection::getAssociatorNames(
         cim_result_class,
         cim_role,
         cim_result_role);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list associator_names;
     const Pegasus::Uint32 cnt = cim_associator_names.size();
@@ -1525,7 +1530,7 @@ bp::object WBEMConnection::getReferences(
     if (!std_role.empty())
         cim_role = Pegasus::String(std_role.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_references = m_client.references(
         cim_ns,
         cim_path,
@@ -1534,7 +1539,7 @@ bp::object WBEMConnection::getReferences(
         include_qualifiers,
         include_class_origin,
         cim_property_list);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list references;
     const Pegasus::Uint32 cnt = cim_references.size();
@@ -1583,13 +1588,13 @@ bp::object WBEMConnection::getReferenceNames(
     if (!std_role.empty())
         cim_role = Pegasus::String(std_role.c_str());
 
-    ScopedConnectionBegin();
+    ScopedTransactionBegin();
     cim_reference_names = m_client.referenceNames(
         cim_ns,
         cim_path,
         cim_result_class,
         cim_role);
-    ScopedConnectionEnd();
+    ScopedTransactionEnd();
 
     bp::list reference_names;
     const Pegasus::Uint32 cnt = cim_reference_names.size();

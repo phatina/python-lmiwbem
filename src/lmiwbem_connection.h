@@ -49,7 +49,17 @@ private:
         bool m_conn_orig_state;
     };
 
+    class ScopedTransaction
+    {
+    public:
+        ScopedTransaction(WBEMConnection *conn);
+
+    private:
+        CIMClient::ScopedCIMClientTransaction m_sct;
+    };
+
     friend class ScopedConnection;
+    friend class ScopedTransaction;
 
 public:
     WBEMConnection(

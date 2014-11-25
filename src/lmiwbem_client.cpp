@@ -27,6 +27,18 @@
 
 #include <cctype>
 
+CIMClient::ScopedCIMClientTransaction::ScopedCIMClientTransaction(
+    CIMClient &client)
+    : m_client(client)
+{
+    m_client.m_mutex.lock();
+}
+
+CIMClient::ScopedCIMClientTransaction::~ScopedCIMClientTransaction()
+{
+    m_client.m_mutex.unlock();
+}
+
 CIMClient::CIMClient()
     : Pegasus::CIMClient()
     , m_url_info()
@@ -48,8 +60,6 @@ void CIMClient::connect(
         return;
     }
 
-    ScopedMutex sm(m_mutex);
-    ScopedGILRelease sr;
     if (!m_url_info.isHttps()) {
         Pegasus::CIMClient::connect(
             m_url_info.hostname(),
@@ -79,23 +89,18 @@ void CIMClient::connect(
 
 void CIMClient::connectLocally()
 {
-    ScopedMutex sm(m_mutex);
-    ScopedGILRelease sr;
     Pegasus::CIMClient::connectLocal();
     m_is_connected = true;
 }
 
 void CIMClient::disconnect()
 {
-    ScopedMutex sm(m_mutex);
-    ScopedGILRelease sr;
     Pegasus::CIMClient::disconnect();
     m_is_connected = false;
 }
 
 bool CIMClient::isConnected()
 {
-    ScopedMutex sm(m_mutex);
     return m_is_connected;
 }
 

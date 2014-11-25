@@ -29,8 +29,28 @@
 #  include "lmiwbem_urlinfo.h"
 #  include "lmiwbem_mutex.h"
 
+class CIMClient;
+
 class CIMClient: public Pegasus::CIMClient
 {
+public:
+    // Every CIMClient operation needs to have a guard.
+    //
+    // Example:
+    //     CIMClient client;
+    //     CIMClient::ScopedCIMClientTransaction sc(client);
+    //     ... further CIM operations ...
+    class ScopedCIMClientTransaction
+    {
+    public:
+        ScopedCIMClientTransaction(CIMClient &client);
+        ~ScopedCIMClientTransaction();
+    private:
+        CIMClient &m_client;
+    };
+
+    friend class ScopedCIMClientTransaction;
+
 public:
     CIMClient();
 
