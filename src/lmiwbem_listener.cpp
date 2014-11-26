@@ -247,6 +247,9 @@ void CIMIndicationListener::start(const bp::object &retries)
             m_listener->addConsumer(&m_consumer);
 
             m_listener->start();
+
+            // Update the actual port we managed to bind to.
+            m_port += i;
         } catch (...) {
             // We couldn't start CIMIndicationListener, free the instance
             // before we process all the exceptions.
