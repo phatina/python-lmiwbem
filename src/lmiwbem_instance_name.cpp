@@ -577,3 +577,15 @@ void CIMInstanceName::updatePegasusCIMObjectPathNamespace(
 
     path.setNameSpace(Pegasus::CIMNamespaceName(ns.c_str()));
 }
+
+void CIMInstanceName::updatePegasusCIMObjectPathHostname(
+    Pegasus::CIMObjectPath &path,
+    const std::string &hostname)
+{
+    if (path.getHost() != Pegasus::String::EMPTY) {
+        // The hostname is already set. We have nothing to do.
+        return;
+    }
+
+    path.setHost(Pegasus::String(hostname.c_str()));
+}

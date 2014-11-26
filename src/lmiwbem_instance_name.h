@@ -95,6 +95,9 @@ public:
     static void updatePegasusCIMObjectPathNamespace(
         Pegasus::CIMObjectPath &path,
         const std::string &ns);
+    static void updatePegasusCIMObjectPathHostname(
+        Pegasus::CIMObjectPath &path,
+        const std::string &hostname);
 
 private:
     static bp::object keybindingToValue(const Pegasus::CIMKeyBinding &keybinding);

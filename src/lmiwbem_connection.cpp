@@ -948,22 +948,8 @@ bp::object WBEMConnection::enumerateInstances(
         cim_property_list);
     ScopedTransactionEnd();
 
-    bp::list instances;
-    const Pegasus::Uint32 cnt = cim_instances.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        Pegasus::CIMInstance &cim_instance = cim_instances[i];
-
-        // XXX: Update Pegasus::CIMInstance namespace by setting a new
-        // Pegasus::CIMObjectPath to the instance with updated namespace.
-        // This needs to be done, because CIMClient doesn't set namespace
-        // property in Pegasus::CIMObjectPath.
-        CIMInstance::updatePegasusCIMInstanceNamespace(cim_instance, std_ns);
-
-        bp::object instance = CIMInstance::create(cim_instance);
-        instances.append(instance);
-    }
-
-    return instances;
+    return ListConv::asPyCIMInstanceList(
+        cim_instances, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1000,15 +986,8 @@ bp::object WBEMConnection::enumerateInstanceNames(
         cim_name);
     ScopedTransactionEnd();
 
-    bp::list instance_names;
-    const Pegasus::Uint32 cnt = cim_instance_names.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        bp::object instance_name = CIMInstanceName::create(
-            cim_instance_names[i], std_ns, m_client.hostname());
-        instance_names.append(instance_name);
-    }
-
-    return instance_names;
+    return ListConv::asPyCIMInstanceNameList(
+        cim_instance_names, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1272,12 +1251,8 @@ bp::object WBEMConnection::execQuery(
         cim_query);
     ScopedTransactionEnd();
 
-    bp::list instances;
-    const Pegasus::Uint32 cnt = cim_instances.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        instances.append(CIMInstance::create(cim_instances[i]));
-
-    return instances;
+    return ListConv::asPyCIMInstanceList(
+        cim_instances, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1404,12 +1379,8 @@ bp::object WBEMConnection::getAssociators(
         cim_property_list);
     ScopedTransactionEnd();
 
-    bp::list associators;
-    const Pegasus::Uint32 cnt = cim_associators.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        associators.append(CIMInstance::create(cim_associators[i]));
-
-    return associators;
+    return ListConv::asPyCIMInstanceList(
+        cim_associators, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1476,12 +1447,8 @@ bp::object WBEMConnection::getAssociatorNames(
         cim_result_role);
     ScopedTransactionEnd();
 
-    bp::list associator_names;
-    const Pegasus::Uint32 cnt = cim_associator_names.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        associator_names.append(CIMInstanceName::create(cim_associator_names[i]));
-
-    return associator_names;
+    return ListConv::asPyCIMInstanceNameList(
+        cim_associator_names, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1541,12 +1508,8 @@ bp::object WBEMConnection::getReferences(
         cim_property_list);
     ScopedTransactionEnd();
 
-    bp::list references;
-    const Pegasus::Uint32 cnt = cim_references.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        references.append(CIMInstance::create(cim_references[i]));
-
-    return references;
+    return ListConv::asPyCIMInstanceList(
+        cim_references, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1596,12 +1559,8 @@ bp::object WBEMConnection::getReferenceNames(
         cim_role);
     ScopedTransactionEnd();
 
-    bp::list reference_names;
-    const Pegasus::Uint32 cnt = cim_reference_names.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        reference_names.append(CIMInstanceName::create(cim_reference_names[i]));
-
-    return reference_names;
+    return ListConv::asPyCIMInstanceNameList(
+        cim_reference_names, std_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {

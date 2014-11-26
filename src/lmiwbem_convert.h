@@ -22,7 +22,12 @@
 #  include <map>
 #  include <string>
 #  include <boost/python/extract.hpp>
+#  include <boost/python/list.hpp>
 #  include <boost/python/to_python_converter.hpp>
+#  include <Pegasus/Common/Array.h>
+#  include <Pegasus/Common/CIMInstance.h>
+#  include <Pegasus/Common/CIMObject.h>
+#  include <Pegasus/Common/CIMObjectPath.h>
 #  include <Pegasus/Common/CIMType.h>
 #  include "lmiwbem.h"
 #  include "lmiwbem_constants.h"
@@ -36,8 +41,6 @@ PEGASUS_BEGIN
 class Char16;
 class CIMDateTime;
 class CIMName;
-class CIMObject;
-class CIMObjectPath;
 class CIMPropertyList;
 class CIMValue;
 class String;
@@ -193,13 +196,78 @@ private:
 
 class ListConv
 {
+private:
+    ListConv();
+
+    // ------------------------------------------------------------------------
+    // To Python Functor classes
+    // ------------------------------------------------------------------------
+    class PyFunctor
+    {
+    public:
+        PyFunctor(
+            const std::string &ns,
+            const std::string &hostname);
+
+    protected:
+        std::string m_ns;
+        std::string m_hostname;
+    };
+
+    class PyFunctorCIMInstance: public PyFunctor
+    {
+    public:
+        PyFunctorCIMInstance(
+            const std::string &ns,
+            const std::string &hostname);
+
+        bp::object operator()(Pegasus::CIMInstance cim_instance) const;
+        bp::object operator()(const Pegasus::CIMObject cim_object) const;
+    };
+
+    class PyFunctorCIMInstanceName: public PyFunctor
+    {
+    public:
+        PyFunctorCIMInstanceName(
+            const std::string &ns,
+            const std::string &hostname);
+
+        bp::object operator()(
+            const Pegasus::CIMObjectPath &cim_instance_name) const;
+    };
+
+    template <typename T, typename Functor>
+    static bp::object asPyListCore(
+        const Pegasus::Array<T> &arr,
+        const Functor &f)
+    {
+        bp::list py_list;
+        const Pegasus::Uint32 cnt = arr.size();
+        for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
+            py_list.append(f(arr[i]));
+        }
+        return py_list;
+    }
+
 public:
     static Pegasus::CIMPropertyList asPegasusPropertyList(
         const bp::object &property_list,
         const std::string &message);
 
-private:
-    ListConv();
+    static bp::object asPyCIMInstanceList(
+        const Pegasus::Array<Pegasus::CIMInstance> &arr,
+        const std::string &ns = std::string(),
+        const std::string &hostname = std::string());
+
+    static bp::object asPyCIMInstanceList(
+        const Pegasus::Array<Pegasus::CIMObject> &arr,
+        const std::string &ns = std::string(),
+        const std::string &hostname = std::string());
+
+    static bp::object asPyCIMInstanceNameList(
+        const Pegasus::Array<Pegasus::CIMObjectPath> &arr,
+        const std::string &ns = std::string(),
+        const std::string &hostname = std::string());
 };
 
 class ObjectConv
@@ -217,6 +285,8 @@ class StringConv
 public:
     static std::string asStdString(const bp::object &obj);
     static std::string asStdString(const bp::object &obj, const std::string &member);
+    static Pegasus::String asPegasusString(const bp::object &obj);
+    static Pegasus::String asPegasusString(const bp::object &obj, const std::string &member);
     static bp::object  asPyUnicode(const char *str);
     static bp::object  asPyUnicode(const std::string &str);
     static bp::object  asPyUnicode(const Pegasus::String &str);

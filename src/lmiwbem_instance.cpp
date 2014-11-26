@@ -637,12 +637,26 @@ void CIMInstance::updatePegasusCIMInstanceNamespace(
     Pegasus::CIMInstance &instance,
     const std::string &ns)
 {
-    Pegasus::CIMObjectPath path = instance.getPath();
+    Pegasus::CIMObjectPath path(instance.getPath());
     if (!path.getNameSpace().isNull()) {
         // The namespace is already set. We have nothing to do.
         return;
     }
 
     CIMInstanceName::updatePegasusCIMObjectPathNamespace(path, ns);
+    instance.setPath(path);
+}
+
+void CIMInstance::updatePegasusCIMInstanceHostname(
+    Pegasus::CIMInstance &instance,
+    const std::string &hostname)
+{
+    Pegasus::CIMObjectPath path(instance.getPath());
+    if (path.getHost() != Pegasus::String::EMPTY) {
+        // The hostname is already set. We have nothing to do.
+        return;
+    }
+
+    CIMInstanceName::updatePegasusCIMObjectPathHostname(path, hostname);
     instance.setPath(path);
 }

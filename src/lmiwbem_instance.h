@@ -96,6 +96,9 @@ public:
     static void updatePegasusCIMInstanceNamespace(
         Pegasus::CIMInstance &instance,
         const std::string &ns);
+    static void updatePegasusCIMInstanceHostname(
+        Pegasus::CIMInstance &instance,
+        const std::string &hostname);
 
 private:
     void evalProperties();

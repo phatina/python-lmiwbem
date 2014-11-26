@@ -166,6 +166,51 @@ Pegasus::CIMType CIMTypeConv::CIMTypeHolder::get(const std::string &type)
     return m_string_type[type];
 }
 
+ListConv::PyFunctor::PyFunctor(
+    const std::string &ns,
+    const std::string &hostname)
+    : m_ns(ns)
+    , m_hostname(hostname)
+{
+}
+
+ListConv::PyFunctorCIMInstance::PyFunctorCIMInstance(
+    const std::string &ns,
+    const std::string &hostname)
+    : ListConv::PyFunctor(ns, hostname)
+{
+}
+
+bp::object ListConv::PyFunctorCIMInstance::operator()(
+    Pegasus::CIMInstance cim_instance) const
+{
+    if (!m_ns.empty())
+        CIMInstance::updatePegasusCIMInstanceNamespace(cim_instance, m_ns);
+    if (!m_hostname.empty())
+        CIMInstance::updatePegasusCIMInstanceHostname(cim_instance, m_hostname);
+    return CIMInstance::create(cim_instance);
+}
+
+bp::object ListConv::PyFunctorCIMInstance::operator()(
+    const Pegasus::CIMObject cim_object) const
+{
+    Pegasus::CIMInstance cim_instance(cim_object);
+    return (*this)(cim_instance);
+}
+
+ListConv::PyFunctorCIMInstanceName::PyFunctorCIMInstanceName(
+    const std::string &ns,
+    const std::string &hostname)
+    : ListConv::PyFunctor(ns, hostname)
+{
+}
+
+bp::object ListConv::PyFunctorCIMInstanceName::operator()(
+    const Pegasus::CIMObjectPath &cim_instance_name) const
+{
+    return CIMInstanceName::create(cim_instance_name, m_ns, m_hostname);
+}
+
 Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
     const bp::object &property_list,
     const std::string &message)
@@ -184,6 +229,35 @@ Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
     }
 
     return cim_property_list;
+}
+
+bp::object ListConv::asPyCIMInstanceList(
+    const Pegasus::Array<Pegasus::CIMInstance> &arr,
+    const std::string &ns,
+    const std::string &hostname)
+{
+    return asPyListCore<Pegasus::CIMInstance>(
+        arr,
+        PyFunctorCIMInstance(ns, hostname));
+}
+
+bp::object ListConv::asPyCIMInstanceList(
+    const Pegasus::Array<Pegasus::CIMObject> &arr,
+    const std::string &ns,
+    const std::string &hostname)
+{
+    return asPyListCore<Pegasus::CIMObject>(
+        arr,
+        PyFunctorCIMInstance(ns, hostname));
+}
+
+bp::object ListConv::asPyCIMInstanceNameList(
+    const Pegasus::Array<Pegasus::CIMObjectPath> &arr,
+    const std::string &ns,
+    const std::string &hostname)
+{
+    return asPyListCore<Pegasus::CIMObjectPath, PyFunctorCIMInstanceName>(
+        arr, PyFunctorCIMInstanceName(ns, hostname));
 }
 
 std::string ObjectConv::asStdString(const bp::object &obj)
@@ -213,6 +287,18 @@ std::string StringConv::asStdString(
     const std::string &member)
 {
     return Conv::as<std::string>(obj, member);
+}
+
+Pegasus::String StringConv::asPegasusString(const bp::object &obj)
+{
+    return Pegasus::String(Conv::as<const char*>(obj));
+}
+
+Pegasus::String StringConv::asPegasusString(
+    const bp::object &obj,
+    const std::string &member)
+{
+    return Pegasus::String(Conv::as<const char*>(obj, member));
 }
 
 bp::object StringConv::asPyUnicode(const char *str)
