@@ -40,6 +40,7 @@ void throw_SLPError(const std::string &message, int code = 0);
 
 void throw_ValueError(const std::string &message);
 void throw_KeyError(const std::string &message);
+void throw_MemoryError(const std::string &message);
 void throw_StopIteration(const std::string &message);
 void throw_TypeError(const std::string &message);
 void throw_RuntimeError(const std::string &message);

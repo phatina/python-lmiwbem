@@ -112,6 +112,11 @@ void throw_KeyError(const std::string &message)
     throw_core(PyExc_KeyError, message);
 }
 
+void throw_MemoryError(const std::string &message)
+{
+    throw_core(PyExc_MemoryError, message);
+}
+
 void throw_StopIteration(const std::string &message)
 {
     throw_core(PyExc_StopIteration, message);

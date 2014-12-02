@@ -154,6 +154,23 @@ AC_TRY_LINK(
      AC_MSG_RESULT([no])]
 )
 
+dnl Check for Pegasus enumeration context
+LIBS="-lpegclient"
+AC_MSG_CHECKING([for TOG-Pegasus Enumeration Content])
+AC_TRY_LINK(
+    [#define $PEGASUS_PLATFORM
+     #include <Pegasus/Client/CIMEnumerationContext.h>],
+    [Pegasus::CIMEnumerationContext ctx;],
+    [with_enum_ctx="yes"
+     AC_MSG_RESULT([yes])
+     AC_DEFINE(
+        [HAVE_PEGASUS_ENUMERATION_CONTEXT], [1],[TOG-Pegasus Enumeration Context])],
+    [with_enum_ctx="no"
+     AC_MSG_RESULT([no])]
+)
+
+AM_CONDITIONAL([BUILD_WITH_ENUM_CTX], [test x"$with_enum_ctx" = x"yes"])
+
 dnl --with-slp
 AC_ARG_WITH(
     [slp],
@@ -282,6 +299,7 @@ AC_MSG_NOTICE([
     Support CIMIndicationListener          : $with_listener
     Support CIMListener bind Address       : $with_listener_bind_addr
     Support X509 Verification Capabilities : $with_x509_verif_cap
+    Support Enumeration Context            : $with_enum_ctx
 
     Build documentation                    : $with_doc
 

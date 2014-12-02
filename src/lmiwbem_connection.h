@@ -23,9 +23,11 @@
 #  define LMIWBEM_CONNECTION_H
 
 #  include <string>
+#  include <boost/python/class.hpp>
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
 #  include "lmiwbem_client.h"
+#  include "lmiwbem_gil.h"
 
 BOOST_PYTHON_BEGIN
     class dict;
@@ -38,6 +40,16 @@ namespace bp = boost::python;
 class WBEMConnection: public CIMBase<WBEMConnection>
 {
 private:
+        /* NOTE: These macros need to be used around every CIM operation.
+         * ScopedTransactionBegin creates a temporary connection, if necessary and also
+         * it ensures that CIMClient can enter a critical section.
+         * ScopedTransactionEnd is defined due to semantics; to close the scope.
+         */
+#  define ScopedTransactionBegin() { \
+       ScopedTransaction _st(this);  \
+       ScopedConnection  _sc(this);
+#  define ScopedTransactionEnd() }
+
     class ScopedConnection
     {
     public:
@@ -60,6 +72,8 @@ private:
 
     friend class ScopedConnection;
     friend class ScopedTransaction;
+
+    typedef bp::class_<WBEMConnection, boost::noncopyable> WBEMConnectionClass;
 
 public:
     WBEMConnection(
@@ -192,7 +206,105 @@ public:
         const bp::object &result_class,
         const bp::object &role);
 
+#  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+    bp::object openEnumerateInstances(
+        const bp::object &cls,
+        const bp::object &ns,
+        const bp::object &deep_inheritance,
+        const bp::object &include_class_origin,
+        const bp::object &property_list,
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object openEnumerateInstanceNames(
+        const bp::object &cls,
+        const bp::object &ns,
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object openAssociators(
+        const bp::object &object_path,
+        const bp::object &ns,
+        const bp::object &assoc_class,
+        const bp::object &result_class,
+        const bp::object &role,
+        const bp::object &result_role,
+        const bp::object &include_class_origin,
+        const bp::object &property_list,
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object openAssociatorNames(
+        const bp::object &object_path,
+        const bp::object &ns,
+        const bp::object &assoc_class,
+        const bp::object &result_class,
+        const bp::object &role,
+        const bp::object &result_role,
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object openReferences(
+        const bp::object &object_path,
+        const bp::object &ns,
+        const bp::object &result_class,
+        const bp::object &role,
+        const bp::object &include_class_origin,
+        const bp::object &property_list,
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object openReferenceNames(
+        const bp::object &object_path,
+        const bp::object &ns,
+        const bp::object &result_class,
+        const bp::object &role,
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object openExecQuery(
+        const bp::object &query_lang,
+        const bp::object &query,
+        const bp::object &ns,
+        const bp::object &operation_timeout,
+        const bp::object &continue_on_error,
+        const bp::object &max_object_cnt);
+
+    bp::object pullInstances(
+        const bp::object &ctx,
+        const bp::object &max_object_cnt);
+
+    bp::object pullInstanceNames(
+        bp::object &ctx,
+        bp::object &max_object_cnt);
+
+    void closeEnumeration(const bp::object &ctx);
+#  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
+
 protected:
+    static void init_type_base(WBEMConnectionClass &cls);
+#  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+    static void init_type_pull(WBEMConnectionClass &cls);
+#  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
+
     bool m_connected_tmp;
     bool m_connect_locally;
     std::string m_url;

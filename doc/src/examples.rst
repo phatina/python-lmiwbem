@@ -20,6 +20,13 @@ and related functions.
    _examples/example_modify_instance
    _examples/example_reference_names
    _examples/example_references
+   _examples/example_pull_associator_names
+   _examples/example_pull_associators
+   _examples/example_pull_enumerate_instance_names
+   _examples/example_pull_enumerate_instances
+   _examples/example_pull_exec_query
+   _examples/example_pull_reference_names
+   _examples/example_pull_references
 
    _examples/example_slp_discovery
    _examples/example_slp_discovery_attrs

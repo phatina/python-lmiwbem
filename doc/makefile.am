@@ -10,10 +10,10 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doc/html/_doctrees $(PAPEROPT_$(PAPER)) $(DOCSRCDIR)
 
-EXTRA_DIST      =     \
-	$(DOCSRCDIR)/_api      \
-	$(DOCSRCDIR)/_examples \
-	$(DOCSRCDIR)/conf.py   \
+EXTRA_DIST      =               \
+	$(DOCSRCDIR)/_api       \
+	$(DOCSRCDIR)/_examples  \
+	$(DOCSRCDIR)/conf.py.in \
 	$(DOCSRCDIR)/*.rst
 
 if BUILD_WITH_DOC

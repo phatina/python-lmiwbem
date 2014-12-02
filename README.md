@@ -114,6 +114,13 @@ Currently supported intrinsic methods:
 - ModifyInstance()
 - References()
 - ReferenceNames()
+- OpenAssociators()
+- OpenAssociatorNames()
+- OpenEnumerateInstances()
+- OpenEnumerateInstanceNames()
+- OpenExecQuery()
+- OpenReferences()
+- OpenReferenceNames()
 
 **NOTE:** See the directory `examples`.
 

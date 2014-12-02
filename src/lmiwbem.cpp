@@ -32,6 +32,9 @@
 #include "lmiwbem_config.h"
 #include "lmiwbem_constants.h"
 #include "lmiwbem_convert.h"
+#ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+#  include "lmiwbem_enum_ctx.h"
+#endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
 #include "lmiwbem_exception.h"
 #ifdef HAVE_PEGASUS_LISTENER
 #  include "lmiwbem_listener.h"
@@ -137,6 +140,9 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
 #  ifdef HAVE_PEGASUS_LISTENER
     CIMIndicationListener::init_type();
 #  endif // HAVE_PEGASUS_LISTENER
+#  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+    CIMEnumerationContext::init_type();
+#  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
 #  ifdef HAVE_SLP
     SLP::init_type();
     SLPResult::init_type();

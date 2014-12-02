@@ -65,6 +65,13 @@ lmiwbem_core_la_SOURCES     +=    \
 	lmiwbem_slp.cpp
 endif # BUILD_WITH_SLP
 
+if BUILD_WITH_ENUM_CTX
+lmiwbem_core_la_SOURCES     +=    \
+	lmiwbem_enum_ctx.h        \
+	lmiwbem_enum_ctx.cpp      \
+	lmiwbem_connection_pull.cpp
+endif # BUILD_WITH_ENUM_CTX
+
 lmiwbem_core_la_LDFLAGS      =    \
 	-module                   \
 	-avoid-version
