@@ -22,6 +22,7 @@
 #include <config.h>
 #include <Pegasus/Common/SSLContext.h>
 #include "lmiwbem_client.h"
+#include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_gil.h"
 
@@ -56,8 +57,9 @@ void CIMClient::connect(
     const Pegasus::String &trust_store)
 {
     if (!m_url_info.set(uri)) {
-        throw_CIMError("Invalid host address");
-        return;
+        throw_ConnectionError(
+            "Invalid locator",
+            CIMConstants::CON_ERR_INVALID_LOCATOR);
     }
 
     if (!m_url_info.isHttps()) {
