@@ -1,5 +1,5 @@
-LMIWBEM Documentation
-=====================
+LMIWBEM |version|
+=================
 
 *LMIWBEM is a Python library that performs CIM operations using CIM-XML
 protocol. The library tries to mimic PyWBEM, but does things in different way:*

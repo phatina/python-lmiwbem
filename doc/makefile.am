@@ -26,8 +26,10 @@ buildhtml:
 	[ -L $(DOCLMIWBEMDIR)/__init__.py ] || ln -s $(BUILDDIR)/src/lmiwbem/__init__.py $(DOCLMIWBEMDIR)/__init__.py
 	[ -L $(DOCLMIWBEMDIR)/lmiwbem_types.py ] || ln -s $(BUILDDIR)/src/lmiwbem/lmiwbem_types.py $(DOCLMIWBEMDIR)/lmiwbem_types.py
 	[ -L $(DOCLMIWBEMDIR)/lmiwbem_core.so ] || ln -s $(BUILDDIR)/src/.libs/lmiwbem_core.so $(DOCLMIWBEMDIR)/lmiwbem_core.so
+	[ -e $(DOCSRCDIR)/conf.py ] || ln -s $(BUILDDIR)/doc/src/conf.py $(DOCSRCDIR)/conf.py
 	LMIWBEM_BUILDDIR=${abs_top_builddir} $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(HTMLBUILDDIR)
 	rm -fr $(DOCLMIWBEMDIR)
+	[ ! -L $(DOCSRCDIR)/conf.py ] || rm -f $(DOCSRCDIR)/conf.py
 
 installhtml: buildhtml
 	mkdir -p $(HTMLINSTALLDIR)

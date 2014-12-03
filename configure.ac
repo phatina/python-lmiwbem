@@ -279,6 +279,7 @@ AC_OUTPUT(
     [makefile
      setup.py
      doc/makefile
+     doc/src/conf.py
      src/makefile
      src/lmiwbem/makefile
      src/lmiwbem/__init__.py
