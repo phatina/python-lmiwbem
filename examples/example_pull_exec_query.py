@@ -13,6 +13,7 @@
 
 import lmiwbem
 
+
 hostname = 'hostname'
 username = 'username'
 password = 'password'

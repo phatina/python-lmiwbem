@@ -13,28 +13,29 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
-del_user = "del_user"
 
-# Connect to CIMOM
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+del_user = 'del_user'
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# Create LMI_Account instance name
+# Create LMI_Account instance name.
 del_user_iname = lmiwbem.CIMInstanceName(
-    "LMI_Account",
+    'LMI_Account',
     lmiwbem.NocaseDict({
-        "CreationClassName" : "LMI_Account",
-        "Name" : del_user,
-        "SystemCreationClassName" : "PG_ComputerSystem",
-        "SystemName" : hostname}),
+        'CreationClassName': 'LMI_Account',
+        'Name': del_user,
+        'SystemCreationClassName': 'PG_ComputerSystem',
+        'SystemName': hostname}),
     hostname,
-    "root/cimv2")
+    'root/cimv2')
 
-# Delete the instance
+# Delete the instance.
 conn.DeleteInstance(del_user_iname)
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

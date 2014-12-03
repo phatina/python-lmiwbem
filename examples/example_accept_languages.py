@@ -6,10 +6,11 @@
 
 import lmiwbem
 
+
 conn = lmiwbem.WBEMConnection()
 
-# Get Accept languages
+# Get Accept languages.
 print conn.request_accept_languages
 
-# Set Accept languages
-conn.request_accept_languages = [("ru", 1.0), ("en", 0.5)]
+# Set Accept languages.
+conn.request_accept_languages = [('ru', 1.0), ('en', 0.5)]

@@ -14,45 +14,46 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
-new_user = "new_user"
 
-# Connect to CIMOM
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+new_user = 'new_user'
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# Create LMI_AccountManagementService instance name
+# Create LMI_AccountManagementService instance name.
 lams_iname = lmiwbem.CIMInstanceName(
-    "LMI_AccountManagementService",
+    'LMI_AccountManagementService',
     lmiwbem.NocaseDict({
-        "CreationClassName" : "LMI_AccountManagementService",
-        "Name" : "OpenLMI Linux Users Account Management Service",
-        "SystemCreationClassName" : "PG_ComputerSystem",
-        "SystemName" : hostname}),
+        'CreationClassName': 'LMI_AccountManagementService',
+        'Name': 'OpenLMI Linux Users Account Management Service',
+        'SystemCreationClassName': 'PG_ComputerSystem',
+        'SystemName': hostname}),
     hostname,
-    "root/cimv2")
+    'root/cimv2')
 
-# Create PG_ComputerSystem instance name
+# Create PG_ComputerSystem instance name.
 cs_iname = lmiwbem.CIMInstanceName(
-    "PG_ComputerSystem",
+    'PG_ComputerSystem',
     lmiwbem.NocaseDict({
-        "CreationClassName" : "PG_ComputerSystem",
-        "Name" : hostname}),
+        'CreationClassName': 'PG_ComputerSystem',
+        'Name': hostname}),
     hostname,
-    "root/cimv2")
+    'root/cimv2')
 
-# Invoke the CreateAccount method
+# Invoke the CreateAccount method.
 rval = conn.InvokeMethod(
-    "CreateAccount",
+    'CreateAccount',
     lams_iname,
     Name=new_user,
     System=cs_iname,
 )
 
-# Do something with the result
+# Do something with the result.
 print rval
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

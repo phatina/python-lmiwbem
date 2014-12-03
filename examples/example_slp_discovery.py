@@ -6,25 +6,28 @@
 
 import lmiwbem
 
+
 def delim():
-    print "-" * 80
+    print '-' * 80
+
 
 def print_slp_result(result):
-    """
+    '''
     Prints a SLP result.
 
     :param lmiwbem.SLPResult result: SLP result to print
-    """
+    '''
     delim()
-    print "Type:", result.srvtype
-    print "Host:", result.host
-    print "Port:", result.port
+    print 'Type:', result.srvtype
+    print 'Host:', result.host
+    print 'Port:', result.port
     delim()
-    print ""
+    print ''
+
 
 # Discover WBEM services.
-services = lmiwbem.slp_discover("service:wbem")
+services = lmiwbem.slp_discover('service:wbem')
 
-# Do something with SLP results
+# Do something with SLP results.
 for result in services:
     print_slp_result(result)

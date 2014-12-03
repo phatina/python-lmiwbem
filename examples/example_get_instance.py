@@ -14,50 +14,54 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
-cls      = "LMI_Account"
-account  = "account"
+
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+cls      = 'LMI_Account'
+account  = 'account'
+
 
 def delim():
-    print "-" * 80
+    print '-' * 80
+
 
 def print_instance(inst):
     delim()
-    print "Classname:", inst.classname
+    print 'Classname:', inst.classname
     delim()
-    print "Path:", inst.path
+    print 'Path:', inst.path
     delim()
-    print "Properties:", inst.properties.keys()
+    print 'Properties:', inst.properties.keys()
     delim()
-    print "Qualifiers:", inst.qualifiers.keys()
+    print 'Qualifiers:', inst.qualifiers.keys()
     delim()
 
-# Connect to CIMOM
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# First, create CIMInstanceName
+# First, create CIMInstanceName.
 tester_iname = lmiwbem.CIMInstanceName(
     cls,
     lmiwbem.NocaseDict({
-      "CreationClassName" : cls,
-      "Name" : account,
-      "SystemCreationClassName" : "PG_ComputerSystem",
-      "SystemName" : hostname}),
-    "virt-rawhide",
-    "root/cimv2")
+      'CreationClassName': cls,
+      'Name': account,
+      'SystemCreationClassName': 'PG_ComputerSystem',
+      'SystemName': hostname}),
+    'virt-rawhide',
+    'root/cimv2')
 
-# Get Instance
+# Get Instance.
 account = conn.GetInstance(
     tester_iname,
     LocalOnly=False,
     IncludeQualifiers=True,
     IncludeClassOrigin=True)
 
-# Do something with the instance
+# Do something with the instance.
 print_instance(account)
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

@@ -2,34 +2,39 @@
 #
 # Author: Peter Hatina <phatina@redhat.com>
 #
+# This example issues EnumerateInstances method, retrieves all the
+# instance names from the remote machine and prints them out.
 #
 # To make this example work, modify following variables:
 #   hostname
 #   username
 #   password
+#   cls
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
 
-# Connect to CIMOM
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+cls = 'class'
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# Enumerate Instances
+# Enumerate Instances.
 accounts = conn.EnumerateInstances(
-    "LMI_Account",
-    "root/cimv2",
+    cls,
+    'root/cimv2',
     LocalOnly=False,
     DeepInheritance=True,
     IncludeQualifiers=True,
     IncludeClassOrigin=True,
     PropertyList=None)
 
-# Do something with instances
+# Do something with instances.
 print accounts
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

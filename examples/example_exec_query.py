@@ -13,23 +13,24 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
-account  = "account"
 
-# Connect to CIMOM
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+account  = 'account'
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# Execute a query in CQL language
+# Execute a query in CQL language.
 instances = conn.ExecQuery(
-    "DMTF:CQL",
-    "select * from LMI_Account where Name = '%s'" % account,
-    "root/cimv2")
+    'DMTF:CQL',
+    'select * from LMI_Account where Name = \'%s\'' % account,
+    'root/cimv2')
 
-# Do something instances
+# Do something instances.
 print instances
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

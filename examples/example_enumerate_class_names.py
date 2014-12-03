@@ -12,22 +12,23 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
 
-# Connect to CIMOM
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# Enumerate Instances
+# Enumerate instances.
 class_names = conn.EnumerateClassNames(
-    "root/cimv2",
+    'root/cimv2',
     ClassName=None,
     DeepInheritance=True)
 
-# Do something with instances
+# Do something with instances.
 print class_names
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

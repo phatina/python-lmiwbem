@@ -13,26 +13,27 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
-account  = "account"
 
-# Connect to CIMOM
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+account  = 'account'
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
 iname = lmiwbem.CIMInstanceName(
-    "LMI_Account",
+    'LMI_Account',
     lmiwbem.NocaseDict({
-        "CreationClassName" : "LMI_Account",
-        "Name" : account,
-        "SystemCreationClassName" : "PG_ComputerSystem",
-        "SystemName" : hostname}),
+        'CreationClassName': 'LMI_Account',
+        'Name': account,
+        'SystemCreationClassName': 'PG_ComputerSystem',
+        'SystemName': hostname}),
     hostname,
-    "root/cimv2")
+    'root/cimv2')
 
-# Get associated instance names with iname
+# Get associated instance names with iname.
 associated_inames = conn.AssociatorNames(
     iname,
     AssocClass=None,
@@ -40,8 +41,8 @@ associated_inames = conn.AssociatorNames(
     Role=None,
     ResultRole=None)
 
-# Do something with associated instance names
+# Do something with associated instance names.
 print associated_inames
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()

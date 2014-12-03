@@ -20,17 +20,17 @@ password = 'password'
 account  = 'account'
 max_obj_cnt=16
 
-# Connect to CIMOM
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
 iname = lmiwbem.CIMInstanceName(
     'LMI_Account',
     lmiwbem.NocaseDict({
-        'CreationClassName' : 'LMI_Account',
-        'Name' : account,
-        'SystemCreationClassName' : 'PG_ComputerSystem',
-        'SystemName' : hostname}),
+        'CreationClassName': 'LMI_Account',
+        'Name': account,
+        'SystemCreationClassName': 'PG_ComputerSystem',
+        'SystemName': hostname}),
     hostname,
     'root/cimv2')
 

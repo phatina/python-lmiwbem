@@ -13,40 +13,44 @@
 
 import lmiwbem
 
-hostname = "hostname"
-username = "username"
-password = "password"
-cls      = "ClassName"
+
+hostname = 'hostname'
+username = 'username'
+password = 'password'
+cls      = 'ClassName'
+
 
 def delim():
-    print "-" * 80
+    print '-' * 80
+
 
 def print_class(cls):
     delim()
-    print "Classname:", cls.classname
+    print 'Classname:', cls.classname
     delim()
-    print "Properties:", cls.properties.keys()
+    print 'Properties:', cls.properties.keys()
     delim()
-    print "Qualifiers:", cls.qualifiers.keys()
+    print 'Qualifiers:', cls.qualifiers.keys()
     delim()
-    print "Methods:", cls.methods.keys()
+    print 'Methods:', cls.methods.keys()
     delim()
 
-# Connect to CIMOM
+
+# Connect to CIMOM.
 conn = lmiwbem.WBEMConnection()
 conn.connect(hostname, username, password)
 
-# Get class
+# Get class.
 cim_cls = conn.GetClass(
     cls,
-    "root/cimv2",
+    'root/cimv2',
     LocalOnly=False,
     IncludeQualifiers=True,
     IncludeClassOrigin=True,
     PropertyList=None)
 
-# Do something with the instance
+# Do something with the instance.
 print_class(cim_cls)
 
-# Disconnect from CIMOM
+# Disconnect from CIMOM.
 conn.disconnect()
