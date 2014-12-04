@@ -364,7 +364,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
     .def("CloseEnumeration", &WBEMConnection::closeEnumeration,
         (bp::arg("Context")),
         "CloseEnumeration(Context)\n\n"
-        "Closes an enumeration sequence."
+        "Closes an enumeration sequence.\n\n"
         ":param CIMEnumerationContext Context: Enumeration context to close.\n"
         ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`");
 }
