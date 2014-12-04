@@ -1,3 +1,15 @@
+New in version 0.5.0:
+* pull operations
+* fixed CIMIndicationListener port value, when multiple bind retries are allowed
+* fixed multithreading races
+* verbose exceptions (more informative exception message)
+  - CIMError, ConnectionError can include intrinsic call names
+    and their parameters
+  - configurable via lmiwbem.EXCEPTION_VERBOSITY
+* CIMIndicationListener.add_handler() can take tuple of handlers
+* doc: switched to rtd theme
+* various fixes and improvements
+
 New in version 0.4.0:
 * introduce WBEMConnection::setCredentials()
 * introduce WBEMConnection::setRequestAcceptLanguages()
