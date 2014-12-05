@@ -13,7 +13,7 @@ m4_include([m4/python_devel.m4])
 m4_include([m4/boost_base.m4])
 m4_include([m4/boost_python.m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign dist-bzip2 subdir-objects])
 AM_SILENT_RULES([yes])
 
 AC_CONFIG_HEADERS([config.h])
@@ -281,7 +281,6 @@ AC_OUTPUT(
      doc/makefile
      doc/src/conf.py
      src/makefile
-     src/lmiwbem/makefile
      src/lmiwbem/__init__.py
      src/lmiwbem/lmiwbem_types.py]
 )

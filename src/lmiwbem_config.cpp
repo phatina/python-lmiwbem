@@ -23,8 +23,8 @@
 #include <boost/python/errors.hpp>
 #include <boost/python/scope.hpp>
 #include "lmiwbem_config.h"
-#include "lmiwbem_convert.h"
-#include "lmiwbem_util.h"
+#include "util/lmiwbem_convert.h"
+#include "util/lmiwbem_util.h"
 
 namespace {
 

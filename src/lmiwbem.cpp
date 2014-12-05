@@ -26,31 +26,31 @@
 #include <boost/python/module.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/scope.hpp>
-#include "lmiwbem_class.h"
-#include "lmiwbem_class_name.h"
-#include "lmiwbem_connection.h"
 #include "lmiwbem_config.h"
-#include "lmiwbem_constants.h"
-#include "lmiwbem_convert.h"
-#ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
-#  include "lmiwbem_enum_ctx.h"
-#endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
 #include "lmiwbem_exception.h"
+#include "obj/lmiwbem_connection.h"
 #ifdef HAVE_PEGASUS_LISTENER
-#  include "lmiwbem_listener.h"
+#  include "obj/lmiwbem_listener.h"
 #endif // HAVE_PEGASUS_LISTENER
-#include "lmiwbem_instance.h"
-#include "lmiwbem_instance_name.h"
-#include "lmiwbem_method.h"
-#include "lmiwbem_nocasedict.h"
-#include "lmiwbem_parameter.h"
-#include "lmiwbem_property.h"
-#include "lmiwbem_qualifier.h"
 #ifdef HAVE_SLP
-#  include "lmiwbem_slp.h"
+#  include "obj/lmiwbem_slp.h"
 #endif // HAVE_SLP
-#include "lmiwbem_types.h"
-#include "lmiwbem_util.h"
+#include "obj/lmiwbem_nocasedict.h"
+#include "obj/cim/lmiwbem_class.h"
+#include "obj/cim/lmiwbem_class_name.h"
+#include "obj/cim/lmiwbem_constants.h"
+#ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+#  include "obj/cim/lmiwbem_enum_ctx.h"
+#endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
+#include "obj/cim/lmiwbem_instance.h"
+#include "obj/cim/lmiwbem_instance_name.h"
+#include "obj/cim/lmiwbem_method.h"
+#include "obj/cim/lmiwbem_parameter.h"
+#include "obj/cim/lmiwbem_property.h"
+#include "obj/cim/lmiwbem_qualifier.h"
+#include "obj/cim/lmiwbem_types.h"
+#include "util/lmiwbem_convert.h"
+#include "util/lmiwbem_util.h"
 
 #include <list>
 

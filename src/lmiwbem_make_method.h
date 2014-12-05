@@ -28,7 +28,7 @@
 #  include <boost/python/raw_function.hpp>
 #  include <boost/mpl/vector/vector10.hpp>
 #  include <boost/limits.hpp>
-#  include "lmiwbem_convert.h"
+#  include "util/lmiwbem_convert.h"
 
 namespace bp = boost::python;
 

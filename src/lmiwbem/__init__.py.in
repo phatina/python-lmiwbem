@@ -19,7 +19,7 @@
 #
 # ##### END LICENSE BLOCK #####
 
-"""
+'''
 lmiwbem - WBEM client bindings for Python.
 
 LMIWBEM is a Python library, which performs CIM operations using CIM-XML
@@ -28,9 +28,9 @@ protocol. The library tries to mimic PyWBEM, but does things in different way:
 - TOG-Pegasus client's library is used for communication
 - lazy evaluation of CIM objects is used
 - some minor API was added for performance reasons
-"""
+'''
 
-__version__ = "@VERSION@"
+__version__ = '@VERSION@'
 
 from lmiwbem.lmiwbem_core import *
 from lmiwbem.lmiwbem_types import *

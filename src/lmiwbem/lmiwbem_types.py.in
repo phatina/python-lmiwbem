@@ -38,9 +38,9 @@ from datetime import tzinfo
 import re
 
 class MinutesFromUTC(tzinfo):
-    """
+    '''
     Fixed offset in minutes from UTC
-    """
+    '''
     def __init__(self, offset):
         self.__offset = timedelta(minutes=offset)
 
@@ -51,26 +51,26 @@ class MinutesFromUTC(tzinfo):
         return timedelta(0)
 
 class CIMType(object):
-    """
+    '''
     Base type for all CIM types
-    """
+    '''
 
 class CIMDateTime(CIMType) :
-    """
+    '''
     A CIM DateTime
-    """
+    '''
 
     def __init__(self, dtarg):
-        self.cimtype = "datetime"
+        self.cimtype = 'datetime'
         self.__timedelta = None
         self.__datetime = None
         if isinstance(dtarg, basestring):
-            date_pattern = re.compile(r"^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.(\d{6})([+|-])(\d{3})")
+            date_pattern = re.compile(r'^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.(\d{6})([+|-])(\d{3})')
             s = date_pattern.search(dtarg)
             if s is not None:
                 g = s.groups()
                 offset = int(g[8])
-                if g[7] == "-":
+                if g[7] == '-':
                     offset = -offset
                 self.__datetime = datetime(
                     int(g[0]), int(g[1]),
@@ -78,10 +78,10 @@ class CIMDateTime(CIMType) :
                     int(g[4]), int(g[5]),
                     int(g[6]), MinutesFromUTC(offset))
             else:
-                tv_pattern = re.compile(r"^(\d{8})(\d{2})(\d{2})(\d{2})\.(\d{6})(:)(000)")
+                tv_pattern = re.compile(r'^(\d{8})(\d{2})(\d{2})(\d{2})\.(\d{6})(:)(000)')
                 s = tv_pattern.search(dtarg)
                 if s is None:
-                    raise ValueError("Invalid Datetime format '%s'" % dtarg)
+                    raise ValueError('Invalid Datetime format \'%s\'' % dtarg)
                 else:
                     g = s.groups()
                     self.__timedelta = timedelta(
@@ -98,13 +98,13 @@ class CIMDateTime(CIMType) :
             self.__datetime = dtarg.__datetime
             self.__timedelta = dtarg.__timedelta
         else:
-            raise ValueError("Expected datetime, timedelta, or string")
+            raise ValueError('Expected datetime, timedelta, or string')
 
     @property
     def minutes_from_utc(self):
-        """
+        '''
         Return the timezone as +/- minutes from UTC
-        """
+        '''
         offset = 0
         if self.__datetime is not None and \
                 self.__datetime.utcoffset() is not None:
@@ -127,9 +127,9 @@ class CIMDateTime(CIMType) :
 
     @staticmethod
     def get_local_utcoffset():
-        """
+        '''
         Return minutes +/- UTC for the local timezone
-        """
+        '''
         utc = datetime.utcnow()
         local = datetime.now()
         if local < utc:
@@ -154,23 +154,23 @@ class CIMDateTime(CIMType) :
             hour = self.__timedelta.seconds / 3600
             minute = (self.__timedelta.seconds - hour * 3600) / 60
             second = self.__timedelta.seconds - hour * 3600 - minute * 60
-            return "%08d%02d%02d%02d.%06d:000" % \
+            return '%08d%02d%02d%02d.%06d:000' % \
                 (self.__timedelta.days, hour, minute, second,
                  self.__timedelta.microseconds)
         else:
             offset = self.minutes_from_utc
-            sign = "+"
+            sign = '+'
             if offset < 0:
-                sign = "-"
+                sign = '-'
                 offset = -offset
-            return "%d%02d%02d%02d%02d%02d.%06d%s%03d" % \
+            return '%d%02d%02d%02d%02d%02d.%06d%s%03d' % \
                 (self.__datetime.year, self.__datetime.month,
                  self.__datetime.day, self.__datetime.hour,
                     self.__datetime.minute, self.__datetime.second,
                     self.__datetime.microsecond, sign, offset)
 
     def __repr__ (self):
-        return "%s(%s)"%(self.__class__.__name__, str(self))
+        return '%s(%s)'%(self.__class__.__name__, str(self))
 
     def __getstate__(self):
         return str(self)
@@ -189,7 +189,7 @@ class CIMDateTime(CIMType) :
 
 # CIM integer types
 if sys.version_info >= (3, 0):
-    # Python3 no longer uses "long" type.
+    # Python3 no longer uses 'long' type.
     base = int
 else:
     base = long
@@ -197,54 +197,54 @@ class CIMInt(CIMType, base):
     pass
 
 class Uint8(CIMInt):
-    cimtype = "uint8"
+    cimtype = 'uint8'
 
 class Sint8(CIMInt):
-    cimtype = "sint8"
+    cimtype = 'sint8'
 
 class Uint16(CIMInt):
-    cimtype = "uint16"
+    cimtype = 'uint16'
 
 class Sint16(CIMInt):
-    cimtype = "sint16"
+    cimtype = 'sint16'
 
 class Uint32(CIMInt):
-    cimtype = "uint32"
+    cimtype = 'uint32'
 
 class Sint32(CIMInt):
-    cimtype = "sint32"
+    cimtype = 'sint32'
 
 class Uint64(CIMInt):
-    cimtype = "uint64"
+    cimtype = 'uint64'
 
 class Sint64(CIMInt):
-    cimtype = "sint64"
+    cimtype = 'sint64'
 
 # CIM float types
 class CIMFloat(CIMType, float):
     pass
 
 class Real32(CIMFloat):
-    cimtype = "real32"
+    cimtype = 'real32'
 
 class Real64(CIMFloat):
-    cimtype = "real64"
+    cimtype = 'real64'
 
 def cimtype(obj):
-    """
+    '''
     Return the CIM type name of an object as a string.  For a list, the
     type is the type of the first element as CIM arrays must be
     homogeneous.
-    """
+    '''
 
     if isinstance(obj, CIMType):
         return obj.cimtype
     if isinstance(obj, bool):
-        return "boolean"
+        return 'boolean'
     if isinstance(obj, (str, unicode)):
-        return "string"
+        return 'string'
     if isinstance(obj, list):
         return cimtype(obj[0])
     if isinstance(obj, (datetime, timedelta)):
-        return "datetime"
-    raise TypeError("Invalid CIM type for %s" % str(obj))
+        return 'datetime'
+    raise TypeError('Invalid CIM type for %s' % str(obj))

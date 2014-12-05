@@ -22,9 +22,9 @@
 #include <config.h>
 #include <Pegasus/Common/SSLContext.h>
 #include "lmiwbem_client.h"
-#include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_gil.h"
+#include "obj/cim/lmiwbem_constants.h"
 
 #include <cctype>
 

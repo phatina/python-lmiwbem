@@ -25,8 +25,8 @@
 #include <boost/python/tuple.hpp>
 #include <Pegasus/Client/CIMClientException.h>
 #include "lmiwbem.h"
-#include "lmiwbem_constants.h"
 #include "lmiwbem_exception.h"
+#include "obj/cim/lmiwbem_constants.h"
 
 namespace bp = boost::python;
 
