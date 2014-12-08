@@ -186,6 +186,11 @@ void CIMInstance::init_type()
 
 bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)
 {
+    if (isUninitialized(instance)) {
+        // If we got uninitialized CIMInstance, return None instead.
+        return None;
+    }
+
     bp::object inst = CIMBase<CIMInstance>::create();
     CIMInstance &fake_this = CIMInstance::asNative(inst);
     fake_this.m_classname = instance.getClassName().getString().getCString();
@@ -659,4 +664,9 @@ void CIMInstance::updatePegasusCIMInstanceHostname(
 
     CIMInstanceName::updatePegasusCIMObjectPathHostname(path, hostname);
     instance.setPath(path);
+}
+
+bool CIMInstance::isUninitialized(const Pegasus::CIMInstance &instance)
+{
+    return instance.isUninitialized();
 }

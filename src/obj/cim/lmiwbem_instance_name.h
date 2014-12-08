@@ -98,6 +98,7 @@ public:
     static void updatePegasusCIMObjectPathHostname(
         Pegasus::CIMObjectPath &path,
         const std::string &hostname);
+    static bool isUninitialized(const Pegasus::CIMObjectPath &path);
 
 private:
     static bp::object keybindingToValue(const Pegasus::CIMKeyBinding &keybinding);

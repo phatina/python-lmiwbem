@@ -164,6 +164,11 @@ bp::object CIMInstanceName::create(
     const std::string &ns,
     const std::string &hostname)
 {
+    if (isUninitialized(obj_path)) {
+        // If we got uninitialized CIMObjectPath, return None instead.
+        return None;
+    }
+
     bp::object inst = CIMBase<CIMInstanceName>::create();
     CIMInstanceName& fake_this = CIMInstanceName::asNative(inst);
 
@@ -588,4 +593,11 @@ void CIMInstanceName::updatePegasusCIMObjectPathHostname(
     }
 
     path.setHost(Pegasus::String(hostname.c_str()));
+}
+
+bool CIMInstanceName::isUninitialized(const Pegasus::CIMObjectPath &path)
+{
+    // Let's consider object path to be Null, when its class name is
+    // undefined or Null.
+    return path.getClassName().isNull();
 }

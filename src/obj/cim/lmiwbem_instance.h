@@ -99,6 +99,7 @@ public:
     static void updatePegasusCIMInstanceHostname(
         Pegasus::CIMInstance &instance,
         const std::string &hostname);
+    static bool isUninitialized(const Pegasus::CIMInstance &instance);
 
 private:
     void evalProperties();
