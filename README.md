@@ -38,6 +38,7 @@ LMIWBEM has several dependencies:
 - tog-pegasus-libs (2.12.0)
 - boost-python (1.50.0)
 - python-devel
+- openslp-devel
 - build tools (autoconf, automake, make, ...)
 
 LMIWBEM supports 2 build systems:
