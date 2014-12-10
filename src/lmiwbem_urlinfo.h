@@ -28,27 +28,31 @@
 class URLInfo
 {
 public:
+    static const Pegasus::Uint32 DEF_HTTPS_PORT = 5989;
+    static const Pegasus::Uint32 DEF_HTTP_PORT  = 5988;
+
     URLInfo();
     URLInfo(const URLInfo &copy);
 
     bool set(Pegasus::String url);
 
+    Pegasus::String url() const { return m_url; }
     Pegasus::String hostname() const { return m_hostname; }
     Pegasus::Uint32 port() const { return m_port; }
 
     bool isHttps() const { return m_is_https; }
+    bool isLocal() const { return m_is_local; }
 
     std::string asStdString() const;
 
     URLInfo &operator =(const URLInfo &rhs);
 
 private:
-    static const Pegasus::Uint32 DEF_HTTPS_PORT = 5989;
-    static const Pegasus::Uint32 DEF_HTTP_PORT  = 5988;
-
+    Pegasus::String m_url;
     Pegasus::String m_hostname;
     Pegasus::Uint32 m_port;
     bool m_is_https;
+    bool m_is_local;
 };
 
 #endif // WBEM_CLIENT_ADDRESS_H
