@@ -206,6 +206,7 @@ private:
     class PyFunctor
     {
     public:
+        PyFunctor();
         PyFunctor(
             const String &ns,
             const String &hostname);
@@ -235,6 +236,12 @@ private:
 
         bp::object operator()(
             const Pegasus::CIMObjectPath &cim_instance_name) const;
+    };
+
+    class PyFunctorCIMClass: public PyFunctor
+    {
+    public:
+        bp::object operator()(const Pegasus::CIMClass &cim_class) const;
     };
 
     template <typename T, typename Functor>
@@ -269,6 +276,9 @@ public:
         const Pegasus::Array<Pegasus::CIMObjectPath> &arr,
         const String &ns = String(),
         const String &hostname = String());
+
+    static bp::object asPyCIMClassList(
+        const Pegasus::Array<Pegasus::CIMClass> &arr);
 };
 
 class ObjectConv

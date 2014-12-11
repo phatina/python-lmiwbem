@@ -166,6 +166,12 @@ Pegasus::CIMType CIMTypeConv::CIMTypeHolder::get(const String &type)
     return m_string_type[type];
 }
 
+ListConv::PyFunctor::PyFunctor()
+    : m_ns()
+    , m_hostname()
+{
+}
+
 ListConv::PyFunctor::PyFunctor(
     const String &ns,
     const String &hostname)
@@ -209,6 +215,12 @@ bp::object ListConv::PyFunctorCIMInstanceName::operator()(
     const Pegasus::CIMObjectPath &cim_instance_name) const
 {
     return CIMInstanceName::create(cim_instance_name, m_ns, m_hostname);
+}
+
+bp::object ListConv::PyFunctorCIMClass::operator()(
+    const Pegasus::CIMClass &cim_class) const
+{
+    return CIMClass::create(cim_class);
 }
 
 Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
@@ -258,6 +270,14 @@ bp::object ListConv::asPyCIMInstanceNameList(
 {
     return asPyListCore<Pegasus::CIMObjectPath, PyFunctorCIMInstanceName>(
         arr, PyFunctorCIMInstanceName(ns, hostname));
+}
+
+bp::object ListConv::asPyCIMClassList(
+    const Pegasus::Array<Pegasus::CIMClass> &arr)
+{
+    return asPyListCore<Pegasus::CIMClass, PyFunctorCIMClass>(
+        arr,
+        PyFunctorCIMClass());
 }
 
 String ObjectConv::asString(const bp::object &obj)

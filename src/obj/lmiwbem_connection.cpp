@@ -1155,12 +1155,7 @@ bp::object WBEMConnection::enumerateClasses(
         include_class_origin);
     ScopedTransactionEnd();
 
-    bp::list py_classes;
-    const Pegasus::Uint32 cnt = peg_classes.size();
-    for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        py_classes.append(CIMClass::create(peg_classes[i]));
-
-    return py_classes;
+    return ListConv::asPyCIMClassList(peg_classes);
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
