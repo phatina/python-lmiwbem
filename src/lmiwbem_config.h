@@ -20,7 +20,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #ifndef   LMIWBEM_CONFIG_H
-#  define LMIWBEM_CINFIG_H
+#  define LMIWBEM_CONFIG_H
 
 #  include <string>
 
