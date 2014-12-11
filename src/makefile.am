@@ -7,6 +7,7 @@ lmiwbem_core_la_SOURCES      =            \
 	lmiwbem_refcountedptr.h           \
 	lmiwbem_traits.h                  \
 	lmiwbem_gil.h                     \
+	obj/lmiwbem_cimbase.h             \
 	obj/lmiwbem_connection.h          \
 	obj/lmiwbem_nocasedict.h          \
 	obj/cim/lmiwbem_property.h        \
@@ -26,7 +27,6 @@ lmiwbem_core_la_SOURCES      =            \
 	lmiwbem_urlinfo.h                 \
 	lmiwbem_config.h                  \
 	lmiwbem_make_method.h             \
-	lmiwbem_cimbase.h                 \
 	lmiwbem.h                         \
 	lmiwbem_exception.cpp             \
 	obj/lmiwbem_connection.cpp        \
