@@ -210,6 +210,19 @@ bool is_error(const bp::object &value)
     case CIMConstants::CIM_ERR_INVALID_QUERY:
     case CIMConstants::CIM_ERR_METHOD_NOT_AVAILABLE:
     case CIMConstants::CIM_ERR_METHOD_NOT_FOUND:
+
+#ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+    case CIMConstants::CIM_ERR_NAMESPACE_NOT_EMPTY:
+    case CIMConstants::CIM_ERR_INVALID_ENUMERATION_CONTEXT:
+    case CIMConstants::CIM_ERR_INVALID_OPERATION_TIMEOUT:
+    case CIMConstants::CIM_ERR_PULL_HAS_BEEN_ABANDONED:
+    case CIMConstants::CIM_ERR_PULL_CANNOT_BE_ABANDONED:
+    case CIMConstants::CIM_ERR_FILTERED_ENUMERATION_NOT_SUPPORTED:
+    case CIMConstants::CIM_ERR_CONTINUATION_ON_ERROR_NOT_SUPPORTED:
+    case CIMConstants::CIM_ERR_SERVER_LIMITS_EXCEEDED:
+    case CIMConstants::CIM_ERR_SERVER_IS_SHUTTING_DOWN:
+#endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
+
     case CIMConstants::CON_ERR_OTHER:
     case CIMConstants::CON_ERR_ALREADY_CONNECTED:
     case CIMConstants::CON_ERR_NOT_CONNECTED:
@@ -219,6 +232,7 @@ bool is_error(const bp::object &value)
     case CIMConstants::CON_ERR_CONNECTION_TIMEOUT:
     case CIMConstants::CON_ERR_SSL_EXCEPTION:
     case CIMConstants::CON_ERR_BIND:
+
 #ifdef HAVE_SLP
     case CIMConstants::SLP_ERR_LANGUAGE_NOT_SUPPORTED:
     case CIMConstants::SLP_ERR_PARSE_ERROR:

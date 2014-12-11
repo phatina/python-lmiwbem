@@ -64,17 +64,17 @@ public:
 #  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
 
         // Connection error codes
-        , CON_ERR_OTHER                               = 18
-        , CON_ERR_ALREADY_CONNECTED                   = 19
-        , CON_ERR_NOT_CONNECTED                       = 20
-        , CON_ERR_INVALID_LOCATOR                     = 21
-        , CON_ERR_CANNOT_CREATE_SOCKET                = 22
-        , CON_ERR_CANNOT_CONNECT                      = 23
-        , CON_ERR_CONNECTION_TIMEOUT                  = 24
-        , CON_ERR_SSL_EXCEPTION                       = 25
+        , CON_ERR_OTHER                               = 40
+        , CON_ERR_ALREADY_CONNECTED                   = 41
+        , CON_ERR_NOT_CONNECTED                       = 42
+        , CON_ERR_INVALID_LOCATOR                     = 43
+        , CON_ERR_CANNOT_CREATE_SOCKET                = 44
+        , CON_ERR_CANNOT_CONNECT                      = 45
+        , CON_ERR_CONNECTION_TIMEOUT                  = 46
+        , CON_ERR_SSL_EXCEPTION                       = 47
 
         // Non standard error codes
-        , CON_ERR_BIND                                = 26
+        , CON_ERR_BIND                                = 48
 
 #  ifdef HAVE_SLP
         // SLP error codes
