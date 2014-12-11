@@ -287,8 +287,8 @@ bp::object SLPResult::create(const SLPSrvURL *url)
 String SLPResult::repr()
 {
     std::stringstream ss;
-    ss << "SLPResult(srvtype='" << m_srvtype
-       << "', host='" << m_host << "', port='"
+    ss << "SLPResult(srvtype=u'" << m_srvtype
+       << "', host=u'" << m_host << "', port='"
        << m_port << "', ...)";
     return ss.str();
 }

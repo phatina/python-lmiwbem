@@ -175,11 +175,11 @@ bool CIMClassName::le(const bp::object &other)
 bp::object CIMClassName::repr()
 {
     std::stringstream ss;
-    ss << "CIMClassName(classname='" << m_classname << '\'';
+    ss << "CIMClassName(classname=u'" << m_classname << '\'';
     if (!m_hostname.empty())
-        ss << ", host='" << m_hostname << '\'';
+        ss << ", host=u'" << m_hostname << '\'';
     if (!m_namespace.empty())
-        ss << ", namespace='" << m_namespace << '\'';
+        ss << ", namespace=u'" << m_namespace << '\'';
     ss << ')';
     return StringConv::asPyUnicode(ss.str());
 }

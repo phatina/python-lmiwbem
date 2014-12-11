@@ -269,7 +269,7 @@ bool CIMParameter::le(const bp::object &other)
 bp::object CIMParameter::repr()
 {
     std::stringstream ss;
-    ss << "CIMParameter(name='" << m_name << "', type='" << m_type
+    ss << "CIMParameter(name=u'" << m_name << "', type=u'" << m_type
        << "', is_array=" << (m_is_array ? "True" : "False") << ')';
     return StringConv::asPyUnicode(ss.str());
 }

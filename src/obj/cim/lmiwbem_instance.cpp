@@ -321,7 +321,7 @@ bool CIMInstance::le(const bp::object &other)
 bp::object CIMInstance::repr()
 {
     std::stringstream ss;
-    ss << "CIMInstance(classname='" << m_classname << "', ...)";
+    ss << "CIMInstance(classname=u'" << m_classname << "', ...)";
     return StringConv::asPyUnicode(ss.str());
 }
 

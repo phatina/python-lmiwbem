@@ -133,7 +133,10 @@ String NocaseDict::repr()
     nocase_map_t::const_iterator it;
     for (it = m_dict.begin(); it != m_dict.end(); ++it) {
         String c_value = ObjectConv::asString(it->second);
-        ss << '\'' << it->first << "': '" << c_value << '\'';
+        ss << "u'" << it->first << "': ";
+        if (isunicode(it->second))
+            ss << 'u';
+        ss << '\'' << c_value << '\'';
         if (it != --m_dict.end())
             ss << ", ";
     }

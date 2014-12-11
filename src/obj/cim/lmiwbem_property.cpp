@@ -321,8 +321,8 @@ bool CIMProperty::le(const bp::object &other)
 bp::object CIMProperty::repr()
 {
     std::stringstream ss;
-    ss << "CIMProperty(name='" << m_name
-        << "', type='" << m_type
+    ss << "CIMProperty(name=u'" << m_name
+        << "', type=u'" << m_type
         << "', value='" << ObjectConv::asString(getPyValue())
         << "', is_array=" << (m_is_array ? "True" : "False") << ", ...)";
     return StringConv::asPyUnicode(ss.str());

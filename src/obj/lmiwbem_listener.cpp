@@ -203,7 +203,7 @@ void CIMIndicationListener::init_type()
 bp::object CIMIndicationListener::repr()
 {
     std::stringstream ss;
-    ss << "CIMIndicationListener(listen_address='" << m_listen_address
+    ss << "CIMIndicationListener(listen_address=u'" << m_listen_address
        << "', port=" << m_port << ")";
     return StringConv::asPyUnicode(ss.str());
 }

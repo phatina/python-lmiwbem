@@ -653,7 +653,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
 String WBEMConnection::repr() const
 {
     std::stringstream ss;
-    ss << "WBEMConnection(url='" << m_url << "', ...)";
+    ss << "WBEMConnection(url=u'" << m_url << "', ...)";
     return ss.str();
 }
 

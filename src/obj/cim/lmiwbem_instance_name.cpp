@@ -391,11 +391,11 @@ bp::object CIMInstanceName::str() const
 bp::object CIMInstanceName::repr() const
 {
     std::stringstream ss;
-    ss << "CIMInstanceName(classname='" << m_classname << "', keybindings="
+    ss << "CIMInstanceName(classname=u'" << m_classname << "', keybindings="
        << ObjectConv::asString(m_keybindings);
     if (!m_hostname.empty())
-        ss << ", host='" << m_hostname << '\'';
-    ss <<  ", namespace='"
+        ss << ", host=u'" << m_hostname << '\'';
+    ss <<  ", namespace=u'"
        << m_namespace << "')";
     return StringConv::asPyUnicode(ss.str());
 }

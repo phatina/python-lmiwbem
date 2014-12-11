@@ -286,7 +286,7 @@ bool CIMQualifier::le(const bp::object &other)
 bp::object CIMQualifier::repr()
 {
     std::stringstream ss;
-    ss << "CIMQualifier(name='" << m_name << "', ...')";
+    ss << "CIMQualifier(name=u'" << m_name << "', ...')";
     return StringConv::asPyUnicode(ss.str());
 }
 

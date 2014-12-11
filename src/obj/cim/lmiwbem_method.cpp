@@ -271,7 +271,7 @@ bool CIMMethod::le(const bp::object &other)
 bp::object CIMMethod::repr()
 {
     std::stringstream ss;
-    ss << "CIMMethod(name='" << m_name << "', return_type='" << m_return_type << "', ...)";
+    ss << "CIMMethod(name=u'" << m_name << "', return_type=u'" << m_return_type << "', ...)";
     return StringConv::asPyUnicode(ss.str());
 }
 

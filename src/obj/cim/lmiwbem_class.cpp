@@ -267,7 +267,7 @@ bool CIMClass::le(const bp::object &other)
 bp::object CIMClass::repr()
 {
     std::stringstream ss;
-    ss << "CIMClass(classname='" << m_classname << "', ...)";
+    ss << "CIMClass(classname=u'" << m_classname << "', ...)";
     return StringConv::asPyUnicode(ss.str());
 }
 
