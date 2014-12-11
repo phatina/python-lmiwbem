@@ -22,40 +22,40 @@
 #ifndef   LMIWBEM_EXCEPTION_H
 #  define LMIWBEM_EXCEPTION_H
 
-#  include <string>
 #  include <sstream>
 #  include <boost/python/errors.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/Exception.h>
 #  include "lmiwbem_traits.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
 void throw_Exception(const Pegasus::Exception &e);
-void throw_Exception(const std::string &message);
+void throw_Exception(const String &message);
 void throw_CIMError(const Pegasus::CIMException &e);
-void throw_CIMError(const std::string &message, int code = 0);
-void throw_ConnectionError(const std::string &message, int code = 0);
-void throw_SLPError(const std::string &message, int code = 0);
+void throw_CIMError(const String &message, int code = 0);
+void throw_ConnectionError(const String &message, int code = 0);
+void throw_SLPError(const String &message, int code = 0);
 
-void throw_ValueError(const std::string &message);
-void throw_KeyError(const std::string &message);
-void throw_MemoryError(const std::string &message);
-void throw_StopIteration(const std::string &message);
-void throw_TypeError(const std::string &message);
-void throw_RuntimeError(const std::string &message);
+void throw_ValueError(const String &message);
+void throw_KeyError(const String &message);
+void throw_MemoryError(const String &message);
+void throw_StopIteration(const String &message);
+void throw_TypeError(const String &message);
+void throw_RuntimeError(const String &message);
 
 template <typename T>
-void throw_TypeError_member(const std::string &member)
+void throw_TypeError_member(const String &member)
 {
-    std::string msg("Wrong type");
-    std::string type = lmi::type_name<T>::get();
+    String msg("Wrong type");
+    String type = lmi::type_name<T>::get();
     if (!type.empty())
-        msg = member + std::string(" must be ") + type + std::string(" type");
+        msg = member + String(" must be ") + type + String(" type");
     throw_TypeError(msg);
 }
 
-void handle_all_exceptions(const std::string &prefix = std::string());
+void handle_all_exceptions(const String &prefix = String());
 void handle_all_exceptions(std::stringstream &prefix);
 
 #endif // LMIWBEM_EXCEPTION_H

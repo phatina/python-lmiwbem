@@ -29,6 +29,11 @@ BOOST_PYTHON_BEGIN
 class object;
 BOOST_PYTHON_END
 
+PEGASUS_BEGIN
+class CIMInstance;
+class CIMObjectPath;
+PEGASUS_END
+
 namespace bp = boost::python;
 
 #  if defined(__GNUC__)

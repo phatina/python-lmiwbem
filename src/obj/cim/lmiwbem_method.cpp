@@ -51,9 +51,9 @@ CIMMethod::CIMMethod(
     const bp::object &propagated,
     const bp::object &qualifiers)
 {
-    m_name  = StringConv::asStdString(name, "name");
-    m_return_type = StringConv::asStdString(return_type, "return_type");
-    m_class_origin = StringConv::asStdString(class_origin, "class_origin");
+    m_name  = StringConv::asString(name, "name");
+    m_return_type = StringConv::asString(return_type, "return_type");
+    m_class_origin = StringConv::asString(class_origin, "class_origin");
     m_is_propagated = Conv::as<bool>(propagated, "propagated");
 
     if (isnone(parameters))
@@ -78,9 +78,9 @@ void CIMMethod::init_type()
             const bp::object &,
             const bp::object &>((
                 bp::arg("methodname"),
-                bp::arg("return_type") = std::string(),
+                bp::arg("return_type") = String(),
                 bp::arg("parameters") = NocaseDict::create(),
-                bp::arg("class_origin") = std::string(),
+                bp::arg("class_origin") = String(),
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create()),
                 "Constructs a :py:class:`.CIMMethod`.\n\n"
@@ -141,11 +141,11 @@ void CIMMethod::init_type()
 
 bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)
 {
-    bp::object inst = CIMBase<CIMMethod>::create();
-    CIMMethod &fake_this = CIMMethod::asNative(inst);
-    fake_this.m_name = method.getName().getString().getCString();
-    fake_this.m_return_type = CIMTypeConv::asStdString(method.getType());
-    fake_this.m_class_origin = method.getClassOrigin().getString().getCString();
+    bp::object py_inst = CIMBase<CIMMethod>::create();
+    CIMMethod &fake_this = CIMMethod::asNative(py_inst);
+    fake_this.m_name = method.getName().getString();
+    fake_this.m_return_type = CIMTypeConv::asString(method.getType());
+    fake_this.m_class_origin = method.getClassOrigin().getString();
     fake_this.m_is_propagated = method.getPropagated();
 
     // Store list of parameters for lazy evaluation
@@ -160,33 +160,33 @@ bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
         fake_this.m_rc_meth_qualifiers.get()->push_back(method.getQualifier(i));
 
-    return inst;
+    return py_inst;
 }
 
 Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
 {
-    Pegasus::CIMMethod method(
-        Pegasus::CIMName(m_name.c_str()),
+    Pegasus::CIMMethod peg_method(
+        Pegasus::CIMName(m_name),
         CIMTypeConv::asCIMType(m_return_type),
-        Pegasus::CIMName(m_class_origin.c_str()),
+        Pegasus::CIMName(m_class_origin),
         m_is_propagated);
 
     // Add all the parameters
-    NocaseDict &parameters = NocaseDict::asNative(getPyParameters());
+    NocaseDict &cim_parameters = NocaseDict::asNative(getPyParameters());
     nocase_map_t::const_iterator it;
-    for (it = parameters.begin(); it != parameters.end(); ++it) {
-        CIMParameter &parameter = CIMParameter::asNative(it->second);
-        method.addParameter(parameter.asPegasusCIMParameter());
+    for (it = cim_parameters.begin(); it != cim_parameters.end(); ++it) {
+        CIMParameter &cim_parameter = CIMParameter::asNative(it->second);
+        peg_method.addParameter(cim_parameter.asPegasusCIMParameter());
     }
 
     // Add all the qualifiers
-    const NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
-    for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
-        CIMQualifier &qualifier = CIMQualifier::asNative(it->second);
-        method.addQualifier(qualifier.asPegasusCIMQualifier());
+    const NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
+    for (it = cim_qualifiers.begin(); it != cim_qualifiers.end(); ++it) {
+        CIMQualifier &cim_qualifier = CIMQualifier::asNative(it->second);
+        peg_method.addQualifier(cim_qualifier.asPegasusCIMQualifier());
     }
 
-    return method;
+    return peg_method;
 }
 
 #  if PY_MAJOR_VERSION < 3
@@ -195,16 +195,16 @@ int CIMMethod::cmp(const bp::object &other)
     if (!isinstance(other, CIMMethod::type()))
         return 1;
 
-    CIMMethod &other_method = CIMMethod::asNative(other);
+    CIMMethod &cim_other = CIMMethod::asNative(other);
 
     int rval;
-    if ((rval = m_name.compare(other_method.m_name)) != 0 ||
-        (rval = m_return_type.compare(other_method.m_return_type)) != 0 ||
-        (rval = m_class_origin.compare(other_method.m_class_origin)) != 0 ||
+    if ((rval = m_name.compare(cim_other.m_name)) != 0 ||
+        (rval = m_return_type.compare(cim_other.m_return_type)) != 0 ||
+        (rval = m_class_origin.compare(cim_other.m_class_origin)) != 0 ||
         (rval = compare(bp::object(m_is_propagated),
-            bp::object(other_method.m_is_propagated))) != 0 ||
-        (rval = compare(getPyParameters(), other_method.getPyParameters())) != 0 ||
-        (rval = compare(getPyQualifiers(), other_method.getPyQualifiers())) != 0)
+            bp::object(cim_other.m_is_propagated))) != 0 ||
+        (rval = compare(getPyParameters(), cim_other.getPyParameters())) != 0 ||
+        (rval = compare(getPyQualifiers(), cim_other.getPyQualifiers())) != 0)
     {
         return rval;
     }
@@ -217,14 +217,14 @@ bool CIMMethod::eq(const bp::object &other)
     if (!isinstance(other, CIMMethod::type()))
         return false;
 
-    CIMMethod &other_method = CIMMethod::asNative(other);
+    CIMMethod &cim_other = CIMMethod::asNative(other);
 
-    return m_name == other_method.m_name &&
-        m_return_type == other_method.m_return_type &&
-        m_class_origin == other_method.m_class_origin &&
-        m_is_propagated == other_method.m_is_propagated &&
-        compare(getPyParameters(), other_method.getPyParameters(), Py_EQ) &&
-        compare(getPyQualifiers(), other_method.getPyQualifiers(), Py_EQ);
+    return m_name == cim_other.m_name &&
+        m_return_type == cim_other.m_return_type &&
+        m_class_origin == cim_other.m_class_origin &&
+        m_is_propagated == cim_other.m_is_propagated &&
+        compare(getPyParameters(), cim_other.getPyParameters(), Py_EQ) &&
+        compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_EQ);
 }
 
 bool CIMMethod::gt(const bp::object &other)
@@ -232,14 +232,14 @@ bool CIMMethod::gt(const bp::object &other)
     if (!isinstance(other, CIMMethod::type()))
         return false;
 
-    CIMMethod &other_method = CIMMethod::asNative(other);
+    CIMMethod &cim_other = CIMMethod::asNative(other);
 
-    return m_name > other_method.m_name ||
-        m_return_type > other_method.m_return_type ||
-        m_class_origin > other_method.m_class_origin ||
-        m_is_propagated > other_method.m_is_propagated ||
-        compare(getPyParameters(), other_method.getPyParameters(), Py_GT) ||
-        compare(getPyQualifiers(), other_method.getPyQualifiers(), Py_GT);
+    return m_name > cim_other.m_name ||
+        m_return_type > cim_other.m_return_type ||
+        m_class_origin > cim_other.m_class_origin ||
+        m_is_propagated > cim_other.m_is_propagated ||
+        compare(getPyParameters(), cim_other.getPyParameters(), Py_GT) ||
+        compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_GT);
 }
 
 bool CIMMethod::lt(const bp::object &other)
@@ -247,14 +247,14 @@ bool CIMMethod::lt(const bp::object &other)
     if (!isinstance(other, CIMMethod::type()))
         return false;
 
-    CIMMethod &other_method = CIMMethod::asNative(other);
+    CIMMethod &cim_other = CIMMethod::asNative(other);
 
-    return m_name < other_method.m_name ||
-        m_return_type < other_method.m_return_type ||
-        m_class_origin < other_method.m_class_origin ||
-        m_is_propagated < other_method.m_is_propagated ||
-        compare(getPyParameters(), other_method.getPyParameters(), Py_LT) ||
-        compare(getPyQualifiers(), other_method.getPyQualifiers(), Py_LT);
+    return m_name < cim_other.m_name ||
+        m_return_type < cim_other.m_return_type ||
+        m_class_origin < cim_other.m_class_origin ||
+        m_is_propagated < cim_other.m_is_propagated ||
+        compare(getPyParameters(), cim_other.getPyParameters(), Py_LT) ||
+        compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_LT);
 }
 
 bool CIMMethod::ge(const bp::object &other)
@@ -283,13 +283,13 @@ bp::object CIMMethod::tomof()
         ss << m_return_type << ' ';
     ss << m_name << '(';
 
-    const NocaseDict &parameters = NocaseDict::asNative(getPyParameters());
+    const NocaseDict &cim_parameters = NocaseDict::asNative(getPyParameters());
     nocase_map_t::const_iterator it;
-    for (it = parameters.begin(); it != parameters.end(); ++it) {
+    for (it = cim_parameters.begin(); it != cim_parameters.end(); ++it) {
         CIMParameter &parameter = CIMParameter::asNative(it->second);
         ss << parameter.tomof();
         nocase_map_t::const_iterator tmp_it = it;
-        if (tmp_it != parameters.end() && ++tmp_it != parameters.end())
+        if (tmp_it != cim_parameters.end() && ++tmp_it != cim_parameters.end())
             ss << ", ";
     }
     ss << ");";
@@ -299,32 +299,32 @@ bp::object CIMMethod::tomof()
 
 bp::object CIMMethod::copy()
 {
-    bp::object obj = CIMBase<CIMMethod>::create();
-    CIMMethod &method = CIMMethod::asNative(obj);
-    NocaseDict &parameters = NocaseDict::asNative(getPyParameters());
-    NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
+    bp::object py_inst = CIMBase<CIMMethod>::create();
+    CIMMethod &cim_method = CIMMethod::asNative(py_inst);
+    NocaseDict &cim_parameters = NocaseDict::asNative(getPyParameters());
+    NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
 
-    method.m_name = m_name;
-    method.m_return_type = m_return_type;
-    method.m_class_origin = m_class_origin;
-    method.m_is_propagated = m_is_propagated;
-    method.m_parameters = parameters.copy();
-    method.m_qualifiers = qualifiers.copy();
+    cim_method.m_name = m_name;
+    cim_method.m_return_type = m_return_type;
+    cim_method.m_class_origin = m_class_origin;
+    cim_method.m_is_propagated = m_is_propagated;
+    cim_method.m_parameters = cim_parameters.copy();
+    cim_method.m_qualifiers = cim_qualifiers.copy();
 
-    return obj;
+    return py_inst;
 }
 
-std::string CIMMethod::getName() const
+String CIMMethod::getName() const
 {
     return m_name;
 }
 
-std::string CIMMethod::getReturnType() const
+String CIMMethod::getReturnType() const
 {
     return m_return_type;
 }
 
-std::string CIMMethod::getClassOrigin() const
+String CIMMethod::getClassOrigin() const
 {
     return m_class_origin;
 }
@@ -388,17 +388,17 @@ bp::object CIMMethod::getPyQualifiers()
     return m_qualifiers;
 }
 
-void CIMMethod::setName(const std::string &name)
+void CIMMethod::setName(const String &name)
 {
     m_name = name;
 }
 
-void CIMMethod::setReturnType(const std::string &return_type)
+void CIMMethod::setReturnType(const String &return_type)
 {
     m_return_type = return_type;
 }
 
-void CIMMethod::setClassOrigin(const std::string &class_origin)
+void CIMMethod::setClassOrigin(const String &class_origin)
 {
     m_class_origin = class_origin;
 }
@@ -410,17 +410,17 @@ void CIMMethod::setIsPropagated(bool is_propagated)
 
 void CIMMethod::setPyName(const bp::object &name)
 {
-    m_name = StringConv::asStdString(name, "name");
+    m_name = StringConv::asString(name, "name");
 }
 
 void CIMMethod::setPyReturnType(const bp::object &rtype)
 {
-    m_return_type = StringConv::asStdString(rtype, "return_type");
+    m_return_type = StringConv::asString(rtype, "return_type");
 }
 
 void CIMMethod::setPyClassOrigin(const bp::object &class_origin)
 {
-    m_class_origin = StringConv::asStdString(class_origin, "class_origin");
+    m_class_origin = StringConv::asString(class_origin, "class_origin");
 }
 
 void CIMMethod::setPyIsPropagated(const bp::object &propagated)

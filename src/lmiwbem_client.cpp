@@ -49,12 +49,12 @@ CIMClient::CIMClient()
 }
 
 void CIMClient::connect(
-    const Pegasus::String &uri,
-    const Pegasus::String &username,
-    const Pegasus::String &password,
-    const Pegasus::String &cert_file,
-    const Pegasus::String &key_file,
-    const Pegasus::String &trust_store)
+    const String &uri,
+    const String &username,
+    const String &password,
+    const String &cert_file,
+    const String &key_file,
+    const String &trust_store)
 {
     if (!m_url_info.set(uri)) {
         throw_ConnectionError(
@@ -77,7 +77,7 @@ void CIMClient::connect(
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
             this,
 #endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
-            Pegasus::String::EMPTY
+            String()
         );
         Pegasus::CIMClient::connect(
             m_url_info.hostname(),
@@ -104,6 +104,26 @@ void CIMClient::disconnect()
 bool CIMClient::isConnected()
 {
     return m_is_connected;
+}
+
+void CIMClient::setVerifyCertificate(bool verify)
+{
+    m_verify_cert = verify;
+}
+
+bool CIMClient::getVerifyCertificate() const
+{
+    return m_verify_cert;
+}
+
+URLInfo CIMClient::getURLInfo() const
+{
+    return m_url_info;
+}
+
+String CIMClient::hostname() const
+{
+    return m_url_info.hostname();
 }
 
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA

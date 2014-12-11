@@ -58,12 +58,12 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
 
     try {
         m_conn->m_client.connect(
-            Pegasus::String(m_conn->m_url.c_str()),
-            Pegasus::String(m_conn->m_username.c_str()),
-            Pegasus::String(m_conn->m_password.c_str()),
-            Pegasus::String(m_conn->m_cert_file.c_str()),
-            Pegasus::String(m_conn->m_key_file.c_str()),
-            Pegasus::String(Config::defaultTrustStore().c_str()));
+            m_conn->m_url,
+            m_conn->m_username,
+            m_conn->m_password,
+            m_conn->m_cert_file,
+            m_conn->m_key_file,
+            Config::defaultTrustStore());
     } catch (...) {
         std::stringstream ss;
         if (Config::isVerbose()) {
@@ -74,7 +74,7 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
                 ss << "connect(";
 
             if (Config::isVerboseMore() && !connect_locally) {
-                ss << "url='" << m_conn->m_client.getURLInfo().asStdString() << '\'';
+                ss << "url='" << m_conn->m_client.getURLInfo().asString() << '\'';
             }
             ss << ')';
         }
@@ -118,30 +118,30 @@ WBEMConnection::WBEMConnection(
         return;
 
     if (!isnone(url))
-        m_url = StringConv::asStdString(url, "url");
+        m_url = StringConv::asString(url, "url");
 
     if (!isnone(creds))
         setCredentials(creds);
 
     if (!isnone(x509)) {
-        bp::dict cert = Conv::as<bp::dict>(x509, "x509");
-        bp::object cert_file = cert["cert_file"];
-        bp::object key_file  = cert["key_file"];
-        if (!isnone(cert_file)) {
-            m_cert_file = StringConv::asStdString(
-                cert["cert_file"], "cert_file");
+        bp::dict py_cert = Conv::as<bp::dict>(x509, "x509");
+        bp::object py_cert_file = py_cert["cert_file"];
+        bp::object py_key_file  = py_cert["key_file"];
+        if (!isnone(py_cert_file)) {
+            m_cert_file = StringConv::asString(
+                py_cert["cert_file"], "cert_file");
         }
-        if (!isnone(key_file)) {
-            m_key_file  = StringConv::asStdString(
-                cert["key_file"], "key_file");
+        if (!isnone(py_key_file)) {
+            m_key_file  = StringConv::asString(
+                py_cert["key_file"], "key_file");
         }
     }
 
-    bool verify = Conv::as<bool>(no_verification, "no_verification");
-    m_client.setVerifyCertificate(verify);
+    bool c_verify = Conv::as<bool>(no_verification, "no_verification");
+    m_client.setVerifyCertificate(c_verify);
 
     if (!isnone(default_namespace)) {
-        m_default_namespace = StringConv::asStdString(
+        m_default_namespace = StringConv::asString(
             default_namespace, "default_namespace");
     }
 
@@ -650,7 +650,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_reference_names`");
 }
 
-std::string WBEMConnection::repr() const
+String WBEMConnection::repr() const
 {
     std::stringstream ss;
     ss << "WBEMConnection(url='" << m_url << "', ...)";
@@ -674,47 +674,47 @@ void WBEMConnection::connect(
 
     // All three parameters can be omitted, WBEMConnection was has been
     // with such parameters; WBEMConnection(url, (username, password)).
-    std::string std_url(m_url);
-    std::string std_cert_file(m_cert_file);
-    std::string std_key_file(m_key_file);
+    String c_url(m_url);
+    String c_cert_file(m_cert_file);
+    String c_key_file(m_key_file);
 
     // Check, if provided parameters are None. If not, try to get a string value
     // out of them.
     if (!isnone(url))
-        std_url = StringConv::asStdString(url, "url");
+        c_url = StringConv::asString(url, "url");
     if (!isnone(username))
-        m_username = StringConv::asStdString(username, "username");
+        m_username = StringConv::asString(username, "username");
     if (!isnone(password))
-        m_password = StringConv::asStdString(password, "password");
+        m_password = StringConv::asString(password, "password");
     if (!isnone(cert_file))
-        std_cert_file = StringConv::asStdString(cert_file, "cert_file");
+        c_cert_file = StringConv::asString(cert_file, "cert_file");
     if (!isnone(key_file))
-        std_key_file = StringConv::asStdString(key_file, "key_file");
+        c_key_file = StringConv::asString(key_file, "key_file");
 
     // Check, if we have any url to connect to
-    if (std_url.empty())
+    if (c_url.empty())
         throw_ValueError("url parameter missing");
 
     if (!isnone(no_verification)) {
-        bool no_verify = Conv::as<bool>(no_verification, "no_verification");
-        m_client.setVerifyCertificate(!no_verify);
+        bool c_no_verify = Conv::as<bool>(no_verification, "no_verification");
+        m_client.setVerifyCertificate(!c_no_verify);
     }
 
     try {
         m_client.connect(
-            Pegasus::String(std_url.c_str()),
-            Pegasus::String(m_username.c_str()),
-            Pegasus::String(m_password.c_str()),
-            Pegasus::String(std_cert_file.c_str()),
-            Pegasus::String(std_key_file.c_str()),
-            Pegasus::String(Config::defaultTrustStore().c_str()));
+            c_url,
+            m_username,
+            m_password,
+            c_cert_file,
+            c_key_file,
+            Config::defaultTrustStore());
         m_connect_locally = false;
     } catch (...) {
         std::stringstream ss;
         if (Config::isVerbose()) {
             ss << "connect(";
             if (Config::isVerboseMore())
-                ss << "url='" << m_client.getURLInfo().asStdString() << '\'';
+                ss << "url='" << m_client.getURLInfo().asString() << '\'';
             ss << ')';
         }
         handle_all_exceptions(ss);
@@ -744,33 +744,35 @@ bp::object WBEMConnection::getHostname() const
 
 bp::object WBEMConnection::getRequestAcceptLanguages() const
 {
-    Pegasus::AcceptLanguageList al_list = m_client.getRequestAcceptLanguages();
-    Pegasus::Uint32 cnt = al_list.size();
-    bp::list languages;
+    Pegasus::AcceptLanguageList peg_al_list = m_client.getRequestAcceptLanguages();
+    Pegasus::Uint32 cnt = peg_al_list.size();
+    bp::list py_languages;
+
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        languages.append(bp::make_tuple(
-            al_list.getLanguageTag(i).toString(),
-            al_list.getQualityValue(i)));
+        py_languages.append(bp::make_tuple(
+            peg_al_list.getLanguageTag(i).toString(),
+            peg_al_list.getQualityValue(i)));
     }
 
-    return languages;
+    return py_languages;
 }
 
 void WBEMConnection::setRequestAcceptLanguages(const bp::object &languages)
 {
-    bp::list lang_list(Conv::get<bp::list>(
+    bp::list py_lang_list(Conv::get<bp::list>(
         languages, "request_accept_languages"));
-    const int cnt = bp::len(lang_list);
-    Pegasus::AcceptLanguageList al_list;
+    const int cnt = bp::len(py_lang_list);
+    Pegasus::AcceptLanguageList peg_al_list;
+
     for (int i = 0; i < cnt; ++i) {
-        bp::tuple lang_elem(Conv::get<bp::tuple>(
-            lang_list[i], "request_accept_languages[i]"));
-        std::string lang(StringConv::asStdString(lang_elem[0]));
-        Pegasus::Real32 q = Conv::as<Pegasus::Real32>(lang_elem[1]);
-        al_list.insert(Pegasus::LanguageTag(lang.c_str()), q);
+        bp::tuple py_lang_elem(Conv::get<bp::tuple>(
+            py_lang_list[i], "request_accept_languages[i]"));
+        String c_lang(StringConv::asString(py_lang_elem[0]));
+        Pegasus::Real32 q = Conv::as<Pegasus::Real32>(py_lang_elem[1]);
+        peg_al_list.insert(Pegasus::LanguageTag(c_lang), q);
     }
 
-    m_client.setRequestAcceptLanguages(al_list);
+    m_client.setRequestAcceptLanguages(peg_al_list);
 }
 
 bp::object WBEMConnection::getDefaultNamespace() const
@@ -780,7 +782,7 @@ bp::object WBEMConnection::getDefaultNamespace() const
 
 void WBEMConnection::setDefaultNamespace(const bp::object &ns)
 {
-    m_default_namespace = StringConv::asStdString(ns, "default_namespace");
+    m_default_namespace = StringConv::asString(ns, "default_namespace");
 }
 
 bp::object WBEMConnection::getCredentials() const
@@ -792,58 +794,56 @@ bp::object WBEMConnection::getCredentials() const
 
 void WBEMConnection::setCredentials(const bp::object &creds)
 {
-    bp::tuple creds_tpl(Conv::get<bp::tuple>(creds, "creds"));
+    bp::tuple py_creds_tpl(Conv::get<bp::tuple>(creds, "creds"));
 
-    if (bp::len(creds_tpl) != 2)
+    if (bp::len(py_creds_tpl) != 2)
         throw_ValueError("creds must be tuple of 2 strings");
 
-    m_username = StringConv::asStdString(creds_tpl[0], "username");
-    m_password = StringConv::asStdString(creds_tpl[1], "password");
+    m_username = StringConv::asString(py_creds_tpl[0], "username");
+    m_password = StringConv::asString(py_creds_tpl[1], "password");
 }
 
 bp::object WBEMConnection::createInstance(
     const bp::object &instance,
     const bp::object &ns) try
 {
-    CIMInstance &inst = CIMInstance::asNative(
-        instance, "NewInstance");
+    CIMInstance &cim_inst = CIMInstance::asNative(instance, "NewInstance");
 
-    std::string std_ns(m_default_namespace);
+    String c_ns(m_default_namespace);
 
-    if (!isnone(inst.getPyPath())) {
+    if (!isnone(cim_inst.getPyPath())) {
         // First, try to get creation namespace from CIMInstanceName.
-        CIMInstanceName &inst_name = CIMInstanceName::asNative(inst.getPyPath());
-        std_ns = inst_name.getNamespace();
+        CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(cim_inst.getPyPath());
+        c_ns = cim_inst_name.getNamespace();
     }
     if (!isnone(ns)) {
         // Override CIMInstanceName's namespace.
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
     }
 
-    Pegasus::CIMObjectPath new_inst_name;
-    Pegasus::CIMNamespaceName new_inst_name_ns(std_ns.c_str());
-    Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();
+    Pegasus::CIMObjectPath peg_new_inst_name;
+    Pegasus::CIMNamespaceName peg_new_inst_name_ns(c_ns);
+    Pegasus::CIMInstance peg_inst = cim_inst.asPegasusCIMInstance();
 
     ScopedTransactionBegin();
-    new_inst_name = m_client.createInstance(
-        new_inst_name_ns,
-        cim_inst);
+    peg_new_inst_name = m_client.createInstance(
+        peg_new_inst_name_ns,
+        peg_inst);
     ScopedTransactionEnd();
 
     // CIMClient::createInstance() does not set namespace and hostname
     // in newly created CIMInstanceName. We need to do that manually.
-    new_inst_name.setNameSpace(
-        Pegasus::CIMNamespaceName(std_ns.c_str()));
-    new_inst_name.setHost(m_client.hostname().c_str());
+    peg_new_inst_name.setNameSpace(Pegasus::CIMNamespaceName(c_ns));
+    peg_new_inst_name.setHost(m_client.hostname());
 
-    return CIMInstanceName::create(new_inst_name);
+    return CIMInstanceName::create(peg_new_inst_name);
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "CreateInstance(";
         if (Config::isVerboseMore()) {
             CIMInstance &inst = CIMInstance::asNative(instance);
-            ss << '\'' << inst.getPath().asStdString() << '\'';
+            ss << '\'' << inst.getPath().asString() << '\'';
         }
         ss << ')';
     }
@@ -853,26 +853,26 @@ bp::object WBEMConnection::createInstance(
 
 void WBEMConnection::deleteInstance(const bp::object &object_path) try
 {
-    const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+    const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "InstanceName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+    Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(m_default_namespace);
-    if (!cim_path.getNameSpace().isNull())
-        std_ns = cim_path.getNameSpace().getString().getCString();
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    String c_ns(m_default_namespace);
+    if (!peg_path.getNameSpace().isNull())
+        c_ns = peg_path.getNameSpace().getString();
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     ScopedTransactionBegin()
     m_client.deleteInstance(
-        cim_ns,
-        cim_path);
+        peg_ns,
+        peg_path);
     ScopedTransactionEnd();
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "DeleteInstance(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -883,31 +883,31 @@ void WBEMConnection::modifyInstance(
     const bool include_qualifiers,
     const bp::object &property_list) try
 {
-    CIMInstance &inst = CIMInstance::asNative(
+    CIMInstance &cim_inst = CIMInstance::asNative(
         instance, "ModifiedInstance");
-    CIMInstanceName &inst_name = CIMInstanceName::asNative(
-        inst.getPyPath());
+    CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
+        cim_inst.getPyPath());
 
-    Pegasus::CIMNamespaceName cim_ns(inst_name.getNamespace().c_str());
-    Pegasus::CIMInstance cim_inst = inst.asPegasusCIMInstance();
-    Pegasus::CIMPropertyList cim_property_list(
-        ListConv::asPegasusPropertyList(property_list,
-        "PropertyList"));
+    Pegasus::CIMNamespaceName peg_ns(cim_inst_name.getNamespace());
+    Pegasus::CIMInstance peg_inst = cim_inst.asPegasusCIMInstance();
+    Pegasus::CIMPropertyList peg_property_list(
+        ListConv::asPegasusPropertyList(
+            property_list, "PropertyList"));
 
     ScopedTransactionBegin();
     m_client.modifyInstance(
-        cim_ns,
-        cim_inst,
+        peg_ns,
+        peg_inst,
         include_qualifiers,
-        cim_property_list);
+        peg_property_list);
     ScopedTransactionEnd();
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "ModifyInstance(";
         if (Config::isVerboseMore()) {
-            CIMInstance &inst = CIMInstance::asNative(instance);
-            ss << '\'' << inst.getPath().asStdString() << '\'';
+            CIMInstance &cim_inst = CIMInstance::asNative(instance);
+            ss << '\'' << cim_inst.getPath().asString() << '\'';
         }
         ss << ')';
     }
@@ -923,41 +923,41 @@ bp::object WBEMConnection::enumerateInstances(
     const bool include_class_origin,
     const bp::object &property_list) try
 {
-    std::string std_cls(StringConv::asStdString(cls, "cls"));
-    std::string std_ns(m_default_namespace);
+    String c_cls(StringConv::asString(cls, "cls"));
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::Array<Pegasus::CIMInstance> cim_instances;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_name(std_cls.c_str());
-    Pegasus::CIMPropertyList cim_property_list(
-        ListConv::asPegasusPropertyList(property_list,
-        "PropertyList"));
+    Pegasus::Array<Pegasus::CIMInstance> peg_instances;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_name(c_cls);
+    Pegasus::CIMPropertyList peg_property_list(
+        ListConv::asPegasusPropertyList(
+            property_list, "PropertyList"));
 
     ScopedTransactionBegin();
-    cim_instances = m_client.enumerateInstances(
-        cim_ns,
-        cim_name,
+    peg_instances = m_client.enumerateInstances(
+        peg_ns,
+        peg_name,
         deep_inheritance,
         local_only,
         include_qualifiers,
         include_class_origin,
-        cim_property_list);
+        peg_property_list);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        cim_instances, std_ns, m_client.hostname());
+        peg_instances, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "EnumerateInstances(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "classname=" << StringConv::asStdString(cls) << ", "
-               << "namespace=" << std_ns;
+                c_ns = StringConv::asString(ns);
+            ss << "classname=" << StringConv::asString(cls) << ", "
+               << "namespace=" << c_ns;
         }
         ss << ')';
     }
@@ -969,33 +969,33 @@ bp::object WBEMConnection::enumerateInstanceNames(
     const bp::object &cls,
     const bp::object &ns) try
 {
-    std::string std_cls(StringConv::asStdString(cls, "cls"));
-    std::string std_ns(m_default_namespace);
+    String c_cls(StringConv::asString(cls, "cls"));
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::Array<Pegasus::CIMObjectPath> cim_instance_names;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_name(std_cls.c_str());
+    Pegasus::Array<Pegasus::CIMObjectPath> peg_instance_names;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_name(c_cls);
 
     ScopedTransactionBegin();
-    cim_instance_names = m_client.enumerateInstanceNames(
-        cim_ns,
-        cim_name);
+    peg_instance_names = m_client.enumerateInstanceNames(
+        peg_ns,
+        peg_name);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        cim_instance_names, std_ns, m_client.hostname());
+        peg_instance_names, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "EnumerateInstanceNames(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "classname='" << StringConv::asStdString(cls) << "', "
-               << "namespace='" << std_ns << '\'';
+                c_ns = StringConv::asString(ns);
+            ss << "classname='" << StringConv::asString(cls) << "', "
+               << "namespace='" << c_ns << '\'';
         }
         ss << ')';
     }
@@ -1010,64 +1010,64 @@ bp::object WBEMConnection::invokeMethod(
     if (bp::len(args) != 2)
         throw_TypeError("InvokeMethod() takes at least 2 arguments");
 
-    std::string std_method = StringConv::asStdString(args[0], "MethodName");
+    String c_method = StringConv::asString(args[0], "MethodName");
 
-    const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+    const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         args[1], "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+    Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(m_default_namespace);
-    if (!cim_path.getNameSpace().isNull())
-        std_ns = cim_path.getNameSpace().getString().getCString();
+    String c_ns(m_default_namespace);
+    if (!peg_path.getNameSpace().isNull())
+        c_ns = peg_path.getNameSpace().getString();
 
-    Pegasus::CIMValue cim_rval;
-    Pegasus::Array<Pegasus::CIMParamValue> cim_out_params;
-    Pegasus::Array<Pegasus::CIMParamValue> cim_in_params;
+    Pegasus::CIMValue peg_rval;
+    Pegasus::Array<Pegasus::CIMParamValue> peg_out_params;
+    Pegasus::Array<Pegasus::CIMParamValue> peg_in_params;
 
     // Create Pegasus::Array from **kwargs
-    bp::list keys = kwds.keys();
-    const int keys_cnt = bp::len(keys);
+    bp::list py_keys = kwds.keys();
+    const int keys_cnt = bp::len(py_keys);
     for (int i = 0; i < keys_cnt; ++i) {
-        std::string param_name = StringConv::asStdString(keys[i]);
-        cim_in_params.append(
+        String c_param_name = StringConv::asString(py_keys[i]);
+        peg_in_params.append(
             Pegasus::CIMParamValue(
-                Pegasus::String(param_name.c_str()),
-                CIMValue::asPegasusCIMValue(kwds[keys[i]]),
+                c_param_name,
+                CIMValue::asPegasusCIMValue(kwds[py_keys[i]]),
                 true /* isTyped */));
     }
 
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_name(std_method.c_str());
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_name(c_method);
 
     ScopedTransactionBegin();
-    cim_rval = m_client.invokeMethod(
-        cim_ns,
-        cim_path,
-        cim_name,
-        cim_in_params,
-        cim_out_params);
+    peg_rval = m_client.invokeMethod(
+        peg_ns,
+        peg_path,
+        peg_name,
+        peg_in_params,
+        peg_out_params);
     ScopedTransactionEnd();
 
     // Create a NocaseDict of method's return parameters
-    bp::object rparams = NocaseDict::create();
-    const Pegasus::Uint32 cnt = cim_out_params.size();
+    bp::object py_rparams = NocaseDict::create();
+    const Pegasus::Uint32 cnt = peg_out_params.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        rparams[bp::object(cim_out_params[i].getParameterName())] =
-            CIMValue::asLMIWbemCIMValue(cim_out_params[i].getValue());
+        py_rparams[bp::object(peg_out_params[i].getParameterName())] =
+            CIMValue::asLMIWbemCIMValue(peg_out_params[i].getValue());
     }
 
     return bp::make_tuple(
-        CIMValue::asLMIWbemCIMValue(cim_rval),
-        rparams);
+        CIMValue::asLMIWbemCIMValue(peg_rval),
+        py_rparams);
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "InvokeMethod(";
         if (Config::isVerboseMore()) {
-            std::string method_name = StringConv::asStdString(args[0]);
-            const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+            String c_method_name = StringConv::asString(args[0]);
+            const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
                 args[1]);
-            ss << '\'' << method_name << "', '" << inst_name.asStdString() << '\'';
+            ss << '\'' << c_method_name << "', '" << cim_inst_name.asString() << '\'';
         }
         ss << ')';
     }
@@ -1085,39 +1085,39 @@ bp::object WBEMConnection::getInstance(
 {
     CIMInstanceName &cim_instance_name = CIMInstanceName::asNative(
         instance_name, "InstanceName");
-    std::string std_ns(m_default_namespace);
+    String c_ns(m_default_namespace);
     if (!cim_instance_name.getNamespace().empty())
-        std_ns = cim_instance_name.getNamespace();
+        c_ns = cim_instance_name.getNamespace();
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::CIMInstance cim_instance;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMObjectPath cim_object_path = cim_instance_name.asPegasusCIMObjectPath();
-    Pegasus::CIMPropertyList cim_property_list(
+    Pegasus::CIMInstance peg_instance;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMObjectPath peg_object_path = cim_instance_name.asPegasusCIMObjectPath();
+    Pegasus::CIMPropertyList peg_property_list(
         ListConv::asPegasusPropertyList(property_list, "PropertyList"));
 
     ScopedTransactionBegin();
-    cim_instance = m_client.getInstance(
-        cim_ns,
-        cim_object_path,
+    peg_instance = m_client.getInstance(
+        peg_ns,
+        peg_object_path,
         local_only,
         include_qualifiers,
         include_class_origin,
-        cim_property_list);
+        peg_property_list);
     ScopedTransactionEnd();
 
     // CIMClient::getInstance() does not set the CIMObjectPath member in
     // CIMInstance. We need to do that manually.
-    cim_instance.setPath(cim_object_path);
+    peg_instance.setPath(peg_object_path);
 
-    return CIMInstance::create(cim_instance);
+    return CIMInstance::create(peg_instance);
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "GetInstance(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(instance_name) << '\'';
+            ss << '\'' << ObjectConv::asString(instance_name) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -1132,44 +1132,44 @@ bp::object WBEMConnection::enumerateClasses(
     const bool include_qualifiers,
     const bool include_class_origin) try
 {
-    std::string std_ns(m_default_namespace);
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::CIMName classname;
+    Pegasus::CIMName peg_classname;
     if (!isnone(cls)) {
-        std::string std_cls(StringConv::asStdString(cls, "ClassName"));
-        classname = Pegasus::CIMName(std_cls.c_str());
+        String c_cls(StringConv::asString(cls, "ClassName"));
+        peg_classname = Pegasus::CIMName(c_cls);
     }
 
-    Pegasus::Array<Pegasus::CIMClass> cim_classes;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::Array<Pegasus::CIMClass> peg_classes;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     ScopedTransactionBegin();
-    cim_classes = m_client.enumerateClasses(
-        cim_ns,
-        classname,
+    peg_classes = m_client.enumerateClasses(
+        peg_ns,
+        peg_classname,
         deep_inheritance,
         local_only,
         include_qualifiers,
         include_class_origin);
     ScopedTransactionEnd();
 
-    bp::list classes;
-    const Pegasus::Uint32 cnt = cim_classes.size();
+    bp::list py_classes;
+    const Pegasus::Uint32 cnt = peg_classes.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        classes.append(CIMClass::create(cim_classes[i]));
+        py_classes.append(CIMClass::create(peg_classes[i]));
 
-    return classes;
+    return py_classes;
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "EnumerateClasses(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "namespace='" << std_ns << '\'';
+                c_ns = StringConv::asString(ns);
+            ss << "namespace='" << c_ns << '\'';
         }
         ss << ')';
     }
@@ -1182,42 +1182,42 @@ bp::object WBEMConnection::enumerateClassNames(
     const bp::object &cls,
     const bool deep_inheritance) try
 {
-    std::string std_ns(m_default_namespace);
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::CIMName classname;
+    Pegasus::CIMName peg_classname;
     if (!isnone(cls)) {
-        std::string std_cls(StringConv::asStdString(cls, "cls"));
-        classname = Pegasus::CIMName(std_cls.c_str());
+        String c_cls(StringConv::asString(cls, "cls"));
+        peg_classname = Pegasus::CIMName(c_cls);
     }
 
-    Pegasus::Array<Pegasus::CIMName> cim_classnames;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
+    Pegasus::Array<Pegasus::CIMName> peg_classnames;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     ScopedTransactionBegin();
-    cim_classnames = m_client.enumerateClassNames(
-        cim_ns,
-        classname,
+    peg_classnames = m_client.enumerateClassNames(
+        peg_ns,
+        peg_classname,
         deep_inheritance);
     ScopedTransactionEnd();
 
     // We do not create lmiwbem.CIMClassName objects here; we try to mimic pywbem.
-    bp::list classnames;
-    const Pegasus::Uint32 cnt = cim_classnames.size();
+    bp::list py_class_names;
+    const Pegasus::Uint32 cnt = peg_classnames.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        classnames.append(bp::object(cim_classnames[i]));
+        py_class_names.append(bp::object(peg_classnames[i]));
 
-    return classnames;
+    return py_class_names;;
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "EnumerateClasseNames(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "namespace='" << std_ns << '\'';
+                c_ns = StringConv::asString(ns);
+            ss << "namespace='" << c_ns << '\'';
         }
         ss << ')';
     }
@@ -1231,33 +1231,33 @@ bp::object WBEMConnection::execQuery(
     const bp::object &query,
     const bp::object &ns) try
 {
-    std::string std_query_lang = StringConv::asStdString(query_lang, "QueryLanguage");
-    std::string std_query = StringConv::asStdString(query, "Query");
-    std::string std_ns(m_default_namespace);
+    String c_query_lang = StringConv::asString(query_lang, "QueryLanguage");
+    String c_query = StringConv::asString(query, "Query");
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::Array<Pegasus::CIMObject> cim_instances;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::String cim_query_lang(std_query_lang.c_str());
-    Pegasus::String cim_query(std_query.c_str());
+    Pegasus::Array<Pegasus::CIMObject> peg_instances;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::String peg_query_lang(c_query_lang);
+    Pegasus::String peg_query(c_query);
 
     ScopedTransactionBegin();
-    cim_instances = m_client.execQuery(
-        cim_ns,
-        cim_query_lang,
-        cim_query);
+    peg_instances = m_client.execQuery(
+        peg_ns,
+        peg_query_lang,
+        peg_query);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        cim_instances, std_ns, m_client.hostname());
+        peg_instances, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "ExecQuery(";
         if (Config::isVerboseMore()) {
-            ss << "lang='"  << StringConv::asStdString(query_lang) << "', "
-               << "query='" << StringConv::asStdString(query) << '\'';
+            ss << "lang='"  << StringConv::asString(query_lang) << "', "
+               << "query='" << StringConv::asString(query) << '\'';
         }
         ss << ')';
     }
@@ -1273,39 +1273,39 @@ bp::object WBEMConnection::getClass(
     const bool include_class_origin,
     const bp::object &property_list) try
 {
-    std::string std_cls(StringConv::asStdString(cls, "ClassName"));
-    std::string std_ns(m_default_namespace);
+    String c_cls(StringConv::asString(cls, "ClassName"));
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        std_ns = StringConv::asStdString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
 
-    Pegasus::CIMClass cim_class;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_name(std_cls.c_str());
-    Pegasus::CIMPropertyList cim_property_list(
-        ListConv::asPegasusPropertyList(property_list,
-        "PropertyList"));
+    Pegasus::CIMClass peg_class;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_name(c_cls);
+    Pegasus::CIMPropertyList peg_property_list(
+        ListConv::asPegasusPropertyList(
+            property_list, "PropertyList"));
 
     ScopedTransactionBegin()
-    cim_class = m_client.getClass(
-        cim_ns,
-        cim_name,
+    peg_class = m_client.getClass(
+        peg_ns,
+        peg_name,
         local_only,
         include_qualifiers,
         include_class_origin,
-        cim_property_list);
+        peg_property_list);
     ScopedTransactionEnd();
 
-    return CIMClass::create(cim_class);
+    return CIMClass::create(peg_class);
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "GetClass(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "class='" << StringConv::asStdString(cls) << "', "
-               << "namespace='" << std_ns << '\'';
+                c_ns = StringConv::asString(ns);
+            ss << "class='" << StringConv::asString(cls) << "', "
+               << "namespace='" << c_ns << '\'';
         }
         ss << ')';
     }
@@ -1323,68 +1323,62 @@ bp::object WBEMConnection::getAssociators(
     const bool include_class_origin,
     const bp::object property_list) try
 {
-    const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+    const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+    Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(m_default_namespace);
-    if (!cim_path.getNameSpace().isNull())
-        std_ns = cim_path.getNameSpace().getString().getCString();
+    String c_ns(m_default_namespace);
+    if (!peg_path.getNameSpace().isNull())
+        c_ns = peg_path.getNameSpace().getString();
 
-    std::string std_assoc_class;
-    std::string std_result_class;
-    std::string std_role;
-    std::string std_result_role;
+    String c_assoc_class;
+    String c_result_class;
+    String c_role;
+    String c_result_role;
     if (!isnone(assoc_class))
-        std_assoc_class = StringConv::asStdString(assoc_class, "AssocClass");
+        c_assoc_class = StringConv::asString(assoc_class, "AssocClass");
     if (!isnone(result_class))
-        std_result_class = StringConv::asStdString(result_class, "ResultClass");
+        c_result_class = StringConv::asString(result_class, "ResultClass");
     if (!isnone(role))
-        std_role = StringConv::asStdString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
     if (!isnone(result_role))
-        std_result_role = StringConv::asStdString(result_role, "ResultRole");
+        c_result_role = StringConv::asString(result_role, "ResultRole");
 
-    Pegasus::CIMPropertyList cim_property_list(
+    Pegasus::CIMPropertyList peg_property_list(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    Pegasus::Array<Pegasus::CIMObject> cim_associators;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_assoc_class;
-    Pegasus::CIMName cim_result_class;
-    Pegasus::String  cim_role = Pegasus::String::EMPTY;
-    Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
+    Pegasus::Array<Pegasus::CIMObject> peg_associators;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_assoc_class;
+    Pegasus::CIMName peg_result_class;
 
-    if (!std_assoc_class.empty())
-        cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
-    if (!std_result_class.empty())
-        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-    if (!std_role.empty())
-        cim_role = std_role.c_str();
-    if (!std_result_role.empty())
-        cim_result_role = std_result_role.c_str();
+    if (!c_assoc_class.empty())
+        peg_assoc_class = Pegasus::CIMName(c_assoc_class);
+    if (!c_result_class.empty())
+        peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    cim_associators = m_client.associators(
-        cim_ns,
-        cim_path,
-        cim_assoc_class,
-        cim_result_class,
-        cim_role,
-        cim_result_role,
+    peg_associators = m_client.associators(
+        peg_ns,
+        peg_path,
+        peg_assoc_class,
+        peg_result_class,
+        c_role,
+        c_result_role,
         include_qualifiers,
         include_class_origin,
-        cim_property_list);
+        peg_property_list);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        cim_associators, std_ns, m_client.hostname());
+        peg_associators, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "Associators(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -1398,61 +1392,55 @@ bp::object WBEMConnection::getAssociatorNames(
     const bp::object &role,
     const bp::object &result_role) try
 {
-    const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+    const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+    Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(m_default_namespace);
-    if (!cim_path.getNameSpace().isNull())
-        std_ns = cim_path.getNameSpace().getString().getCString();
+    String c_ns(m_default_namespace);
+    if (!peg_path.getNameSpace().isNull())
+        c_ns = peg_path.getNameSpace().getString();
 
-    std::string std_assoc_class;
-    std::string std_result_class;
-    std::string std_role;
-    std::string std_result_role;
+    String c_assoc_class;
+    String c_result_class;
+    String c_role;
+    String c_result_role;
     if (!isnone(assoc_class))
-        std_assoc_class = StringConv::asStdString(assoc_class, "AssocClass");
+        c_assoc_class = StringConv::asString(assoc_class, "AssocClass");
     if (!isnone(result_class))
-        std_result_class = StringConv::asStdString(result_class, "ResultClass");
+        c_result_class = StringConv::asString(result_class, "ResultClass");
     if (!isnone(role))
-        std_role = StringConv::asStdString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
     if (!isnone(result_role))
-        std_result_role = StringConv::asStdString(result_role, "ResultRole");
+        c_result_role = StringConv::asString(result_role, "ResultRole");
 
-    Pegasus::Array<Pegasus::CIMObjectPath> cim_associator_names;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_assoc_class;
-    Pegasus::CIMName cim_result_class;
-    Pegasus::String  cim_role = Pegasus::String::EMPTY;
-    Pegasus::String  cim_result_role = Pegasus::String::EMPTY;
+    Pegasus::Array<Pegasus::CIMObjectPath> peg_associator_names;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_assoc_class;
+    Pegasus::CIMName peg_result_class;
 
-    if (!std_assoc_class.empty())
-        cim_assoc_class = Pegasus::CIMName(std_assoc_class.c_str());
-    if (!std_result_class.empty())
-        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-    if (!std_role.empty())
-        cim_role = std_role.c_str();
-    if (!std_result_role.empty())
-        cim_result_role = std_result_role.c_str();
+    if (!c_assoc_class.empty())
+        peg_assoc_class = Pegasus::CIMName(c_assoc_class);
+    if (!c_result_class.empty())
+        peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    cim_associator_names = m_client.associatorNames(
-        cim_ns,
-        cim_path,
-        cim_assoc_class,
-        cim_result_class,
-        cim_role,
-        cim_result_role);
+    peg_associator_names = m_client.associatorNames(
+        peg_ns,
+        peg_path,
+        peg_assoc_class,
+        peg_result_class,
+        c_role,
+        c_result_role);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        cim_associator_names, std_ns, m_client.hostname());
+        peg_associator_names, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "AssociatorNames(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -1467,53 +1455,50 @@ bp::object WBEMConnection::getReferences(
     const bool include_class_origin,
     const bp::object &property_list) try
 {
-    const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+    const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+    Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(m_default_namespace);
-    if (!cim_path.getNameSpace().isNull())
-        std_ns = cim_path.getNameSpace().getString().getCString();
+    String c_ns(m_default_namespace);
+    if (!peg_path.getNameSpace().isNull())
+        c_ns = peg_path.getNameSpace().getString();
 
-    std::string std_result_class;
-    std::string std_role;
+    String c_result_class;
+    String c_role;
     if (!isnone(result_class))
-        std_result_class = StringConv::asStdString(result_class, "ResultClass");
+        c_result_class = StringConv::asString(result_class, "ResultClass");
     if (!isnone(role))
-        std_role = StringConv::asStdString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
 
-    Pegasus::CIMPropertyList cim_property_list(
+    Pegasus::CIMPropertyList peg_property_list(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    Pegasus::Array<Pegasus::CIMObject> cim_references;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_result_class;
-    Pegasus::String  cim_role = Pegasus::String::EMPTY;
-    if (!std_result_class.empty())
-        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-    if (!std_role.empty())
-        cim_role = Pegasus::String(std_role.c_str());
+    Pegasus::Array<Pegasus::CIMObject> peg_references;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_result_class;
+    if (!c_result_class.empty())
+        peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    cim_references = m_client.references(
-        cim_ns,
-        cim_path,
-        cim_result_class,
-        cim_role,
+    peg_references = m_client.references(
+        peg_ns,
+        peg_path,
+        peg_result_class,
+        c_role,
         include_qualifiers,
         include_class_origin,
-        cim_property_list);
+        peg_property_list);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        cim_references, std_ns, m_client.hostname());
+        peg_references, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "References(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -1525,46 +1510,43 @@ bp::object WBEMConnection::getReferenceNames(
     const bp::object &result_class,
     const bp::object &role) try
 {
-    const CIMInstanceName &inst_name = CIMInstanceName::asNative(
+    const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
-    Pegasus::CIMObjectPath cim_path = inst_name.asPegasusCIMObjectPath();
+    Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    std::string std_ns(m_default_namespace);
-    if (!cim_path.getNameSpace().isNull())
-        std_ns = cim_path.getNameSpace().getString().getCString();
+    String c_ns(m_default_namespace);
+    if (!peg_path.getNameSpace().isNull())
+        c_ns = peg_path.getNameSpace().getString();
 
-    std::string std_result_class;
-    std::string std_role;
+    String c_result_class;
+    String c_role;
     if (!isnone(result_class))
-        std_result_class = StringConv::asStdString(result_class, "ResultClass");
+        c_result_class = StringConv::asString(result_class, "ResultClass");
     if (!isnone(role))
-        std_role = StringConv::asStdString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
 
-    Pegasus::Array<Pegasus::CIMObjectPath> cim_reference_names;
-    Pegasus::CIMNamespaceName cim_ns(std_ns.c_str());
-    Pegasus::CIMName cim_result_class;
-    Pegasus::String  cim_role = Pegasus::String::EMPTY;
-    if (!std_result_class.empty())
-        cim_result_class = Pegasus::CIMName(std_result_class.c_str());
-    if (!std_role.empty())
-        cim_role = Pegasus::String(std_role.c_str());
+    Pegasus::Array<Pegasus::CIMObjectPath> peg_reference_names;
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
+    Pegasus::CIMName peg_result_class;
+    if (!c_result_class.empty())
+        peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    cim_reference_names = m_client.referenceNames(
-        cim_ns,
-        cim_path,
-        cim_result_class,
-        cim_role);
+    peg_reference_names = m_client.referenceNames(
+        peg_ns,
+        peg_path,
+        peg_result_class,
+        c_role);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        cim_reference_names, std_ns, m_client.hostname());
+        peg_reference_names, c_ns, m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "ReferenceNames(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);

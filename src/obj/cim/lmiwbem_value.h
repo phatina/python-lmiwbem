@@ -22,9 +22,9 @@
 #ifndef   LMIWBEM_VALUE_H
 #  define LMIWBEM_VALUE_H
 
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMValue.h>
+#  include "util/lmiwbem_string.h"
 
 class CIMValue
 {
@@ -33,7 +33,7 @@ public:
         const Pegasus::CIMValue &value);
     static Pegasus::CIMValue asPegasusCIMValue(
         const bp::object &value,
-        const std::string &def_type = std::string());
+        const String &def_type = String());
 };
 
 #endif // LMIWBEM_VALUE_H

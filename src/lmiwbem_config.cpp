@@ -37,9 +37,9 @@ const char *KEY_EXC_VERB_MORE   = "EXC_VERB_MORE";
 
 } // Unnamed namespace
 
-const std::string Config::DEF_NAMESPACE     = DEFAULT_NAMESPACE;
-const std::string Config::DEF_TRUST_STORE   = DEFAULT_TRUST_STORE;
-const int         Config::DEF_EXC_VERBOSITY = EXC_VERB_NONE;
+const String Config::DEF_NAMESPACE     = DEFAULT_NAMESPACE;
+const String Config::DEF_TRUST_STORE   = DEFAULT_TRUST_STORE;
+const int    Config::DEF_EXC_VERBOSITY = EXC_VERB_NONE;
 
 void Config::init_type()
 {
@@ -52,19 +52,19 @@ void Config::init_type()
     bp::scope().attr(KEY_EXC_VERB_MORE) = static_cast<int>(EXC_VERB_MORE);
 }
 
-std::string Config::defaultNamespace() try
+String Config::defaultNamespace() try
 {
-    bp::object def_namespace(this_module().attr(KEY_DEF_NAMESPACE));
-    return StringConv::asStdString(def_namespace, KEY_DEF_NAMESPACE);
+    bp::object py_def_namespace(this_module().attr(KEY_DEF_NAMESPACE));
+    return StringConv::asString(py_def_namespace, KEY_DEF_NAMESPACE);
 } catch (const bp::error_already_set &e) {
     this_module().attr(KEY_DEF_NAMESPACE) = StringConv::asPyUnicode(DEF_NAMESPACE);
     return DEF_NAMESPACE;
 }
 
-std::string Config::defaultTrustStore() try
+String Config::defaultTrustStore() try
 {
-    bp::object def_trust_store(this_module().attr(KEY_DEF_TRUST_STORE));
-    return StringConv::asStdString(def_trust_store, KEY_DEF_TRUST_STORE);
+    bp::object py_def_trust_store(this_module().attr(KEY_DEF_TRUST_STORE));
+    return StringConv::asString(py_def_trust_store, KEY_DEF_TRUST_STORE);
 } catch (const bp::error_already_set &e) {
     this_module().attr(KEY_DEF_TRUST_STORE) = StringConv::asPyUnicode(DEF_TRUST_STORE);
     return DEF_TRUST_STORE;
@@ -72,8 +72,8 @@ std::string Config::defaultTrustStore() try
 
 int Config::exceptionVerbosity() try
 {
-    bp::object exc_verbosity(this_module().attr(KEY_EXC_VERBOSITY));
-    int verbosity = Conv::as<int>(exc_verbosity, KEY_EXC_VERBOSITY);
+    bp::object py_exc_verbosity(this_module().attr(KEY_EXC_VERBOSITY));
+    int verbosity = Conv::as<int>(py_exc_verbosity, KEY_EXC_VERBOSITY);
 
     switch (verbosity) {
     case EXC_VERB_NONE:

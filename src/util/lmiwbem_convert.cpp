@@ -42,22 +42,22 @@ namespace Conv {
 
 namespace detail {
 
-extract<std::string>::extract(const bp::object &obj)
+extract<String>::extract(const bp::object &obj)
     : m_good(true)
     , m_str()
 {
     if (isunicode(obj)) {
 #  if PY_MAJOR_VERSION < 3
-        m_str = std::string(
+        m_str = String(
             PyString_AsString(
                 PyUnicode_EncodeUTF8(
                     PyUnicode_AsUnicode(obj.ptr()),
                     PyUnicode_GetSize(obj.ptr()),
                     NULL)));
     } else if (isstring(obj)) {
-        m_str = std::string(PyString_AsString(obj.ptr()));
+        m_str = String(PyString_AsString(obj.ptr()));
 #  else
-        m_str = std::string(PyUnicode_AsUTF8(obj.ptr()));
+        m_str = String(PyUnicode_AsUTF8(obj.ptr()));
 #  endif // PY_MAJOR_VERSION
     } else {
         m_good = false;
@@ -68,42 +68,42 @@ extract<std::string>::extract(const bp::object &obj)
 
 } // namespace Conv
 
-std::string CIMTypeConv::asStdString(const bp::object &obj)
+String CIMTypeConv::asString(const bp::object &obj)
 {
     if (isnone(obj))
-        return std::string();
+        return String();
 
     bool is_array = isarray(obj);
     if (is_array && !bp::len(obj))
-        return std::string();
+        return String();
 
-    bp::object value_type_check = is_array ? obj[0] : obj;
+    bp::object py_value_type_check = is_array ? obj[0] : obj;
 
-    if (isinstance(value_type_check, CIMType::type()))
-        return StringConv::asStdString(value_type_check.attr("cimtype"));
-    else if (isinstance(value_type_check, CIMInstance::type()))
-        return std::string("string"); // XXX: instance?
-    else if (isinstance(value_type_check, CIMClass::type()))
-        return std::string("object");
-    else if (isinstance(value_type_check, CIMInstanceName::type()))
-        return std::string("reference");
-    else if (isinstance(value_type_check, CIMClassName::type()))
+    if (isinstance(py_value_type_check, CIMType::type()))
+        return StringConv::asString(py_value_type_check.attr("cimtype"));
+    else if (isinstance(py_value_type_check, CIMInstance::type()))
+        return String("string"); // XXX: instance?
+    else if (isinstance(py_value_type_check, CIMClass::type()))
+        return String("object");
+    else if (isinstance(py_value_type_check, CIMInstanceName::type()))
+        return String("reference");
+    else if (isinstance(py_value_type_check, CIMClassName::type()))
         throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
-    else if (isbasestring(value_type_check))
-        return std::string("string");
-    else if (isbool(value_type_check))
-        return std::string("boolean");
+    else if (isbasestring(py_value_type_check))
+        return String("string");
+    else if (isbool(py_value_type_check))
+        return String("boolean");
     // CIM types for numeric values can't be easily determined.
 
-    return std::string();
+    return String();
 }
 
-std::string CIMTypeConv::asStdString(Pegasus::CIMType type)
+String CIMTypeConv::asString(Pegasus::CIMType type)
 {
     return CIMTypeConv::CIMTypeHolder::instance()->get(type);
 }
 
-Pegasus::CIMType CIMTypeConv::asCIMType(const std::string &type)
+Pegasus::CIMType CIMTypeConv::asCIMType(const String &type)
 {
     return CIMTypeConv::CIMTypeHolder::instance()->get(type);
 }
@@ -154,29 +154,29 @@ CIMTypeConv::CIMTypeHolder::CIMTypeHolder()
     m_string_type["instance"] = Pegasus::CIMTYPE_INSTANCE;
 }
 
-std::string CIMTypeConv::CIMTypeHolder::get(Pegasus::CIMType type)
+String CIMTypeConv::CIMTypeHolder::get(Pegasus::CIMType type)
 {
     if (m_type_string.find(type) == m_type_string.end())
-        return std::string();
+        return String();
     return m_type_string[type];
 }
 
-Pegasus::CIMType CIMTypeConv::CIMTypeHolder::get(const std::string &type)
+Pegasus::CIMType CIMTypeConv::CIMTypeHolder::get(const String &type)
 {
     return m_string_type[type];
 }
 
 ListConv::PyFunctor::PyFunctor(
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
     : m_ns(ns)
     , m_hostname(hostname)
 {
 }
 
 ListConv::PyFunctorCIMInstance::PyFunctorCIMInstance(
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
     : ListConv::PyFunctor(ns, hostname)
 {
 }
@@ -194,13 +194,13 @@ bp::object ListConv::PyFunctorCIMInstance::operator()(
 bp::object ListConv::PyFunctorCIMInstance::operator()(
     const Pegasus::CIMObject cim_object) const
 {
-    Pegasus::CIMInstance cim_instance(cim_object);
-    return (*this)(cim_instance);
+    Pegasus::CIMInstance peg_instance(cim_object);
+    return (*this)(peg_instance);
 }
 
 ListConv::PyFunctorCIMInstanceName::PyFunctorCIMInstanceName(
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
     : ListConv::PyFunctor(ns, hostname)
 {
 }
@@ -213,28 +213,28 @@ bp::object ListConv::PyFunctorCIMInstanceName::operator()(
 
 Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
     const bp::object &property_list,
-    const std::string &message)
+    const String &message)
 {
-    Pegasus::CIMPropertyList cim_property_list;
+    Pegasus::CIMPropertyList peg_property_list;
 
     if (!isnone(property_list)) {
         bp::list py_property_list(Conv::get<bp::list>(property_list, message));
         const int cnt = bp::len(py_property_list);
         Pegasus::Array<Pegasus::CIMName> property_arr(cnt);
         for (int i = 0; i < cnt; ++i) {
-            std::string property = StringConv::asStdString(py_property_list[i]);
-            property_arr[i] = Pegasus::CIMName(property.c_str());
+            String c_property = StringConv::asString(py_property_list[i]);
+            property_arr[i] = Pegasus::CIMName(c_property);
         }
-        cim_property_list.set(property_arr);
+        peg_property_list.set(property_arr);
     }
 
-    return cim_property_list;
+    return peg_property_list;
 }
 
 bp::object ListConv::asPyCIMInstanceList(
     const Pegasus::Array<Pegasus::CIMInstance> &arr,
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
 {
     return asPyListCore<Pegasus::CIMInstance>(
         arr,
@@ -243,8 +243,8 @@ bp::object ListConv::asPyCIMInstanceList(
 
 bp::object ListConv::asPyCIMInstanceList(
     const Pegasus::Array<Pegasus::CIMObject> &arr,
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
 {
     return asPyListCore<Pegasus::CIMObject>(
         arr,
@@ -253,22 +253,22 @@ bp::object ListConv::asPyCIMInstanceList(
 
 bp::object ListConv::asPyCIMInstanceNameList(
     const Pegasus::Array<Pegasus::CIMObjectPath> &arr,
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
 {
     return asPyListCore<Pegasus::CIMObjectPath, PyFunctorCIMInstanceName>(
         arr, PyFunctorCIMInstanceName(ns, hostname));
 }
 
-std::string ObjectConv::asStdString(const bp::object &obj)
+String ObjectConv::asString(const bp::object &obj)
 {
-    PyObject *str = PyObject_Str(obj.ptr());
-    if (!str)
-        return std::string();
+    PyObject *py_str_ptr = PyObject_Str(obj.ptr());
+    if (!py_str_ptr)
+        return String();
 #  if PY_MAJOR_VERSION < 3
-    return std::string(PyString_AsString(str));
+    return String(PyString_AsString(py_str_ptr));
 #  else
-    return std::string(PyUnicode_AsUTF8(str));
+    return String(PyUnicode_AsUTF8(py_str_ptr));
 #  endif // PY_MAJOR_VERSION
 }
 
@@ -277,16 +277,16 @@ bp::object ObjectConv::asPyUnicode(const bp::object &obj)
     return bp::object(bp::handle<>(PyObject_Unicode(obj.ptr())));
 }
 
-std::string StringConv::asStdString(const bp::object &obj)
+String StringConv::asString(const bp::object &obj)
 {
-    return Conv::as<std::string>(obj);
+    return Conv::as<String>(obj);
 }
 
-std::string StringConv::asStdString(
+String StringConv::asString(
     const bp::object &obj,
-    const std::string &member)
+    const String &member)
 {
-    return Conv::as<std::string>(obj, member);
+    return Conv::as<String>(obj, member);
 }
 
 Pegasus::String StringConv::asPegasusString(const bp::object &obj)
@@ -296,7 +296,7 @@ Pegasus::String StringConv::asPegasusString(const bp::object &obj)
 
 Pegasus::String StringConv::asPegasusString(
     const bp::object &obj,
-    const std::string &member)
+    const String &member)
 {
     return Pegasus::String(Conv::as<const char*>(obj, member));
 }
@@ -306,7 +306,7 @@ bp::object StringConv::asPyUnicode(const char *str)
     return bp::object(bp::handle<>(PyUnicode_FromString(str)));
 }
 
-bp::object StringConv::asPyUnicode(const std::string &str)
+bp::object StringConv::asPyUnicode(const String &str)
 {
     return asPyUnicode(str.c_str());
 }
@@ -322,7 +322,7 @@ bp::object StringConv::asPyBool(const char *str)
     return bp::object(bp::handle<>(PyBool_FromLong(b)));
 }
 
-bp::object StringConv::asPyBool(const std::string &str)
+bp::object StringConv::asPyBool(const String &str)
 {
     return asPyBool(str.c_str());
 }
@@ -336,12 +336,12 @@ bp::object StringConv::asPyBool(const Pegasus::String &str)
 bp::object StringConv::asPyInt(const char *str)
 {
     char *s = strdup(str);
-    bp::object pyint(bp::handle<>(PyInt_FromString(s, NULL, 10)));
+    bp::object py_int(bp::handle<>(PyInt_FromString(s, NULL, 10)));
     free(static_cast<void*>(s));
-    return pyint;
+    return py_int;
 }
 
-bp::object StringConv::asPyInt(const std::string &str)
+bp::object StringConv::asPyInt(const String &str)
 {
     return asPyInt(str.c_str());
 }
@@ -358,7 +358,7 @@ bp::object StringConv::asPyFloat(const char *str)
     return bp::object(bp::handle<>(PyFloat_FromDouble(d)));
 }
 
-bp::object StringConv::asPyFloat(const std::string &str)
+bp::object StringConv::asPyFloat(const String &str)
 {
     return asPyFloat(str.c_str());
 }
@@ -371,12 +371,12 @@ bp::object StringConv::asPyFloat(const Pegasus::String &str)
 bp::object StringConv::asPyLong(const char *str)
 {
     char *s = strdup(str);
-    bp::object pylong(bp::handle<>(PyLong_FromString(s, NULL, 10)));
+    bp::object py_long(bp::handle<>(PyLong_FromString(s, NULL, 10)));
     free(static_cast<void*>(s));
-    return pylong;
+    return py_long;
 }
 
-bp::object StringConv::asPyLong(const std::string &str)
+bp::object StringConv::asPyLong(const String &str)
 {
     return asPyLong(str.c_str());
 }
@@ -386,11 +386,16 @@ bp::object StringConv::asPyLong(const Pegasus::String &str)
     return asPyLong(str.getCString());
 }
 
+DEFINE_TO_CONVERTER(StringToPythonString, String)
+{
+    return bp::incref(StringConv::asPyUnicode(value).ptr());
+}
+
 DEFINE_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String)
 {
     return bp::incref(
         StringConv::asPyUnicode(
-            std::string(value.getCString())).ptr());
+            String(value.getCString())).ptr());
 }
 
 DEFINE_TO_CONVERTER(PegasusCIMNameToPythonString, Pegasus::CIMName)

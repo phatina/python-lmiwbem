@@ -52,8 +52,8 @@ CIMClass::CIMClass(
     const bp::object &methods,
     const bp::object &superclass)
 {
-    m_classname = StringConv::asStdString(classname, "classname");
-    m_super_classname = StringConv::asStdString(superclass, "superclass");
+    m_classname = StringConv::asString(classname, "classname");
+    m_super_classname = StringConv::asString(superclass, "superclass");
     m_properties = Conv::get<NocaseDict, bp::dict>(properties, "properties");
     m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
     m_methods = Conv::get<NocaseDict, bp::dict>(methods, "methods");
@@ -72,7 +72,7 @@ void CIMClass::init_type()
                 bp::arg("properties") = NocaseDict::create(),
                 bp::arg("qualifiers") = NocaseDict::create(),
                 bp::arg("methods") = NocaseDict::create(),
-                bp::arg("superclass") = std::string()),
+                bp::arg("superclass") = String()),
                 "Constructs a :py:class:`.CIMClass`.\n\n"
                 ":param str classname: String containing class name\n"
                 ":param NocaseDict properties: Dictionary containing properties\n"
@@ -146,8 +146,8 @@ bp::object CIMClass::create(const Pegasus::CIMClass &cls)
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
         fake_this.m_rc_class_methods.get()->push_back(cls.getMethod(i));
 
-    fake_this.m_classname = cls.getClassName().getString().getCString();
-    fake_this.m_super_classname = cls.getSuperClassName().getString().getCString();
+    fake_this.m_classname = cls.getClassName().getString();
+    fake_this.m_super_classname = cls.getSuperClassName().getString();
 
     return inst;
 }
@@ -159,33 +159,35 @@ bp::object CIMClass::create(const Pegasus::CIMObject &object)
 
 Pegasus::CIMClass CIMClass::asPegasusCIMClass()
 {
-    Pegasus::CIMClass cls(
-        Pegasus::CIMName(m_classname.c_str()),
-        Pegasus::CIMName(m_super_classname.c_str()));
+    // Doubled parenthesis are used due to the C++ ambiguity known also as
+    // The most vexing parse.
+    Pegasus::CIMClass peg_class(
+        (Pegasus::CIMName(m_classname)),
+        (Pegasus::CIMName(m_super_classname)));
 
     // Add all the properties
-    const NocaseDict &properties = NocaseDict::asNative(getPyProperties());
+    const NocaseDict &cim_properties = NocaseDict::asNative(getPyProperties());
     nocase_map_t::const_iterator it;
-    for (it = properties.begin(); it != properties.end(); ++it) {
+    for (it = cim_properties.begin(); it != cim_properties.end(); ++it) {
         CIMProperty &property = CIMProperty::asNative(it->second);
-        cls.addProperty(property.asPegasusCIMProperty());
+        peg_class.addProperty(property.asPegasusCIMProperty());
     }
 
     // Add all the qualifiers
-    const NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
-    for (it = qualifiers.begin(); it != qualifiers.end(); ++it) {
+    const NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
+    for (it = cim_qualifiers.begin(); it != cim_qualifiers.end(); ++it) {
         CIMQualifier &qualifier = CIMQualifier::asNative(it->second);
-        cls.addQualifier(qualifier.asPegasusCIMQualifier());
+        peg_class.addQualifier(qualifier.asPegasusCIMQualifier());
     }
 
     // Add all the methods
-    const NocaseDict &methods = NocaseDict::asNative(getPyMethods());
-    for (it = methods.begin(); it != methods.end(); ++it) {
+    const NocaseDict &cim_methods = NocaseDict::asNative(getPyMethods());
+    for (it = cim_methods.begin(); it != cim_methods.end(); ++it) {
         CIMMethod &method = CIMMethod::asNative(it->second);
-        cls.addMethod(method.asPegasusCIMMethod());
+        peg_class.addMethod(method.asPegasusCIMMethod());
     }
 
-    return cls;
+    return peg_class;
 }
 
 #  if PY_MAJOR_VERSION < 3
@@ -194,14 +196,14 @@ int CIMClass::cmp(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return 1;
 
-    CIMClass &other_class = CIMClass::asNative(other);
+    CIMClass &cim_other = CIMClass::asNative(other);
 
     int rval;
-    if ((rval = m_classname.compare(other_class.m_classname)) != 0 ||
-        (rval = m_super_classname.compare(other_class.m_super_classname)) != 0 ||
-        (rval = compare(getPyProperties(), other_class.getPyProperties())) != 0 ||
-        (rval = compare(getPyQualifiers(), other_class.getPyQualifiers())) != 0 ||
-        (rval = compare(getPyMethods(), other_class.getPyMethods())) != 0)
+    if ((rval = m_classname.compare(cim_other.m_classname)) != 0 ||
+        (rval = m_super_classname.compare(cim_other.m_super_classname)) != 0 ||
+        (rval = compare(getPyProperties(), cim_other.getPyProperties())) != 0 ||
+        (rval = compare(getPyQualifiers(), cim_other.getPyQualifiers())) != 0 ||
+        (rval = compare(getPyMethods(), cim_other.getPyMethods())) != 0)
     {
         return rval;
     }
@@ -214,13 +216,13 @@ bool CIMClass::eq(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return false;
 
-    CIMClass &other_class = CIMClass::asNative(other);
+    CIMClass &cim_other = CIMClass::asNative(other);
 
-    return m_classname == other_class.m_classname &&
-        m_super_classname == other_class.m_super_classname &&
-        compare(getPyProperties(), other_class.getPyProperties(), Py_EQ) &&
-        compare(getPyQualifiers(), other_class.getPyQualifiers(), Py_EQ) &&
-        compare(getPyMethods(), other_class.getPyMethods(), Py_EQ);
+    return m_classname == cim_other.m_classname &&
+        m_super_classname == cim_other.m_super_classname &&
+        compare(getPyProperties(), cim_other.getPyProperties(), Py_EQ) &&
+        compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_EQ) &&
+        compare(getPyMethods(), cim_other.getPyMethods(), Py_EQ);
 }
 
 bool CIMClass::gt(const bp::object &other)
@@ -228,13 +230,13 @@ bool CIMClass::gt(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return false;
 
-    CIMClass &other_class = CIMClass::asNative(other);
+    CIMClass &cim_other = CIMClass::asNative(other);
 
-    return m_classname > other_class.m_classname ||
-        m_super_classname > other_class.m_super_classname ||
-        compare(getPyProperties(), other_class.getPyProperties(), Py_GT) ||
-        compare(getPyQualifiers(), other_class.getPyQualifiers(), Py_GT) ||
-        compare(getPyMethods(), other_class.getPyMethods(), Py_GT);
+    return m_classname > cim_other.m_classname ||
+        m_super_classname > cim_other.m_super_classname ||
+        compare(getPyProperties(), cim_other.getPyProperties(), Py_GT) ||
+        compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_GT) ||
+        compare(getPyMethods(), cim_other.getPyMethods(), Py_GT);
 }
 
 bool CIMClass::lt(const bp::object &other)
@@ -242,13 +244,13 @@ bool CIMClass::lt(const bp::object &other)
     if (!isinstance(other, CIMClass::type()))
         return false;
 
-    CIMClass &other_class = CIMClass::asNative(other);
+    CIMClass &cim_other = CIMClass::asNative(other);
 
-    return m_classname < other_class.m_classname ||
-        m_super_classname < other_class.m_super_classname ||
-        compare(getPyProperties(), other_class.getPyProperties(), Py_LT) ||
-        compare(getPyQualifiers(), other_class.getPyQualifiers(), Py_LT) ||
-        compare(getPyMethods(), other_class.getPyMethods(), Py_LT);
+    return m_classname < cim_other.m_classname ||
+        m_super_classname < cim_other.m_super_classname ||
+        compare(getPyProperties(), cim_other.getPyProperties(), Py_LT) ||
+        compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_LT) ||
+        compare(getPyMethods(), cim_other.getPyMethods(), Py_LT);
 }
 
 bool CIMClass::ge(const bp::object &other)
@@ -271,27 +273,27 @@ bp::object CIMClass::repr()
 
 bp::object CIMClass::copy()
 {
-    bp::object obj = CIMBase<CIMClass>::create();
-    CIMClass &cls = CIMClass::asNative(obj);
-    NocaseDict &properties = NocaseDict::asNative(getPyProperties());
-    NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
-    NocaseDict &methods    = NocaseDict::asNative(getPyMethods());
+    bp::object py_inst = CIMBase<CIMClass>::create();
+    CIMClass &cim_class = CIMClass::asNative(py_inst);
+    NocaseDict &cim_properties = NocaseDict::asNative(getPyProperties());
+    NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
+    NocaseDict &cim_methods    = NocaseDict::asNative(getPyMethods());
 
-    cls.m_classname = m_classname;
-    cls.m_super_classname = m_super_classname;
-    cls.m_properties = properties.copy();
-    cls.m_qualifiers = qualifiers.copy();
-    cls.m_methods    = methods.copy();
+    cim_class.m_classname = m_classname;
+    cim_class.m_super_classname = m_super_classname;
+    cim_class.m_properties = cim_properties.copy();
+    cim_class.m_qualifiers = cim_qualifiers.copy();
+    cim_class.m_methods    = cim_methods.copy();
 
-    return obj;
+    return py_inst;
 }
 
-std::string CIMClass::getClassname() const
+String CIMClass::getClassname() const
 {
     return m_classname;
 }
 
-std::string CIMClass::getSuperClassname() const
+String CIMClass::getSuperClassname() const
 {
     return m_super_classname;
 }
@@ -311,9 +313,9 @@ bp::object CIMClass::getPyProperties()
     if (!m_rc_class_properties.empty()) {
         m_properties = NocaseDict::create();
         std::list<Pegasus::CIMConstProperty>::const_iterator it;
-        std::list<Pegasus::CIMConstProperty> &properties = *m_rc_class_properties.get();
+        std::list<Pegasus::CIMConstProperty> &cim_properties = *m_rc_class_properties.get();
 
-        for (it = properties.begin(); it != properties.end(); ++it)
+        for (it = cim_properties.begin(); it != cim_properties.end(); ++it)
             m_properties[bp::object(it->getName())] = CIMProperty::create(*it);
 
         m_rc_class_properties.release();
@@ -327,9 +329,9 @@ bp::object CIMClass::getPyQualifiers()
     if (!m_rc_class_qualifiers.empty()) {
         m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
-        std::list<Pegasus::CIMConstQualifier> &qualifiers = *m_rc_class_qualifiers.get();
+        std::list<Pegasus::CIMConstQualifier> &cim_qualifiers = *m_rc_class_qualifiers.get();
 
-        for (it = qualifiers.begin(); it != qualifiers.end(); ++it)
+        for (it = cim_qualifiers.begin(); it != cim_qualifiers.end(); ++it)
             m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
 
         m_rc_class_qualifiers.release();
@@ -343,9 +345,9 @@ bp::object CIMClass::getPyMethods()
     if (!m_rc_class_methods.empty()) {
         m_methods = NocaseDict::create();
         std::list<Pegasus::CIMConstMethod>::const_iterator it;
-        std::list<Pegasus::CIMConstMethod> &methods = *m_rc_class_methods.get();
+        std::list<Pegasus::CIMConstMethod> &cim_methods = *m_rc_class_methods.get();
 
-        for (it = methods.begin(); it != methods.end(); ++it)
+        for (it = cim_methods.begin(); it != cim_methods.end(); ++it)
             m_methods[bp::object(it->getName())] = CIMMethod::create(*it);
 
         m_rc_class_methods.release();
@@ -354,24 +356,24 @@ bp::object CIMClass::getPyMethods()
     return m_methods;
 }
 
-void CIMClass::setClassname(const std::string &classname)
+void CIMClass::setClassname(const String &classname)
 {
     m_classname = classname;
 }
 
-void CIMClass::setSuperClassname(const std::string &super_classname)
+void CIMClass::setSuperClassname(const String &super_classname)
 {
     m_super_classname = super_classname;
 }
 
 void CIMClass::setPyClassname(const bp::object &classname)
 {
-    m_classname = StringConv::asStdString(classname, "classname");
+    m_classname = StringConv::asString(classname, "classname");
 }
 
 void CIMClass::setPySuperClassname(const bp::object &super_classname)
 {
-    m_super_classname = StringConv::asStdString(super_classname, "superclass");
+    m_super_classname = StringConv::asString(super_classname, "superclass");
 }
 
 void CIMClass::setPyProperties(const bp::object &properties)

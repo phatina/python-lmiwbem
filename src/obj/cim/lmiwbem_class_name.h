@@ -22,9 +22,9 @@
 #ifndef   LMIWBEM_CLASS_NAME_H
 #  define LMIWBEM_CLASS_NAME_H
 
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -39,9 +39,9 @@ public:
 
     static void init_type();
     static bp::object create(
-        const std::string &classname_,
-        const std::string &namespace_,
-        const std::string &hostname);
+        const String &classname_,
+        const String &namespace_,
+        const String &hostname);
 
 #  if PY_MAJOR_VERSION < 3
     int cmp(const bp::object &other);
@@ -57,24 +57,24 @@ public:
 
     bp::object copy();
 
-    std::string getClassname() const;
-    std::string getNamespace() const;
-    std::string getHostname()  const;
+    String getClassname() const;
+    String getNamespace() const;
+    String getHostname()  const;
     bp::object getPyClassname() const;
     bp::object getPyNamespace() const;
     bp::object getPyHostname()  const;
 
-    void setClassname(const std::string &classname);
-    void setNamespace(const std::string &namespace_);
-    void setHostname(const std::string &hostname);
+    void setClassname(const String &classname);
+    void setNamespace(const String &namespace_);
+    void setHostname(const String &hostname);
     void setPyClassname(const bp::object &classname);
     void setPyNamespace(const bp::object &namespace_);
     void setPyHostname(const bp::object &hostname);
 
 private:
-    std::string m_classname;
-    std::string m_namespace;
-    std::string m_hostname;
+    String m_classname;
+    String m_namespace;
+    String m_hostname;
 };
 
 #endif // LMIWBEM_CLASS_NAME_H

@@ -28,6 +28,7 @@
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
 #  include "util/lmiwbem_convert.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -38,12 +39,12 @@ BOOST_PYTHON_END
 
 class NocaseDictComparator;
 
-typedef std::map <std::string, bp::object, NocaseDictComparator> nocase_map_t;
+typedef std::map <String, bp::object, NocaseDictComparator> nocase_map_t;
 
 class NocaseDictComparator
 {
 public:
-    bool operator ()(const std::string &a, const std::string &b) const;
+    bool operator ()(const String &a, const String &b) const;
 };
 
 class NocaseDict: public CIMBase<NocaseDict>
@@ -67,7 +68,7 @@ public:
     void setitem(const bp::object &key, const bp::object &value);
     bp::object getitem(const bp::object &key);
 
-    std::string repr();
+    String repr();
 
     bp::list keys();
     bp::list values();

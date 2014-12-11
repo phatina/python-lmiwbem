@@ -48,8 +48,8 @@ CIMQualifier::CIMQualifier(
     const bp::object &toinstance,
     const bp::object &translatable)
 {
-    m_name = StringConv::asStdString(name, "name");
-    m_type = StringConv::asStdString(type, "type");
+    m_name = StringConv::asString(name, "name");
+    m_type = StringConv::asString(type, "type");
     m_value = value;
     m_is_propagated = Conv::as<bool>(propagated, "propagated");
     m_is_overridable = Conv::as<bool>(overridable, "overridable");
@@ -72,7 +72,7 @@ void CIMQualifier::init_type()
             const bp::object &>((
                 bp::arg("name"),
                 bp::arg("value"),
-                bp::arg("type") = std::string(),
+                bp::arg("type") = String(),
                 bp::arg("propagated") = false,
                 bp::arg("overridable") = false,
                 bp::arg("tosubclass") = false,
@@ -160,35 +160,35 @@ bp::object CIMQualifier::create(const Pegasus::CIMQualifier &qualifier)
 
 bp::object CIMQualifier::create(const Pegasus::CIMConstQualifier &qualifier)
 {
-    bp::object inst = CIMBase<CIMQualifier>::create();
-    CIMQualifier &fake_this = CIMQualifier::asNative(inst);
-    fake_this.m_name = std::string(qualifier.getName().getString().getCString());
-    fake_this.m_type = CIMTypeConv::asStdString(qualifier.getType());
+    bp::object py_inst = CIMBase<CIMQualifier>::create();
+    CIMQualifier &fake_this = CIMQualifier::asNative(py_inst);
+    fake_this.m_name = qualifier.getName().getString();
+    fake_this.m_type = CIMTypeConv::asString(qualifier.getType());
     fake_this.m_value = CIMValue::asLMIWbemCIMValue(qualifier.getValue());
     fake_this.m_is_propagated = static_cast<bool>(qualifier.getPropagated());
-    const Pegasus::CIMFlavor &flavor = qualifier.getFlavor();
-    fake_this.m_is_overridable = flavor.hasFlavor(Pegasus::CIMFlavor::OVERRIDABLE);
-    fake_this.m_is_tosubclass = flavor.hasFlavor(Pegasus::CIMFlavor::TOSUBCLASS);
-    fake_this.m_is_toinstance = flavor.hasFlavor(Pegasus::CIMFlavor::TOINSTANCE);
-    fake_this.m_is_translatable = flavor.hasFlavor(Pegasus::CIMFlavor::TRANSLATABLE);
-    return inst;
+    const Pegasus::CIMFlavor &peg_flavor = qualifier.getFlavor();
+    fake_this.m_is_overridable = peg_flavor.hasFlavor(Pegasus::CIMFlavor::OVERRIDABLE);
+    fake_this.m_is_tosubclass = peg_flavor.hasFlavor(Pegasus::CIMFlavor::TOSUBCLASS);
+    fake_this.m_is_toinstance = peg_flavor.hasFlavor(Pegasus::CIMFlavor::TOINSTANCE);
+    fake_this.m_is_translatable = peg_flavor.hasFlavor(Pegasus::CIMFlavor::TRANSLATABLE);
+    return py_inst;
 }
 
 Pegasus::CIMQualifier CIMQualifier::asPegasusCIMQualifier() const
 {
-    Pegasus::CIMFlavor flavor;
+    Pegasus::CIMFlavor peg_flavor;
     if (m_is_overridable)
-        flavor.addFlavor(Pegasus::CIMFlavor::OVERRIDABLE);
+        peg_flavor.addFlavor(Pegasus::CIMFlavor::OVERRIDABLE);
     if (m_is_tosubclass)
-        flavor.addFlavor(Pegasus::CIMFlavor::TOSUBCLASS);
+        peg_flavor.addFlavor(Pegasus::CIMFlavor::TOSUBCLASS);
     if (m_is_toinstance)
-        flavor.addFlavor(Pegasus::CIMFlavor::TOINSTANCE);
+        peg_flavor.addFlavor(Pegasus::CIMFlavor::TOINSTANCE);
     if (m_is_translatable)
-        flavor.addFlavor(Pegasus::CIMFlavor::TRANSLATABLE);
+        peg_flavor.addFlavor(Pegasus::CIMFlavor::TRANSLATABLE);
     return Pegasus::CIMQualifier(
-        Pegasus::CIMName(m_name.c_str()),
+        Pegasus::CIMName(m_name),
         CIMValue::asPegasusCIMValue(m_value, m_type),
-        flavor,
+        peg_flavor,
         m_is_propagated);
 }
 
@@ -198,22 +198,22 @@ int CIMQualifier::cmp(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return 1;
 
-    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
+    CIMQualifier &cim_other = CIMQualifier::asNative(other);
 
     int rval;
-    if ((rval = m_name.compare(other_qualifier.m_name)) != 0 ||
-        (rval = m_type.compare(other_qualifier.m_type)) != 0 ||
-        (rval = compare(m_value, other_qualifier.m_value)) != 0 ||
+    if ((rval = m_name.compare(cim_other.m_name)) != 0 ||
+        (rval = m_type.compare(cim_other.m_type)) != 0 ||
+        (rval = compare(m_value, cim_other.m_value)) != 0 ||
         (rval = compare(bp::object(m_is_propagated),
-            bp::object(other_qualifier.m_is_propagated))) != 0 ||
+            bp::object(cim_other.m_is_propagated))) != 0 ||
         (rval = compare(bp::object(m_is_overridable),
-            bp::object(other_qualifier.m_is_overridable))) != 0 ||
+            bp::object(cim_other.m_is_overridable))) != 0 ||
         (rval = compare(bp::object(m_is_tosubclass),
-            bp::object(other_qualifier.m_is_tosubclass))) != 0 ||
+            bp::object(cim_other.m_is_tosubclass))) != 0 ||
         (rval = compare(bp::object(m_is_toinstance),
-            bp::object(other_qualifier.m_is_toinstance))) != 0 ||
+            bp::object(cim_other.m_is_toinstance))) != 0 ||
         (rval = compare(bp::object(m_is_translatable),
-            bp::object(other_qualifier.m_is_translatable))) != 0)
+            bp::object(cim_other.m_is_translatable))) != 0)
     {
         return rval;
     }
@@ -226,16 +226,16 @@ bool CIMQualifier::eq(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return false;
 
-    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
+    CIMQualifier &cim_other = CIMQualifier::asNative(other);
 
-    return m_name == other_qualifier.m_name &&
-        m_type == other_qualifier.m_type &&
-        m_is_propagated == other_qualifier.m_is_propagated &&
-        m_is_overridable == other_qualifier.m_is_overridable &&
-        m_is_tosubclass == other_qualifier.m_is_tosubclass &&
-        m_is_toinstance == other_qualifier.m_is_toinstance &&
-        m_is_translatable == other_qualifier.m_is_translatable &&
-        compare(m_value, other_qualifier.m_value, Py_EQ);
+    return m_name == cim_other.m_name &&
+        m_type == cim_other.m_type &&
+        m_is_propagated == cim_other.m_is_propagated &&
+        m_is_overridable == cim_other.m_is_overridable &&
+        m_is_tosubclass == cim_other.m_is_tosubclass &&
+        m_is_toinstance == cim_other.m_is_toinstance &&
+        m_is_translatable == cim_other.m_is_translatable &&
+        compare(m_value, cim_other.m_value, Py_EQ);
 }
 
 bool CIMQualifier::gt(const bp::object &other)
@@ -243,16 +243,16 @@ bool CIMQualifier::gt(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return false;
 
-    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
+    CIMQualifier &cim_other = CIMQualifier::asNative(other);
 
-    return m_name > other_qualifier.m_name ||
-        m_type > other_qualifier.m_type ||
-        m_is_propagated > other_qualifier.m_is_propagated ||
-        m_is_overridable > other_qualifier.m_is_overridable ||
-        m_is_tosubclass > other_qualifier.m_is_tosubclass ||
-        m_is_toinstance > other_qualifier.m_is_toinstance ||
-        m_is_translatable > other_qualifier.m_is_translatable ||
-        compare(m_value, other_qualifier.m_value, Py_GT);
+    return m_name > cim_other.m_name ||
+        m_type > cim_other.m_type ||
+        m_is_propagated > cim_other.m_is_propagated ||
+        m_is_overridable > cim_other.m_is_overridable ||
+        m_is_tosubclass > cim_other.m_is_tosubclass ||
+        m_is_toinstance > cim_other.m_is_toinstance ||
+        m_is_translatable > cim_other.m_is_translatable ||
+        compare(m_value, cim_other.m_value, Py_GT);
 }
 
 bool CIMQualifier::lt(const bp::object &other)
@@ -260,16 +260,16 @@ bool CIMQualifier::lt(const bp::object &other)
     if (!isinstance(other, CIMQualifier::type()))
         return false;
 
-    CIMQualifier &other_qualifier = CIMQualifier::asNative(other);
+    CIMQualifier &cim_other = CIMQualifier::asNative(other);
 
-    return m_name < other_qualifier.m_name ||
-        m_type < other_qualifier.m_type ||
-        m_is_propagated < other_qualifier.m_is_propagated ||
-        m_is_overridable < other_qualifier.m_is_overridable ||
-        m_is_tosubclass < other_qualifier.m_is_tosubclass ||
-        m_is_toinstance < other_qualifier.m_is_toinstance ||
-        m_is_translatable < other_qualifier.m_is_translatable ||
-        compare(m_value, other_qualifier.m_value, Py_LT);
+    return m_name < cim_other.m_name ||
+        m_type < cim_other.m_type ||
+        m_is_propagated < cim_other.m_is_propagated ||
+        m_is_overridable < cim_other.m_is_overridable ||
+        m_is_tosubclass < cim_other.m_is_tosubclass ||
+        m_is_toinstance < cim_other.m_is_toinstance ||
+        m_is_translatable < cim_other.m_is_translatable ||
+        compare(m_value, cim_other.m_value, Py_LT);
 }
 
 bool CIMQualifier::ge(const bp::object &other)
@@ -297,18 +297,18 @@ bp::object CIMQualifier::tomof()
     ss << m_name;
     if (!PyList_Check(m_value.ptr()) && !PyTuple_Check(m_value.ptr())) {
         if (isbasestring(m_value))
-            ss << " (\"" << ObjectConv::asStdString(m_value) << "\")";
+            ss << " (\"" << ObjectConv::asString(m_value) << "\")";
         else
-            ss << " (" << ObjectConv::asStdString(m_value) << ')';
+            ss << " (" << ObjectConv::asString(m_value) << ')';
     } else {
         ss << " {";
         const int cnt = bp::len(m_value);
         for (int i = 0; i < cnt; ++i) {
             const bp::object &value = m_value[i];
             if (isbasestring(value))
-                ss << '\'' << ObjectConv::asStdString(value) << '\'';
+                ss << '\'' << ObjectConv::asString(value) << '\'';
             else
-                ss << ObjectConv::asStdString(value);
+                ss << ObjectConv::asString(value);
 
             if (i < cnt - 1)
                 ss << ", ";
@@ -321,27 +321,27 @@ bp::object CIMQualifier::tomof()
 
 bp::object CIMQualifier::copy()
 {
-    bp::object obj = CIMBase<CIMQualifier>::create();
-    CIMQualifier &qualifier = CIMQualifier::asNative(obj);
+    bp::object py_inst = CIMBase<CIMQualifier>::create();
+    CIMQualifier &cim_qualifier = CIMQualifier::asNative(py_inst);
 
-    qualifier.m_name = m_name;
-    qualifier.m_type = m_type;
-    qualifier.m_value = m_value;
-    qualifier.m_is_propagated = m_is_propagated;
-    qualifier.m_is_overridable = m_is_overridable;
-    qualifier.m_is_tosubclass = m_is_tosubclass;
-    qualifier.m_is_toinstance = m_is_toinstance;
-    qualifier.m_is_translatable = m_is_translatable;
+    cim_qualifier.m_name = m_name;
+    cim_qualifier.m_type = m_type;
+    cim_qualifier.m_value = m_value;
+    cim_qualifier.m_is_propagated = m_is_propagated;
+    cim_qualifier.m_is_overridable = m_is_overridable;
+    cim_qualifier.m_is_tosubclass = m_is_tosubclass;
+    cim_qualifier.m_is_toinstance = m_is_toinstance;
+    cim_qualifier.m_is_translatable = m_is_translatable;
 
-    return obj;
+    return py_inst;
 }
 
-std::string CIMQualifier::getName() const
+String CIMQualifier::getName() const
 {
     return m_name;
 }
 
-std::string CIMQualifier::getType() const
+String CIMQualifier::getType() const
 {
     return m_type;
 }
@@ -411,12 +411,12 @@ bp::object CIMQualifier::getPyIsTranslatable() const
     return bp::object(m_is_translatable);
 }
 
-void CIMQualifier::setName(const std::string &name)
+void CIMQualifier::setName(const String &name)
 {
     m_name = name;
 }
 
-void CIMQualifier::setType(const std::string &type)
+void CIMQualifier::setType(const String &type)
 {
     m_type = type;
 }
@@ -448,12 +448,12 @@ void CIMQualifier::setIsTranslatable(bool is_translatable)
 
 void CIMQualifier::setPyName(const bp::object &name)
 {
-    m_name = StringConv::asStdString(name, "name");
+    m_name = StringConv::asString(name, "name");
 }
 
 void CIMQualifier::setPyType(const bp::object &type)
 {
-    m_type = StringConv::asStdString(type, "type");
+    m_type = StringConv::asString(type, "type");
 }
 
 void CIMQualifier::setPyValue(const bp::object &value)

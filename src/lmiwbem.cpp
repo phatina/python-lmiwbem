@@ -82,6 +82,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     bp::scope().attr("SLPError") = SLPErrorExc;
 
     // Register type converts
+    StringToPythonString::register_converter();
     PegasusStringToPythonString::register_converter();
     PegasusCIMNameToPythonString::register_converter();
     PegasusCIMDateteTimeToPythonDateTime::register_converter();

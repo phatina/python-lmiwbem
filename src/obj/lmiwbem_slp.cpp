@@ -36,7 +36,7 @@
 
 ScopedSLPHandle::ScopedSLPHandle(
     const bool is_async,
-    const std::string pc_lang)
+    const String pc_lang)
 {
     m_error = SLPOpen(
         pc_lang.c_str(),
@@ -89,8 +89,8 @@ SLPBoolean SLP::urlCallback(
         SLPSrvURL *url;
         SLPParseSrvURL(srvurl, &url);
 
-        bp::list *srvs = static_cast<bp::list *>(cookie);
-        srvs->append(SLPResult::create(url));
+        bp::list *py_srvs_ptr = static_cast<bp::list *>(cookie);
+        py_srvs_ptr->append(SLPResult::create(url));
 
         SLPFree(url);
     }
@@ -105,10 +105,10 @@ SLPBoolean SLP::attrCallback(
     void *cookie)
 {
     if (errcode == SLP_OK) {
-        bp::dict &attrs = *static_cast<bp::dict *>(cookie);
+        bp::dict &py_attrs = *static_cast<bp::dict *>(cookie);
 
         std::stringstream ss(attrlist);
-        std::string item;
+        String item;
 
         while (std::getline(ss, item, ',')) {
             std::size_t pos = item.find("=", 0, 1);
@@ -116,16 +116,16 @@ SLPBoolean SLP::attrCallback(
             // Basic check of the attribute's format.
             if (item[0] != '(' ||
                 item[item.length() - 1] != ')' ||
-                pos == std::string::npos)
+                pos == String::npos)
             {
                 return SLP_FALSE;
             }
 
             // Cut the key and value of the attribute.
-            std::string key = item.substr(1, pos - 1);
-            std::string val = item.substr(pos + 1, item.length() - pos - 2);
+            String key = item.substr(1, pos - 1);
+            String val = item.substr(pos + 1, item.length() - pos - 2);
 
-            attrs[key] = val;
+            py_attrs[key] = val;
         }
     }
 
@@ -138,31 +138,31 @@ bp::object SLP::discover(
     const bp::object &filter,
     const bp::object &async)
 {
-    std::string std_srvtype = StringConv::asStdString(srvtype, "srvtype");
-    std::string std_scopelist = StringConv::asStdString(scopelist, "scopelist");
-    std::string std_filter = StringConv::asStdString(filter, "filter");
-    bool std_async = Conv::as<bool>(async, "async");
+    String c_srvtype = StringConv::asString(srvtype, "srvtype");
+    String c_scopelist = StringConv::asString(scopelist, "scopelist");
+    String c_filter = StringConv::asString(filter, "filter");
+    bool c_async = Conv::as<bool>(async, "async");
 
     // Open SLP handle.
-    ScopedSLPHandle hslp(std_async);
+    ScopedSLPHandle hslp(c_async);
     if (!hslp)
         throw_SLPError("Can't open SLP handle", static_cast<int>(hslp.error()));
 
     // Discover the services.
     SLPError err;
-    bp::list srvs;
+    bp::list py_srvs;
     if ((err = SLPFindSrvs(
             hslp,
-            std_srvtype.c_str(),
-            std_scopelist.c_str(),
-            std_filter.c_str(),
+            c_srvtype.c_str(),
+            c_scopelist.c_str(),
+            c_filter.c_str(),
             SLP::urlCallback,
-            static_cast<void*>(&srvs))) != SLP_OK)
+            static_cast<void*>(&py_srvs))) != SLP_OK)
     {
         throw_SLPError("SLP discovery failed", static_cast<int>(err));
     }
 
-    return srvs;
+    return py_srvs;
 }
 
 bp::object SLP::discoverAttrs(
@@ -171,31 +171,31 @@ bp::object SLP::discoverAttrs(
     const bp::object &attrids,
     const bp::object &async)
 {
-    std::string std_srvurl = StringConv::asStdString(srvurl, "srvurl");
-    std::string std_scopelist = StringConv::asStdString(scopelist, "scopelist");
-    std::string std_attrids = StringConv::asStdString(attrids, "attrids");
-    bool std_async = Conv::as<bool>(async, "async");
+    String c_srvurl = StringConv::asString(srvurl, "srvurl");
+    String c_scopelist = StringConv::asString(scopelist, "scopelist");
+    String c_attrids = StringConv::asString(attrids, "attrids");
+    bool c_async = Conv::as<bool>(async, "async");
 
     // Open SLP handle.
-    ScopedSLPHandle hslp(std_async);
+    ScopedSLPHandle hslp(c_async);
     if (!hslp)
         throw_SLPError("Can't open SLP handle", static_cast<int>(hslp.error()));
 
     // Discover the attrs.
     SLPError err;
-    bp::dict attrs;
+    bp::dict py_attrs;
     if ((err = SLPFindAttrs(
             hslp,
-            std_srvurl.c_str(),
-            std_scopelist.c_str(),
-            std_attrids.c_str(),
+            c_srvurl.c_str(),
+            c_scopelist.c_str(),
+            c_attrids.c_str(),
             SLP::attrCallback,
-            static_cast<void*>(&attrs))) != SLP_OK)
+            static_cast<void*>(&py_attrs))) != SLP_OK)
     {
         throw_SLPError("SLP attrs discovery failed", static_cast<int>(err));
     }
 
-    return attrs;
+    return py_attrs;
 }
 
 SLPResult::SLPResult()
@@ -214,11 +214,11 @@ SLPResult::SLPResult(
     const bp::object &family,
     const bp::object &srvpart)
 {
-    m_srvtype = StringConv::asStdString(srvtype, "srvtype");
-    m_host = StringConv::asStdString(host, "host");
+    m_srvtype = StringConv::asString(srvtype, "srvtype");
+    m_host = StringConv::asString(host, "host");
     m_port = Conv::as<int>(port, "port");
-    m_family = StringConv::asStdString(family, "family");
-    m_srvpart = StringConv::asStdString(srvpart, "srvpart");
+    m_family = StringConv::asString(family, "family");
+    m_srvpart = StringConv::asString(srvpart, "srvpart");
 }
 
 void SLPResult::init_type()
@@ -234,8 +234,8 @@ void SLPResult::init_type()
                 bp::arg("srvtype"),
                 bp::arg("host"),
                 bp::arg("port") = 0,
-                bp::arg("family") = std::string(),
-                bp::arg("srvpart") = std::string()),
+                bp::arg("family") = String(),
+                bp::arg("srvpart") = String()),
                 "Constructs a :py:class:`.CIMClass`.\n\n"
                 ":param str srvtype: service type\n"
                 ":param str host: host name\n"
@@ -272,19 +272,19 @@ void SLPResult::init_type()
 
 bp::object SLPResult::create(const SLPSrvURL *url)
 {
-    bp::object inst = CIMBase<SLPResult>::create();
-    SLPResult &fake_this = SLPResult::asNative(inst);
+    bp::object py_inst = CIMBase<SLPResult>::create();
+    SLPResult &fake_this = SLPResult::asNative(py_inst);
 
-    fake_this.m_srvtype = std::string(url->s_pcSrvType);
-    fake_this.m_host = std::string(url->s_pcHost);
+    fake_this.m_srvtype = String(url->s_pcSrvType);
+    fake_this.m_host = String(url->s_pcHost);
     fake_this.m_port = url->s_iPort;
-    fake_this.m_family = std::string(url->s_pcNetFamily);
-    fake_this.m_srvpart = std::string(url->s_pcSrvPart);
+    fake_this.m_family = String(url->s_pcNetFamily);
+    fake_this.m_srvpart = String(url->s_pcSrvPart);
 
-    return inst;
+    return py_inst;
 }
 
-std::string SLPResult::repr()
+String SLPResult::repr()
 {
     std::stringstream ss;
     ss << "SLPResult(srvtype='" << m_srvtype
@@ -293,24 +293,49 @@ std::string SLPResult::repr()
     return ss.str();
 }
 
+String SLPResult::getSrvType() const
+{
+    return m_srvtype;
+}
+
+String SLPResult::getHost() const
+{
+    return m_host;
+}
+
+String SLPResult::getFamily() const
+{
+    return m_family;
+}
+
+String SLPResult::getSrvPart() const
+{
+    return m_srvpart;
+}
+
+int SLPResult::getPort() const
+{
+    return m_port;
+}
+
 void SLPResult::setSrvType(const bp::object &srvtype)
 {
-    m_srvtype = StringConv::asStdString(srvtype, "srvtype");
+    m_srvtype = StringConv::asString(srvtype, "srvtype");
 }
 
 void SLPResult::setHost(const bp::object &host)
 {
-    m_host = StringConv::asStdString(host, "host");
+    m_host = StringConv::asString(host, "host");
 }
 
 void SLPResult::setFamily(const bp::object &family)
 {
-    m_family = StringConv::asStdString(family, "family");
+    m_family = StringConv::asString(family, "family");
 }
 
 void SLPResult::setSrvPart(const bp::object &srvpart)
 {
-    m_srvpart = StringConv::asStdString(srvpart, "srvpart");
+    m_srvpart = StringConv::asString(srvpart, "srvpart");
 }
 
 void SLPResult::setPort(const bp::object &port)

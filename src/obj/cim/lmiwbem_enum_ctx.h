@@ -26,6 +26,7 @@
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Client/CIMEnumerationContext.h>
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -38,11 +39,11 @@ public:
     static bp::object create(
         Pegasus::CIMEnumerationContext *ctx_ptr,
         const bool with_paths = true,
-        const std::string &ns = std::string());
+        const String &ns = String());
     static bp::object create(
         const boost::shared_ptr<Pegasus::CIMEnumerationContext> &ctx_ptr,
         const bool with_paths = true,
-        const std::string &ns = std::string());
+        const String &ns = String());
 
     bp::object repr();
 
@@ -50,9 +51,9 @@ public:
 
     // These methods are present due to non-uniform Pegasus::CIMClient pull
     // methods (::pullInstancesWithPaths() vs. ::pullInstnaces()).
-    std::string getNamespace() const;
+    String getNamespace() const;
     bool getIsWithPaths() const;
-    void setNamespace(const std::string &ns);
+    void setNamespace(const String &ns);
     void setIsWithPaths(const bool is_with_paths);
 
     void clear();
@@ -60,7 +61,7 @@ public:
 private:
     boost::shared_ptr<Pegasus::CIMEnumerationContext> m_enum_ctx_ptr;
     bool m_is_with_paths;
-    std::string m_namespace;
+    String m_namespace;
 };
 
 #endif // LMIWBEM_ENUM_CTX_H

@@ -27,6 +27,7 @@
 #  include <Pegasus/Common/CIMMethod.h>
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -62,9 +63,9 @@ public:
 
     bp::object copy();
 
-    std::string getName() const;
-    std::string getReturnType() const;
-    std::string getClassOrigin() const;
+    String getName() const;
+    String getReturnType() const;
+    String getClassOrigin() const;
     bool getIsPropagated() const;
     bp::object getPyName() const;
     bp::object getPyReturnType() const;
@@ -73,9 +74,9 @@ public:
     bp::object getPyParameters();
     bp::object getPyQualifiers();
 
-    void setName(const std::string &name);
-    void setReturnType(const std::string &return_type);
-    void setClassOrigin(const std::string &class_origin);
+    void setName(const String &name);
+    void setReturnType(const String &return_type);
+    void setClassOrigin(const String &class_origin);
     void setIsPropagated(bool is_propagated);
     void setPyName(const bp::object &name);
     void setPyReturnType(const bp::object &rtype);
@@ -85,9 +86,9 @@ public:
     void setPyQualifiers(const bp::object &qualifiers);
 
 private:
-    std::string m_name;
-    std::string m_return_type;
-    std::string m_class_origin;
+    String m_name;
+    String m_return_type;
+    String m_class_origin;
     bool m_is_propagated;
     bp::object m_parameters;
     bp::object m_qualifiers;

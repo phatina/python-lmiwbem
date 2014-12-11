@@ -36,7 +36,7 @@ extern bp::object SLPErrorExc;
 
 namespace {
 
-inline void throw_core(PyObject *exc, const std::string &message)
+inline void throw_core(PyObject *exc, const String &message)
 {
     PyErr_SetString(exc, message.c_str());
     bp::throw_error_already_set();
@@ -44,21 +44,21 @@ inline void throw_core(PyObject *exc, const std::string &message)
 
 inline void throw_core(
     PyObject *exc,
-    const std::string &message,
+    const String &message,
     int code)
 {
     PyErr_SetObject(exc, bp::make_tuple(code, bp::str(message)).ptr());
     bp::throw_error_already_set();
 }
 
-inline void throw_core(const bp::object &exc, const std::string &message)
+inline void throw_core(const bp::object &exc, const String &message)
 {
     throw_core(exc.ptr(), message);
 }
 
 inline void throw_core(
     const bp::object &exc,
-    const std::string &message,
+    const String &message,
     int code)
 {
     throw_core(exc.ptr(), message, code);
@@ -68,16 +68,16 @@ inline void throw_core(
 
 void throw_Exception(const Pegasus::Exception &e)
 {
-    throw_core(CIMErrorExc, std::string(
-        (Pegasus::String("Pegasus: ") + e.getMessage()).getCString()));
+    throw_core(CIMErrorExc, String(
+        (Pegasus::String("Pegasus: ") + e.getMessage())));
 }
 
-void throw_Exception(const std::string &message)
+void throw_Exception(const String &message)
 {
-    throw_core(CIMErrorExc, std::string("Pegasus: ") + message);
+    throw_core(CIMErrorExc, String("Pegasus: ") + message);
 }
 
-void throw_ConnectionError(const std::string &message, int code)
+void throw_ConnectionError(const String &message, int code)
 {
     throw_core(ConnectionErrorExc, message, code);
 }
@@ -86,53 +86,53 @@ void throw_CIMError(const Pegasus::CIMException &e)
 {
     throw_core(
         CIMErrorExc,
-        std::string(e.getMessage().getCString()),
+        String(e.getMessage()),
         static_cast<int>(e.getCode()));
 }
 
-void throw_CIMError(const std::string &message, int code)
+void throw_CIMError(const String &message, int code)
 {
     throw_core(CIMErrorExc, message, code);
     bp::throw_error_already_set();
 }
 
-void throw_SLPError(const std::string &message, int code)
+void throw_SLPError(const String &message, int code)
 {
     throw_core(SLPErrorExc, message, code);
     bp::throw_error_already_set();
 }
 
-void throw_ValueError(const std::string &message)
+void throw_ValueError(const String &message)
 {
     throw_core(PyExc_ValueError, message);
 }
 
-void throw_KeyError(const std::string &message)
+void throw_KeyError(const String &message)
 {
     throw_core(PyExc_KeyError, message);
 }
 
-void throw_MemoryError(const std::string &message)
+void throw_MemoryError(const String &message)
 {
     throw_core(PyExc_MemoryError, message);
 }
 
-void throw_StopIteration(const std::string &message)
+void throw_StopIteration(const String &message)
 {
     throw_core(PyExc_StopIteration, message);
 }
 
-void throw_TypeError(const std::string &message)
+void throw_TypeError(const String &message)
 {
     throw_core(PyExc_TypeError, message);
 }
 
-void throw_RuntimeError(const std::string &message)
+void throw_RuntimeError(const String &message)
 {
     throw_core(PyExc_RuntimeError, message);
 }
 
-void handle_all_exceptions(const std::string &prefix)
+void handle_all_exceptions(const String &prefix)
 {
     std::stringstream ss(prefix);
     handle_all_exceptions(ss);

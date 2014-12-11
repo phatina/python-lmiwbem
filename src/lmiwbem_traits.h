@@ -23,6 +23,7 @@
 #  define LMIWBEM_TRAITS_H
 
 #  include "lmiwbem.h"
+#  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN
 class dict;
@@ -44,7 +45,7 @@ LMIWBEM_BEGIN
        template <> \
        struct type_name<type> \
        { \
-           static std::string get() { return std::string(#value); } \
+           static String get() { return String(#value); } \
        }
 
 #  define DEF_TYPE_NAME(type) DEF_TYPE_NAME_TYPE(type, type)
@@ -52,7 +53,7 @@ LMIWBEM_BEGIN
 template <typename T>
 struct type_name
 {
-    static std::string get() { return std::string(); }
+    static String get() { return String(); }
 };
 
 DEF_TYPE_NAME(bool);
@@ -69,8 +70,10 @@ DEF_TYPE_NAME(NocaseDict);
 DEF_TYPE_NAME_TYPE(bp::dict, dict);
 DEF_TYPE_NAME_TYPE(bp::list, list);
 DEF_TYPE_NAME_TYPE(bp::tuple, tuple);
-DEF_TYPE_NAME_TYPE(std::string, string);
-DEF_TYPE_NAME_TYPE(std::string&, string);
+DEF_TYPE_NAME_TYPE(std::string, string);  // TODO: remove, when not used
+DEF_TYPE_NAME_TYPE(std::string&, string); // TODO: remove, when not used
+DEF_TYPE_NAME_TYPE(String, string);
+DEF_TYPE_NAME_TYPE(String&, string);
 
 LMIWBEM_END
 

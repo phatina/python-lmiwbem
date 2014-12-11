@@ -22,11 +22,11 @@
 #ifndef   LMIWBEM_QUALIFIER_H
 #  define LMIWBEM_QUALIFIER_H
 
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMQualifier.h>
 #  include "lmiwbem.h"
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -65,8 +65,8 @@ public:
 
     bp::object copy();
 
-    std::string getName() const;
-    std::string getType() const;
+    String getName() const;
+    String getType() const;
     bool getIsPropagated()   const;
     bool getIsOverridable()  const;
     bool getIsToSubClass()   const;
@@ -81,8 +81,8 @@ public:
     bp::object getPyIsToInstance()   const;
     bp::object getPyIsTranslatable() const;
 
-    void setName(const std::string &name);
-    void setType(const std::string &type);
+    void setName(const String &name);
+    void setType(const String &type);
     void setIsPropagated(bool is_propagated);
     void setIsOverridable(bool is_overridable);
     void setIsToSubclass(bool is_tosubclass);
@@ -98,8 +98,8 @@ public:
     void setPyIsTranslatable(const bp::object &is_translatable);
 
 private:
-    std::string m_name;
-    std::string m_type;
+    String m_name;
+    String m_type;
     bp::object m_value;
     bool m_is_propagated;
     bool m_is_overridable;

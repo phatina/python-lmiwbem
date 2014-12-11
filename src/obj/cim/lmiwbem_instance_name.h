@@ -22,10 +22,10 @@
 #ifndef   LMIWBEM_INSTANCE_NAME_H
 #  define LMIWBEM_INSTANCE_NAME_H
 
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMObjectPath.h>
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -40,11 +40,10 @@ public:
         const bp::object &ns);
 
     static void init_type();
-    static bp::object create(const Pegasus::String &obj_path);
     static bp::object create(
         const Pegasus::CIMObjectPath &obj_path,
-        const std::string &ns = std::string(),
-        const std::string &hostname = std::string());
+        const String &ns = String(),
+        const String &hostname = String());
 
     Pegasus::CIMObjectPath asPegasusCIMObjectPath() const;
 
@@ -58,7 +57,7 @@ public:
     bool le(const bp::object &other);
 #  endif // PY_MAJOR_VERSION
 
-    std::string asStdString() const;
+    String asString() const;
     bp::object str() const;
     bp::object repr() const;
 
@@ -76,17 +75,17 @@ public:
 
     bp::object copy();
 
-    std::string getClassname() const;
-    std::string getNamespace() const;
-    std::string getHostname()  const;
+    String getClassname() const;
+    String getNamespace() const;
+    String getHostname()  const;
     bp::object getPyClassname() const;
     bp::object getPyNamespace() const;
     bp::object getPyHostname() const;
     bp::object getPyKeybindings() const;
 
-    void setClassname(const std::string &classname);
-    void setNamespace(const std::string &namespace_);
-    void setHostname(const std::string &hostname);
+    void setClassname(const String &classname);
+    void setNamespace(const String &namespace_);
+    void setHostname(const String &hostname);
     void setPyClassname(const bp::object &classname);
     void setPyNamespace(const bp::object &namespace_);
     void setPyHostname(const bp::object &hostname);
@@ -94,18 +93,18 @@ public:
 
     static void updatePegasusCIMObjectPathNamespace(
         Pegasus::CIMObjectPath &path,
-        const std::string &ns);
+        const String &ns);
     static void updatePegasusCIMObjectPathHostname(
         Pegasus::CIMObjectPath &path,
-        const std::string &hostname);
+        const String &hostname);
     static bool isUninitialized(const Pegasus::CIMObjectPath &path);
 
 private:
     static bp::object keybindingToValue(const Pegasus::CIMKeyBinding &keybinding);
 
-    std::string m_classname;
-    std::string m_namespace;
-    std::string m_hostname;
+    String m_classname;
+    String m_namespace;
+    String m_hostname;
     bp::object m_keybindings;
 };
 

@@ -23,7 +23,6 @@
 #  define LMIWBEM_PROPERTY_H
 
 #  include <list>
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMProperty.h>
 #  include <Pegasus/Common/CIMType.h>
@@ -31,6 +30,7 @@
 #  include <Pegasus/Common/CIMValue.h>
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -71,10 +71,10 @@ public:
 
     bp::object copy();
 
-    std::string getName() const;
-    std::string getType() const;
-    std::string getClassOrigin() const;
-    std::string getReferenceClass() const;
+    String getName() const;
+    String getType() const;
+    String getClassOrigin() const;
+    String getReferenceClass() const;
     int getArraySize() const;
     bool getIsArray() const;
     bool getIsPropagated() const;
@@ -88,10 +88,10 @@ public:
     bp::object getPyValue();
     bp::object getPyQualifiers();
 
-    void setName(const std::string &name);
-    void setType(const std::string &type);
-    void setClassOrigin(const std::string &class_origin);
-    void setReferenceClass(const std::string &reference_class);
+    void setName(const String &name);
+    void setType(const String &type);
+    void setClassOrigin(const String &class_origin);
+    void setReferenceClass(const String &reference_class);
     void setArraySize(int array_size);
     void setIsArray(bool is_array);
     void setIsPropagated(bool is_propagated);
@@ -106,12 +106,12 @@ public:
     void setPyQualifiers(const bp::object &qualifiers);
 
 private:
-    static std::string propertyTypeAsString(const Pegasus::CIMType type);
+    static String propertyTypeAsString(const Pegasus::CIMType type);
 
-    std::string m_name;
-    std::string m_type;
-    std::string m_class_origin;
-    std::string m_reference_class;
+    String m_name;
+    String m_type;
+    String m_class_origin;
+    String m_reference_class;
     bool m_is_array;
     bool m_is_propagated;
     int m_array_size;

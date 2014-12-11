@@ -29,6 +29,7 @@
 #  include <boost/shared_ptr.hpp>
 #  include "obj/lmiwbem_cimbase.h"
 #  include "obj/cim/lmiwbem_instance.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -36,7 +37,7 @@ class CallableWithParams;
 class CIMIndicationListener;
 
 typedef std::map<
-    std::string,
+    String,
     std::list<CallableWithParams>
 > handler_map_t;
 
@@ -95,7 +96,7 @@ public:
     bool getIsAlive() const;
     bool getUsesSSL() const;
 
-    std::string getListenAddress() const;
+    String getListenAddress() const;
     int getPort() const;
     bp::object getPyListenAddress() const;
     bp::object getPyPort() const;
@@ -107,7 +108,7 @@ public:
 private:
     friend class CIMIndicationConsumer;
     void call(
-        const std::string &name,
+        const String &name,
         const bp::object &indication) const;
 
     boost::shared_ptr<Pegasus::CIMListener> m_listener;
@@ -116,10 +117,10 @@ private:
     handler_map_t m_handlers;
 
     Pegasus::Uint32 m_port;
-    std::string m_listen_address;
-    std::string m_certfile;
-    std::string m_keyfile;
-    std::string m_trust_store;
+    String m_listen_address;
+    String m_certfile;
+    String m_keyfile;
+    String m_trust_store;
     Mutex m_mutex;          // A guard for m_terminating flag.
     bool m_terminating;
 };

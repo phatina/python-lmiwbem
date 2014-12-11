@@ -22,12 +22,12 @@
 #ifndef   LMIWBEM_CONNECTION_H
 #  define LMIWBEM_CONNECTION_H
 
-#  include <string>
 #  include <boost/python/class.hpp>
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
 #  include "lmiwbem_client.h"
 #  include "lmiwbem_gil.h"
+#  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN
     class dict;
@@ -87,7 +87,7 @@ public:
 
     static void init_type();
 
-    std::string repr() const;
+    String repr() const;
 
     void connect(
         const bp::object &url,
@@ -307,12 +307,12 @@ protected:
 
     bool m_connected_tmp;
     bool m_connect_locally;
-    std::string m_url;
-    std::string m_username;
-    std::string m_password;
-    std::string m_cert_file;
-    std::string m_key_file;
-    std::string m_default_namespace;
+    String m_url;
+    String m_username;
+    String m_password;
+    String m_cert_file;
+    String m_key_file;
+    String m_default_namespace;
     CIMClient m_client;
 };
 

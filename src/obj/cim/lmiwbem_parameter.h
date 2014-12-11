@@ -23,11 +23,11 @@
 #  define LMIWBEM_PARAMETER_H
 
 #  include <list>
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMParameter.h>
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -64,9 +64,9 @@ public:
 
     bp::object copy();
 
-    std::string getName() const;
-    std::string getType() const;
-    std::string getReferenceClass() const;
+    String getName() const;
+    String getType() const;
+    String getReferenceClass() const;
     bool getIsArray() const;
     int  getArraySize() const;
     bp::object getPyName() const;
@@ -76,9 +76,9 @@ public:
     bp::object getPyArraySize() const;
     bp::object getPyQualifiers();
 
-    void setName(const std::string &name);
-    void setType(const std::string &type);
-    void setReferenceClass(const std::string &reference_class);
+    void setName(const String &name);
+    void setType(const String &type);
+    void setReferenceClass(const String &reference_class);
     void setIsArray(bool is_array);
     void setArraySize(int array_size);
     void setPyName(const bp::object &name);
@@ -89,9 +89,9 @@ public:
     void setPyQualifiers(const bp::object &qualifiers);
 
 private:
-    std::string m_name;
-    std::string m_type;
-    std::string m_reference_class;
+    String m_name;
+    String m_type;
+    String m_reference_class;
     bool m_is_array;
     int  m_array_size;
     bp::object m_qualifiers;

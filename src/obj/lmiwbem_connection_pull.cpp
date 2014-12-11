@@ -381,17 +381,17 @@ bp::object WBEMConnection::openEnumerateInstances(
     const bp::object &continue_on_error,
     const bp::object &max_object_cnt) try
 {
-    Pegasus::CIMName peg_cls(StringConv::asPegasusString(cls, "ClassName"));
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMName peg_class(StringConv::asPegasusString(cls, "ClassName"));
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!isnone(ns))
         peg_ns = StringConv::asPegasusString(ns, "namespace");
 
-    Pegasus::String peg_query_lang;
-    Pegasus::String peg_query;
+    String c_query_lang;
+    String c_query;
     if (!isnone(query_lang))
-        peg_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asPegasusString(query_lang);
     if (!isnone(query))
-        peg_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asPegasusString(query);
 
     Pegasus::Boolean peg_deep_inheritance = Conv::as<Pegasus::Boolean>(
         deep_inheritance, "DeepInheritance");
@@ -421,12 +421,12 @@ bp::object WBEMConnection::openEnumerateInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
-        peg_cls,
+        peg_class,
         peg_deep_inheritance,
         peg_include_class_origin,
         peg_property_list,
-        peg_query_lang,
-        peg_query,
+        c_query_lang,
+        c_query,
         peg_operation_timeout,
         peg_continue_on_error,
         peg_max_object_cnt);
@@ -441,11 +441,11 @@ bp::object WBEMConnection::openEnumerateInstances(
     if (Config::isVerbose()) {
         ss << "OpenEnumerateInstances(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "classname=" << StringConv::asStdString(cls) << ", "
-               << "namespace=" << std_ns;
+                c_ns = StringConv::asString(ns);
+            ss << "classname=" << StringConv::asString(cls) << ", "
+               << "namespace=" << c_ns;
         }
         ss << ')';
     }
@@ -462,17 +462,17 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     const bp::object &continue_on_error,
     const bp::object &max_object_cnt) try
 {
-    Pegasus::CIMName peg_cls(StringConv::asPegasusString(cls, "ClassName"));
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMName peg_class(StringConv::asPegasusString(cls, "ClassName"));
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!isnone(ns))
         peg_ns = StringConv::asPegasusString(ns, "namespace");
 
-    Pegasus::String peg_query_lang;
-    Pegasus::String peg_query;
+    String c_query_lang;
+    String c_query;
     if (!isnone(query_lang))
-        peg_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asPegasusString(query_lang);
     if (!isnone(query))
-        peg_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asPegasusString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -495,9 +495,9 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
-        peg_cls,
-        peg_query_lang,
-        peg_query,
+        peg_class,
+        c_query_lang,
+        c_query,
         peg_operation_timeout,
         peg_continue_on_error,
         peg_max_object_cnt);
@@ -512,11 +512,11 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     if (Config::isVerbose()) {
         ss << "OpenEnumerateInstanceNames(";
         if (Config::isVerboseMore()) {
-            std::string std_ns(m_default_namespace);
+            String c_ns(m_default_namespace);
             if (!isnone(ns))
-                std_ns = StringConv::asStdString(ns);
-            ss << "classname=" << StringConv::asStdString(cls) << ", "
-               << "namespace=" << std_ns;
+                c_ns = StringConv::asString(ns);
+            ss << "classname=" << StringConv::asString(cls) << ", "
+               << "namespace=" << c_ns;
         }
         ss << ')';
     }
@@ -543,7 +543,7 @@ bp::object WBEMConnection::openAssociators(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -559,13 +559,13 @@ bp::object WBEMConnection::openAssociators(
             result_class, "ResultClass");
     }
 
-    Pegasus::String peg_role;
+    String c_role;
     if (!isnone(role))
-        peg_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asPegasusString(role, "Role");
 
-    Pegasus::String peg_result_role;
+    String c_result_role;
     if (!isnone(result_role)) {
-        peg_result_role = StringConv::asPegasusString(
+        c_result_role = StringConv::asPegasusString(
             result_role, "ResultRole");
     }
 
@@ -575,12 +575,12 @@ bp::object WBEMConnection::openAssociators(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    Pegasus::String peg_query_lang;
-    Pegasus::String peg_query;
+    String c_query_lang;
+    String c_query;
     if (!isnone(query_lang))
-        peg_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asPegasusString(query_lang);
     if (!isnone(query))
-        peg_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asPegasusString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -606,12 +606,12 @@ bp::object WBEMConnection::openAssociators(
         peg_path,
         peg_assoc_class,
         peg_result_class,
-        peg_role,
-        peg_result_role,
+        c_role,
+        c_result_role,
         peg_include_class_origin,
         peg_property_list,
-        peg_query_lang,
-        peg_query,
+        c_query_lang,
+        c_query,
         peg_operation_timeout,
         peg_continue_on_error,
         peg_max_object_cnt);
@@ -626,7 +626,7 @@ bp::object WBEMConnection::openAssociators(
     if (Config::isVerbose()) {
         ss << "OpenAssociators(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -650,7 +650,7 @@ bp::object WBEMConnection::openAssociatorNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -666,22 +666,22 @@ bp::object WBEMConnection::openAssociatorNames(
             result_class, "ResultClass");
     }
 
-    Pegasus::String peg_role;
+    String c_role;
     if (!isnone(role))
-        peg_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asPegasusString(role, "Role");
 
-    Pegasus::String peg_result_role;
+    String c_result_role;
     if (!isnone(result_role)) {
-        peg_result_role = StringConv::asPegasusString(
+        c_result_role = StringConv::asPegasusString(
             result_role, "ResultRole");
     }
 
-    Pegasus::String peg_query_lang;
-    Pegasus::String peg_query;
+    String c_query_lang;
+    String c_query;
     if (!isnone(query_lang))
-        peg_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asPegasusString(query_lang);
     if (!isnone(query))
-        peg_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asPegasusString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -707,10 +707,10 @@ bp::object WBEMConnection::openAssociatorNames(
         peg_path,
         peg_assoc_class,
         peg_result_class,
-        peg_role,
-        peg_result_role,
-        peg_query_lang,
-        peg_query,
+        c_role,
+        c_result_role,
+        c_query_lang,
+        c_query,
         peg_operation_timeout,
         peg_continue_on_error,
         peg_max_object_cnt);
@@ -725,7 +725,7 @@ bp::object WBEMConnection::openAssociatorNames(
     if (Config::isVerbose()) {
         ss << "OpenAssociatorNames(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -749,7 +749,7 @@ bp::object WBEMConnection::openReferences(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -759,9 +759,9 @@ bp::object WBEMConnection::openReferences(
             result_class, "ResultClass");
     }
 
-    Pegasus::String peg_role;
+    String c_role;
     if (!isnone(role))
-        peg_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asPegasusString(role, "Role");
 
     Pegasus::Boolean peg_include_class_origin = \
         Conv::as<Pegasus::Boolean>(include_class_origin, "IncludeClassOrigin");
@@ -769,12 +769,12 @@ bp::object WBEMConnection::openReferences(
         ListConv::asPegasusPropertyList(property_list,
         "PropertyList"));
 
-    Pegasus::String peg_query_lang;
-    Pegasus::String peg_query;
+    String c_query_lang;
+    String c_query;
     if (!isnone(query_lang))
-        peg_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asPegasusString(query_lang);
     if (!isnone(query))
-        peg_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asPegasusString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -799,11 +799,11 @@ bp::object WBEMConnection::openReferences(
         peg_ns,
         peg_path,
         peg_result_class,
-        peg_role,
+        c_role,
         peg_include_class_origin,
         peg_property_list,
-        peg_query_lang,
-        peg_query,
+        c_query_lang,
+        c_query,
         peg_operation_timeout,
         peg_continue_on_error,
         peg_max_object_cnt);
@@ -818,7 +818,7 @@ bp::object WBEMConnection::openReferences(
     if (Config::isVerbose()) {
         ss << "OpenReferences(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -840,7 +840,7 @@ bp::object WBEMConnection::openReferenceNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -850,16 +850,16 @@ bp::object WBEMConnection::openReferenceNames(
             result_class, "ResultClass");
     }
 
-    Pegasus::String peg_role;
+    String c_role;
     if (!isnone(role))
-        peg_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asPegasusString(role, "Role");
 
-    Pegasus::String peg_query_lang;
-    Pegasus::String peg_query;
+    String c_query_lang;
+    String c_query;
     if (!isnone(query_lang))
-        peg_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asPegasusString(query_lang);
     if (!isnone(query))
-        peg_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asPegasusString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -884,9 +884,9 @@ bp::object WBEMConnection::openReferenceNames(
         peg_ns,
         peg_path,
         peg_result_class,
-        peg_role,
-        peg_query_lang,
-        peg_query,
+        c_role,
+        c_query_lang,
+        c_query,
         peg_operation_timeout,
         peg_continue_on_error,
         peg_max_object_cnt);
@@ -901,7 +901,7 @@ bp::object WBEMConnection::openReferenceNames(
     if (Config::isVerbose()) {
         ss << "OpenReferenceNames(";
         if (Config::isVerboseMore())
-            ss << '\'' << ObjectConv::asStdString(object_path) << '\'';
+            ss << '\'' << ObjectConv::asString(object_path) << '\'';
         ss << ')';
     }
     handle_all_exceptions(ss);
@@ -916,13 +916,13 @@ bp::object WBEMConnection::openExecQuery(
     const bp::object &continue_on_error,
     const bp::object &max_object_cnt) try
 {
-    Pegasus::String peg_query_lang(
+    String c_query_lang(
         StringConv::asPegasusString(query_lang, "QueryLanguage"));
-    Pegasus::String peg_query(
+    String c_query(
         StringConv::asPegasusString(query, "Query"));
-    Pegasus::CIMClass peg_query_cls;
+    Pegasus::CIMClass c_query_cls;
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace.c_str());
+    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!isnone(ns))
         peg_ns = StringConv::asPegasusString(ns, "namespace");
 
@@ -947,9 +947,9 @@ bp::object WBEMConnection::openExecQuery(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
-        peg_query_lang,
-        peg_query,
-        peg_query_cls, // Unused: queryResultClass
+        c_query_lang,
+        c_query,
+        c_query_cls, // Unused: queryResultClass
         false,         // Unused: returnQueryResultClass
         peg_operation_timeout,
         peg_continue_on_error,
@@ -959,20 +959,20 @@ bp::object WBEMConnection::openExecQuery(
     return bp::make_tuple(
         ListConv::asPyCIMInstanceList(
             peg_instances,
-            std::string(peg_ns.getString().getCString()),
+            peg_ns.getString(),
             m_client.hostname()),
         CIMEnumerationContext::create(
             ctx_ptr,
             false, /* with_paths */
-            std::string(peg_ns.getString().getCString())),
+            peg_ns.getString()),
         bp::object(peg_end_of_sequence));
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "OpenExecQuery(";
         if (Config::isVerboseMore()) {
-            ss << "lang='"  << StringConv::asStdString(query_lang) << "', "
-               << "query='" << StringConv::asStdString(query) << '\'';
+            ss << "lang='"  << StringConv::asString(query_lang) << "', "
+               << "query='" << StringConv::asString(query) << '\'';
         }
         ss << ')';
     }

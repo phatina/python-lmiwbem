@@ -41,33 +41,33 @@ void CIMEnumerationContext::init_type()
 bp::object CIMEnumerationContext::create(
     Pegasus::CIMEnumerationContext *ctx_ptr,
     const bool with_paths,
-    const std::string &ns)
+    const String &ns)
 {
-    bp::object inst(CIMBase<CIMEnumerationContext>::create());
-    CIMEnumerationContext &fake_this = CIMEnumerationContext::asNative(inst);
+    bp::object py_inst(CIMBase<CIMEnumerationContext>::create());
+    CIMEnumerationContext &fake_this = CIMEnumerationContext::asNative(py_inst);
     fake_this.m_enum_ctx_ptr.reset(ctx_ptr);
     fake_this.m_is_with_paths = with_paths;
     fake_this.m_namespace = ns;
-    return inst;
+    return py_inst;
 }
 
 bp::object CIMEnumerationContext::create(
     const boost::shared_ptr<Pegasus::CIMEnumerationContext> &ctx_ptr,
     const bool with_paths,
-    const std::string &ns)
+    const String &ns)
 {
-    bp::object inst(CIMBase<CIMEnumerationContext>::create());
-    CIMEnumerationContext &fake_this = CIMEnumerationContext::asNative(inst);
+    bp::object py_inst(CIMBase<CIMEnumerationContext>::create());
+    CIMEnumerationContext &fake_this = CIMEnumerationContext::asNative(py_inst);
     fake_this.m_enum_ctx_ptr = ctx_ptr;
     fake_this.m_is_with_paths = with_paths;
     fake_this.m_namespace = ns;
-    return inst;
+    return py_inst;
 }
 
 bp::object CIMEnumerationContext::repr()
 {
     return StringConv::asPyUnicode(
-        std::string("CIMEnumerationContext()"));
+        String("CIMEnumerationContext()"));
 }
 
 Pegasus::CIMEnumerationContext &CIMEnumerationContext::getPegasusContext()
@@ -82,7 +82,7 @@ Pegasus::CIMEnumerationContext &CIMEnumerationContext::getPegasusContext()
     return *m_enum_ctx_ptr;
 }
 
-std::string CIMEnumerationContext::getNamespace() const
+String CIMEnumerationContext::getNamespace() const
 {
     return m_namespace;
 }
@@ -92,7 +92,7 @@ bool CIMEnumerationContext::getIsWithPaths() const
     return m_is_with_paths;
 }
 
-void CIMEnumerationContext::setNamespace(const std::string &ns)
+void CIMEnumerationContext::setNamespace(const String &ns)
 {
     m_namespace = ns;
 }

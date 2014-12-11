@@ -23,11 +23,11 @@
 #  define LMIWBEM_CLASS_H
 
 #  include <list>
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMClass.h>
-#  include "obj/lmiwbem_cimbase.h"
 #  include "lmiwbem_refcountedptr.h"
+#  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -62,16 +62,16 @@ public:
 
     bp::object copy();
 
-    std::string getClassname() const;
-    std::string getSuperClassname() const;
+    String getClassname() const;
+    String getSuperClassname() const;
     bp::object getPyClassname() const;
     bp::object getPySuperClassname() const;
     bp::object getPyProperties();
     bp::object getPyQualifiers();
     bp::object getPyMethods();
 
-    void setClassname(const std::string &classname);
-    void setSuperClassname(const std::string &super_classname);
+    void setClassname(const String &classname);
+    void setSuperClassname(const String &super_classname);
     void setPyClassname(const bp::object &classname);
     void setPySuperClassname(const bp::object &super_classname);
     void setPyProperties(const bp::object &properties);
@@ -79,8 +79,8 @@ public:
     void setPyMethods(const bp::object &methods);
 
 private:
-    std::string m_classname;
-    std::string m_super_classname;
+    String m_classname;
+    String m_super_classname;
     bp::object m_properties;
     bp::object m_qualifiers;
     bp::object m_methods;

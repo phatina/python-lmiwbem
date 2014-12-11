@@ -22,6 +22,7 @@ lmiwbem_core_la_SOURCES      =            \
 	obj/cim/lmiwbem_constants.h       \
 	obj/cim/lmiwbem_class_name.h      \
 	util/lmiwbem_convert.h            \
+	util/lmiwbem_string.h             \
 	util/lmiwbem_util.h               \
 	lmiwbem_mutex.h                   \
 	lmiwbem_urlinfo.h                 \
@@ -43,6 +44,7 @@ lmiwbem_core_la_SOURCES      =            \
 	obj/cim/lmiwbem_constants.cpp     \
 	obj/cim/lmiwbem_value.cpp         \
 	util/lmiwbem_convert.cpp          \
+	util/lmiwbem_string.cpp           \
 	util/lmiwbem_util.cpp             \
 	lmiwbem_urlinfo.cpp               \
 	lmiwbem_config.cpp                \

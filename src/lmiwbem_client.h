@@ -22,12 +22,12 @@
 #ifndef   LMIWBEM_CLIENT_H
 #  define LMIWBEM_CLIENT_H
 
-#  include <string>
 #  include <Pegasus/Client/CIMClient.h>
 #  include <Pegasus/Common/CIMType.h>
 #  include <Pegasus/Common/SSLContext.h>
 #  include "lmiwbem_urlinfo.h"
 #  include "lmiwbem_mutex.h"
+#  include "util/lmiwbem_string.h"
 
 class CIMClient;
 
@@ -55,24 +55,20 @@ public:
     CIMClient();
 
     void connect(
-        const Pegasus::String &uri,
-        const Pegasus::String &username,
-        const Pegasus::String &password,
-        const Pegasus::String &cert_file,
-        const Pegasus::String &key_file,
-        const Pegasus::String &trust_store);
+        const String &uri,
+        const String &username,
+        const String &password,
+        const String &cert_file,
+        const String &key_file,
+        const String &trust_store);
     void connectLocally();
     void disconnect();
     bool isConnected();
 
-    void setVerifyCertificate(bool verify = true) { m_verify_cert = verify; }
-    bool getVerifyCertificate() const { return m_verify_cert; }
-    URLInfo getURLInfo() const { return m_url_info; }
-
-    std::string hostname() const
-    {
-        return std::string(m_url_info.hostname().getCString());
-    }
+    void setVerifyCertificate(bool verify = true);
+    bool getVerifyCertificate() const;
+    URLInfo getURLInfo() const;
+    String hostname() const;
 
 private:
     // We hide these from Pegasus::CIMClient

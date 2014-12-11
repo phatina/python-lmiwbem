@@ -19,34 +19,35 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef   LMIWBEM_CONFIG_H
-#  define LMIWBEM_CONFIG_H
+#  ifndef LMIWBEM_STRING_H
+#  define LMIWBEM_STRING_H
 
-#  include "util/lmiwbem_string.h"
+#  include <string>
+#  include <Pegasus/Common/String.h>
 
-class Config
+class String: public std::string
 {
 public:
-    static void init_type();
+    String();
+    String(const char *str);
+    String(const char *str, size_t pos, size_t len = npos);
+    String(const std::string &str);
+    String(const Pegasus::String &str);
 
-    static String defaultNamespace();
-    static String defaultTrustStore();
+    // Unification methods
+    std::string asStdString() const;
+    Pegasus::String asPegasusString() const;
 
-    static int exceptionVerbosity();
-    static bool isVerbose();
-    static bool isVerboseCall();
-    static bool isVerboseMore();
+    operator Pegasus::String() const;
 
-private:
-    enum {
-        EXC_VERB_NONE,
-        EXC_VERB_CALL,
-        EXC_VERB_MORE
-    };
+    String &operator=(const char *rhs);
+    String &operator=(const String &rhs);
+    String &operator=(const std::string &rhs);
+    String &operator=(const Pegasus::String &rhs);
 
-    static const String DEF_NAMESPACE;
-    static const String DEF_TRUST_STORE;
-    static const int DEF_EXC_VERBOSITY;
+    String &operator+=(const Pegasus::String &rhs);
+
+    using std::string::npos;
 };
 
-#endif // LMIWBEM_CONFIG_H
+#endif // LMIWBEM_STRING_H

@@ -100,7 +100,7 @@ void CIMIndicationConsumer::consumeIndication(
     ScopedGILAcquire sg;
     bp::object inst = CIMInstance::create(indication);
     m_listener->call(
-        std::string(url.subString(1).getCString()),
+        String(url).substr(1),
         inst);
 }
 
@@ -122,16 +122,16 @@ CIMIndicationListener::CIMIndicationListener(
     , m_trust_store(Config::defaultTrustStore())
     , m_terminating(false)
 {
-    m_listen_address = StringConv::asStdString(
+    m_listen_address = StringConv::asString(
         listen_address, "listen_address");
     m_port = Conv::as<Pegasus::Uint32>(port, "port");
 
     if (!isnone(certfile))
-        m_certfile = StringConv::asStdString(certfile, "certfile");
+        m_certfile = StringConv::asString(certfile, "certfile");
     if (!isnone(keyfile))
-        m_keyfile = StringConv::asStdString(keyfile, "keyfile");
+        m_keyfile = StringConv::asString(keyfile, "keyfile");
     if (!isnone(trust_store))
-        m_trust_store = StringConv::asStdString(trust_store, "trust_store");
+        m_trust_store = StringConv::asString(trust_store, "trust_store");
 }
 
 void CIMIndicationListener::init_type()
@@ -215,15 +215,15 @@ void CIMIndicationListener::start(const bp::object &retries)
 
     m_terminating = false;
     // Get retries count for port binding. By default, we try only once.
-    const int std_retries = Conv::as<int>(retries, "retries");
-    if (std_retries < 0)
+    const int c_retries = Conv::as<int>(retries, "retries");
+    if (c_retries < 0)
         throw_ValueError("retries must be positive number");
 
     // Try to create a listener for retries-times.
-    for (int i = 0; !m_listener && i < std_retries; ++i) {
+    for (int i = 0; !m_listener && i < c_retries; ++i) {
         m_listener.reset(new Pegasus::CIMListener(
 #ifdef HAVE_PEGASUS_LISTENER_WITH_BIND_ADDRESS
-            Pegasus::String(m_listen_address.c_str()),
+            m_listen_address),
 #endif
             m_port + static_cast<Pegasus::Uint32>(i)));
 
@@ -233,15 +233,15 @@ void CIMIndicationListener::start(const bp::object &retries)
         try {
             if (!m_certfile.empty()) {
                 // Pegasus::SSLContext will be freed by Pegasus::CIMListener
-                Pegasus::SSLContext *ctx = new Pegasus::SSLContext(
-                    Pegasus::String(m_trust_store.c_str()),
-                    Pegasus::String(m_certfile.c_str()),
-                    Pegasus::String(m_keyfile.c_str()),
-                    Pegasus::String::EMPTY, // CRL path
+                Pegasus::SSLContext *peg_ctx = new Pegasus::SSLContext(
+                    m_trust_store,
+                    m_certfile,
+                    m_keyfile,
+                    String(), // CRL path
                     NULL, // verification callback
-                    Pegasus::String::EMPTY);
+                    String());
 
-                m_listener->setSSLContext(ctx);
+                m_listener->setSSLContext(peg_ctx);
             }
 
             m_listener->addConsumer(&m_consumer);
@@ -257,12 +257,12 @@ void CIMIndicationListener::start(const bp::object &retries)
 
             // We raise the exception, when we run out of retries or TCP port
             // is out of range.
-            if (i == std_retries - 1 || m_port + i >= 65536) {
+            if (i == c_retries - 1 || m_port + i >= 65536) {
                 std::stringstream ss;
                 if (Config::isVerbose()) {
                     ss << "CIMIndicationListener.start(";
                     if (Config::isVerboseMore())
-                        ss << "port=" << m_port << ", port_retries=+" << std_retries;
+                        ss << "port=" << m_port << ", port_retries=+" << c_retries;
                     ss << ')';
                 }
                 handle_all_exceptions(ss);
@@ -301,11 +301,11 @@ bool CIMIndicationListener::getUsesSSL() const
     if (!m_listener)
         return false;
 
-    Pegasus::SSLContext *ctx = m_listener->getSSLContext();
-    return ctx ? ctx->getCertPath() != Pegasus::String::EMPTY : false;
+    Pegasus::SSLContext *peg_ctx = m_listener->getSSLContext();
+    return peg_ctx ? peg_ctx->getCertPath() != Pegasus::String::EMPTY : false;
 }
 
-std::string CIMIndicationListener::getListenAddress() const
+String CIMIndicationListener::getListenAddress() const
 {
     return m_listen_address;
 }
@@ -329,27 +329,27 @@ bp::object CIMIndicationListener::addPyHandler(
     const bp::tuple &args,
     const bp::dict  &kwds)
 {
-    bp::object name = args[0];
-    bp::object callable = args[1];
-    std::string std_name = StringConv::asStdString(name, "name");
+    bp::object py_name = args[0];
+    bp::object py_callable = args[1];
+    String c_name = StringConv::asString(py_name, "name");
 
-    if (iscallable(callable)) {
-        m_handlers[std_name].push_back(
+    if (iscallable(py_callable)) {
+        m_handlers[c_name].push_back(
             CallableWithParams(
-                callable,
+                py_callable,
                 args.slice(2, bp::len(args)),
                 kwds));
-    } else if (islist(callable) || istuple(callable)) {
-        const int cnt = bp::len(callable);
+    } else if (islist(py_callable) || istuple(py_callable)) {
+        const int cnt = bp::len(py_callable);
         for (int i = 0; i < cnt; ++i) {
-            bp::object handler(callable[i]);
+            bp::object py_handler(py_callable[i]);
 
-            if (!iscallable(handler))
+            if (!iscallable(py_handler))
                 throw_TypeError("list/tuple with handlers contains non-callable");
 
-            m_handlers[std_name].push_back(
+            m_handlers[c_name].push_back(
                 CallableWithParams(
-                    handler,
+                    py_handler,
                     args.slice(2, bp::len(args)),
                     kwds));
         }
@@ -362,24 +362,24 @@ bp::object CIMIndicationListener::addPyHandler(
 
 void CIMIndicationListener::removePyHandler(const bp::object &name)
 {
-    std::string std_name = StringConv::asStdString(name, "name");
-    handler_map_t::iterator it = m_handlers.find(std_name);
+    String c_name = StringConv::asString(name, "name");
+    handler_map_t::iterator it = m_handlers.find(c_name);
     if (it == m_handlers.end())
-        throw_KeyError("No such handler registered: " + std_name);
+        throw_KeyError("No such handler registered: " + c_name);
     m_handlers.erase(it);
 }
 
 bp::object CIMIndicationListener::getPyHandlers() const
 {
-    bp::list handlers;
+    bp::list py_handlers;
     handler_map_t::const_iterator it;
     for (it = m_handlers.begin(); it != m_handlers.end(); ++it)
-        handlers.append(it->first);
-    return handlers;
+        py_handlers.append(it->first);
+    return py_handlers;
 }
 
 void CIMIndicationListener::call(
-    const std::string &name,
+    const String &name,
     const bp::object &indication) const
 {
 

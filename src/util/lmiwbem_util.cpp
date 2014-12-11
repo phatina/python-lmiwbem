@@ -32,6 +32,7 @@
 #include "obj/cim/lmiwbem_class.h"
 #include "obj/cim/lmiwbem_constants.h"
 #include "util/lmiwbem_convert.h"
+#include "util/lmiwbem_string.h"
 #include "util/lmiwbem_util.h"
 
 // Define a Python's equivalent of None
@@ -138,51 +139,50 @@ bool cim_issubclass(
     const bp::object &superclass,
     const bp::object &subclass)
 {
-    WBEMConnection &conn = WBEMConnection::asNative(ch, "ch");
-    std::string std_ns = StringConv::asStdString(ns, "ns");
-    std::string std_superclass = StringConv::asStdString(
-        superclass, "superclass");
+    WBEMConnection &c_conn = WBEMConnection::asNative(ch, "ch");
+    String c_ns = StringConv::asString(ns, "ns");
+    String c_superclass = StringConv::asString(superclass, "superclass");
 
-    std::string std_subclass;
-    std::string std_subsuperclass;
-    std::string std_lsubclass;
-    std::string std_lsuperclass(std_superclass);
-    std::transform(std_lsuperclass.begin(), std_lsuperclass.end(),
-        std_lsuperclass.begin(), ::tolower);
+    String c_subclass;
+    String c_subsuperclass;
+    String c_lsubclass;
+    String c_lsuperclass(c_superclass);
+    std::transform(c_lsuperclass.begin(), c_lsuperclass.end(),
+        c_lsuperclass.begin(), ::tolower);
 
     if (isinstance(subclass, CIMClass::type())) {
         const CIMClass &cim_subclass = CIMClass::asNative(subclass);
-        std_subclass = cim_subclass.getClassname();
-        std_subsuperclass = cim_subclass.getSuperClassname();
+        c_subclass = cim_subclass.getClassname();
+        c_subsuperclass = cim_subclass.getSuperClassname();
     } else {
-        std_subclass = StringConv::asStdString(subclass, "subclass");
+        c_subclass = StringConv::asString(subclass, "subclass");
     }
 
     while (1) {
         // Matching is case insensitive.
-        std_lsubclass = std_subclass;
-        std::transform(std_lsubclass.begin(), std_lsubclass.end(),
-            std_lsubclass.begin(), ::tolower);
+        c_lsubclass = c_subclass;
+        std::transform(c_lsubclass.begin(), c_lsubclass.end(),
+            c_lsubclass.begin(), ::tolower);
 
-        if (std_lsubclass == std_lsuperclass) {
+        if (c_lsubclass == c_lsuperclass) {
             // Do subclass and superclass match?
             return true;
-        } else if (std_subsuperclass.empty()) {
+        } else if (c_subsuperclass.empty()) {
             // Get minimal subclass.
-            bp::object cls = conn.getClass(bp::str(std_subclass.c_str()),
-                bp::str(std_ns.c_str()), true, false, false, bp::list());
+            bp::object py_cls = c_conn.getClass(bp::str(c_subclass),
+                bp::str(c_ns), true, false, false, bp::list());
 
-            const CIMClass &cim_subclass = CIMClass::asNative(cls);
-            std_subsuperclass = cim_subclass.getSuperClassname();
+            const CIMClass &cim_subclass = CIMClass::asNative(py_cls);
+            c_subsuperclass = cim_subclass.getSuperClassname();
         }
 
-        if (std_subsuperclass.empty()) {
+        if (c_subsuperclass.empty()) {
             // We got a CIMClass without super class.
             return false;
         }
 
-        std_subclass = std_subsuperclass;
-        std_subsuperclass.clear();
+        c_subclass = c_subsuperclass;
+        c_subsuperclass.clear();
     }
 
     return false;

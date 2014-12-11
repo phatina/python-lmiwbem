@@ -38,28 +38,28 @@ URLInfo::URLInfo(const URLInfo &copy)
 {
 }
 
-bool URLInfo::set(Pegasus::String url)
+bool URLInfo::set(String url)
 {
-    if (url.subString(0, 7) == "http://") {
-        url.remove(0, 7);
+    if (url.substr(0, 7) == "http://") {
+        url.erase(0, 7);
         m_port = URLInfo::DEF_HTTP_PORT;
         m_is_https = false;
-    } else if (url.subString(0, 8) == "https://") {
-        url.remove(0, 8);
+    } else if (url.substr(0, 8) == "https://") {
+        url.erase(0, 8);
         m_port = URLInfo::DEF_HTTPS_PORT;
         m_is_https = true;
     } else {
         return false;
     }
 
-    Pegasus::Uint32 pos = url.reverseFind(':');
-    if (pos != Pegasus::PEG_NOT_FOUND) {
-        m_hostname = url.subString(0, pos);
-        long int port = strtol(url.subString(pos + 1,
-            url.size() - pos - 1).getCString(), NULL, 10);
+    size_t pos = url.rfind(':');
+    if (pos != String::npos) {
+        m_hostname = url.substr(0, pos);
+        long int port = strtol(url.substr(pos + 1,
+            url.size() - pos - 1).c_str(), NULL, 10);
         if (errno == ERANGE || port < 0 || port > 65535)
             return false;
-        m_port = static_cast<Pegasus::Uint32>(port);
+        m_port = static_cast<uint32_t>(port);
     } else {
         m_hostname = url;
     }
@@ -67,7 +67,7 @@ bool URLInfo::set(Pegasus::String url)
     return true;
 }
 
-std::string URLInfo::asStdString() const
+String URLInfo::asString() const
 {
     std::stringstream ss;
 
@@ -78,7 +78,7 @@ std::string URLInfo::asStdString() const
 
     ss << m_hostname << ':' << m_port;
 
-    return ss.str();
+    return String(ss.str());
 }
 
 URLInfo &URLInfo::operator =(const URLInfo &rhs)

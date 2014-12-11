@@ -48,11 +48,11 @@ CIMInstanceName::CIMInstanceName(
     , m_hostname()
     , m_keybindings()
 {
-    m_classname = StringConv::asStdString(cls, "classname");
-    m_namespace = StringConv::asStdString(ns, "namespace");
+    m_classname = StringConv::asString(cls, "classname");
+    m_namespace = StringConv::asString(ns, "namespace");
     if (!isnone(host)) {
         // Host may be missing, other members (classname, namespace not)
-        m_hostname  = StringConv::asStdString(host, "host");
+        m_hostname  = StringConv::asString(host, "host");
     }
     if (isnone(keybindings))
         m_keybindings = NocaseDict::create();
@@ -71,8 +71,8 @@ void CIMInstanceName::init_type()
             const bp::object &>((
                 bp::arg("classname"),
                 bp::arg("keybindings") = NocaseDict::create(),
-                bp::arg("host") = std::string(),
-                bp::arg("namespace") = std::string()),
+                bp::arg("host") = String(),
+                bp::arg("namespace") = String()),
                 "Constructs :py:class:`CIMInstance`.\n\n"
                 ":param str classname: Class name of the object path\n"
                 ":param NocaseDict keybindings: Dictionary containing keybindings\n"
@@ -154,74 +154,68 @@ void CIMInstanceName::init_type()
             ":rtype: :py:class:`.NocaseDict`"));
 }
 
-bp::object CIMInstanceName::create(const Pegasus::String &obj_path)
-{
-    return create(Pegasus::CIMObjectPath(obj_path));
-}
-
 bp::object CIMInstanceName::create(
     const Pegasus::CIMObjectPath &obj_path,
-    const std::string &ns,
-    const std::string &hostname)
+    const String &ns,
+    const String &hostname)
 {
     if (isUninitialized(obj_path)) {
         // If we got uninitialized CIMObjectPath, return None instead.
         return None;
     }
 
-    bp::object inst = CIMBase<CIMInstanceName>::create();
-    CIMInstanceName& fake_this = CIMInstanceName::asNative(inst);
+    bp::object py_inst = CIMBase<CIMInstanceName>::create();
+    CIMInstanceName& fake_this = CIMInstanceName::asNative(py_inst);
 
-    fake_this.m_classname = obj_path.getClassName().getString().getCString();
+    fake_this.m_classname = obj_path.getClassName().getString();
     fake_this.m_namespace = obj_path.getNameSpace().isNull() ? ns :
-        std::string(obj_path.getNameSpace().getString().getCString());
+        String(obj_path.getNameSpace().getString().getCString());
     fake_this.m_hostname = obj_path.getHost() == Pegasus::String::EMPTY
-        ? hostname : std::string(obj_path.getHost().getCString());
+        ? hostname : String(obj_path.getHost().getCString());
     fake_this.m_keybindings = NocaseDict::create();
 
-    const Pegasus::Array<Pegasus::CIMKeyBinding> &keybindings = obj_path.getKeyBindings();
-    const Pegasus::Uint32 cnt = keybindings.size();
+    const Pegasus::Array<Pegasus::CIMKeyBinding> &peg_keybindings = obj_path.getKeyBindings();
+    const Pegasus::Uint32 cnt = peg_keybindings.size();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
-        Pegasus::CIMKeyBinding keybinding = keybindings[i];
+        Pegasus::CIMKeyBinding peg_keybinding = peg_keybindings[i];
 
-        if (keybinding.getType() == Pegasus::CIMKeyBinding::REFERENCE) {
+        if (peg_keybinding.getType() == Pegasus::CIMKeyBinding::REFERENCE) {
             // We got a keybinding with CIMObjectPath value. Let's set its
             // hostname which could be left out by Pegasus.
-            Pegasus::CIMObjectPath path(keybinding.getValue());
-            if (path.getHost() == Pegasus::String::EMPTY) {
-                path.setHost(fake_this.m_hostname.c_str());
-                keybinding.setValue(path.toString());
+            Pegasus::CIMObjectPath peg_path(peg_keybinding.getValue());
+            if (peg_path.getHost() == Pegasus::String::EMPTY) {
+                peg_path.setHost(fake_this.m_hostname);
+                peg_keybinding.setValue(peg_path.toString());
             }
         }
 
-        bp::object value = keybindingToValue(keybinding);
+        bp::object py_value = keybindingToValue(peg_keybinding);
 
-        fake_this.m_keybindings[bp::object(keybinding.getName())] = value;
+        fake_this.m_keybindings[bp::object(peg_keybinding.getName())] = py_value;
     }
 
-    return inst;
+    return py_inst;
 }
 
 Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
 {
-    Pegasus::Array<Pegasus::CIMKeyBinding> arr_keybindings;
+    Pegasus::Array<Pegasus::CIMKeyBinding> peg_arr_keybindings;
 
     if (!isnone(m_keybindings)) {
-        NocaseDict &keybindings = NocaseDict::asNative(
+        NocaseDict &cim_keybindings = NocaseDict::asNative(
             m_keybindings, "self.keybindings");
 
         // Create an array of keybindings. Allowed keybindings' types:
         // bool, numeric, str or CIMInstanceName
         nocase_map_t::const_iterator it;
-        for (it = keybindings.begin(); it != keybindings.end(); ++it) {
+        for (it = cim_keybindings.begin(); it != cim_keybindings.end(); ++it) {
             if (isbool(it->second)) {
                 // Create bool CIMKeyBinding
-                bool bval = Conv::as<bool>(it->second);
-                Pegasus::CIMValue value = Pegasus::CIMValue(bval);
-                arr_keybindings.append(
+                Pegasus::CIMValue peg_value(Conv::as<bool>(it->second));
+                peg_arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
-                        Pegasus::CIMName(it->first.c_str()),
-                        value));
+                        Pegasus::CIMName(it->first),
+                        peg_value));
                 continue;
             }
 
@@ -233,33 +227,31 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
             {
                 // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
                 // are derived from long or float, so we get here.
-                arr_keybindings.append(
+                peg_arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
-                        Pegasus::CIMName(it->first.c_str()),
-                        Pegasus::String(ObjectConv::asStdString(it->second).c_str()),
+                        Pegasus::CIMName(it->first),
+                        ObjectConv::asString(it->second),
                         Pegasus::CIMKeyBinding::NUMERIC));
                 continue;
             }
 
             if (isbasestring(it->second)) {
                 // Create str CIMKeyBinding
-                std::string std_string(
-                    StringConv::asStdString(it->second));
-                Pegasus::CIMValue value = Pegasus::CIMValue(Pegasus::String(std_string.c_str()));
-                arr_keybindings.append(
+                Pegasus::CIMValue peg_value(StringConv::asString(it->second));
+                peg_arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
-                        Pegasus::CIMName(it->first.c_str()),
-                        value));
+                        Pegasus::CIMName(it->first),
+                        peg_value));
                 continue;
             }
 
             if (isinstance(it->second, CIMInstanceName::type())) {
                 // Create CIMInstanceName CIMKeyBinding
-                CIMInstanceName &instance_name = CIMInstanceName::asNative(it->second);
-                arr_keybindings.append(
+                CIMInstanceName &cim_instance_name = CIMInstanceName::asNative(it->second);
+                peg_arr_keybindings.append(
                     Pegasus::CIMKeyBinding(
-                        Pegasus::CIMName(it->first.c_str()),
-                        instance_name.asPegasusCIMObjectPath()));
+                        Pegasus::CIMName(it->first),
+                        cim_instance_name.asPegasusCIMObjectPath()));
                 continue;
             }
 
@@ -268,10 +260,10 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
     }
 
     return Pegasus::CIMObjectPath(
-        Pegasus::String(m_hostname.c_str()),
-        Pegasus::CIMNamespaceName(m_namespace.c_str()),
-        Pegasus::CIMName(m_classname.c_str()),
-        arr_keybindings);
+        Pegasus::String(m_hostname),
+        Pegasus::CIMNamespaceName(m_namespace),
+        Pegasus::CIMName(m_classname),
+        peg_arr_keybindings);
 }
 
 #  if PY_MAJOR_VERSION < 3
@@ -280,13 +272,13 @@ int CIMInstanceName::cmp(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return 1;
 
-    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
+    CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
     int rval;
-    if ((rval = m_classname.compare(other_inst_name.m_classname)) != 0 ||
-        (rval = m_namespace.compare(other_inst_name.m_namespace)) != 0 ||
-        (rval = m_hostname.compare(other_inst_name.m_hostname)) != 0 ||
-        (rval = compare(m_keybindings, other_inst_name.m_keybindings)) != 0)
+    if ((rval = m_classname.compare(cim_other.m_classname)) != 0 ||
+        (rval = m_namespace.compare(cim_other.m_namespace)) != 0 ||
+        (rval = m_hostname.compare(cim_other.m_hostname)) != 0 ||
+        (rval = compare(m_keybindings, cim_other.m_keybindings)) != 0)
     {
         return rval;
     }
@@ -299,12 +291,12 @@ bool CIMInstanceName::eq(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return false;
 
-    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
+    CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
-    return m_classname == other_inst_name.m_classname &&
-        m_namespace == other_inst_name.m_namespace &&
-        m_hostname  == other_inst_name.m_hostname  &&
-        compare(m_keybindings, other_inst_name.m_keybindings, Py_EQ);
+    return m_classname == cim_other.m_classname &&
+        m_namespace == cim_other.m_namespace &&
+        m_hostname  == cim_other.m_hostname  &&
+        compare(m_keybindings, cim_other.m_keybindings, Py_EQ);
 }
 
 bool CIMInstanceName::gt(const bp::object &other)
@@ -312,12 +304,12 @@ bool CIMInstanceName::gt(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return false;
 
-    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
+    CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
-    return m_classname > other_inst_name.m_classname ||
-        m_namespace > other_inst_name.m_namespace ||
-        m_hostname  > other_inst_name.m_hostname  ||
-        compare(m_keybindings, other_inst_name.m_keybindings, Py_GT);
+    return m_classname > cim_other.m_classname ||
+        m_namespace > cim_other.m_namespace ||
+        m_hostname  > cim_other.m_hostname  ||
+        compare(m_keybindings, cim_other.m_keybindings, Py_GT);
 }
 
 bool CIMInstanceName::lt(const bp::object &other)
@@ -325,12 +317,12 @@ bool CIMInstanceName::lt(const bp::object &other)
     if (!isinstance(other, CIMInstanceName::type()))
         return false;
 
-    CIMInstanceName &other_inst_name = CIMInstanceName::asNative(other);
+    CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
-    return m_classname < other_inst_name.m_classname ||
-        m_namespace < other_inst_name.m_namespace ||
-        m_hostname  < other_inst_name.m_hostname  ||
-        compare(m_keybindings, other_inst_name.m_keybindings, Py_LT);
+    return m_classname < cim_other.m_classname ||
+        m_namespace < cim_other.m_namespace ||
+        m_hostname  < cim_other.m_hostname  ||
+        compare(m_keybindings, cim_other.m_keybindings, Py_LT);
 }
 
 bool CIMInstanceName::ge(const bp::object &other)
@@ -346,17 +338,19 @@ bool CIMInstanceName::le(const bp::object &other)
 
 bp::object CIMInstanceName::copy()
 {
-    bp::object obj = CIMBase<CIMInstanceName>::create();
-    CIMInstanceName &inst_name = CIMInstanceName::asNative(obj);
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    inst_name.m_classname = m_classname;
-    inst_name.m_namespace = m_namespace;
-    inst_name.m_hostname = m_hostname;
-    inst_name.m_keybindings = keybindings.copy();
-    return obj;
+    bp::object py_inst = CIMBase<CIMInstanceName>::create();
+    CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(py_inst);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+
+    cim_inst_name.m_classname = m_classname;
+    cim_inst_name.m_namespace = m_namespace;
+    cim_inst_name.m_hostname = m_hostname;
+    cim_inst_name.m_keybindings = cim_keybindings.copy();
+
+    return py_inst;
 }
 
-std::string CIMInstanceName::asStdString() const
+String CIMInstanceName::asString() const
 {
     std::stringstream ss;
 
@@ -366,23 +360,23 @@ std::string CIMInstanceName::asStdString() const
         ss << m_namespace << ':';
     ss << m_classname << '.';
 
-    const NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
+    const NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
     nocase_map_t::const_iterator it;
-    for (it = keybindings.begin(); it != keybindings.end(); ++it) {
+    for (it = cim_keybindings.begin(); it != cim_keybindings.end(); ++it) {
         ss << it->first << '=';
         if (isinstance(it->second, CIMInstanceName::type())) {
-            std::string iname_str = ObjectConv::asStdString(it->second);
+            String iname_str = ObjectConv::asString(it->second);
             boost::replace_all(iname_str, "\\", "\\\\");
             boost::replace_all(iname_str, "\"", "\\\"");
             ss << '"' << iname_str << '"';
         } else if (isbasestring(it->second)) {
-            ss << '"' << ObjectConv::asStdString(it->second) << '"';
+            ss << '"' << ObjectConv::asString(it->second) << '"';
         } else {
-            ss << ObjectConv::asStdString(it->second);
+            ss << ObjectConv::asString(it->second);
         }
 
         nocase_map_t::const_iterator tmp_it = it;
-        if (tmp_it != keybindings.end() && ++tmp_it != keybindings.end())
+        if (tmp_it != cim_keybindings.end() && ++tmp_it != cim_keybindings.end())
             ss << ',';
     }
 
@@ -391,15 +385,14 @@ std::string CIMInstanceName::asStdString() const
 
 bp::object CIMInstanceName::str() const
 {
-
-    return StringConv::asPyUnicode(asStdString());
+    return StringConv::asPyUnicode(asString());
 }
 
 bp::object CIMInstanceName::repr() const
 {
     std::stringstream ss;
     ss << "CIMInstanceName(classname='" << m_classname << "', keybindings="
-       << ObjectConv::asStdString(m_keybindings);
+       << ObjectConv::asString(m_keybindings);
     if (!m_hostname.empty())
         ss << ", host='" << m_hostname << '\'';
     ss <<  ", namespace='"
@@ -434,51 +427,51 @@ bp::object CIMInstanceName::haskey(const bp::object &key) const
 
 bp::object CIMInstanceName::keys()
 {
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    return keybindings.keys();
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    return cim_keybindings.keys();
 }
 
 bp::object CIMInstanceName::values()
 {
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    return keybindings.values();
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    return cim_keybindings.values();
 }
 
 bp::object CIMInstanceName::items()
 {
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    return keybindings.items();
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    return cim_keybindings.items();
 }
 
 bp::object CIMInstanceName::iterkeys()
 {
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    return keybindings.iterkeys();
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    return cim_keybindings.iterkeys();
 }
 
 bp::object CIMInstanceName::itervalues()
 {
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    return keybindings.itervalues();
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    return cim_keybindings.itervalues();
 }
 
 bp::object CIMInstanceName::iteritems()
 {
-    NocaseDict &keybindings = NocaseDict::asNative(m_keybindings);
-    return keybindings.iteritems();
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    return cim_keybindings.iteritems();
 }
 
-std::string CIMInstanceName::getClassname() const
+String CIMInstanceName::getClassname() const
 {
     return m_classname;
 }
 
-std::string CIMInstanceName::getNamespace() const
+String CIMInstanceName::getNamespace() const
 {
     return m_namespace;
 }
 
-std::string CIMInstanceName::getHostname()  const
+String CIMInstanceName::getHostname()  const
 {
     return m_hostname;
 }
@@ -503,44 +496,44 @@ bp::object CIMInstanceName::getPyKeybindings() const
     return m_keybindings;
 }
 
-void CIMInstanceName::setClassname(const std::string &classname)
+void CIMInstanceName::setClassname(const String &classname)
 {
     m_classname = classname;
 }
 
-void CIMInstanceName::setNamespace(const std::string &namespace_)
+void CIMInstanceName::setNamespace(const String &namespace_)
 {
     m_namespace = namespace_;
 }
 
-void CIMInstanceName::setHostname(const std::string &hostname)
+void CIMInstanceName::setHostname(const String &hostname)
 {
     m_hostname = hostname;
 }
 
 void CIMInstanceName::setPyClassname(const bp::object &classname)
 {
-    m_classname = StringConv::asStdString(classname);
+    m_classname = StringConv::asString(classname, "classname");
 }
 
 void CIMInstanceName::setPyNamespace(const bp::object &namespace_)
 {
-    m_namespace = StringConv::asStdString(namespace_);
+    m_namespace = StringConv::asString(namespace_, "namespace");
 }
 
 void CIMInstanceName::setPyHostname(const bp::object &hostname)
 {
-    m_hostname = StringConv::asStdString(hostname);
+    m_hostname = StringConv::asString(hostname, "hostname");
 }
 
 void CIMInstanceName::setPyKeybindings(const bp::object &keybindings)
 {
-    m_keybindings = Conv::get<NocaseDict, bp::dict>(keybindings);
+    m_keybindings = Conv::get<NocaseDict, bp::dict>(keybindings, "keybindings");
 }
 
 bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keybinding)
 {
-    bp::object value;
+    bp::object py_value;
 
     const Pegasus::String cim_value = keybinding.getValue();
     switch (keybinding.getType()) {
@@ -549,50 +542,50 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
     case Pegasus::CIMKeyBinding::STRING:
         return StringConv::asPyUnicode(cim_value);
     case Pegasus::CIMKeyBinding::NUMERIC: {
-        bp::object num;
+        bp::object py_num;
 #  if PY_MAJOR_VERSION < 3
-        if (!isnone(num = StringConv::asPyInt(cim_value))  ||
-            !isnone(num = StringConv::asPyLong(cim_value)) ||
+        if (!isnone(py_num = StringConv::asPyInt(cim_value))  ||
+            !isnone(py_num = StringConv::asPyLong(cim_value)) ||
 #  else
-        if (!isnone(num = StringConv::asPyLong(cim_value)) ||
+        if (!isnone(py_num = StringConv::asPyLong(cim_value)) ||
 #  endif // PY_MAJOR_VERSION
-            !isnone(num = StringConv::asPyFloat(cim_value)))
+            !isnone(py_num = StringConv::asPyFloat(cim_value)))
         {
-            return num;
+            return py_num;
         }
 
         throw_TypeError("Wrong keybinding numeric type");
         return None;
     }
     case Pegasus::CIMKeyBinding::REFERENCE:
-        return CIMInstanceName::create(cim_value);
+        return CIMInstanceName::create(Pegasus::CIMObjectPath(cim_value));
     }
 
-    return value;
+    return py_value;
 }
 
 void CIMInstanceName::updatePegasusCIMObjectPathNamespace(
     Pegasus::CIMObjectPath &path,
-    const std::string &ns)
+    const String &ns)
 {
     if (!path.getNameSpace().isNull()) {
         // The namespace is already set. We have nothing to do.
         return;
     }
 
-    path.setNameSpace(Pegasus::CIMNamespaceName(ns.c_str()));
+    path.setNameSpace(Pegasus::CIMNamespaceName(ns));
 }
 
 void CIMInstanceName::updatePegasusCIMObjectPathHostname(
     Pegasus::CIMObjectPath &path,
-    const std::string &hostname)
+    const String &hostname)
 {
     if (path.getHost() != Pegasus::String::EMPTY) {
         // The hostname is already set. We have nothing to do.
         return;
     }
 
-    path.setHost(Pegasus::String(hostname.c_str()));
+    path.setHost(hostname);
 }
 
 bool CIMInstanceName::isUninitialized(const Pegasus::CIMObjectPath &path)

@@ -22,8 +22,13 @@
 #ifndef   WBEM_CLIENT_ADDRESS_H
 #  define WBEM_CLIENT_ADDRESS_H
 
+extern "C" {
+// We can't include <cstdint>, because GNU stdlib requires compiler standard at
+// least C++ 2011.
+#  include <stdint.h>
+}
 #  include <Pegasus/Common/CIMType.h>
-#  include <Pegasus/Common/String.h>
+#  include "util/lmiwbem_string.h"
 
 class URLInfo
 {
@@ -31,23 +36,23 @@ public:
     URLInfo();
     URLInfo(const URLInfo &copy);
 
-    bool set(Pegasus::String url);
+    bool set(String url);
 
-    Pegasus::String hostname() const { return m_hostname; }
-    Pegasus::Uint32 port() const { return m_port; }
+    String hostname() const { return m_hostname; }
+    uint32_t port() const { return m_port; }
 
     bool isHttps() const { return m_is_https; }
 
-    std::string asStdString() const;
+    String asString() const;
 
     URLInfo &operator =(const URLInfo &rhs);
 
 private:
-    static const Pegasus::Uint32 DEF_HTTPS_PORT = 5989;
-    static const Pegasus::Uint32 DEF_HTTP_PORT  = 5988;
+    static const uint32_t DEF_HTTPS_PORT = 5989;
+    static const uint32_t DEF_HTTP_PORT  = 5988;
 
-    Pegasus::String m_hostname;
-    Pegasus::Uint32 m_port;
+    String m_hostname;
+    uint32_t m_port;
     bool m_is_https;
 };
 

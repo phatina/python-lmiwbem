@@ -85,15 +85,15 @@ bp::object getPegasusValue(const Pegasus::CIMValue &value)
         bp::object obj(getPegasusValueCore<T>(raw_value));
         return incref(obj);
     } else {
-        bp::list array;
+        bp::list py_array;
         Pegasus::Array<T> raw_array;
         value.get(raw_array);
         const Pegasus::Uint32 cnt = value.getArraySize();
         for (Pegasus::Uint32 i = 0; i < cnt; ++i) {
             const T &raw_value = raw_array[i];
-            array.append(getPegasusValueCore<T>(raw_value));
+            py_array.append(getPegasusValueCore<T>(raw_value));
         }
-        return incref(array);
+        return incref(py_array);
     }
 }
 
@@ -108,7 +108,7 @@ Pegasus::CIMDateTime setPegasusValueCore<
     Pegasus::CIMDateTime,
     Pegasus::CIMDateTime>(const bp::object &value)
 {
-    return Pegasus::CIMDateTime(ObjectConv::asStdString(value).c_str());
+    return Pegasus::CIMDateTime(ObjectConv::asString(value));
 }
 
 template <>
@@ -116,8 +116,8 @@ Pegasus::CIMObjectPath setPegasusValueCore<
     Pegasus::CIMObjectPath,
     Pegasus::CIMObjectPath>(const bp::object &value)
 {
-    const CIMInstanceName &path = CIMInstanceName::asNative(value);
-    return path.asPegasusCIMObjectPath();
+    const CIMInstanceName &cim_path = CIMInstanceName::asNative(value);
+    return cim_path.asPegasusCIMObjectPath();
 }
 
 template <>
@@ -125,8 +125,8 @@ Pegasus::CIMObject setPegasusValueCore<
     Pegasus::CIMClass,
     Pegasus::CIMObject>(const bp::object &value)
 {
-    CIMClass &cls = CIMClass::asNative(value);
-    return Pegasus::CIMObject(cls.asPegasusCIMClass());
+    CIMClass &cim_class = CIMClass::asNative(value);
+    return Pegasus::CIMObject(cim_class.asPegasusCIMClass());
 }
 
 template <>
@@ -134,8 +134,8 @@ Pegasus::CIMObject setPegasusValueCore<
     Pegasus::CIMInstance,
     Pegasus::CIMObject>(const bp::object &value)
 {
-    CIMInstance &instance = CIMInstance::asNative(value);
-    return Pegasus::CIMObject(instance.asPegasusCIMInstance());
+    CIMInstance &cim_instance = CIMInstance::asNative(value);
+    return Pegasus::CIMObject(cim_instance.asPegasusCIMInstance());
 }
 
 template <>
@@ -143,8 +143,7 @@ Pegasus::String setPegasusValueCore<
     Pegasus::String,
     Pegasus::String>(const bp::object &value)
 {
-    std::string std_value = StringConv::asStdString(value);
-    return Pegasus::String(std_value.c_str());
+    return StringConv::asString(value);
 }
 
 template <typename T, typename R>
@@ -155,11 +154,11 @@ Pegasus::CIMValue setPegasusValue(
     if (!is_array)
         return Pegasus::CIMValue(setPegasusValueCore<T, R>(value));
 
-    bp::list list(value);
+    bp::list py_list(value);
     Pegasus::Array<R> array;
-    const int cnt = bp::len(list);
+    const int cnt = bp::len(py_list);
     for (int i = 0; i < cnt; ++i)
-        array.append(setPegasusValueCore<T, R>(list[i]));
+        array.append(setPegasusValueCore<T, R>(py_list[i]));
 
     return Pegasus::CIMValue(array);
 }
@@ -223,57 +222,57 @@ bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
 
 Pegasus::CIMValue CIMValue::asPegasusCIMValue(
     const bp::object &value,
-    const std::string &def_type)
+    const String &def_type)
 {
     bool is_array = isarray(value);
     if (isnone(value) || (is_array && bp::len(value) == 0))
         return Pegasus::CIMValue(CIMTypeConv::asCIMType(def_type), true);
 
-    bp::object value_type_check = is_array ? value[0] : value;
+    bp::object py_value_type_check = is_array ? value[0] : value;
 
-    if (isinstance(value_type_check, CIMType::type())) {
-        std::string type = StringConv::asStdString(value_type_check.attr("cimtype"));
-        if (type == "uint8")
+    if (isinstance(py_value_type_check, CIMType::type())) {
+        String c_type = StringConv::asString(py_value_type_check.attr("cimtype"));
+        if (c_type == "uint8")
             return setPegasusValueS<Pegasus::Uint8>(value, is_array);
-        else if (type == "sint8")
+        else if (c_type == "sint8")
             return setPegasusValueS<Pegasus::Sint8>(value, is_array);
-        else if (type == "uint16")
+        else if (c_type == "uint16")
             return setPegasusValueS<Pegasus::Uint16>(value, is_array);
-        else if (type == "sint16")
+        else if (c_type == "sint16")
             return setPegasusValueS<Pegasus::Sint16>(value, is_array);
-        else if (type == "uint32")
+        else if (c_type == "uint32")
             return setPegasusValueS<Pegasus::Uint32>(value, is_array);
-        else if (type == "sint32")
+        else if (c_type == "sint32")
             return setPegasusValueS<Pegasus::Sint32>(value, is_array);
-        else if (type == "uint64")
+        else if (c_type == "uint64")
             return setPegasusValueS<Pegasus::Uint64>(value, is_array);
-        else if (type == "sint64")
+        else if (c_type == "sint64")
             return setPegasusValueS<Pegasus::Sint64>(value, is_array);
-        else if (type == "real32")
+        else if (c_type == "real32")
             return setPegasusValueS<Pegasus::Real32>(value, is_array);
-        else if (type == "real64")
+        else if (c_type == "real64")
             return setPegasusValueS<Pegasus::Real32>(value, is_array);
-        else if (type == "datetime")
+        else if (c_type == "datetime")
             return setPegasusValueS<Pegasus::CIMDateTime>(value, is_array);
-    } else if (isinstance(value_type_check, CIMInstance::type())) {
+    } else if (isinstance(py_value_type_check, CIMInstance::type())) {
         return setPegasusValue<Pegasus::CIMInstance, Pegasus::CIMObject>(value, is_array);
-    } else if (isinstance(value_type_check, CIMClass::type())) {
+    } else if (isinstance(py_value_type_check, CIMClass::type())) {
         return setPegasusValue<Pegasus::CIMClass, Pegasus::CIMObject>(value, is_array);
-    } else if (isinstance(value_type_check, CIMInstanceName::type())) {
+    } else if (isinstance(py_value_type_check, CIMInstanceName::type())) {
         return setPegasusValueS<Pegasus::CIMObjectPath>(value, is_array);
-    } else if (isinstance(value_type_check, CIMClassName::type())) {
+    } else if (isinstance(py_value_type_check, CIMClassName::type())) {
         throw_TypeError("CIMClassName: Unsupported TOG-Pegasus type");
-    } else if (isbasestring(value_type_check)) {
+    } else if (isbasestring(py_value_type_check)) {
         return setPegasusValueS<Pegasus::String>(value, is_array);
-    } else if (isbool(value_type_check)) {
+    } else if (isbool(py_value_type_check)) {
         return setPegasusValueS<bool>(value, is_array);
 #  if PY_MAJOR_VERSION < 3
-    } else if (isint(value_type_check)) {
+    } else if (isint(py_value_type_check)) {
         return setPegasusValueS<Pegasus::Sint32>(value, is_array);
 #  endif // PY_MAJOR_VERSION
-    } else if (islong(value_type_check)) {
+    } else if (islong(py_value_type_check)) {
         return setPegasusValueS<Pegasus::Sint64>(value, is_array);
-    } else if (isfloat(value_type_check)) {
+    } else if (isfloat(py_value_type_check)) {
         return setPegasusValueS<float>(value, is_array);
     }
 

@@ -23,12 +23,12 @@
 #  define LMIWBEM_INSTANCE_H
 
 #  include <list>
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMInstance.h>
 #  include "lmiwbem.h"
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -77,7 +77,7 @@ public:
 
     bp::object copy();
 
-    std::string getClassname() const;
+    String getClassname() const;
     CIMInstanceName getPath();
     const CIMInstanceName &getPath() const;
     bp::object getPyClassname() const;
@@ -86,7 +86,7 @@ public:
     bp::object getPyQualifiers();
     bp::object getPyPropertyList();
 
-    void setClassname(const std::string &classname);
+    void setClassname(const String &classname);
     void setPyClassname(const bp::object &classname);
     void setPyPath(const bp::object &path);
     void setPyProperties(const bp::object &properties);
@@ -95,18 +95,18 @@ public:
 
     static void updatePegasusCIMInstanceNamespace(
         Pegasus::CIMInstance &instance,
-        const std::string &ns);
+        const String &ns);
     static void updatePegasusCIMInstanceHostname(
         Pegasus::CIMInstance &instance,
-        const std::string &hostname);
+        const String &hostname);
     static bool isUninitialized(const Pegasus::CIMInstance &instance);
 
 private:
     void evalProperties();
 
-    static std::string tomofContent(const bp::object &value);
+    static String tomofContent(const bp::object &value);
 
-    std::string m_classname;
+    String m_classname;
     bp::object m_path;
     bp::object m_properties;
     bp::object m_qualifiers;

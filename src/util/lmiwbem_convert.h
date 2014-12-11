@@ -20,7 +20,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 #  include <map>
-#  include <string>
 #  include <boost/python/extract.hpp>
 #  include <boost/python/list.hpp>
 #  include <boost/python/to_python_converter.hpp>
@@ -32,6 +31,7 @@
 #  include "lmiwbem.h"
 #  include "lmiwbem_exception.h"
 #  include "obj/cim/lmiwbem_constants.h"
+#  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN
 class object;
@@ -65,6 +65,7 @@ namespace bp = boost::python;
        } \
        PyObject *name::convert(const type &value)
 
+DECL_TO_CONVERTER(StringToPythonString, String);
 DECL_TO_CONVERTER(PegasusStringToPythonString, Pegasus::String);
 DECL_TO_CONVERTER(PegasusCIMNameToPythonString, Pegasus::CIMName);
 DECL_TO_CONVERTER(PegasusCIMDateteTimeToPythonDateTime, Pegasus::CIMDateTime);
@@ -86,17 +87,17 @@ public:
 };
 
 template <>
-class extract<std::string>
+class extract<String>
 {
 public:
     extract(const bp::object &obj);
     bool check() const { return m_good; }
-    operator std::string() { return m_str; }
-    std::string operator ()() { return m_str; }
+    operator String() { return m_str; }
+    String operator ()() { return m_str; }
 
 private:
     bool m_good;
-    std::string m_str;
+    String m_str;
 };
 
 template <typename T>
@@ -113,7 +114,7 @@ private:
 template <typename T>
 void throw_if_fail(
     const extract<T> &ext_obj,
-    const std::string &obj_name)
+    const String &obj_name)
 {
     if (ext_obj.check())
         return;
@@ -125,7 +126,7 @@ void throw_if_fail(
 template<typename T>
 T as(
     const bp::object &obj,
-    const std::string &obj_name = std::string("variable"))
+    const String &obj_name = String("variable"))
 {
     detail::extract<T> ext_obj(obj);
     //if (!ext_obj.check())
@@ -137,7 +138,7 @@ T as(
 template <typename T>
 bp::object get(
     const bp::object &obj,
-    const std::string &obj_name = std::string("variable"))
+    const String &obj_name = String("variable"))
 {
     detail::get<T> get_obj(obj);
     if (!get_obj.check())
@@ -148,7 +149,7 @@ bp::object get(
 template <typename T, typename U>
 bp::object get(
     const bp::object &obj,
-    const std::string &obj_name = std::string("variable"))
+    const String &obj_name = String("variable"))
 {
     detail::get<T> get_objT(obj);
     detail::get<U> get_objU(obj);
@@ -166,9 +167,9 @@ bp::object get(
 class CIMTypeConv
 {
 public:
-    static std::string asStdString(const bp::object &obj);
-    static std::string asStdString(Pegasus::CIMType type);
-    static Pegasus::CIMType asCIMType(const std::string &type);
+    static String asString(const bp::object &obj);
+    static String asString(Pegasus::CIMType type);
+    static Pegasus::CIMType asCIMType(const String &type);
 
 private:
     CIMTypeConv();
@@ -178,8 +179,8 @@ private:
     public:
         static CIMTypeHolder *instance();
 
-        std::string get(Pegasus::CIMType type);
-        Pegasus::CIMType get(const std::string &type);
+        String get(Pegasus::CIMType type);
+        Pegasus::CIMType get(const String &type);
 
     private:
         CIMTypeHolder();
@@ -187,8 +188,8 @@ private:
 
         static boost::shared_ptr<CIMTypeHolder> s_instance;
 
-        std::map<Pegasus::CIMType, std::string> m_type_string;
-        std::map<std::string, Pegasus::CIMType> m_string_type;
+        std::map<Pegasus::CIMType, String> m_type_string;
+        std::map<String, Pegasus::CIMType> m_string_type;
     };
 
     static CIMTypeHolder s_type_holder;
@@ -206,20 +207,20 @@ private:
     {
     public:
         PyFunctor(
-            const std::string &ns,
-            const std::string &hostname);
+            const String &ns,
+            const String &hostname);
 
     protected:
-        std::string m_ns;
-        std::string m_hostname;
+        String m_ns;
+        String m_hostname;
     };
 
     class PyFunctorCIMInstance: public PyFunctor
     {
     public:
         PyFunctorCIMInstance(
-            const std::string &ns,
-            const std::string &hostname);
+            const String &ns,
+            const String &hostname);
 
         bp::object operator()(Pegasus::CIMInstance cim_instance) const;
         bp::object operator()(const Pegasus::CIMObject cim_object) const;
@@ -229,8 +230,8 @@ private:
     {
     public:
         PyFunctorCIMInstanceName(
-            const std::string &ns,
-            const std::string &hostname);
+            const String &ns,
+            const String &hostname);
 
         bp::object operator()(
             const Pegasus::CIMObjectPath &cim_instance_name) const;
@@ -252,29 +253,29 @@ private:
 public:
     static Pegasus::CIMPropertyList asPegasusPropertyList(
         const bp::object &property_list,
-        const std::string &message);
+        const String &message);
 
     static bp::object asPyCIMInstanceList(
         const Pegasus::Array<Pegasus::CIMInstance> &arr,
-        const std::string &ns = std::string(),
-        const std::string &hostname = std::string());
+        const String &ns = String(),
+        const String &hostname = String());
 
     static bp::object asPyCIMInstanceList(
         const Pegasus::Array<Pegasus::CIMObject> &arr,
-        const std::string &ns = std::string(),
-        const std::string &hostname = std::string());
+        const String &ns = String(),
+        const String &hostname = String());
 
     static bp::object asPyCIMInstanceNameList(
         const Pegasus::Array<Pegasus::CIMObjectPath> &arr,
-        const std::string &ns = std::string(),
-        const std::string &hostname = std::string());
+        const String &ns = String(),
+        const String &hostname = String());
 };
 
 class ObjectConv
 {
 public:
-    static std::string asStdString(const bp::object &obj);
-    static bp::object  asPyUnicode(const bp::object &obj);
+    static String asString(const bp::object &obj);
+    static bp::object asPyUnicode(const bp::object &obj);
 
 private:
     ObjectConv();
@@ -283,26 +284,26 @@ private:
 class StringConv
 {
 public:
-    static std::string asStdString(const bp::object &obj);
-    static std::string asStdString(const bp::object &obj, const std::string &member);
+    static String asString(const bp::object &obj);
+    static String asString(const bp::object &obj, const String &member);
     static Pegasus::String asPegasusString(const bp::object &obj);
-    static Pegasus::String asPegasusString(const bp::object &obj, const std::string &member);
+    static Pegasus::String asPegasusString(const bp::object &obj, const String &member);
     static bp::object  asPyUnicode(const char *str);
-    static bp::object  asPyUnicode(const std::string &str);
+    static bp::object  asPyUnicode(const String &str);
     static bp::object  asPyUnicode(const Pegasus::String &str);
     static bp::object  asPyBool(const char *str);
-    static bp::object  asPyBool(const std::string &str);
+    static bp::object  asPyBool(const String &str);
     static bp::object  asPyBool(const Pegasus::String &str);
 #  if PY_MAJOR_VERSION < 3
     static bp::object  asPyInt(const char *str);
-    static bp::object  asPyInt(const std::string &str);
+    static bp::object  asPyInt(const String &str);
     static bp::object  asPyInt(const Pegasus::String &str);
 #  endif // PY_MAJOR_VERSION
     static bp::object  asPyFloat(const char *str);
-    static bp::object  asPyFloat(const std::string &str);
+    static bp::object  asPyFloat(const String &str);
     static bp::object  asPyFloat(const Pegasus::String &str);
     static bp::object  asPyLong(const char *str);
-    static bp::object  asPyLong(const std::string &str);
+    static bp::object  asPyLong(const String &str);
     static bp::object  asPyLong(const Pegasus::String &str);
 
 private:

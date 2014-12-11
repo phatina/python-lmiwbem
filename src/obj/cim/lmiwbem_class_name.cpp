@@ -39,9 +39,9 @@ CIMClassName::CIMClassName(
     const bp::object &namespace_,
     const bp::object &hostname)
 {
-    m_classname = StringConv::asStdString(classname, "classname");
-    m_namespace = StringConv::asStdString(namespace_, "namespace");
-    m_hostname  = StringConv::asStdString(hostname, "hostname");
+    m_classname = StringConv::asString(classname, "classname");
+    m_namespace = StringConv::asString(namespace_, "namespace");
+    m_hostname  = StringConv::asString(hostname, "hostname");
 }
 
 void CIMClassName::init_type()
@@ -53,8 +53,8 @@ void CIMClassName::init_type()
             const bp::object &,
             const bp::object &>((
                 bp::arg("classname"),
-                bp::arg("host") = std::string(),
-                bp::arg("namespace") = std::string()),
+                bp::arg("host") = String(),
+                bp::arg("namespace") = String()),
                 "Constructs a :py:class:`.CIMClassName`.\n\n"
                 ":param str classname: String containing class name\n"
                 ":param str host: String containing host name\n"
@@ -92,9 +92,9 @@ void CIMClassName::init_type()
 }
 
 bp::object CIMClassName::create(
-    const std::string &classname_,
-    const std::string &namespace_,
-    const std::string &hostname)
+    const String &classname_,
+    const String &namespace_,
+    const String &hostname)
 {
     bp::object inst = CIMBase<CIMClassName>::create();
     CIMClassName &classname = CIMClassName::asNative(inst);
@@ -112,12 +112,12 @@ int CIMClassName::cmp(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return 1;
 
-    CIMClassName &other_classname = CIMClassName::asNative(other);
+    CIMClassName &cim_other = CIMClassName::asNative(other);
 
     int rval;
-    if ((rval = m_classname.compare(other_classname.m_classname)) != 0 ||
-        (rval = m_namespace.compare(other_classname.m_namespace)) != 0 ||
-        (rval = m_hostname.compare(other_classname.m_hostname)) != 0)
+    if ((rval = m_classname.compare(cim_other.m_classname)) != 0 ||
+        (rval = m_namespace.compare(cim_other.m_namespace)) != 0 ||
+        (rval = m_hostname.compare(cim_other.m_hostname)) != 0)
     {
         return rval;
     }
@@ -130,11 +130,11 @@ bool CIMClassName::eq(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return false;
 
-    CIMClassName &other_classname = CIMClassName::asNative(other);
+    CIMClassName &cim_other = CIMClassName::asNative(other);
 
-    return m_classname == other_classname.m_classname &&
-        m_namespace == other_classname.m_namespace &&
-        m_hostname  == other_classname.m_hostname;
+    return m_classname == cim_other.m_classname &&
+        m_namespace == cim_other.m_namespace &&
+        m_hostname  == cim_other.m_hostname;
 }
 
 bool CIMClassName::gt(const bp::object &other)
@@ -142,11 +142,11 @@ bool CIMClassName::gt(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return false;
 
-    CIMClassName &other_classname = CIMClassName::asNative(other);
+    CIMClassName &cim_other = CIMClassName::asNative(other);
 
-    return m_classname > other_classname.m_classname ||
-        m_namespace > other_classname.m_namespace ||
-        m_hostname  > other_classname.m_hostname;
+    return m_classname > cim_other.m_classname ||
+        m_namespace > cim_other.m_namespace ||
+        m_hostname  > cim_other.m_hostname;
 }
 
 bool CIMClassName::lt(const bp::object &other)
@@ -154,11 +154,11 @@ bool CIMClassName::lt(const bp::object &other)
     if (!isinstance(other, CIMClassName::type()))
         return false;
 
-    CIMClassName &other_classname = CIMClassName::asNative(other);
+    CIMClassName &cim_other = CIMClassName::asNative(other);
 
-    return m_classname < other_classname.m_classname ||
-        m_namespace < other_classname.m_namespace ||
-        m_hostname  < other_classname.m_hostname;
+    return m_classname < cim_other.m_classname ||
+        m_namespace < cim_other.m_namespace ||
+        m_hostname  < cim_other.m_hostname;
 }
 
 bool CIMClassName::ge(const bp::object &other)
@@ -186,27 +186,27 @@ bp::object CIMClassName::repr()
 
 bp::object CIMClassName::copy()
 {
-    bp::object obj = CIMBase<CIMClassName>::create();
-    CIMClassName &classname = CIMClassName::asNative(obj);
+    bp::object py_inst = CIMBase<CIMClassName>::create();
+    CIMClassName &cim_classname = CIMClassName::asNative(py_inst);
 
-    classname.m_classname = m_classname;
-    classname.m_namespace = m_namespace;
-    classname.m_hostname  = m_hostname;
+    cim_classname.m_classname = m_classname;
+    cim_classname.m_namespace = m_namespace;
+    cim_classname.m_hostname  = m_hostname;
 
-    return obj;
+    return py_inst;
 }
 
-std::string CIMClassName::getClassname() const
+String CIMClassName::getClassname() const
 {
     return m_classname;
 }
 
-std::string CIMClassName::getNamespace() const
+String CIMClassName::getNamespace() const
 {
     return m_namespace;
 }
 
-std::string CIMClassName::getHostname() const
+String CIMClassName::getHostname() const
 {
     return m_hostname;
 }
@@ -226,32 +226,32 @@ bp::object CIMClassName::getPyHostname() const
     return StringConv::asPyUnicode(m_hostname);
 }
 
-void CIMClassName::setClassname(const std::string &classname)
+void CIMClassName::setClassname(const String &classname)
 {
     m_classname = classname;
 }
 
-void CIMClassName::setNamespace(const std::string &namespace_)
+void CIMClassName::setNamespace(const String &namespace_)
 {
     m_namespace = namespace_;
 }
 
-void CIMClassName::setHostname(const std::string &hostname)
+void CIMClassName::setHostname(const String &hostname)
 {
     m_hostname = hostname;
 }
 
 void CIMClassName::setPyClassname(const bp::object &classname)
 {
-    m_classname = StringConv::asStdString(classname, "classname");
+    m_classname = StringConv::asString(classname, "classname");
 }
 
 void CIMClassName::setPyNamespace(const bp::object &namespace_)
 {
-    m_namespace = StringConv::asStdString(namespace_, "namespace");
+    m_namespace = StringConv::asString(namespace_, "namespace");
 }
 
 void CIMClassName::setPyHostname(const bp::object &hostname)
 {
-    m_hostname = StringConv::asStdString(hostname, "hostname");
+    m_hostname = StringConv::asString(hostname, "hostname");
 }

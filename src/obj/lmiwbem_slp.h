@@ -23,9 +23,9 @@
 #  define LMIWBEM_SLP_H
 
 #  include <slp.h>
-#  include <string>
 #  include <boost/python/object.hpp>
 #  include "obj/lmiwbem_cimbase.h"
+#  include "util/lmiwbem_string.h"
 
 namespace bp = boost::python;
 
@@ -34,7 +34,7 @@ class ScopedSLPHandle
 public:
     ScopedSLPHandle(
         const bool is_async = false,
-        const std::string pc_lang = std::string());
+        const String pc_lang = String());
     ~ScopedSLPHandle();
 
     SLPHandle handle() { return m_handle; }
@@ -95,13 +95,13 @@ public:
 
     static bp::object create(const SLPSrvURL *url);
 
-    std::string repr();
+    String repr();
 
-    std::string getSrvType() const { return m_srvtype; }
-    std::string getHost() const { return m_host; }
-    std::string getFamily() const { return m_family; }
-    std::string getSrvPart() const { return m_srvpart; }
-    int getPort() const { return m_port; }
+    String getSrvType() const;
+    String getHost() const;
+    String getFamily() const;
+    String getSrvPart() const;
+    int getPort() const;
 
     void setSrvType(const bp::object &srvtype);
     void setHost(const bp::object &host);
@@ -110,10 +110,10 @@ public:
     void setPort(const bp::object &port);
 
 private:
-    std::string m_srvtype;
-    std::string m_host;
-    std::string m_family;
-    std::string m_srvpart;
+    String m_srvtype;
+    String m_host;
+    String m_family;
+    String m_srvpart;
     int m_port;
 };
 
