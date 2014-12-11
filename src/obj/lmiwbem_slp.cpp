@@ -244,28 +244,28 @@ void SLPResult::init_type()
                 ":param str srvpart: remainder of a URL (see SLP)"))
         .def("__repr__", &SLPResult::repr)
         .add_property("srvtype",
-            &SLPResult::getSrvType,
-            &SLPResult::setSrvType,
+            &SLPResult::getPySrvType,
+            &SLPResult::setPySrvType,
             "Property storing service type.\n\n"
             ":rtype: str")
         .add_property("host",
-            &SLPResult::getHost,
-            &SLPResult::setHost,
+            &SLPResult::getPyHost,
+            &SLPResult::setPyHost,
             "Property storing host name of the service.\n\n"
             ":rtype: str")
         .add_property("port",
-            &SLPResult::getPort,
-            &SLPResult::setPort,
+            &SLPResult::getPyPort,
+            &SLPResult::setPyPort,
             "Property storing port of the service.\n\n"
             ":rtype: int")
         .add_property("family",
-            &SLPResult::getFamily,
+            &SLPResult::getPyFamily,
             &SLPResult::setFamily,
             "Property storing network address of the service.\n\n"
             ":rtype: str")
         .add_property("srvpart",
-            &SLPResult::getSrvPart,
-            &SLPResult::setSrvPart,
+            &SLPResult::getPySrvPart,
+            &SLPResult::setPySrvPart,
             "Property storing remainder of the service URL.\n\n"
             ":rtype: str"));
 }
@@ -318,27 +318,77 @@ int SLPResult::getPort() const
     return m_port;
 }
 
-void SLPResult::setSrvType(const bp::object &srvtype)
+bp::object SLPResult::getPySrvType() const
+{
+    return StringConv::asPyUnicode(m_srvtype);
+}
+
+bp::object SLPResult::getPyHost() const
+{
+    return StringConv::asPyUnicode(m_host);
+}
+
+bp::object SLPResult::getPyFamily() const
+{
+    return StringConv::asPyUnicode(m_family);
+}
+
+bp::object SLPResult::getPySrvPart() const
+{
+    return StringConv::asPyUnicode(m_srvpart);
+}
+
+bp::object SLPResult::getPyPort() const
+{
+    return bp::object(m_port);
+}
+
+void SLPResult::setSrvType(const String &srvtype)
+{
+    m_srvtype = srvtype;
+}
+
+void SLPResult::setHost(const String &host)
+{
+    m_host = host;
+}
+
+void SLPResult::setFamily(const String &family)
+{
+    m_family = family;
+}
+
+void SLPResult::setSrvPart(const String &srvpart)
+{
+    m_srvpart = srvpart;
+}
+
+void SLPResult::setPort(int port)
+{
+    m_port = port;
+}
+
+void SLPResult::setPySrvType(const bp::object &srvtype)
 {
     m_srvtype = StringConv::asString(srvtype, "srvtype");
 }
 
-void SLPResult::setHost(const bp::object &host)
+void SLPResult::setPyHost(const bp::object &host)
 {
     m_host = StringConv::asString(host, "host");
 }
 
-void SLPResult::setFamily(const bp::object &family)
+void SLPResult::setPyFamily(const bp::object &family)
 {
     m_family = StringConv::asString(family, "family");
 }
 
-void SLPResult::setSrvPart(const bp::object &srvpart)
+void SLPResult::setPySrvPart(const bp::object &srvpart)
 {
     m_srvpart = StringConv::asString(srvpart, "srvpart");
 }
 
-void SLPResult::setPort(const bp::object &port)
+void SLPResult::setPyPort(const bp::object &port)
 {
     m_port = Conv::as<int>(port, "port");
 }

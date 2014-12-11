@@ -102,12 +102,22 @@ public:
     String getFamily() const;
     String getSrvPart() const;
     int getPort() const;
+    bp::object getPySrvType() const;
+    bp::object getPyHost() const;
+    bp::object getPyFamily() const;
+    bp::object getPySrvPart() const;
+    bp::object getPyPort() const;
 
-    void setSrvType(const bp::object &srvtype);
-    void setHost(const bp::object &host);
-    void setFamily(const bp::object &family);
-    void setSrvPart(const bp::object &srvpart);
-    void setPort(const bp::object &port);
+    void setSrvType(const String &srvtype);
+    void setHost(const String &host);
+    void setFamily(const String &family);
+    void setSrvPart(const String &srvpart);
+    void setPort(int port);
+    void setPySrvType(const bp::object &srvtype);
+    void setPyHost(const bp::object &host);
+    void setPyFamily(const bp::object &family);
+    void setPySrvPart(const bp::object &srvpart);
+    void setPyPort(const bp::object &port);
 
 private:
     String m_srvtype;
