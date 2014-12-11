@@ -444,8 +444,8 @@ bp::object WBEMConnection::openEnumerateInstances(
             String c_ns(m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
-            ss << "classname=" << StringConv::asString(cls) << ", "
-               << "namespace=" << c_ns;
+            ss << "classname=u" << StringConv::asString(cls) << ", "
+               << "namespace=u" << c_ns;
         }
         ss << ')';
     }
@@ -515,8 +515,8 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
             String c_ns(m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
-            ss << "classname=" << StringConv::asString(cls) << ", "
-               << "namespace=" << c_ns;
+            ss << "classname=u" << StringConv::asString(cls) << ", "
+               << "namespace=u" << c_ns;
         }
         ss << ')';
     }
@@ -971,8 +971,8 @@ bp::object WBEMConnection::openExecQuery(
     if (Config::isVerbose()) {
         ss << "OpenExecQuery(";
         if (Config::isVerboseMore()) {
-            ss << "lang='"  << StringConv::asString(query_lang) << "', "
-               << "query='" << StringConv::asString(query) << '\'';
+            ss << "lang=u'"  << StringConv::asString(query_lang) << "', "
+               << "query=u'" << StringConv::asString(query) << '\'';
         }
         ss << ')';
     }
