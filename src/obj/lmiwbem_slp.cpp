@@ -51,6 +51,31 @@ ScopedSLPHandle::~ScopedSLPHandle()
     SLPClose(m_handle);
 }
 
+SLPHandle ScopedSLPHandle::handle()
+{
+    return m_handle;
+}
+
+SLPError ScopedSLPHandle::error() const
+{
+    return m_error;
+}
+
+bool ScopedSLPHandle::good() const
+{
+    return m_error == SLP_OK;
+}
+
+bool ScopedSLPHandle::operator!() const
+{
+    return !good();
+}
+
+ScopedSLPHandle::operator SLPHandle() const
+{
+    return m_handle;
+}
+
 void SLP::init_type()
 {
     bp::def("slp_discover", SLP::discover,

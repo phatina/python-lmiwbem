@@ -38,12 +38,12 @@ public:
 
     bool set(String url);
 
-    String url() const { return m_url; }
-    String hostname() const { return m_hostname; }
-    uint32_t port() const { return m_port; }
+    String url() const;
+    String hostname() const;
+    uint32_t port() const;
 
-    bool isHttps() const { return m_is_https; }
-    bool isLocal() const { return m_is_local; }
+    bool isHttps() const;
+    bool isLocal() const;
 
     String asString() const;
 

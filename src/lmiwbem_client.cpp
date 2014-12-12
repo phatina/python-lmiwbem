@@ -102,7 +102,7 @@ void CIMClient::disconnect()
     m_is_connected = false;
 }
 
-bool CIMClient::isConnected()
+bool CIMClient::isConnected() const
 {
     return m_is_connected;
 }

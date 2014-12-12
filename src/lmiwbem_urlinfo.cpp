@@ -129,6 +129,31 @@ bool URLInfo::set(String url)
     return true;
 }
 
+String URLInfo::url() const
+{
+    return m_url;
+}
+
+String URLInfo::hostname() const
+{
+    return m_hostname;
+}
+
+uint32_t URLInfo::port() const
+{
+    return m_port;
+}
+
+bool URLInfo::isHttps() const
+{
+    return m_is_https;
+}
+
+bool URLInfo::isLocal() const
+{
+    return m_is_local;
+}
+
 String URLInfo::asString() const
 {
     std::stringstream ss;

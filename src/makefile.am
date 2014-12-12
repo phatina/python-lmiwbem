@@ -46,6 +46,7 @@ lmiwbem_core_la_SOURCES      =            \
 	util/lmiwbem_convert.cpp          \
 	util/lmiwbem_string.cpp           \
 	util/lmiwbem_util.cpp             \
+	lmiwbem_mutex.cpp                 \
 	lmiwbem_urlinfo.cpp               \
 	lmiwbem_config.cpp                \
 	lmiwbem.cpp                       \

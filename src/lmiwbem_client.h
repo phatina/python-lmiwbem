@@ -63,7 +63,7 @@ public:
         const String &trust_store);
     void connectLocally();
     void disconnect();
-    bool isConnected();
+    bool isConnected() const;
 
     void setVerifyCertificate(bool verify = true);
     bool getVerifyCertificate() const;

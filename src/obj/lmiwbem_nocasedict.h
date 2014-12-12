@@ -54,15 +54,15 @@ public:
     NocaseDict(const bp::object &d);
 
     static void init_type();
-    static bp::object create() { return CIMBase<NocaseDict>::create(); }
+    static bp::object create();
     static bp::object create(const bp::object &d);
 
-    nocase_map_t::iterator begin() { return m_dict.begin(); }
-    nocase_map_t::iterator end() { return m_dict.end(); }
-    nocase_map_t::const_iterator begin() const { return m_dict.begin(); }
-    nocase_map_t::const_iterator end() const { return m_dict.end(); }
+    nocase_map_t::iterator begin();
+    nocase_map_t::iterator end();
+    nocase_map_t::const_iterator begin() const;
+    nocase_map_t::const_iterator end() const;
 
-    bool empty() { return m_dict.empty(); }
+    bool empty();
 
     void delitem(const bp::object &key);
     void setitem(const bp::object &key, const bp::object &value);
@@ -81,7 +81,7 @@ public:
     bp::object len() const;
 
     void update(const bp::object &d);
-    void clear() { m_dict.clear(); }
+    void clear();
 
     bp::object get(
         const bp::object &key,

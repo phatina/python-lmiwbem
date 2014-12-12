@@ -37,12 +37,12 @@ public:
         const String pc_lang = String());
     ~ScopedSLPHandle();
 
-    SLPHandle handle() { return m_handle; }
-    SLPError error() const { return m_error; }
-    bool good() const { return m_error == SLP_OK; }
+    SLPHandle handle();
+    SLPError error() const;
+    bool good() const;
 
-    bool operator !() { return !good(); }
-    operator SLPHandle() { return m_handle; }
+    bool operator!() const;
+    operator SLPHandle() const;
 
 private:
     SLPHandle m_handle;

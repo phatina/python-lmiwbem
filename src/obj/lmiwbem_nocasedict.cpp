@@ -90,12 +90,42 @@ void NocaseDict::init_type()
         .def("copy", &NocaseDict::copy, "copy()"));
 }
 
+bp::object NocaseDict::create()
+{
+    return CIMBase<NocaseDict>::create();
+}
+
 bp::object NocaseDict::create(const bp::object &d)
 {
     bp::object inst = create();
     NocaseDict& nocase_dict = NocaseDict::asNative(inst);
     nocase_dict.update(d);
     return inst;
+}
+
+nocase_map_t::iterator NocaseDict::begin()
+{
+    return m_dict.begin();
+}
+
+nocase_map_t::iterator NocaseDict::end()
+{
+    return m_dict.end();
+}
+
+nocase_map_t::const_iterator NocaseDict::begin() const
+{
+    return m_dict.begin();
+}
+
+nocase_map_t::const_iterator NocaseDict::end() const
+{
+    return m_dict.end();
+}
+
+bool NocaseDict::empty()
+{
+    return m_dict.empty();
 }
 
 void NocaseDict::delitem(const bp::object &key)
@@ -232,6 +262,11 @@ void NocaseDict::update(const bp::object &d)
     } else {
         throw_TypeError("NocaseDict can be updated from NocaseDict or dict");
     }
+}
+
+void NocaseDict::clear()
+{
+    m_dict.clear();
 }
 
 bp::object NocaseDict::get(const bp::object &key, const bp::object &def)

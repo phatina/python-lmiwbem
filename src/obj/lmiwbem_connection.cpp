@@ -737,9 +737,44 @@ void WBEMConnection::disconnect()
     m_client.disconnect();
 }
 
+bool WBEMConnection::isConnected() const
+{
+    return m_client.isConnected();
+}
+
 bp::object WBEMConnection::getHostname() const
 {
     return StringConv::asPyUnicode(m_client.hostname());
+}
+
+bool WBEMConnection::getVerifyCertificate() const
+{
+    return !m_client.getVerifyCertificate();
+}
+
+void WBEMConnection::setVerifyCertificate(bool verify_cert)
+{
+    m_client.setVerifyCertificate(!verify_cert);
+}
+
+bool WBEMConnection::getConnectLocally() const
+{
+    return m_connect_locally;
+}
+
+void WBEMConnection::setConnectLocally(bool connect_locally)
+{
+    m_connect_locally = connect_locally;
+}
+
+unsigned int WBEMConnection::getTimeout() const
+{
+    return m_client.getTimeout();
+}
+
+void WBEMConnection::setTimeout(unsigned int timeout)
+{
+    m_client.setTimeout(timeout);
 }
 
 bp::object WBEMConnection::getRequestAcceptLanguages() const

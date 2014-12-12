@@ -98,15 +98,15 @@ public:
         const bp::object &no_verification);
     void connectLocally();
     void disconnect();
-    bool isConnected() { return m_client.isConnected(); }
+    bool isConnected() const;
     bp::object getHostname() const;
 
-    bool getVerifyCertificate() { return !m_client.getVerifyCertificate(); }
-    void setVerifyCertificate(bool verify_cert) { m_client.setVerifyCertificate(!verify_cert); }
-    bool getConnectLocally() const { return m_connect_locally; }
-    void setConnectLocally(bool connect_locally) { m_connect_locally = connect_locally; }
-    unsigned int getTimeout() const { return m_client.getTimeout(); }
-    void setTimeout(unsigned int timeout) { m_client.setTimeout(timeout); }
+    bool getVerifyCertificate() const;
+    void setVerifyCertificate(bool verify_cert);
+    bool getConnectLocally() const;
+    void setConnectLocally(bool connect_locally);
+    unsigned int getTimeout() const;
+    void setTimeout(unsigned int timeout);
     bp::object getRequestAcceptLanguages() const;
     void setRequestAcceptLanguages(const bp::object &langs);
     bp::object getDefaultNamespace() const;
