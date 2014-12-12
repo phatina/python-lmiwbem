@@ -275,8 +275,11 @@ if test x"$with_doc" != x"yes"; then
 fi
 AM_CONDITIONAL([BUILD_WITH_DOC], [test x"$with_doc" = x"yes"])
 
+AC_SUBST([SPECFILE_DATE], [$(date +"%a %b %e %G")])
+
 AC_OUTPUT(
     [makefile
+     lmiwbem.spec
      setup.py
      doc/makefile
      doc/src/conf.py
