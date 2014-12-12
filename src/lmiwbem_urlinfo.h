@@ -38,22 +38,26 @@ public:
 
     bool set(String url);
 
+    String url() const { return m_url; }
     String hostname() const { return m_hostname; }
     uint32_t port() const { return m_port; }
 
     bool isHttps() const { return m_is_https; }
+    bool isLocal() const { return m_is_local; }
 
     String asString() const;
 
     URLInfo &operator =(const URLInfo &rhs);
 
-private:
     static const uint32_t DEF_HTTPS_PORT = 5989;
     static const uint32_t DEF_HTTP_PORT  = 5988;
 
+private:
+    String m_url;
     String m_hostname;
     uint32_t m_port;
     bool m_is_https;
+    bool m_is_local;
 };
 
 #endif // WBEM_CLIENT_ADDRESS_H

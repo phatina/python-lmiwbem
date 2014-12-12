@@ -93,6 +93,7 @@ void CIMClient::connectLocally()
 {
     Pegasus::CIMClient::connectLocal();
     m_is_connected = true;
+    m_url_info.set("localhost");
 }
 
 void CIMClient::disconnect()
