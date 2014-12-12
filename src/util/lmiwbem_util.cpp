@@ -56,7 +56,7 @@ bool isnone(const bp::object &obj)
 #else
     // Older boost implementations lack api::object_base::is_none(). We need
     // to check for Py_None by empty boost::python::object().
-    return obj == bp::object();
+    return obj == None;
 #endif // BOOST_PYTHON_OBJECT_HAS_IS_NONE
 }
 

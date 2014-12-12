@@ -96,8 +96,8 @@ void CIMInstance::init_type()
                 bp::arg("classname"),
                 bp::arg("properties") = NocaseDict::create(),
                 bp::arg("qualifiers") = NocaseDict::create(),
-                bp::arg("path") = bp::object(),
-                bp::arg("property_list") = bp::object()),
+                bp::arg("path") = None,
+                bp::arg("property_list") = None),
                 "Constructs a :py:class:`.CIMInstance`.\n\n"
                 ":param str classname: String containing a class name\n"
                 ":param NocaseDict properties: Dictionary containing :py:class:`.CIMProperty`\n"

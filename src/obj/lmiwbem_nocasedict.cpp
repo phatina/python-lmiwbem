@@ -81,11 +81,11 @@ void NocaseDict::init_type()
         .def("clear", &NocaseDict::clear, "clear()")
         .def("get", &NocaseDict::get,
             (bp::arg("key"),
-             bp::arg("def") = bp::object()),
+             bp::arg("def") = None),
             "get(key, default_value=None)")
         .def("pop", &NocaseDict::pop,
             (bp::arg("key"),
-             bp::arg("def") = bp::object()),
+             bp::arg("def") = None),
             "pop(key, default_value)")
         .def("copy", &NocaseDict::copy, "copy()"));
 }

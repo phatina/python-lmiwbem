@@ -94,12 +94,12 @@ void CIMProperty::init_type()
             const bp::object &>((
                 bp::arg("name"),
                 bp::arg("value"),
-                bp::arg("type") = bp::object(),
+                bp::arg("type") = None,
                 bp::arg("class_origin") = String(),
                 bp::arg("array_size") = 0,
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create(),
-                bp::arg("is_array") = bp::object(),
+                bp::arg("is_array") = None,
                 bp::arg("reference_class") = String()),
                 "Property of a CIM object.\n\n"
                 ":param str name: String containing the property's name\n"

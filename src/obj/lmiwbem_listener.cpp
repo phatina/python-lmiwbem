@@ -146,9 +146,9 @@ void CIMIndicationListener::init_type()
                 const bp::object &>((
                     bp::arg("listen_address"),
                     bp::arg("port"),
-                    bp::arg("certfile") = bp::object(),
-                    bp::arg("keyfile") = bp::object(),
-                    bp::arg("trust_store") = bp::object()),
+                    bp::arg("certfile") = None,
+                    bp::arg("keyfile") = None,
+                    bp::arg("trust_store") = None),
                     "Constructs a :py:class:`.CIMIndicationListener` object.\n\n"
                     ":param unicode listen_address: bind address\n"
                     ":param int port: listening port\n"

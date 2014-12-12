@@ -85,10 +85,10 @@ public:
 
     bp::object get(
         const bp::object &key,
-        const bp::object &def = bp::object());
+        const bp::object &def);
     bp::object pop(
         const bp::object &key,
-        const bp::object &def = bp::object());
+        const bp::object &def);
 
     bp::object copy();
 

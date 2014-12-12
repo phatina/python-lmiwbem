@@ -175,10 +175,10 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         const bp::object &,
         const bp::object &,
         const bp::object &>((
-            bp::arg("url") = bp::object(),
-            bp::arg("creds") = bp::object(),
-            bp::arg("x509") = bp::object(),
-            bp::arg("default_namespace") = bp::object(),
+            bp::arg("url") = None,
+            bp::arg("creds") = None,
+            bp::arg("x509") = None,
+            bp::arg("default_namespace") = None,
             bp::arg("no_verification") = false,
             bp::arg("connect_locally") = false),
             "Constructs :py:class:`.WBEMConnection` object.\n\n"
@@ -195,12 +195,12 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
             "\tused. Default value is False.\n"))
     .def("__repr__", &WBEMConnection::repr)
     .def("connect", &WBEMConnection::connect,
-        (bp::arg("url") = bp::object(),
-         bp::arg("username") = bp::object(),
-         bp::arg("password") = bp::object(),
-         bp::arg("cert_file") = bp::object(),
-         bp::arg("key_file") = bp::object(),
-         bp::arg("no_verification") = bp::object()),
+        (bp::arg("url") = None,
+         bp::arg("username") = None,
+         bp::arg("password") = None,
+         bp::arg("cert_file") = None,
+         bp::arg("key_file") = None,
+         bp::arg("no_verification") = None),
         "connect(url=None, username=None, password=None, cert_file=None, "
         "key_file=None, no_verification=None)\n\n"
         "Connects to CIMOM.\n\n"
@@ -261,7 +261,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         ":rtype: tuple containing username and password")
     .def("CreateInstance", &WBEMConnection::createInstance,
         (bp::arg("NewInstance"),
-         bp::arg("ns") = bp::object()),
+         bp::arg("ns") = None),
         "CreateInstance(NewInstance, ns=None)\n\n"
         "Creates a new CIM instance and returns its instance name.\n\n"
         ":param CIMInstance NewInstance: new local :py:class:`.CIMInstance`\n"
@@ -281,7 +281,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
     .def("ModifyInstance", &WBEMConnection::modifyInstance,
         (bp::arg("ModifiedInstance"),
          bp::arg("IncludeQualifiers") = true,
-         bp::arg("PropertyList") = bp::object()),
+         bp::arg("PropertyList") = None),
         "ModifyInstance(ModifiedInstance, IncludeQualifiers=True, PropertyList=None)\n\n"
         "Modifies properties of a existing instance.\n\n"
         ":param CIMInstance ModifiedInstance: modified instance\n"
@@ -299,12 +299,12 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_modify_instance`")
     .def("EnumerateInstances", &WBEMConnection::enumerateInstances,
         (bp::arg("ClassName"),
-         bp::arg("namespace") = bp::object(),
+         bp::arg("namespace") = None,
          bp::arg("LocalOnly") = true,
          bp::arg("DeepInheritance") = true,
          bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = bp::object()),
+         bp::arg("PropertyList") = None),
         "EnumerateInstances(ClassName, namespace=None, LocalOnly=True, "
         "DeepInheritance=True, IncludeQualifiers=False, IncludeClassOrigin=False, "
         "PropertyList=None)\n\n"
@@ -337,7 +337,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_enumerate_instances`")
     .def("EnumerateInstanceNames", &WBEMConnection::enumerateInstanceNames,
         (bp::arg("ClassName"),
-         bp::arg("namespace") = bp::object()),
+         bp::arg("namespace") = None),
         "EnumerateInstanceNames(ClassName, namespace=None)\n\n"
         "Enumerates instance names of a given class name.\n\n"
         ":param str ClassName: String containing class name of instance\n"
@@ -349,11 +349,11 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_enumerate_instance_names`")
     .def("GetInstance", &WBEMConnection::getInstance,
         (bp::arg("InstanceName"),
-         bp::arg("namespace") = bp::object(),
+         bp::arg("namespace") = None,
          bp::arg("LocalOnly") = true,
          bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = bp::object()),
+         bp::arg("PropertyList") = None),
         "GetInstance(InstanceName, namespace=None, LocalOnly=True, "
         "IncludeQualifiers=False, IncludeClassOrigin=False, PropertyList=None)\n\n"
         "Fetches a :py:class:`.CIMInstance` from CIMOM identified by\n"
@@ -385,8 +385,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
         "**Example:** :ref:`example_get_instance`")
     .def("EnumerateClasses", &WBEMConnection::enumerateClasses,
-        (bp::arg("namespace") = bp::object(),
-         bp::arg("ClassName") = bp::object(),
+        (bp::arg("namespace") = None,
+         bp::arg("ClassName") = None,
          bp::arg("DeepInheritance") = false,
          bp::arg("LocalOnly") = true,
          bp::arg("IncludeQualifiers") = true,
@@ -421,8 +421,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
         "**Example:** :ref:`example_enumerate_classes`")
     .def("EnumerateClassNames", &WBEMConnection::enumerateClassNames,
-        (bp::arg("namespace") = bp::object(),
-         bp::arg("ClassName") = bp::object(),
+        (bp::arg("namespace") = None,
+         bp::arg("ClassName") = None,
          bp::arg("DeepInheritance") = false),
         "EnumerateClassNames(namespace=None, ClassName=None, DeepInheritance=False)\n\n"
         "Enumerates class names managed by the CIMOM.\n\n"
@@ -444,7 +444,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
     .def("ExecQuery", &WBEMConnection::execQuery,
         (bp::arg("QueryLanguage"),
          bp::arg("Query"),
-         bp::arg("namespace") = bp::object()),
+         bp::arg("namespace") = None),
         "ExecQuery(QueryLanguage, Query, namespace=None)\n\n"
         "Executes a query and returns a list of :py:class:`.CIMInstance` objects.\n\n"
         ":param str query_lang: query language\n"
@@ -466,11 +466,11 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_invoke_method`")
     .def("GetClass", &WBEMConnection::getClass,
         (bp::arg("ClassName"),
-         bp::arg("namespace") = bp::object(),
+         bp::arg("namespace") = None,
          bp::arg("LocalOnly") = true,
          bp::arg("IncludeQualifiers") = true,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = bp::object()),
+         bp::arg("PropertyList") = None),
         "GetClass(ClassName, namespace=None, LocalOnly=True, IncludeQualifiers=True, "
         "IncludeClassOrigin=False, PropertyList=None)\n\n"
         "Returns a :py:class:`.CIMClass` representing the named class.\n\n"
@@ -505,13 +505,13 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_get_class`")
     .def("Associators", &WBEMConnection::getAssociators,
         (bp::arg("ObjectName"),
-         bp::arg("AssocClass") = bp::object(),
-         bp::arg("ResultClass") = bp::object(),
-         bp::arg("Role") = bp::object(),
-         bp::arg("ResultRole") = bp::object(),
+         bp::arg("AssocClass") = None,
+         bp::arg("ResultClass") = None,
+         bp::arg("Role") = None,
+         bp::arg("ResultRole") = None,
          bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = bp::object()),
+         bp::arg("PropertyList") = None),
         "Associators(ObjectName, AssocClass=None, ResultClass=None, Role=None, "
         "ResultRole=None, IncludeQualifiers=False, IncludeClassOrigin=False, "
         "PropertyList=None)\n\n"
@@ -556,10 +556,10 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_associators`")
     .def("AssociatorNames", &WBEMConnection::getAssociatorNames,
         (bp::arg("ObjectName"),
-         bp::arg("AssocClass") = bp::object(),
-         bp::arg("ResultClass") = bp::object(),
-         bp::arg("Role") = bp::object(),
-         bp::arg("ResultRole") = bp::object()),
+         bp::arg("AssocClass") = None,
+         bp::arg("ResultClass") = None,
+         bp::arg("Role") = None,
+         bp::arg("ResultRole") = None),
         "AssociatorNames(ObjectName, AssocClass=None, ResultClass=None, Role=None, "
         "ResultRole=None)\n\n"
         "Returns a list of associated :py:class:`.CIMInstanceName` objects with an input\n"
@@ -592,11 +592,11 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_associator_names`")
     .def("References", &WBEMConnection::getReferences,
         (bp::arg("ObjectName"),
-         bp::arg("ResultClass") = bp::object(),
-         bp::arg("Role") = bp::object(),
+         bp::arg("ResultClass") = None,
+         bp::arg("Role") = None,
          bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = bp::object()),
+         bp::arg("PropertyList") = None),
         "References(ObjectName, ResultClass=None, Role=None, IncludeQualifiers=False, "
         "IncludeClassOrigin=False, PropertyList=None)\n\n"
         "Returns a list of association :py:class:`.CIMInstance` objects with an input\n"
@@ -629,8 +629,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "**Example:** :ref:`example_references`")
     .def("ReferenceNames", &WBEMConnection::getReferenceNames,
         (bp::arg("ObjectName"),
-         bp::arg("ResultClass") = bp::object(),
-         bp::arg("Role") = bp::object()),
+         bp::arg("ResultClass") = None,
+         bp::arg("Role") = None),
         "ReferenceNames(ObjectName, ResultClass=None, Role=None)\n\n"
         "Returns a list of association :py:class:`.CIMInstanceName` objects with an\n"
         "input instance.\n\n"
