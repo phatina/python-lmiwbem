@@ -188,19 +188,19 @@ ListConv::PyFunctorCIMInstance::PyFunctorCIMInstance(
 }
 
 bp::object ListConv::PyFunctorCIMInstance::operator()(
-    Pegasus::CIMInstance cim_instance) const
+    Pegasus::CIMInstance instance) const
 {
     if (!m_ns.empty())
-        CIMInstance::updatePegasusCIMInstanceNamespace(cim_instance, m_ns);
+        CIMInstance::updatePegasusCIMInstanceNamespace(instance, m_ns);
     if (!m_hostname.empty())
-        CIMInstance::updatePegasusCIMInstanceHostname(cim_instance, m_hostname);
-    return CIMInstance::create(cim_instance);
+        CIMInstance::updatePegasusCIMInstanceHostname(instance, m_hostname);
+    return CIMInstance::create(instance);
 }
 
 bp::object ListConv::PyFunctorCIMInstance::operator()(
-    const Pegasus::CIMObject cim_object) const
+    const Pegasus::CIMObject object) const
 {
-    Pegasus::CIMInstance peg_instance(cim_object);
+    Pegasus::CIMInstance peg_instance(object);
     return (*this)(peg_instance);
 }
 
@@ -212,15 +212,15 @@ ListConv::PyFunctorCIMInstanceName::PyFunctorCIMInstanceName(
 }
 
 bp::object ListConv::PyFunctorCIMInstanceName::operator()(
-    const Pegasus::CIMObjectPath &cim_instance_name) const
+    const Pegasus::CIMObjectPath &instance_name) const
 {
-    return CIMInstanceName::create(cim_instance_name, m_ns, m_hostname);
+    return CIMInstanceName::create(instance_name, m_ns, m_hostname);
 }
 
 bp::object ListConv::PyFunctorCIMClass::operator()(
-    const Pegasus::CIMClass &cim_class) const
+    const Pegasus::CIMClass &class_) const
 {
-    return CIMClass::create(cim_class);
+    return CIMClass::create(class_);
 }
 
 Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
