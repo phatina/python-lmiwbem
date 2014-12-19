@@ -23,6 +23,7 @@
 #  define LMIWBEM_NOCASEDICT_H
 
 #  include <map>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/class.hpp>
 #  include <boost/python/object.hpp>
 #  include "lmiwbem.h"
@@ -103,7 +104,9 @@ public:
 #  endif // PY_MAJOR_VERSION
 
 private:
-    nocase_map_t m_dict;
+    class NocaseDictRep;
+
+    boost::shared_ptr<NocaseDictRep> m_rep;
 };
 
 class NocaseDictIterator
@@ -113,6 +116,8 @@ public:
     virtual bp::object next() = 0;
 
 protected:
+    class NocaseDictIteratorRep;
+
     template <typename T>
     static void init_type(const char *classname)
     {
@@ -132,13 +137,12 @@ protected:
     {
         bp::object inst = CIMBase<T>::create();
         T &fake_this = Conv::as<T&>(inst);
-        fake_this.m_dict = dict;
-        fake_this.m_iter = fake_this.m_dict.begin();
+        fake_this.m_rep->m_dict = dict;
+        fake_this.m_rep->m_iter = fake_this.m_rep->m_dict.begin();
         return inst;
     }
 
-    nocase_map_t m_dict;
-    nocase_map_t::const_iterator m_iter;
+    boost::shared_ptr<NocaseDictIteratorRep> m_rep;
 };
 
 class NocaseDictKeyIterator:

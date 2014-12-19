@@ -23,12 +23,12 @@
 #  define LMIWBEM_PROPERTY_H
 
 #  include <list>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMProperty.h>
 #  include <Pegasus/Common/CIMType.h>
 #  include <Pegasus/Common/CIMQualifier.h>
 #  include <Pegasus/Common/CIMValue.h>
-#  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 
@@ -108,18 +108,9 @@ public:
 private:
     static String propertyTypeAsString(const Pegasus::CIMType type);
 
-    String m_name;
-    String m_type;
-    String m_class_origin;
-    String m_reference_class;
-    bool m_is_array;
-    bool m_is_propagated;
-    int m_array_size;
-    bp::object m_value;
-    bp::object m_qualifiers;
+    class CIMPropertyRep;
 
-    RefCountedPtr<Pegasus::CIMValue> m_rc_prop_value;
-    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_prop_qualifiers;
+    boost::shared_ptr<CIMPropertyRep> m_rep;
 };
 
 #endif // LMIWBEM_PROPERTY_H

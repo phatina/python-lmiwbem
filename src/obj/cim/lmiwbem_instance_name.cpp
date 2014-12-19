@@ -30,11 +30,27 @@
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
-CIMInstanceName::CIMInstanceName()
+class CIMInstanceName::CIMInstanceNameRep
+{
+public:
+    CIMInstanceNameRep();
+
+    String m_classname;
+    String m_namespace;
+    String m_hostname;
+    bp::object m_keybindings;
+};
+
+CIMInstanceName::CIMInstanceNameRep::CIMInstanceNameRep()
     : m_classname()
     , m_namespace()
     , m_hostname()
     , m_keybindings()
+{
+}
+
+CIMInstanceName::CIMInstanceName()
+    : m_rep(new CIMInstanceNameRep)
 {
 }
 
@@ -43,21 +59,18 @@ CIMInstanceName::CIMInstanceName(
     const bp::object &keybindings,
     const bp::object &host,
     const bp::object &ns)
-    : m_classname()
-    , m_namespace()
-    , m_hostname()
-    , m_keybindings()
+    : m_rep(new CIMInstanceNameRep)
 {
-    m_classname = StringConv::asString(cls, "classname");
-    m_namespace = StringConv::asString(ns, "namespace");
+    m_rep->m_classname = StringConv::asString(cls, "classname");
+    m_rep->m_namespace = StringConv::asString(ns, "namespace");
     if (!isnone(host)) {
         // Host may be missing, other members (classname, namespace not)
-        m_hostname  = StringConv::asString(host, "host");
+        m_rep->m_hostname  = StringConv::asString(host, "host");
     }
     if (isnone(keybindings))
-        m_keybindings = NocaseDict::create();
+        m_rep->m_keybindings = NocaseDict::create();
     else
-        m_keybindings = NocaseDict::create(keybindings);
+        m_rep->m_keybindings = NocaseDict::create(keybindings);
 }
 
 void CIMInstanceName::init_type()
@@ -167,12 +180,12 @@ bp::object CIMInstanceName::create(
     bp::object py_inst = CIMBase<CIMInstanceName>::create();
     CIMInstanceName& fake_this = CIMInstanceName::asNative(py_inst);
 
-    fake_this.m_classname = obj_path.getClassName().getString();
-    fake_this.m_namespace = obj_path.getNameSpace().isNull() ? ns :
+    fake_this.m_rep->m_classname = obj_path.getClassName().getString();
+    fake_this.m_rep->m_namespace = obj_path.getNameSpace().isNull() ? ns :
         String(obj_path.getNameSpace().getString().getCString());
-    fake_this.m_hostname = obj_path.getHost() == Pegasus::String::EMPTY
+    fake_this.m_rep->m_hostname = obj_path.getHost() == Pegasus::String::EMPTY
         ? hostname : String(obj_path.getHost().getCString());
-    fake_this.m_keybindings = NocaseDict::create();
+    fake_this.m_rep->m_keybindings = NocaseDict::create();
 
     const Pegasus::Array<Pegasus::CIMKeyBinding> &peg_keybindings = obj_path.getKeyBindings();
     const Pegasus::Uint32 cnt = peg_keybindings.size();
@@ -184,14 +197,14 @@ bp::object CIMInstanceName::create(
             // hostname which could be left out by Pegasus.
             Pegasus::CIMObjectPath peg_path(peg_keybinding.getValue());
             if (peg_path.getHost() == Pegasus::String::EMPTY) {
-                peg_path.setHost(fake_this.m_hostname);
+                peg_path.setHost(fake_this.m_rep->m_hostname);
                 peg_keybinding.setValue(peg_path.toString());
             }
         }
 
         bp::object py_value = keybindingToValue(peg_keybinding);
 
-        fake_this.m_keybindings[bp::object(peg_keybinding.getName())] = py_value;
+        fake_this.m_rep->m_keybindings[bp::object(peg_keybinding.getName())] = py_value;
     }
 
     return py_inst;
@@ -201,9 +214,9 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
 {
     Pegasus::Array<Pegasus::CIMKeyBinding> peg_arr_keybindings;
 
-    if (!isnone(m_keybindings)) {
+    if (!isnone(m_rep->m_keybindings)) {
         NocaseDict &cim_keybindings = NocaseDict::asNative(
-            m_keybindings, "self.keybindings");
+            m_rep->m_keybindings, "self.keybindings");
 
         // Create an array of keybindings. Allowed keybindings' types:
         // bool, numeric, str or CIMInstanceName
@@ -260,9 +273,9 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
     }
 
     return Pegasus::CIMObjectPath(
-        Pegasus::String(m_hostname),
-        Pegasus::CIMNamespaceName(m_namespace),
-        Pegasus::CIMName(m_classname),
+        Pegasus::String(m_rep->m_hostname),
+        Pegasus::CIMNamespaceName(m_rep->m_namespace),
+        Pegasus::CIMName(m_rep->m_classname),
         peg_arr_keybindings);
 }
 
@@ -275,10 +288,10 @@ int CIMInstanceName::cmp(const bp::object &other)
     CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
     int rval;
-    if ((rval = m_classname.compare(cim_other.m_classname)) != 0 ||
-        (rval = m_namespace.compare(cim_other.m_namespace)) != 0 ||
-        (rval = m_hostname.compare(cim_other.m_hostname)) != 0 ||
-        (rval = compare(m_keybindings, cim_other.m_keybindings)) != 0)
+    if ((rval = m_rep->m_classname.compare(cim_other.m_rep->m_classname)) != 0 ||
+        (rval = m_rep->m_namespace.compare(cim_other.m_rep->m_namespace)) != 0 ||
+        (rval = m_rep->m_hostname.compare(cim_other.m_rep->m_hostname)) != 0 ||
+        (rval = compare(m_rep->m_keybindings, cim_other.m_rep->m_keybindings)) != 0)
     {
         return rval;
     }
@@ -293,10 +306,10 @@ bool CIMInstanceName::eq(const bp::object &other)
 
     CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
-    return m_classname == cim_other.m_classname &&
-        m_namespace == cim_other.m_namespace &&
-        m_hostname  == cim_other.m_hostname  &&
-        compare(m_keybindings, cim_other.m_keybindings, Py_EQ);
+    return m_rep->m_classname == cim_other.m_rep->m_classname &&
+        m_rep->m_namespace == cim_other.m_rep->m_namespace &&
+        m_rep->m_hostname  == cim_other.m_rep->m_hostname  &&
+        compare(m_rep->m_keybindings, cim_other.m_rep->m_keybindings, Py_EQ);
 }
 
 bool CIMInstanceName::gt(const bp::object &other)
@@ -306,10 +319,10 @@ bool CIMInstanceName::gt(const bp::object &other)
 
     CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
-    return m_classname > cim_other.m_classname ||
-        m_namespace > cim_other.m_namespace ||
-        m_hostname  > cim_other.m_hostname  ||
-        compare(m_keybindings, cim_other.m_keybindings, Py_GT);
+    return m_rep->m_classname > cim_other.m_rep->m_classname ||
+        m_rep->m_namespace > cim_other.m_rep->m_namespace ||
+        m_rep->m_hostname  > cim_other.m_rep->m_hostname  ||
+        compare(m_rep->m_keybindings, cim_other.m_rep->m_keybindings, Py_GT);
 }
 
 bool CIMInstanceName::lt(const bp::object &other)
@@ -319,10 +332,10 @@ bool CIMInstanceName::lt(const bp::object &other)
 
     CIMInstanceName &cim_other = CIMInstanceName::asNative(other);
 
-    return m_classname < cim_other.m_classname ||
-        m_namespace < cim_other.m_namespace ||
-        m_hostname  < cim_other.m_hostname  ||
-        compare(m_keybindings, cim_other.m_keybindings, Py_LT);
+    return m_rep->m_classname < cim_other.m_rep->m_classname ||
+        m_rep->m_namespace < cim_other.m_rep->m_namespace ||
+        m_rep->m_hostname  < cim_other.m_rep->m_hostname  ||
+        compare(m_rep->m_keybindings, cim_other.m_rep->m_keybindings, Py_LT);
 }
 
 bool CIMInstanceName::ge(const bp::object &other)
@@ -340,12 +353,12 @@ bp::object CIMInstanceName::copy()
 {
     bp::object py_inst = CIMBase<CIMInstanceName>::create();
     CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(py_inst);
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
 
-    cim_inst_name.m_classname = m_classname;
-    cim_inst_name.m_namespace = m_namespace;
-    cim_inst_name.m_hostname = m_hostname;
-    cim_inst_name.m_keybindings = cim_keybindings.copy();
+    cim_inst_name.m_rep->m_classname = m_rep->m_classname;
+    cim_inst_name.m_rep->m_namespace = m_rep->m_namespace;
+    cim_inst_name.m_rep->m_hostname = m_rep->m_hostname;
+    cim_inst_name.m_rep->m_keybindings = cim_keybindings.copy();
 
     return py_inst;
 }
@@ -354,13 +367,13 @@ String CIMInstanceName::asString() const
 {
     std::stringstream ss;
 
-    if (!m_hostname.empty())
-        ss << "//" << m_hostname << '/';
-    if (!m_namespace.empty())
-        ss << m_namespace << ':';
-    ss << m_classname << '.';
+    if (!m_rep->m_hostname.empty())
+        ss << "//" << m_rep->m_hostname << '/';
+    if (!m_rep->m_namespace.empty())
+        ss << m_rep->m_namespace << ':';
+    ss << m_rep->m_classname << '.';
 
-    const NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    const NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     nocase_map_t::const_iterator it;
     for (it = cim_keybindings.begin(); it != cim_keybindings.end(); ++it) {
         ss << it->first << '=';
@@ -391,144 +404,144 @@ bp::object CIMInstanceName::str() const
 bp::object CIMInstanceName::repr() const
 {
     std::stringstream ss;
-    ss << "CIMInstanceName(classname=u'" << m_classname << "', keybindings="
-       << ObjectConv::asString(m_keybindings);
-    if (!m_hostname.empty())
-        ss << ", host=u'" << m_hostname << '\'';
+    ss << "CIMInstanceName(classname=u'" << m_rep->m_classname << "', keybindings="
+       << ObjectConv::asString(m_rep->m_keybindings);
+    if (!m_rep->m_hostname.empty())
+        ss << ", host=u'" << m_rep->m_hostname << '\'';
     ss <<  ", namespace=u'"
-       << m_namespace << "')";
+       << m_rep->m_namespace << "')";
     return StringConv::asPyUnicode(ss.str());
 }
 
 bp::object CIMInstanceName::getitem(const bp::object &key)
 {
-    return m_keybindings[key];
+    return m_rep->m_keybindings[key];
 }
 
 void CIMInstanceName::delitem(const bp::object &key)
 {
-    bp::delitem(m_keybindings, key);
+    bp::delitem(m_rep->m_keybindings, key);
 }
 
 void CIMInstanceName::setitem(const bp::object &key, const bp::object &value)
 {
-    m_keybindings[key] = value;
+    m_rep->m_keybindings[key] = value;
 }
 
 bp::object CIMInstanceName::len() const
 {
-    return bp::object(bp::len(m_keybindings));
+    return bp::object(bp::len(m_rep->m_keybindings));
 }
 
 bp::object CIMInstanceName::haskey(const bp::object &key) const
 {
-    return m_keybindings.contains(key);
+    return m_rep->m_keybindings.contains(key);
 }
 
 bp::object CIMInstanceName::keys()
 {
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     return cim_keybindings.keys();
 }
 
 bp::object CIMInstanceName::values()
 {
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     return cim_keybindings.values();
 }
 
 bp::object CIMInstanceName::items()
 {
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     return cim_keybindings.items();
 }
 
 bp::object CIMInstanceName::iterkeys()
 {
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     return cim_keybindings.iterkeys();
 }
 
 bp::object CIMInstanceName::itervalues()
 {
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     return cim_keybindings.itervalues();
 }
 
 bp::object CIMInstanceName::iteritems()
 {
-    NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+    NocaseDict &cim_keybindings = NocaseDict::asNative(m_rep->m_keybindings);
     return cim_keybindings.iteritems();
 }
 
 String CIMInstanceName::getClassname() const
 {
-    return m_classname;
+    return m_rep->m_classname;
 }
 
 String CIMInstanceName::getNamespace() const
 {
-    return m_namespace;
+    return m_rep->m_namespace;
 }
 
 String CIMInstanceName::getHostname()  const
 {
-    return m_hostname;
+    return m_rep->m_hostname;
 }
 
 bp::object CIMInstanceName::getPyClassname() const
 {
-    return StringConv::asPyUnicode(m_classname);
+    return StringConv::asPyUnicode(m_rep->m_classname);
 }
 
 bp::object CIMInstanceName::getPyNamespace() const
 {
-    return StringConv::asPyUnicode(m_namespace);
+    return StringConv::asPyUnicode(m_rep->m_namespace);
 }
 
 bp::object CIMInstanceName::getPyHostname() const
 {
-    return StringConv::asPyUnicode(m_hostname);
+    return StringConv::asPyUnicode(m_rep->m_hostname);
 }
 
 bp::object CIMInstanceName::getPyKeybindings() const
 {
-    return m_keybindings;
+    return m_rep->m_keybindings;
 }
 
 void CIMInstanceName::setClassname(const String &classname)
 {
-    m_classname = classname;
+    m_rep->m_classname = classname;
 }
 
 void CIMInstanceName::setNamespace(const String &namespace_)
 {
-    m_namespace = namespace_;
+    m_rep->m_namespace = namespace_;
 }
 
 void CIMInstanceName::setHostname(const String &hostname)
 {
-    m_hostname = hostname;
+    m_rep->m_hostname = hostname;
 }
 
 void CIMInstanceName::setPyClassname(const bp::object &classname)
 {
-    m_classname = StringConv::asString(classname, "classname");
+    m_rep->m_classname = StringConv::asString(classname, "classname");
 }
 
 void CIMInstanceName::setPyNamespace(const bp::object &namespace_)
 {
-    m_namespace = StringConv::asString(namespace_, "namespace");
+    m_rep->m_namespace = StringConv::asString(namespace_, "namespace");
 }
 
 void CIMInstanceName::setPyHostname(const bp::object &hostname)
 {
-    m_hostname = StringConv::asString(hostname, "hostname");
+    m_rep->m_hostname = StringConv::asString(hostname, "hostname");
 }
 
 void CIMInstanceName::setPyKeybindings(const bp::object &keybindings)
 {
-    m_keybindings = Conv::get<NocaseDict, bp::dict>(keybindings, "keybindings");
+    m_rep->m_keybindings = Conv::get<NocaseDict, bp::dict>(keybindings, "keybindings");
 }
 
 bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keybinding)

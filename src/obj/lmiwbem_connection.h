@@ -22,11 +22,13 @@
 #ifndef   LMIWBEM_CONNECTION_H
 #  define LMIWBEM_CONNECTION_H
 
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/class.hpp>
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
 #  include "lmiwbem_client.h"
 #  include "lmiwbem_gil.h"
+#  include "obj/lmiwbem_connection_rep.h"
 #  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN
@@ -305,15 +307,7 @@ protected:
     static void init_type_pull(WBEMConnectionClass &cls);
 #  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
 
-    bool m_connected_tmp;
-    bool m_connect_locally;
-    String m_url;
-    String m_username;
-    String m_password;
-    String m_cert_file;
-    String m_key_file;
-    String m_default_namespace;
-    CIMClient m_client;
+    boost::shared_ptr<WBEMConnectionRep> m_rep;
 };
 
 #endif // LMIWBEM_CONNECTION_H

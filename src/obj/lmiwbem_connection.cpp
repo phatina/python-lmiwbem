@@ -44,37 +44,37 @@ namespace bp = boost::python;
 
 WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
     : m_conn(conn)
-    , m_conn_orig_state(m_conn->m_client.isConnected())
+    , m_conn_orig_state(m_conn->m_rep->m_client.isConnected())
 {
     if (m_conn_orig_state) {
         // We are already connected, nothing to do here.
         return;
-    } else if (m_conn->m_connect_locally) {
-        m_conn->m_client.connectLocally();
+    } else if (m_conn->m_rep->m_connect_locally) {
+        m_conn->m_rep->m_client.connectLocally();
         return;
-    } else if (m_conn->m_url.empty()) {
+    } else if (m_conn->m_rep->m_url.empty()) {
         throw_ValueError("WBEMConnection constructed without url parameter");
     }
 
     try {
-        m_conn->m_client.connect(
-            m_conn->m_url,
-            m_conn->m_username,
-            m_conn->m_password,
-            m_conn->m_cert_file,
-            m_conn->m_key_file,
+        m_conn->m_rep->m_client.connect(
+            m_conn->m_rep->m_url,
+            m_conn->m_rep->m_username,
+            m_conn->m_rep->m_password,
+            m_conn->m_rep->m_cert_file,
+            m_conn->m_rep->m_key_file,
             Config::defaultTrustStore());
     } catch (...) {
         std::stringstream ss;
         if (Config::isVerbose()) {
-            bool connect_locally = m_conn->m_connect_locally;
+            bool connect_locally = m_conn->m_rep->m_connect_locally;
             if (connect_locally)
                 ss << "connect_locally(";
             else
                 ss << "connect(";
 
             if (Config::isVerboseMore() && !connect_locally) {
-                ss << "url='" << m_conn->m_client.getURLInfo().asString() << '\'';
+                ss << "url='" << m_conn->m_rep->m_client.getURLInfo().asString() << '\'';
             }
             ss << ')';
         }
@@ -85,11 +85,11 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
 WBEMConnection::ScopedConnection::~ScopedConnection()
 {
     if (!m_conn_orig_state)
-        m_conn->m_client.disconnect();
+        m_conn->m_rep->m_client.disconnect();
 }
 
 WBEMConnection::ScopedTransaction::ScopedTransaction(WBEMConnection *conn)
-    : m_sct(conn->m_client)
+    : m_sct(conn->m_rep->m_client)
 {
 }
 
@@ -100,25 +100,17 @@ WBEMConnection::WBEMConnection(
     const bp::object &default_namespace,
     const bp::object &no_verification,
     const bp::object &connect_locally)
-    : m_connected_tmp(false)
-    , m_connect_locally(false)
-    , m_url()
-    , m_username()
-    , m_password()
-    , m_cert_file()
-    , m_key_file()
-    , m_default_namespace(Config::defaultNamespace())
-    , m_client()
+    : m_rep(new WBEMConnectionRep)
 {
-    m_connect_locally = Conv::as<bool>(connect_locally, "connect_locally");
+    m_rep->m_connect_locally = Conv::as<bool>(connect_locally, "connect_locally");
 
     // We are constructing with local connection flag; disregard other
     // parameters.
-    if (m_connect_locally)
+    if (m_rep->m_connect_locally)
         return;
 
     if (!isnone(url))
-        m_url = StringConv::asString(url, "url");
+        m_rep->m_url = StringConv::asString(url, "url");
 
     if (!isnone(creds))
         setCredentials(creds);
@@ -128,30 +120,30 @@ WBEMConnection::WBEMConnection(
         bp::object py_cert_file = py_cert["cert_file"];
         bp::object py_key_file  = py_cert["key_file"];
         if (!isnone(py_cert_file)) {
-            m_cert_file = StringConv::asString(
+            m_rep->m_cert_file = StringConv::asString(
                 py_cert["cert_file"], "cert_file");
         }
         if (!isnone(py_key_file)) {
-            m_key_file  = StringConv::asString(
+            m_rep->m_key_file  = StringConv::asString(
                 py_cert["key_file"], "key_file");
         }
     }
 
     bool c_verify = Conv::as<bool>(no_verification, "no_verification");
-    m_client.setVerifyCertificate(c_verify);
+    m_rep->m_client.setVerifyCertificate(c_verify);
 
     if (!isnone(default_namespace)) {
-        m_default_namespace = StringConv::asString(
+        m_rep->m_default_namespace = StringConv::asString(
             default_namespace, "default_namespace");
     }
 
     // Set timeout to 1 minute.
-    m_client.setTimeout(60000);
+    m_rep->m_client.setTimeout(60000);
 }
 
 WBEMConnection::~WBEMConnection()
 {
-    m_client.disconnect();
+    m_rep->m_client.disconnect();
 }
 
 void WBEMConnection::init_type()
@@ -653,7 +645,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
 String WBEMConnection::repr() const
 {
     std::stringstream ss;
-    ss << "WBEMConnection(url=u'" << m_url << "', ...)";
+    ss << "WBEMConnection(url=u'" << m_rep->m_url << "', ...)";
     return ss.str();
 }
 
@@ -667,25 +659,25 @@ void WBEMConnection::connect(
 {
     // If we have local connection flag set, disregard other parameters and
     // perform socket connection.
-    if (m_connect_locally) {
+    if (m_rep->m_connect_locally) {
         connectLocally();
         return;
     }
 
     // All three parameters can be omitted, WBEMConnection was has been
     // with such parameters; WBEMConnection(url, (username, password)).
-    String c_url(m_url);
-    String c_cert_file(m_cert_file);
-    String c_key_file(m_key_file);
+    String c_url(m_rep->m_url);
+    String c_cert_file(m_rep->m_cert_file);
+    String c_key_file(m_rep->m_key_file);
 
     // Check, if provided parameters are None. If not, try to get a string value
     // out of them.
     if (!isnone(url))
         c_url = StringConv::asString(url, "url");
     if (!isnone(username))
-        m_username = StringConv::asString(username, "username");
+        m_rep->m_username = StringConv::asString(username, "username");
     if (!isnone(password))
-        m_password = StringConv::asString(password, "password");
+        m_rep->m_password = StringConv::asString(password, "password");
     if (!isnone(cert_file))
         c_cert_file = StringConv::asString(cert_file, "cert_file");
     if (!isnone(key_file))
@@ -697,24 +689,24 @@ void WBEMConnection::connect(
 
     if (!isnone(no_verification)) {
         bool c_no_verify = Conv::as<bool>(no_verification, "no_verification");
-        m_client.setVerifyCertificate(!c_no_verify);
+        m_rep->m_client.setVerifyCertificate(!c_no_verify);
     }
 
     try {
-        m_client.connect(
+        m_rep->m_client.connect(
             c_url,
-            m_username,
-            m_password,
+            m_rep->m_username,
+            m_rep->m_password,
             c_cert_file,
             c_key_file,
             Config::defaultTrustStore());
-        m_connect_locally = false;
+        m_rep->m_connect_locally = false;
     } catch (...) {
         std::stringstream ss;
         if (Config::isVerbose()) {
             ss << "connect(";
             if (Config::isVerboseMore())
-                ss << "url='" << m_client.getURLInfo().asString() << '\'';
+                ss << "url='" << m_rep->m_client.getURLInfo().asString() << '\'';
             ss << ')';
         }
         handle_all_exceptions(ss);
@@ -723,8 +715,8 @@ void WBEMConnection::connect(
 
 void WBEMConnection::connectLocally() try
 {
-    m_client.connectLocally();
-    m_connect_locally = true;
+    m_rep->m_client.connectLocally();
+    m_rep->m_connect_locally = true;
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose())
@@ -734,52 +726,52 @@ void WBEMConnection::connectLocally() try
 
 void WBEMConnection::disconnect()
 {
-    m_client.disconnect();
+    m_rep->m_client.disconnect();
 }
 
 bool WBEMConnection::isConnected() const
 {
-    return m_client.isConnected();
+    return m_rep->m_client.isConnected();
 }
 
 bp::object WBEMConnection::getHostname() const
 {
-    return StringConv::asPyUnicode(m_client.hostname());
+    return StringConv::asPyUnicode(m_rep->m_client.hostname());
 }
 
 bool WBEMConnection::getVerifyCertificate() const
 {
-    return !m_client.getVerifyCertificate();
+    return !m_rep->m_client.getVerifyCertificate();
 }
 
 void WBEMConnection::setVerifyCertificate(bool verify_cert)
 {
-    m_client.setVerifyCertificate(!verify_cert);
+    m_rep->m_client.setVerifyCertificate(!verify_cert);
 }
 
 bool WBEMConnection::getConnectLocally() const
 {
-    return m_connect_locally;
+    return m_rep->m_connect_locally;
 }
 
 void WBEMConnection::setConnectLocally(bool connect_locally)
 {
-    m_connect_locally = connect_locally;
+    m_rep->m_connect_locally = connect_locally;
 }
 
 unsigned int WBEMConnection::getTimeout() const
 {
-    return m_client.getTimeout();
+    return m_rep->m_client.getTimeout();
 }
 
 void WBEMConnection::setTimeout(unsigned int timeout)
 {
-    m_client.setTimeout(timeout);
+    m_rep->m_client.setTimeout(timeout);
 }
 
 bp::object WBEMConnection::getRequestAcceptLanguages() const
 {
-    Pegasus::AcceptLanguageList peg_al_list = m_client.getRequestAcceptLanguages();
+    Pegasus::AcceptLanguageList peg_al_list = m_rep->m_client.getRequestAcceptLanguages();
     Pegasus::Uint32 cnt = peg_al_list.size();
     bp::list py_languages;
 
@@ -807,24 +799,24 @@ void WBEMConnection::setRequestAcceptLanguages(const bp::object &languages)
         peg_al_list.insert(Pegasus::LanguageTag(c_lang), q);
     }
 
-    m_client.setRequestAcceptLanguages(peg_al_list);
+    m_rep->m_client.setRequestAcceptLanguages(peg_al_list);
 }
 
 bp::object WBEMConnection::getDefaultNamespace() const
 {
-    return StringConv::asPyUnicode(m_default_namespace);
+    return StringConv::asPyUnicode(m_rep->m_default_namespace);
 }
 
 void WBEMConnection::setDefaultNamespace(const bp::object &ns)
 {
-    m_default_namespace = StringConv::asString(ns, "default_namespace");
+    m_rep->m_default_namespace = StringConv::asString(ns, "default_namespace");
 }
 
 bp::object WBEMConnection::getCredentials() const
 {
     return bp::make_tuple(
-        StringConv::asPyUnicode(m_username),
-        StringConv::asPyUnicode(m_password));
+        StringConv::asPyUnicode(m_rep->m_username),
+        StringConv::asPyUnicode(m_rep->m_password));
 }
 
 void WBEMConnection::setCredentials(const bp::object &creds)
@@ -834,8 +826,8 @@ void WBEMConnection::setCredentials(const bp::object &creds)
     if (bp::len(py_creds_tpl) != 2)
         throw_ValueError("creds must be tuple of 2 strings");
 
-    m_username = StringConv::asString(py_creds_tpl[0], "username");
-    m_password = StringConv::asString(py_creds_tpl[1], "password");
+    m_rep->m_username = StringConv::asString(py_creds_tpl[0], "username");
+    m_rep->m_password = StringConv::asString(py_creds_tpl[1], "password");
 }
 
 bp::object WBEMConnection::createInstance(
@@ -844,7 +836,7 @@ bp::object WBEMConnection::createInstance(
 {
     CIMInstance &cim_inst = CIMInstance::asNative(instance, "NewInstance");
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
 
     if (!isnone(cim_inst.getPyPath())) {
         // First, try to get creation namespace from CIMInstanceName.
@@ -861,7 +853,7 @@ bp::object WBEMConnection::createInstance(
     Pegasus::CIMInstance peg_inst = cim_inst.asPegasusCIMInstance();
 
     ScopedTransactionBegin();
-    peg_new_inst_name = m_client.createInstance(
+    peg_new_inst_name = m_rep->m_client.createInstance(
         peg_new_inst_name_ns,
         peg_inst);
     ScopedTransactionEnd();
@@ -869,7 +861,7 @@ bp::object WBEMConnection::createInstance(
     // CIMClient::createInstance() does not set namespace and hostname
     // in newly created CIMInstanceName. We need to do that manually.
     peg_new_inst_name.setNameSpace(Pegasus::CIMNamespaceName(c_ns));
-    peg_new_inst_name.setHost(m_client.hostname());
+    peg_new_inst_name.setHost(m_rep->m_client.hostname());
 
     return CIMInstanceName::create(peg_new_inst_name);
 } catch (...) {
@@ -892,13 +884,13 @@ void WBEMConnection::deleteInstance(const bp::object &object_path) try
         object_path, "InstanceName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
     Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     ScopedTransactionBegin()
-    m_client.deleteInstance(
+    m_rep->m_client.deleteInstance(
         peg_ns,
         peg_path);
     ScopedTransactionEnd();
@@ -930,7 +922,7 @@ void WBEMConnection::modifyInstance(
             property_list, "PropertyList"));
 
     ScopedTransactionBegin();
-    m_client.modifyInstance(
+    m_rep->m_client.modifyInstance(
         peg_ns,
         peg_inst,
         include_qualifiers,
@@ -959,7 +951,7 @@ bp::object WBEMConnection::enumerateInstances(
     const bp::object &property_list) try
 {
     String c_cls(StringConv::asString(cls, "cls"));
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
 
@@ -971,7 +963,7 @@ bp::object WBEMConnection::enumerateInstances(
             property_list, "PropertyList"));
 
     ScopedTransactionBegin();
-    peg_instances = m_client.enumerateInstances(
+    peg_instances = m_rep->m_client.enumerateInstances(
         peg_ns,
         peg_name,
         deep_inheritance,
@@ -982,13 +974,13 @@ bp::object WBEMConnection::enumerateInstances(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_instances, c_ns, m_client.hostname());
+        peg_instances, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "EnumerateInstances(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "classname=u" << StringConv::asString(cls) << ", "
@@ -1005,7 +997,7 @@ bp::object WBEMConnection::enumerateInstanceNames(
     const bp::object &ns) try
 {
     String c_cls(StringConv::asString(cls, "cls"));
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
 
@@ -1014,19 +1006,19 @@ bp::object WBEMConnection::enumerateInstanceNames(
     Pegasus::CIMName peg_name(c_cls);
 
     ScopedTransactionBegin();
-    peg_instance_names = m_client.enumerateInstanceNames(
+    peg_instance_names = m_rep->m_client.enumerateInstanceNames(
         peg_ns,
         peg_name);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        peg_instance_names, c_ns, m_client.hostname());
+        peg_instance_names, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
         ss << "EnumerateInstanceNames(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "classname=u'" << StringConv::asString(cls) << "', "
@@ -1051,7 +1043,7 @@ bp::object WBEMConnection::invokeMethod(
         args[1], "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
@@ -1075,7 +1067,7 @@ bp::object WBEMConnection::invokeMethod(
     Pegasus::CIMName peg_name(c_method);
 
     ScopedTransactionBegin();
-    peg_rval = m_client.invokeMethod(
+    peg_rval = m_rep->m_client.invokeMethod(
         peg_ns,
         peg_path,
         peg_name,
@@ -1120,7 +1112,7 @@ bp::object WBEMConnection::getInstance(
 {
     CIMInstanceName &cim_instance_name = CIMInstanceName::asNative(
         instance_name, "InstanceName");
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!cim_instance_name.getNamespace().empty())
         c_ns = cim_instance_name.getNamespace();
     if (!isnone(ns))
@@ -1133,7 +1125,7 @@ bp::object WBEMConnection::getInstance(
         ListConv::asPegasusPropertyList(property_list, "PropertyList"));
 
     ScopedTransactionBegin();
-    peg_instance = m_client.getInstance(
+    peg_instance = m_rep->m_client.getInstance(
         peg_ns,
         peg_object_path,
         local_only,
@@ -1167,7 +1159,7 @@ bp::object WBEMConnection::enumerateClasses(
     const bool include_qualifiers,
     const bool include_class_origin) try
 {
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
 
@@ -1181,7 +1173,7 @@ bp::object WBEMConnection::enumerateClasses(
     Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     ScopedTransactionBegin();
-    peg_classes = m_client.enumerateClasses(
+    peg_classes = m_rep->m_client.enumerateClasses(
         peg_ns,
         peg_classname,
         deep_inheritance,
@@ -1196,7 +1188,7 @@ bp::object WBEMConnection::enumerateClasses(
     if (Config::isVerbose()) {
         ss << "EnumerateClasses(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "namespace=u'" << c_ns << '\'';
@@ -1212,7 +1204,7 @@ bp::object WBEMConnection::enumerateClassNames(
     const bp::object &cls,
     const bool deep_inheritance) try
 {
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
 
@@ -1226,7 +1218,7 @@ bp::object WBEMConnection::enumerateClassNames(
     Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     ScopedTransactionBegin();
-    peg_classnames = m_client.enumerateClassNames(
+    peg_classnames = m_rep->m_client.enumerateClassNames(
         peg_ns,
         peg_classname,
         deep_inheritance);
@@ -1244,7 +1236,7 @@ bp::object WBEMConnection::enumerateClassNames(
     if (Config::isVerbose()) {
         ss << "EnumerateClasseNames(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "namespace=u'" << c_ns << '\'';
@@ -1263,7 +1255,7 @@ bp::object WBEMConnection::execQuery(
 {
     String c_query_lang = StringConv::asString(query_lang, "QueryLanguage");
     String c_query = StringConv::asString(query, "Query");
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
 
@@ -1273,14 +1265,14 @@ bp::object WBEMConnection::execQuery(
     Pegasus::String peg_query(c_query);
 
     ScopedTransactionBegin();
-    peg_instances = m_client.execQuery(
+    peg_instances = m_rep->m_client.execQuery(
         peg_ns,
         peg_query_lang,
         peg_query);
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_instances, c_ns, m_client.hostname());
+        peg_instances, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1304,7 +1296,7 @@ bp::object WBEMConnection::getClass(
     const bp::object &property_list) try
 {
     String c_cls(StringConv::asString(cls, "ClassName"));
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
 
@@ -1316,7 +1308,7 @@ bp::object WBEMConnection::getClass(
             property_list, "PropertyList"));
 
     ScopedTransactionBegin()
-    peg_class = m_client.getClass(
+    peg_class = m_rep->m_client.getClass(
         peg_ns,
         peg_name,
         local_only,
@@ -1331,7 +1323,7 @@ bp::object WBEMConnection::getClass(
     if (Config::isVerbose()) {
         ss << "GetClass(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "class=u'" << StringConv::asString(cls) << "', "
@@ -1357,7 +1349,7 @@ bp::object WBEMConnection::getAssociators(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
@@ -1389,7 +1381,7 @@ bp::object WBEMConnection::getAssociators(
         peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    peg_associators = m_client.associators(
+    peg_associators = m_rep->m_client.associators(
         peg_ns,
         peg_path,
         peg_assoc_class,
@@ -1402,7 +1394,7 @@ bp::object WBEMConnection::getAssociators(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_associators, c_ns, m_client.hostname());
+        peg_associators, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1426,7 +1418,7 @@ bp::object WBEMConnection::getAssociatorNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
@@ -1454,7 +1446,7 @@ bp::object WBEMConnection::getAssociatorNames(
         peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    peg_associator_names = m_client.associatorNames(
+    peg_associator_names = m_rep->m_client.associatorNames(
         peg_ns,
         peg_path,
         peg_assoc_class,
@@ -1464,7 +1456,7 @@ bp::object WBEMConnection::getAssociatorNames(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        peg_associator_names, c_ns, m_client.hostname());
+        peg_associator_names, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1489,7 +1481,7 @@ bp::object WBEMConnection::getReferences(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
@@ -1511,7 +1503,7 @@ bp::object WBEMConnection::getReferences(
         peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    peg_references = m_client.references(
+    peg_references = m_rep->m_client.references(
         peg_ns,
         peg_path,
         peg_result_class,
@@ -1522,7 +1514,7 @@ bp::object WBEMConnection::getReferences(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_references, c_ns, m_client.hostname());
+        peg_references, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1544,7 +1536,7 @@ bp::object WBEMConnection::getReferenceNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
-    String c_ns(m_default_namespace);
+    String c_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
@@ -1562,7 +1554,7 @@ bp::object WBEMConnection::getReferenceNames(
         peg_result_class = Pegasus::CIMName(c_result_class);
 
     ScopedTransactionBegin();
-    peg_reference_names = m_client.referenceNames(
+    peg_reference_names = m_rep->m_client.referenceNames(
         peg_ns,
         peg_path,
         peg_result_class,
@@ -1570,7 +1562,7 @@ bp::object WBEMConnection::getReferenceNames(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        peg_reference_names, c_ns, m_client.hostname());
+        peg_reference_names, c_ns, m_rep->m_client.hostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {

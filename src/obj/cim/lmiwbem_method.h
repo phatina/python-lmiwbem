@@ -23,9 +23,9 @@
 #  define LMIWBEM_METHOD_H
 
 #  include <list>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMMethod.h>
-#  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 
@@ -86,15 +86,9 @@ public:
     void setPyQualifiers(const bp::object &qualifiers);
 
 private:
-    String m_name;
-    String m_return_type;
-    String m_class_origin;
-    bool m_is_propagated;
-    bp::object m_parameters;
-    bp::object m_qualifiers;
+    class CIMMethodRep;
 
-    RefCountedPtr<std::list<Pegasus::CIMConstParameter> > m_rc_meth_parameters;
-    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_meth_qualifiers;
+    boost::shared_ptr<CIMMethodRep> m_rep;
 };
 
 #endif // LMIWBEM_METHOD_H

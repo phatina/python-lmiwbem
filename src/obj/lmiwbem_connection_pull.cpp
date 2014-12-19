@@ -382,7 +382,7 @@ bp::object WBEMConnection::openEnumerateInstances(
     const bp::object &max_object_cnt) try
 {
     Pegasus::CIMName peg_class(StringConv::asPegasusString(cls, "ClassName"));
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         peg_ns = StringConv::asPegasusString(ns, "namespace");
 
@@ -417,7 +417,7 @@ bp::object WBEMConnection::openEnumerateInstances(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instances = m_client.openEnumerateInstances(
+    peg_instances = m_rep->m_client.openEnumerateInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -441,7 +441,7 @@ bp::object WBEMConnection::openEnumerateInstances(
     if (Config::isVerbose()) {
         ss << "OpenEnumerateInstances(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "classname=u" << StringConv::asString(cls) << ", "
@@ -463,7 +463,7 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     const bp::object &max_object_cnt) try
 {
     Pegasus::CIMName peg_class(StringConv::asPegasusString(cls, "ClassName"));
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         peg_ns = StringConv::asPegasusString(ns, "namespace");
 
@@ -491,7 +491,7 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instance_names = m_client.openEnumerateInstancePaths(
+    peg_instance_names = m_rep->m_client.openEnumerateInstancePaths(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -512,7 +512,7 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     if (Config::isVerbose()) {
         ss << "OpenEnumerateInstanceNames(";
         if (Config::isVerboseMore()) {
-            String c_ns(m_default_namespace);
+            String c_ns(m_rep->m_default_namespace);
             if (!isnone(ns))
                 c_ns = StringConv::asString(ns);
             ss << "classname=u" << StringConv::asString(cls) << ", "
@@ -543,7 +543,7 @@ bp::object WBEMConnection::openAssociators(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -599,7 +599,7 @@ bp::object WBEMConnection::openAssociators(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_associators = m_client.openAssociatorInstances(
+    peg_associators = m_rep->m_client.openAssociatorInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -650,7 +650,7 @@ bp::object WBEMConnection::openAssociatorNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -700,7 +700,7 @@ bp::object WBEMConnection::openAssociatorNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_associator_names = m_client.openAssociatorInstancePaths(
+    peg_associator_names = m_rep->m_client.openAssociatorInstancePaths(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -749,7 +749,7 @@ bp::object WBEMConnection::openReferences(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -793,7 +793,7 @@ bp::object WBEMConnection::openReferences(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_references = m_client.openReferenceInstances(
+    peg_references = m_rep->m_client.openReferenceInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -840,7 +840,7 @@ bp::object WBEMConnection::openReferenceNames(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = inst_name.asPegasusCIMObjectPath();
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!peg_path.getNameSpace().isNull())
         peg_ns = peg_path.getNameSpace().getString();
 
@@ -878,7 +878,7 @@ bp::object WBEMConnection::openReferenceNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_reference_names = m_client.openReferenceInstancePaths(
+    peg_reference_names = m_rep->m_client.openReferenceInstancePaths(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -922,7 +922,7 @@ bp::object WBEMConnection::openExecQuery(
         StringConv::asPegasusString(query, "Query"));
     Pegasus::CIMClass c_query_cls;
 
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    Pegasus::CIMNamespaceName peg_ns(m_rep->m_default_namespace);
     if (!isnone(ns))
         peg_ns = StringConv::asPegasusString(ns, "namespace");
 
@@ -943,7 +943,7 @@ bp::object WBEMConnection::openExecQuery(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instances = m_client.openQueryInstances(
+    peg_instances = m_rep->m_client.openQueryInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -960,7 +960,7 @@ bp::object WBEMConnection::openExecQuery(
         ListConv::asPyCIMInstanceList(
             peg_instances,
             peg_ns.getString(),
-            m_client.hostname()),
+            m_rep->m_client.hostname()),
         CIMEnumerationContext::create(
             ctx_ptr,
             false, /* with_paths */
@@ -993,12 +993,12 @@ bp::object WBEMConnection::pullInstances(
 
     ScopedTransactionBegin();
     if (ctx_.getIsWithPaths()) {
-        peg_instances = m_client.pullInstancesWithPath(
+        peg_instances = m_rep->m_client.pullInstancesWithPath(
             ctx_.getPegasusContext(),
             peg_end_of_sequence,
             peg_max_object_cnt);
     } else {
-        peg_instances = m_client.pullInstances(
+        peg_instances = m_rep->m_client.pullInstances(
             ctx_.getPegasusContext(),
             peg_end_of_sequence,
             peg_max_object_cnt);
@@ -1009,7 +1009,7 @@ bp::object WBEMConnection::pullInstances(
         ListConv::asPyCIMInstanceList(
             peg_instances,
             ctx_.getNamespace(),
-            m_client.hostname()),
+            m_rep->m_client.hostname()),
         ctx,
         bp::object(peg_end_of_sequence));
 } catch (...) {
@@ -1032,7 +1032,7 @@ bp::object WBEMConnection::pullInstanceNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instance_names = m_client.pullInstancePaths(
+    peg_instance_names = m_rep->m_client.pullInstancePaths(
         ctx_.getPegasusContext(),
         peg_end_of_sequence,
         peg_max_object_cnt);
@@ -1054,7 +1054,7 @@ void WBEMConnection::closeEnumeration(const bp::object &ctx) try
 {
     CIMEnumerationContext &ctx_ = CIMEnumerationContext::asNative(ctx, "Context");
     ScopedTransactionBegin();
-    m_client.closeEnumeration(ctx_.getPegasusContext());
+    m_rep->m_client.closeEnumeration(ctx_.getPegasusContext());
     ScopedTransactionEnd();
 } catch (...) {
     std::stringstream ss;

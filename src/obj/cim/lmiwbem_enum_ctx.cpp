@@ -23,10 +23,25 @@
 #include <boost/python/class.hpp>
 #include "obj/cim/lmiwbem_enum_ctx.h"
 
-CIMEnumerationContext::CIMEnumerationContext()
+class CIMEnumerationContext::CIMEnumerationContextRep
+{
+public:
+    CIMEnumerationContextRep();
+
+    boost::shared_ptr<Pegasus::CIMEnumerationContext> m_enum_ctx_ptr;
+    bool m_is_with_paths;
+    String m_namespace;
+};
+
+CIMEnumerationContext::CIMEnumerationContextRep::CIMEnumerationContextRep()
     : m_enum_ctx_ptr()
     , m_is_with_paths(true)
     , m_namespace()
+{
+}
+
+CIMEnumerationContext::CIMEnumerationContext()
+    : m_rep(new CIMEnumerationContextRep)
 {
 }
 
@@ -45,9 +60,9 @@ bp::object CIMEnumerationContext::create(
 {
     bp::object py_inst(CIMBase<CIMEnumerationContext>::create());
     CIMEnumerationContext &fake_this = CIMEnumerationContext::asNative(py_inst);
-    fake_this.m_enum_ctx_ptr.reset(ctx_ptr);
-    fake_this.m_is_with_paths = with_paths;
-    fake_this.m_namespace = ns;
+    fake_this.m_rep->m_enum_ctx_ptr.reset(ctx_ptr);
+    fake_this.m_rep->m_is_with_paths = with_paths;
+    fake_this.m_rep->m_namespace = ns;
     return py_inst;
 }
 
@@ -58,9 +73,9 @@ bp::object CIMEnumerationContext::create(
 {
     bp::object py_inst(CIMBase<CIMEnumerationContext>::create());
     CIMEnumerationContext &fake_this = CIMEnumerationContext::asNative(py_inst);
-    fake_this.m_enum_ctx_ptr = ctx_ptr;
-    fake_this.m_is_with_paths = with_paths;
-    fake_this.m_namespace = ns;
+    fake_this.m_rep->m_enum_ctx_ptr = ctx_ptr;
+    fake_this.m_rep->m_is_with_paths = with_paths;
+    fake_this.m_rep->m_namespace = ns;
     return py_inst;
 }
 
@@ -72,39 +87,39 @@ bp::object CIMEnumerationContext::repr()
 
 Pegasus::CIMEnumerationContext &CIMEnumerationContext::getPegasusContext()
 {
-    if (!m_enum_ctx_ptr) {
+    if (!m_rep->m_enum_ctx_ptr) {
         std::cout << "We don't have a context!\n";
 
         // Just in case, we don't dereference a NULL pointer.
-        m_enum_ctx_ptr.reset(new Pegasus::CIMEnumerationContext);
+        m_rep->m_enum_ctx_ptr.reset(new Pegasus::CIMEnumerationContext);
     }
 
-    return *m_enum_ctx_ptr;
+    return *m_rep->m_enum_ctx_ptr;
 }
 
 String CIMEnumerationContext::getNamespace() const
 {
-    return m_namespace;
+    return m_rep->m_namespace;
 }
 
 bool CIMEnumerationContext::getIsWithPaths() const
 {
-    return m_is_with_paths;
+    return m_rep->m_is_with_paths;
 }
 
 void CIMEnumerationContext::setNamespace(const String &ns)
 {
-    m_namespace = ns;
+    m_rep->m_namespace = ns;
 }
 
 void CIMEnumerationContext::setIsWithPaths(const bool is_with_paths)
 {
-    m_is_with_paths = is_with_paths;
+    m_rep->m_is_with_paths = is_with_paths;
 }
 
 void CIMEnumerationContext::clear()
 {
-    if (!m_enum_ctx_ptr)
+    if (!m_rep->m_enum_ctx_ptr)
         return;
-    m_enum_ctx_ptr->clear();
+    m_rep->m_enum_ctx_ptr->clear();
 }

@@ -22,6 +22,7 @@
 #ifndef   LMIWBEM_QUALIFIER_H
 #  define LMIWBEM_QUALIFIER_H
 
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMQualifier.h>
 #  include "lmiwbem.h"
@@ -98,14 +99,9 @@ public:
     void setPyIsTranslatable(const bp::object &is_translatable);
 
 private:
-    String m_name;
-    String m_type;
-    bp::object m_value;
-    bool m_is_propagated;
-    bool m_is_overridable;
-    bool m_is_tosubclass;
-    bool m_is_toinstance;
-    bool m_is_translatable;
+    class CIMQualifierRep;
+
+    boost::shared_ptr<CIMQualifierRep> m_rep;
 };
 
 #endif // LMIWBEM_QUALIFIER_H

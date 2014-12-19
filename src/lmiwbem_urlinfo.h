@@ -27,6 +27,7 @@ extern "C" {
 // least C++ 2011.
 #  include <stdint.h>
 }
+#  include <boost/shared_ptr.hpp>
 #  include <Pegasus/Common/CIMType.h>
 #  include "util/lmiwbem_string.h"
 
@@ -53,11 +54,9 @@ public:
     static const uint32_t DEF_HTTP_PORT  = 5988;
 
 private:
-    String m_url;
-    String m_hostname;
-    uint32_t m_port;
-    bool m_is_https;
-    bool m_is_local;
+    class URLInfoRep;
+
+    boost::shared_ptr<URLInfoRep> m_rep;
 };
 
 #endif // WBEM_CLIENT_ADDRESS_H

@@ -22,6 +22,7 @@
 #ifndef   LMIWBEM_INSTANCE_NAME_H
 #  define LMIWBEM_INSTANCE_NAME_H
 
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMObjectPath.h>
 #  include "obj/lmiwbem_cimbase.h"
@@ -102,10 +103,9 @@ public:
 private:
     static bp::object keybindingToValue(const Pegasus::CIMKeyBinding &keybinding);
 
-    String m_classname;
-    String m_namespace;
-    String m_hostname;
-    bp::object m_keybindings;
+    class CIMInstanceNameRep;
+
+    boost::shared_ptr<CIMInstanceNameRep> m_rep;
 };
 
 #endif // LMIWBEM_INSTANCE_NAME_H

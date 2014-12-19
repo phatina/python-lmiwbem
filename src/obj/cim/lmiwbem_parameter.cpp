@@ -24,13 +24,29 @@
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
 #include "lmiwbem_exception.h"
+#include "lmiwbem_refcountedptr.h"
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_parameter.h"
 #include "obj/cim/lmiwbem_qualifier.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
-CIMParameter::CIMParameter()
+class CIMParameter::CIMParameterRep
+{
+public:
+    CIMParameterRep();
+
+    String m_name;
+    String m_type;
+    String m_reference_class;
+    bool m_is_array;
+    int  m_array_size;
+    bp::object m_qualifiers;
+
+    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_param_qualifiers;
+};
+
+CIMParameter::CIMParameterRep::CIMParameterRep()
     : m_name()
     , m_type()
     , m_reference_class()
@@ -41,6 +57,11 @@ CIMParameter::CIMParameter()
 {
 }
 
+CIMParameter::CIMParameter()
+    : m_rep(new CIMParameterRep)
+{
+}
+
 CIMParameter::CIMParameter(
     const bp::object &name,
     const bp::object &type,
@@ -48,13 +69,14 @@ CIMParameter::CIMParameter(
     const bp::object &is_array,
     const bp::object &array_size,
     const bp::object &qualifiers)
+    : m_rep(new CIMParameterRep)
 {
-    m_name = StringConv::asString(name, "name");
-    m_type = StringConv::asString(type, "type");
-    m_reference_class = StringConv::asString(reference_class, "reference_class");
-    m_is_array = Conv::as<bool>(is_array, "is_array");
-    m_array_size = Conv::as<int>(array_size, "array_size");
-    m_qualifiers = Conv::get<NocaseDict, bp::dict>(
+    m_rep->m_name = StringConv::asString(name, "name");
+    m_rep->m_type = StringConv::asString(type, "type");
+    m_rep->m_reference_class = StringConv::asString(reference_class, "reference_class");
+    m_rep->m_is_array = Conv::as<bool>(is_array, "is_array");
+    m_rep->m_array_size = Conv::as<int>(array_size, "array_size");
+    m_rep->m_qualifiers = Conv::get<NocaseDict, bp::dict>(
         qualifiers, "qualifiers");
 }
 
@@ -145,17 +167,17 @@ bp::object CIMParameter::create(const Pegasus::CIMConstParameter &parameter)
 {
     bp::object py_inst = CIMBase<CIMParameter>::create();
     CIMParameter &fake_this = CIMParameter::asNative(py_inst);
-    fake_this.m_name = parameter.getName().getString();
-    fake_this.m_type = CIMTypeConv::asString(parameter.getType());
-    fake_this.m_reference_class = parameter.getReferenceClassName().getString();
-    fake_this.m_is_array = parameter.isArray();
-    fake_this.m_array_size = static_cast<int>(parameter.getArraySize());
+    fake_this.m_rep->m_name = parameter.getName().getString();
+    fake_this.m_rep->m_type = CIMTypeConv::asString(parameter.getType());
+    fake_this.m_rep->m_reference_class = parameter.getReferenceClassName().getString();
+    fake_this.m_rep->m_is_array = parameter.isArray();
+    fake_this.m_rep->m_array_size = static_cast<int>(parameter.getArraySize());
 
     // Store list of qualifiers for lazy evaluation
-    fake_this.m_rc_param_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
+    fake_this.m_rep->m_rc_param_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
     const Pegasus::Uint32 cnt = parameter.getQualifierCount();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        fake_this.m_rc_param_qualifiers.get()->push_back(parameter.getQualifier(i));
+        fake_this.m_rep->m_rc_param_qualifiers.get()->push_back(parameter.getQualifier(i));
 
     return py_inst;
 }
@@ -163,11 +185,11 @@ bp::object CIMParameter::create(const Pegasus::CIMConstParameter &parameter)
 Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
 {
     Pegasus::CIMParameter cim_parameter(
-        Pegasus::CIMName(m_name),
-        CIMTypeConv::asCIMType(m_type),
-        m_is_array,
-        static_cast<Pegasus::Uint32>(m_array_size),
-        Pegasus::CIMName(m_reference_class));
+        Pegasus::CIMName(m_rep->m_name),
+        CIMTypeConv::asCIMType(m_rep->m_type),
+        m_rep->m_is_array,
+        static_cast<Pegasus::Uint32>(m_rep->m_array_size),
+        Pegasus::CIMName(m_rep->m_reference_class));
 
     // Add all the qualifiers
     const NocaseDict &qualifiers = NocaseDict::asNative(getPyQualifiers());
@@ -179,7 +201,7 @@ Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
 
     return cim_parameter;
 } catch (const Pegasus::TypeMismatchException &e) {
-    String msg(m_name);
+    String msg(m_rep->m_name);
     msg += ": ";
     msg += e.getMessage();
     throw Pegasus::TypeMismatchException(msg);
@@ -195,13 +217,13 @@ int CIMParameter::cmp(const bp::object &other)
     CIMParameter &cim_other = CIMParameter::asNative(other);
 
     int rval;
-    if ((rval = m_name.compare(cim_other.m_name)) != 0 ||
-        (rval = m_type.compare(cim_other.m_type)) != 0 ||
-        (rval = m_reference_class.compare(cim_other.m_reference_class)) != 0 ||
-        (rval = compare(bp::object(m_is_array),
-            bp::object(cim_other.m_is_array))) != 0 ||
-        (rval = compare(bp::object(m_array_size),
-            bp::object(cim_other.m_array_size))) != 0 ||
+    if ((rval = m_rep->m_name.compare(cim_other.m_rep->m_name)) != 0 ||
+        (rval = m_rep->m_type.compare(cim_other.m_rep->m_type)) != 0 ||
+        (rval = m_rep->m_reference_class.compare(cim_other.m_rep->m_reference_class)) != 0 ||
+        (rval = compare(bp::object(m_rep->m_is_array),
+            bp::object(cim_other.m_rep->m_is_array))) != 0 ||
+        (rval = compare(bp::object(m_rep->m_array_size),
+            bp::object(cim_other.m_rep->m_array_size))) != 0 ||
         (rval = compare(getPyQualifiers(), cim_other.getPyQualifiers())) != 0)
     {
         return rval;
@@ -217,11 +239,11 @@ bool CIMParameter::eq(const bp::object &other)
 
     CIMParameter &cim_other = CIMParameter::asNative(other);
 
-    return m_name == cim_other.m_name &&
-        m_type == cim_other.m_type &&
-        m_reference_class == cim_other.m_reference_class &&
-        m_is_array == cim_other.m_is_array &&
-        m_array_size == cim_other.m_array_size &&
+    return m_rep->m_name == cim_other.m_rep->m_name &&
+        m_rep->m_type == cim_other.m_rep->m_type &&
+        m_rep->m_reference_class == cim_other.m_rep->m_reference_class &&
+        m_rep->m_is_array == cim_other.m_rep->m_is_array &&
+        m_rep->m_array_size == cim_other.m_rep->m_array_size &&
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_EQ);
 }
 
@@ -232,11 +254,11 @@ bool CIMParameter::gt(const bp::object &other)
 
     CIMParameter &cim_other = CIMParameter::asNative(other);
 
-    return m_name > cim_other.m_name ||
-        m_type > cim_other.m_type ||
-        m_reference_class > cim_other.m_reference_class ||
-        m_is_array > cim_other.m_is_array ||
-        m_array_size > cim_other.m_array_size ||
+    return m_rep->m_name > cim_other.m_rep->m_name ||
+        m_rep->m_type > cim_other.m_rep->m_type ||
+        m_rep->m_reference_class > cim_other.m_rep->m_reference_class ||
+        m_rep->m_is_array > cim_other.m_rep->m_is_array ||
+        m_rep->m_array_size > cim_other.m_rep->m_array_size ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_GT);
 }
 
@@ -247,11 +269,11 @@ bool CIMParameter::lt(const bp::object &other)
 
     CIMParameter &cim_other = CIMParameter::asNative(other);
 
-    return m_name < cim_other.m_name ||
-        m_type < cim_other.m_type ||
-        m_reference_class < cim_other.m_reference_class ||
-        m_is_array < cim_other.m_is_array ||
-        m_array_size < cim_other.m_array_size ||
+    return m_rep->m_name < cim_other.m_rep->m_name ||
+        m_rep->m_type < cim_other.m_rep->m_type ||
+        m_rep->m_reference_class < cim_other.m_rep->m_reference_class ||
+        m_rep->m_is_array < cim_other.m_rep->m_is_array ||
+        m_rep->m_array_size < cim_other.m_rep->m_array_size ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_LT);
 }
 
@@ -269,15 +291,15 @@ bool CIMParameter::le(const bp::object &other)
 bp::object CIMParameter::repr()
 {
     std::stringstream ss;
-    ss << "CIMParameter(name=u'" << m_name << "', type=u'" << m_type
-       << "', is_array=" << (m_is_array ? "True" : "False") << ')';
+    ss << "CIMParameter(name=u'" << m_rep->m_name << "', type=u'" << m_rep->m_type
+       << "', is_array=" << (m_rep->m_is_array ? "True" : "False") << ')';
     return StringConv::asPyUnicode(ss.str());
 }
 
 bp::object CIMParameter::tomof()
 {
     std::stringstream ss;
-    ss << m_type << ' ' << m_name;
+    ss << m_rep->m_type << ' ' << m_rep->m_name;
     return StringConv::asPyUnicode(ss.str());
 }
 
@@ -287,101 +309,101 @@ bp::object CIMParameter::copy()
     CIMParameter &cim_parameter = CIMParameter::asNative(py_inst);
     NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
 
-    cim_parameter.m_name = m_name;
-    cim_parameter.m_type = m_type;
-    cim_parameter.m_reference_class = m_reference_class;
-    cim_parameter.m_is_array = m_is_array;
-    cim_parameter.m_array_size = m_array_size;
-    cim_parameter.m_qualifiers = cim_qualifiers.copy();
+    cim_parameter.m_rep->m_name = m_rep->m_name;
+    cim_parameter.m_rep->m_type = m_rep->m_type;
+    cim_parameter.m_rep->m_reference_class = m_rep->m_reference_class;
+    cim_parameter.m_rep->m_is_array = m_rep->m_is_array;
+    cim_parameter.m_rep->m_array_size = m_rep->m_array_size;
+    cim_parameter.m_rep->m_qualifiers = cim_qualifiers.copy();
 
     return py_inst;
 }
 
 String CIMParameter::getName() const
 {
-    return m_name;
+    return m_rep->m_name;
 }
 
 String CIMParameter::getType() const
 {
-    return m_type;
+    return m_rep->m_type;
 }
 
 String CIMParameter::getReferenceClass() const
 {
-    return m_reference_class;
+    return m_rep->m_reference_class;
 }
 
 bool CIMParameter::getIsArray() const
 {
-    return m_is_array;
+    return m_rep->m_is_array;
 }
 
 int CIMParameter::getArraySize() const
 {
-    return m_array_size;
+    return m_rep->m_array_size;
 }
 
 bp::object CIMParameter::getPyName() const
 {
-    return StringConv::asPyUnicode(m_name);
+    return StringConv::asPyUnicode(m_rep->m_name);
 }
 
 bp::object CIMParameter::getPyType() const
 {
-    return StringConv::asPyUnicode(m_type);
+    return StringConv::asPyUnicode(m_rep->m_type);
 }
 
 bp::object CIMParameter::getPyReferenceClass() const
 {
-    return StringConv::asPyUnicode(m_reference_class);
+    return StringConv::asPyUnicode(m_rep->m_reference_class);
 }
 
 bp::object CIMParameter::getPyIsArray() const
 {
-    return bp::object(m_is_array);
+    return bp::object(m_rep->m_is_array);
 }
 
 bp::object CIMParameter::getPyArraySize() const
 {
-    return bp::object(m_array_size);
+    return bp::object(m_rep->m_array_size);
 }
 
 bp::object CIMParameter::getPyQualifiers()
 {
-    if (!m_rc_param_qualifiers.empty()) {
-        m_qualifiers = NocaseDict::create();
+    if (!m_rep->m_rc_param_qualifiers.empty()) {
+        m_rep->m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
-        for (it = m_rc_param_qualifiers.get()->begin();
-             it != m_rc_param_qualifiers.get()->end(); ++it)
+        for (it = m_rep->m_rc_param_qualifiers.get()->begin();
+             it != m_rep->m_rc_param_qualifiers.get()->end(); ++it)
         {
-            m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
+            m_rep->m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
         }
 
-        m_rc_param_qualifiers.release();
+        m_rep->m_rc_param_qualifiers.release();
     }
 
-    return m_qualifiers;
+    return m_rep->m_qualifiers;
 }
 
 void CIMParameter::setName(const String &name)
 {
-    m_name = name;
+    m_rep->m_name = name;
 }
 
 void CIMParameter::setType(const String &type)
 {
-    m_type = type;
+    m_rep->m_type = type;
 }
 
 void CIMParameter::setReferenceClass(const String &reference_class)
 {
-    m_reference_class = reference_class;
+    m_rep->m_reference_class = reference_class;
 }
 
 void CIMParameter::setIsArray(bool is_array)
 {
-    m_is_array = is_array;
+    m_rep->m_is_array = is_array;
 }
 
 void CIMParameter::setArraySize(int array_size)
@@ -389,38 +411,38 @@ void CIMParameter::setArraySize(int array_size)
     if (array_size < 0)
         throw_ValueError("array_size must be positive number or 0");
 
-    m_array_size = array_size;
+    m_rep->m_array_size = array_size;
 }
 
 void CIMParameter::setPyName(const bp::object &name)
 {
-    m_name = StringConv::asString(name, "name");
+    m_rep->m_name = StringConv::asString(name, "name");
 }
 
 void CIMParameter::setPyType(const bp::object &type)
 {
-    m_type = StringConv::asString(type, "type");
+    m_rep->m_type = StringConv::asString(type, "type");
 }
 
 void CIMParameter::setPyReferenceClass(const bp::object &reference_class)
 {
-    m_reference_class = StringConv::asString(reference_class, "reference_class");
+    m_rep->m_reference_class = StringConv::asString(reference_class, "reference_class");
 }
 
 void CIMParameter::setPyIsArray(const bp::object &is_array)
 {
-    m_is_array = Conv::as<bool>(is_array, "is_array");
+    m_rep->m_is_array = Conv::as<bool>(is_array, "is_array");
 }
 
 void CIMParameter::setPyArraySize(const bp::object &array_size)
 {
-    m_array_size = Conv::as<int>(array_size, "array_size");
+    m_rep->m_array_size = Conv::as<int>(array_size, "array_size");
 }
 
 void CIMParameter::setPyQualifiers(const bp::object &qualifiers)
 {
-    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_rep->m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_param_qualifiers.release();
+    m_rep->m_rc_param_qualifiers.release();
 }

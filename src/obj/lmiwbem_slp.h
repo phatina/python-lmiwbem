@@ -23,6 +23,7 @@
 #  define LMIWBEM_SLP_H
 
 #  include <slp.h>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
@@ -45,8 +46,9 @@ public:
     operator SLPHandle() const;
 
 private:
-    SLPHandle m_handle;
-    SLPError m_error;
+    class ScopedSLPHandleRep;
+
+    boost::shared_ptr<ScopedSLPHandleRep> m_rep;
 };
 
 class SLP
@@ -120,11 +122,9 @@ public:
     void setPyPort(const bp::object &port);
 
 private:
-    String m_srvtype;
-    String m_host;
-    String m_family;
-    String m_srvpart;
-    int m_port;
+    class SLPResultRep;
+
+    boost::shared_ptr<SLPResultRep> m_rep;
 };
 
 #endif // LMIWBEM_SLP_H

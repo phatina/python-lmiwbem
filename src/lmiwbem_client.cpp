@@ -28,23 +28,40 @@
 
 #include <cctype>
 
+class CIMClient::CIMClientRep
+{
+public:
+    CIMClientRep();
+
+    URLInfo m_url_info;
+    Mutex m_mutex;
+    bool m_is_connected;
+    bool m_verify_cert;
+};
+
+CIMClient::CIMClientRep::CIMClientRep()
+    : m_url_info()
+    , m_mutex()
+    , m_is_connected(false)
+    , m_verify_cert(true)
+{
+}
+
 CIMClient::ScopedCIMClientTransaction::ScopedCIMClientTransaction(
     CIMClient &client)
     : m_client(client)
 {
-    m_client.m_mutex.lock();
+    m_client.m_rep->m_mutex.lock();
 }
 
 CIMClient::ScopedCIMClientTransaction::~ScopedCIMClientTransaction()
 {
-    m_client.m_mutex.unlock();
+    m_client.m_rep->m_mutex.unlock();
 }
 
 CIMClient::CIMClient()
     : Pegasus::CIMClient()
-    , m_url_info()
-    , m_is_connected(false)
-    , m_verify_cert(true)
+    , m_rep(new CIMClientRep)
 {
 }
 
@@ -56,16 +73,16 @@ void CIMClient::connect(
     const String &key_file,
     const String &trust_store)
 {
-    if (!m_url_info.set(uri)) {
+    if (!m_rep->m_url_info.set(uri)) {
         throw_ConnectionError(
             "Invalid locator",
             CIMConstants::CON_ERR_INVALID_LOCATOR);
     }
 
-    if (!m_url_info.isHttps()) {
+    if (!m_rep->m_url_info.isHttps()) {
         Pegasus::CIMClient::connect(
-            m_url_info.hostname(),
-            m_url_info.port(),
+            m_rep->m_url_info.hostname(),
+            m_rep->m_url_info.port(),
             username,
             password);
     } else {
@@ -73,58 +90,58 @@ void CIMClient::connect(
             trust_store,
             cert_file,
             key_file,
-            m_verify_cert ? verifyCertificate : NULL,
+            m_rep->m_verify_cert ? verifyCertificate : NULL,
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
             this,
 #endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
             String()
         );
         Pegasus::CIMClient::connect(
-            m_url_info.hostname(),
-            m_url_info.port(),
+            m_rep->m_url_info.hostname(),
+            m_rep->m_url_info.port(),
             ctx,
             username,
             password);
     }
-    m_is_connected = true;
+    m_rep->m_is_connected = true;
 }
 
 void CIMClient::connectLocally()
 {
     Pegasus::CIMClient::connectLocal();
-    m_is_connected = true;
-    m_url_info.set("localhost");
+    m_rep->m_is_connected = true;
+    m_rep->m_url_info.set("localhost");
 }
 
 void CIMClient::disconnect()
 {
     Pegasus::CIMClient::disconnect();
-    m_is_connected = false;
+    m_rep->m_is_connected = false;
 }
 
 bool CIMClient::isConnected() const
 {
-    return m_is_connected;
+    return m_rep->m_is_connected;
 }
 
 void CIMClient::setVerifyCertificate(bool verify)
 {
-    m_verify_cert = verify;
+    m_rep->m_verify_cert = verify;
 }
 
 bool CIMClient::getVerifyCertificate() const
 {
-    return m_verify_cert;
+    return m_rep->m_verify_cert;
 }
 
 URLInfo CIMClient::getURLInfo() const
 {
-    return m_url_info;
+    return m_rep->m_url_info;
 }
 
 String CIMClient::hostname() const
 {
-    return m_url_info.hostname();
+    return m_rep->m_url_info.hostname();
 }
 
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
@@ -164,7 +181,7 @@ Pegasus::Boolean CIMClient::verifyCertificate(Pegasus::SSLCertificateInfo &ci, v
     }
 
     CIMClient *fake_this = reinterpret_cast<CIMClient*>(data);
-    Pegasus::String hostname(fake_this->m_url_info.hostname());
+    Pegasus::String hostname(fake_this->m_rep->m_url_info.hostname());
 
     // Verify against DNS names
     Pegasus::Array<Pegasus::String> dnsNames = ci.getSubjectAltNames().getDnsNames();

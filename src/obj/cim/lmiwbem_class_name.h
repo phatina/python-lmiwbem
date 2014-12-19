@@ -22,6 +22,7 @@
 #ifndef   LMIWBEM_CLASS_NAME_H
 #  define LMIWBEM_CLASS_NAME_H
 
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
@@ -72,9 +73,9 @@ public:
     void setPyHostname(const bp::object &hostname);
 
 private:
-    String m_classname;
-    String m_namespace;
-    String m_hostname;
+    class CIMClassNameRep;
+
+    boost::shared_ptr<CIMClassNameRep> m_rep;
 };
 
 #endif // LMIWBEM_CLASS_NAME_H

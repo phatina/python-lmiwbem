@@ -19,42 +19,20 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef   LMIWBEM_MUTEX_H
-#  define LMIWBEM_MUTEX_H
+#include "lmiwbem_client.h"
+#include "lmiwbem_config.h"
+#include "obj/lmiwbem_connection_rep.h"
+#include "util/lmiwbem_string.h"
 
-extern "C" {
-#  include <pthread.h>
+WBEMConnectionRep::WBEMConnectionRep()
+    : m_connected_tmp(false)
+    , m_connect_locally(false)
+    , m_url()
+    , m_username()
+    , m_password()
+    , m_cert_file()
+    , m_key_file()
+    , m_default_namespace(Config::defaultNamespace())
+    , m_client()
+{
 }
-#  include <boost/shared_ptr.hpp>
-
-class Mutex
-{
-public:
-    Mutex();
-    ~Mutex();
-
-    bool lock();
-    bool unlock();
-    bool isLocked() const;
-
-private:
-    class MutexRep;
-
-    boost::shared_ptr<MutexRep> m_rep;
-};
-
-class ScopedMutex
-{
-public:
-    ScopedMutex(Mutex &m);
-    ~ScopedMutex();
-
-    bool lock();
-    bool unlock();
-    bool isLocked() const;
-
-private:
-    Mutex &m_mutex;
-};
-
-#endif // LMIWBEM_MUTEX_H

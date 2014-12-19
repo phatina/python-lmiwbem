@@ -22,6 +22,7 @@
 #ifndef   LMIWBEM_CLIENT_H
 #  define LMIWBEM_CLIENT_H
 
+#  include <boost/shared_ptr.hpp>
 #  include <Pegasus/Client/CIMClient.h>
 #  include <Pegasus/Common/CIMType.h>
 #  include <Pegasus/Common/SSLContext.h>
@@ -71,6 +72,8 @@ public:
     String hostname() const;
 
 private:
+    class CIMClientRep;
+
     // We hide these from Pegasus::CIMClient
     using Pegasus::CIMClient::connect;
     using Pegasus::CIMClient::connectLocal;
@@ -83,10 +86,7 @@ private:
     static Pegasus::Boolean verifyCertificate(Pegasus::SSLCertificateInfo &ci);
 #  endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
 
-    URLInfo m_url_info;
-    Mutex m_mutex;
-    bool m_is_connected;
-    bool m_verify_cert;
+    boost::shared_ptr<CIMClientRep> m_rep;
 };
 
 #endif // LMIWBEM_CLIENT_H

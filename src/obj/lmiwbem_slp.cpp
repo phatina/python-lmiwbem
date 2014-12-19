@@ -34,36 +34,73 @@
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
+class ScopedSLPHandle::ScopedSLPHandleRep
+{
+public:
+    ScopedSLPHandleRep();
+
+    SLPHandle m_handle;
+    SLPError m_error;
+};
+
+class SLPResult::SLPResultRep
+{
+public:
+    SLPResultRep();
+
+    String m_srvtype;
+    String m_host;
+    String m_family;
+    String m_srvpart;
+    int m_port;
+};
+
+ScopedSLPHandle::ScopedSLPHandleRep::ScopedSLPHandleRep()
+    : m_handle(NULL)
+    , m_error(SLP_OK)
+{
+}
+
+SLPResult::SLPResultRep::SLPResultRep()
+    : m_srvtype()
+    , m_host()
+    , m_family()
+    , m_srvpart()
+    , m_port(0)
+{
+}
+
 ScopedSLPHandle::ScopedSLPHandle(
     const bool is_async,
     const String pc_lang)
+    : m_rep(new ScopedSLPHandleRep)
 {
-    m_error = SLPOpen(
+    m_rep->m_error = SLPOpen(
         pc_lang.c_str(),
         is_async ? SLP_TRUE : SLP_FALSE,
-        &m_handle);
+        &m_rep->m_handle);
 }
 
 ScopedSLPHandle::~ScopedSLPHandle()
 {
     if (!good())
         return;
-    SLPClose(m_handle);
+    SLPClose(m_rep->m_handle);
 }
 
 SLPHandle ScopedSLPHandle::handle()
 {
-    return m_handle;
+    return m_rep->m_handle;
 }
 
 SLPError ScopedSLPHandle::error() const
 {
-    return m_error;
+    return m_rep->m_error;
 }
 
 bool ScopedSLPHandle::good() const
 {
-    return m_error == SLP_OK;
+    return m_rep->m_error == SLP_OK;
 }
 
 bool ScopedSLPHandle::operator!() const
@@ -73,7 +110,7 @@ bool ScopedSLPHandle::operator!() const
 
 ScopedSLPHandle::operator SLPHandle() const
 {
-    return m_handle;
+    return m_rep->m_handle;
 }
 
 void SLP::init_type()
@@ -224,11 +261,7 @@ bp::object SLP::discoverAttrs(
 }
 
 SLPResult::SLPResult()
-    : m_srvtype()
-    , m_host()
-    , m_family()
-    , m_srvpart()
-    , m_port(0)
+    : m_rep(new SLPResultRep)
 {
 }
 
@@ -238,12 +271,13 @@ SLPResult::SLPResult(
     const bp::object &port,
     const bp::object &family,
     const bp::object &srvpart)
+    : m_rep(new SLPResultRep)
 {
-    m_srvtype = StringConv::asString(srvtype, "srvtype");
-    m_host = StringConv::asString(host, "host");
-    m_port = Conv::as<int>(port, "port");
-    m_family = StringConv::asString(family, "family");
-    m_srvpart = StringConv::asString(srvpart, "srvpart");
+    m_rep->m_srvtype = StringConv::asString(srvtype, "srvtype");
+    m_rep->m_host = StringConv::asString(host, "host");
+    m_rep->m_port = Conv::as<int>(port, "port");
+    m_rep->m_family = StringConv::asString(family, "family");
+    m_rep->m_srvpart = StringConv::asString(srvpart, "srvpart");
 }
 
 void SLPResult::init_type()
@@ -300,11 +334,11 @@ bp::object SLPResult::create(const SLPSrvURL *url)
     bp::object py_inst = CIMBase<SLPResult>::create();
     SLPResult &fake_this = SLPResult::asNative(py_inst);
 
-    fake_this.m_srvtype = String(url->s_pcSrvType);
-    fake_this.m_host = String(url->s_pcHost);
-    fake_this.m_port = url->s_iPort;
-    fake_this.m_family = String(url->s_pcNetFamily);
-    fake_this.m_srvpart = String(url->s_pcSrvPart);
+    fake_this.m_rep->m_srvtype = String(url->s_pcSrvType);
+    fake_this.m_rep->m_host = String(url->s_pcHost);
+    fake_this.m_rep->m_port = url->s_iPort;
+    fake_this.m_rep->m_family = String(url->s_pcNetFamily);
+    fake_this.m_rep->m_srvpart = String(url->s_pcSrvPart);
 
     return py_inst;
 }
@@ -312,108 +346,108 @@ bp::object SLPResult::create(const SLPSrvURL *url)
 String SLPResult::repr()
 {
     std::stringstream ss;
-    ss << "SLPResult(srvtype=u'" << m_srvtype
-       << "', host=u'" << m_host << "', port='"
-       << m_port << "', ...)";
+    ss << "SLPResult(srvtype=u'" << m_rep->m_srvtype
+       << "', host=u'" << m_rep->m_host << "', port='"
+       << m_rep->m_port << "', ...)";
     return ss.str();
 }
 
 String SLPResult::getSrvType() const
 {
-    return m_srvtype;
+    return m_rep->m_srvtype;
 }
 
 String SLPResult::getHost() const
 {
-    return m_host;
+    return m_rep->m_host;
 }
 
 String SLPResult::getFamily() const
 {
-    return m_family;
+    return m_rep->m_family;
 }
 
 String SLPResult::getSrvPart() const
 {
-    return m_srvpart;
+    return m_rep->m_srvpart;
 }
 
 int SLPResult::getPort() const
 {
-    return m_port;
+    return m_rep->m_port;
 }
 
 bp::object SLPResult::getPySrvType() const
 {
-    return StringConv::asPyUnicode(m_srvtype);
+    return StringConv::asPyUnicode(m_rep->m_srvtype);
 }
 
 bp::object SLPResult::getPyHost() const
 {
-    return StringConv::asPyUnicode(m_host);
+    return StringConv::asPyUnicode(m_rep->m_host);
 }
 
 bp::object SLPResult::getPyFamily() const
 {
-    return StringConv::asPyUnicode(m_family);
+    return StringConv::asPyUnicode(m_rep->m_family);
 }
 
 bp::object SLPResult::getPySrvPart() const
 {
-    return StringConv::asPyUnicode(m_srvpart);
+    return StringConv::asPyUnicode(m_rep->m_srvpart);
 }
 
 bp::object SLPResult::getPyPort() const
 {
-    return bp::object(m_port);
+    return bp::object(m_rep->m_port);
 }
 
 void SLPResult::setSrvType(const String &srvtype)
 {
-    m_srvtype = srvtype;
+    m_rep->m_srvtype = srvtype;
 }
 
 void SLPResult::setHost(const String &host)
 {
-    m_host = host;
+    m_rep->m_host = host;
 }
 
 void SLPResult::setFamily(const String &family)
 {
-    m_family = family;
+    m_rep->m_family = family;
 }
 
 void SLPResult::setSrvPart(const String &srvpart)
 {
-    m_srvpart = srvpart;
+    m_rep->m_srvpart = srvpart;
 }
 
 void SLPResult::setPort(int port)
 {
-    m_port = port;
+    m_rep->m_port = port;
 }
 
 void SLPResult::setPySrvType(const bp::object &srvtype)
 {
-    m_srvtype = StringConv::asString(srvtype, "srvtype");
+    m_rep->m_srvtype = StringConv::asString(srvtype, "srvtype");
 }
 
 void SLPResult::setPyHost(const bp::object &host)
 {
-    m_host = StringConv::asString(host, "host");
+    m_rep->m_host = StringConv::asString(host, "host");
 }
 
 void SLPResult::setPyFamily(const bp::object &family)
 {
-    m_family = StringConv::asString(family, "family");
+    m_rep->m_family = StringConv::asString(family, "family");
 }
 
 void SLPResult::setPySrvPart(const bp::object &srvpart)
 {
-    m_srvpart = StringConv::asString(srvpart, "srvpart");
+    m_rep->m_srvpart = StringConv::asString(srvpart, "srvpart");
 }
 
 void SLPResult::setPyPort(const bp::object &port)
 {
-    m_port = Conv::as<int>(port, "port");
+    m_rep->m_port = Conv::as<int>(port, "port");
 }

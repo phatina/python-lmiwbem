@@ -9,6 +9,7 @@ lmiwbem_core_la_SOURCES      =            \
 	lmiwbem_gil.h                     \
 	obj/lmiwbem_cimbase.h             \
 	obj/lmiwbem_connection.h          \
+	obj/lmiwbem_connection_rep.h      \
 	obj/lmiwbem_nocasedict.h          \
 	obj/cim/lmiwbem_property.h        \
 	obj/cim/lmiwbem_method.h          \
@@ -31,6 +32,7 @@ lmiwbem_core_la_SOURCES      =            \
 	lmiwbem.h                         \
 	lmiwbem_exception.cpp             \
 	obj/lmiwbem_connection.cpp        \
+	obj/lmiwbem_connection_rep.cpp    \
 	obj/lmiwbem_nocasedict.cpp        \
 	obj/cim/lmiwbem_class.cpp         \
 	obj/cim/lmiwbem_instance.cpp      \

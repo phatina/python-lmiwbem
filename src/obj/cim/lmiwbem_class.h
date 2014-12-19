@@ -23,9 +23,9 @@
 #  define LMIWBEM_CLASS_H
 
 #  include <list>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMClass.h>
-#  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 
@@ -79,15 +79,9 @@ public:
     void setPyMethods(const bp::object &methods);
 
 private:
-    String m_classname;
-    String m_super_classname;
-    bp::object m_properties;
-    bp::object m_qualifiers;
-    bp::object m_methods;
+    class CIMClassRep;
 
-    RefCountedPtr<std::list<Pegasus::CIMConstProperty> >  m_rc_class_properties;
-    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_class_qualifiers;
-    RefCountedPtr<std::list<Pegasus::CIMConstMethod> > m_rc_class_methods;
+    boost::shared_ptr<CIMClassRep> m_rep;
 };
 
 #endif // LMIWBEM_CLASS_H

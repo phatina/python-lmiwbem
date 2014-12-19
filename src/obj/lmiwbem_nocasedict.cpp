@@ -31,6 +31,34 @@
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
+class NocaseDict::NocaseDictRep
+{
+public:
+    NocaseDictRep();
+
+    nocase_map_t m_dict;
+};
+
+class NocaseDictIterator::NocaseDictIteratorRep
+{
+public:
+    NocaseDictIteratorRep();
+
+    nocase_map_t m_dict;
+    nocase_map_t::const_iterator m_iter;
+};
+
+NocaseDict::NocaseDictRep::NocaseDictRep()
+    : m_dict()
+{
+}
+
+NocaseDictIterator::NocaseDictIteratorRep::NocaseDictIteratorRep()
+    : m_dict()
+    , m_iter()
+{
+}
+
 bool NocaseDictComparator::operator ()(const String &a, const String &b) const
 {
     String low_a(a);
@@ -41,12 +69,12 @@ bool NocaseDictComparator::operator ()(const String &a, const String &b) const
 }
 
 NocaseDict::NocaseDict()
-    : m_dict()
+    : m_rep(new NocaseDictRep)
 {
 }
 
 NocaseDict::NocaseDict(const bp::object &d)
-    : m_dict()
+    : m_rep(new NocaseDictRep)
 {
     update(d);
 }
@@ -105,52 +133,52 @@ bp::object NocaseDict::create(const bp::object &d)
 
 nocase_map_t::iterator NocaseDict::begin()
 {
-    return m_dict.begin();
+    return m_rep->m_dict.begin();
 }
 
 nocase_map_t::iterator NocaseDict::end()
 {
-    return m_dict.end();
+    return m_rep->m_dict.end();
 }
 
 nocase_map_t::const_iterator NocaseDict::begin() const
 {
-    return m_dict.begin();
+    return m_rep->m_dict.begin();
 }
 
 nocase_map_t::const_iterator NocaseDict::end() const
 {
-    return m_dict.end();
+    return m_rep->m_dict.end();
 }
 
 bool NocaseDict::empty()
 {
-    return m_dict.empty();
+    return m_rep->m_dict.empty();
 }
 
 void NocaseDict::delitem(const bp::object &key)
 {
     String c_key = StringConv::asString(key, "key");
 
-    nocase_map_t::iterator found = m_dict.find(c_key);
-    if (found == m_dict.end())
+    nocase_map_t::iterator found = m_rep->m_dict.find(c_key);
+    if (found == m_rep->m_dict.end())
         throw_KeyError("Key not found");
 
-    m_dict.erase(found);
+    m_rep->m_dict.erase(found);
 }
 
 void NocaseDict::setitem(const bp::object &key, const bp::object &value)
 {
     String c_key = StringConv::asString(key, "key");
-    m_dict[c_key] = value;
+    m_rep->m_dict[c_key] = value;
 }
 
 bp::object NocaseDict::getitem(const bp::object &key)
 {
     String c_key = StringConv::asString(key, "key");
 
-    nocase_map_t::const_iterator found = m_dict.find(c_key);
-    if (found == m_dict.end())
+    nocase_map_t::const_iterator found = m_rep->m_dict.find(c_key);
+    if (found == m_rep->m_dict.end())
         throw_KeyError("Key not found");
 
     return found->second;
@@ -161,13 +189,13 @@ String NocaseDict::repr()
     std::stringstream ss;
     ss << "NocaseDict({";
     nocase_map_t::const_iterator it;
-    for (it = m_dict.begin(); it != m_dict.end(); ++it) {
+    for (it = m_rep->m_dict.begin(); it != m_rep->m_dict.end(); ++it) {
         String c_value = ObjectConv::asString(it->second);
         ss << "u'" << it->first << "': ";
         if (isunicode(it->second))
             ss << 'u';
         ss << '\'' << c_value << '\'';
-        if (it != --m_dict.end())
+        if (it != --m_rep->m_dict.end())
             ss << ", ";
     }
     ss << "})";
@@ -179,7 +207,7 @@ bp::list NocaseDict::keys()
 {
     bp::list py_keys;
     nocase_map_t::const_iterator it;
-    for (it = m_dict.begin(); it != m_dict.end(); ++it)
+    for (it = m_rep->m_dict.begin(); it != m_rep->m_dict.end(); ++it)
         py_keys.append(StringConv::asPyUnicode(it->first));
     return py_keys;
 }
@@ -188,7 +216,7 @@ bp::list NocaseDict::values()
 {
     bp::list py_values;
     nocase_map_t::const_iterator it;
-    for (it = m_dict.begin(); it != m_dict.end(); ++it)
+    for (it = m_rep->m_dict.begin(); it != m_rep->m_dict.end(); ++it)
         py_values.append(it->second);
     return py_values;
 }
@@ -197,7 +225,7 @@ bp::list NocaseDict::items()
 {
     bp::list py_items;
     nocase_map_t::const_iterator it;
-    for (it = m_dict.begin(); it != m_dict.end(); ++it) {
+    for (it = m_rep->m_dict.begin(); it != m_rep->m_dict.end(); ++it) {
         py_items.append(
             bp::make_tuple(
                 StringConv::asPyUnicode(it->first),
@@ -209,28 +237,28 @@ bp::list NocaseDict::items()
 
 bp::object NocaseDict::iterkeys()
 {
-    return NocaseDictKeyIterator::create(m_dict);
+    return NocaseDictKeyIterator::create(m_rep->m_dict);
 }
 
 bp::object NocaseDict::itervalues()
 {
-    return NocaseDictValueIterator::create(m_dict);
+    return NocaseDictValueIterator::create(m_rep->m_dict);
 }
 
 bp::object NocaseDict::iteritems()
 {
-    return NocaseDictItemIterator::create(m_dict);
+    return NocaseDictItemIterator::create(m_rep->m_dict);
 }
 
 bp::object NocaseDict::haskey(const bp::object &key) const
 {
     String c_key = StringConv::asString(key, "key");
-    return bp::object(m_dict.find(c_key) != m_dict.end());
+    return bp::object(m_rep->m_dict.find(c_key) != m_rep->m_dict.end());
 }
 
 bp::object NocaseDict::len() const
 {
-    return bp::object(m_dict.size());
+    return bp::object(m_rep->m_dict.size());
 }
 
 void NocaseDict::update(const bp::object &d)
@@ -239,11 +267,11 @@ void NocaseDict::update(const bp::object &d)
         NocaseDict &cim_nocasedict = NocaseDict::asNative(d);
         // Update from NocaseDict
         nocase_map_t::iterator it;
-        for (it = cim_nocasedict.m_dict.begin();
-            it != cim_nocasedict.m_dict.end(); ++it)
+        for (it = cim_nocasedict.m_rep->m_dict.begin();
+            it != cim_nocasedict.m_rep->m_dict.end(); ++it)
         {
             std::pair<nocase_map_t::iterator, bool> ret;
-            ret = m_dict.insert(std::make_pair(it->first, it->second));
+            ret = m_rep->m_dict.insert(std::make_pair(it->first, it->second));
             if (!ret.second) {
                 // Update existing key
                 ret.first->second = it->second;
@@ -257,7 +285,7 @@ void NocaseDict::update(const bp::object &d)
         for (int i = 0; i < len; ++i) {
             bp::object py_key(py_keys[i]);
             String c_key = StringConv::asString(py_key, "key");
-            m_dict[c_key] = py_dict[py_key];
+            m_rep->m_dict[c_key] = py_dict[py_key];
         }
     } else {
         throw_TypeError("NocaseDict can be updated from NocaseDict or dict");
@@ -266,15 +294,15 @@ void NocaseDict::update(const bp::object &d)
 
 void NocaseDict::clear()
 {
-    m_dict.clear();
+    m_rep->m_dict.clear();
 }
 
 bp::object NocaseDict::get(const bp::object &key, const bp::object &def)
 {
     String c_key = StringConv::asString(key, "key");
 
-    nocase_map_t::const_iterator found = m_dict.find(c_key);
-    if (found == m_dict.end())
+    nocase_map_t::const_iterator found = m_rep->m_dict.find(c_key);
+    if (found == m_rep->m_dict.end())
         return def;
 
     return found->second;
@@ -284,12 +312,12 @@ bp::object NocaseDict::pop(const bp::object &key, const bp::object &def)
 {
     String c_key = StringConv::asString(key, "key");
 
-    nocase_map_t::iterator found = m_dict.find(c_key);
-    if (found == m_dict.end())
+    nocase_map_t::iterator found = m_rep->m_dict.find(c_key);
+    if (found == m_rep->m_dict.end())
             return def;
 
     bp::object py_rval = found->second;
-    m_dict.erase(found);
+    m_rep->m_dict.erase(found);
 
     return py_rval;
 }
@@ -298,7 +326,7 @@ bp::object NocaseDict::copy()
 {
     bp::object py_inst = CIMBase<NocaseDict>::create();
     NocaseDict &fake_this = NocaseDict::asNative(py_inst);
-    fake_this.m_dict = nocase_map_t(m_dict);
+    fake_this.m_rep->m_dict = nocase_map_t(m_rep->m_dict);
     return py_inst;
 }
 
@@ -308,9 +336,9 @@ int NocaseDict::cmp(const bp::object &other)
     if (!isinstance(other, type()))
         return -1;
 
-    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_dict;
+    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_rep->m_dict;
     nocase_map_t::const_iterator it;
-    for (it = m_dict.begin(); it != m_dict.end(); ++it) {
+    for (it = m_rep->m_dict.begin(); it != m_rep->m_dict.end(); ++it) {
         const nocase_map_t::const_iterator found = c_other_dict.find(it->first);
         if (found == c_other_dict.end())
             return -1;
@@ -321,7 +349,7 @@ int NocaseDict::cmp(const bp::object &other)
             return 1;
     }
 
-    return m_dict.size() - c_other_dict.size();
+    return m_rep->m_dict.size() - c_other_dict.size();
 }
 #  else
 bool NocaseDict::eq(const bp::object &other)
@@ -329,9 +357,13 @@ bool NocaseDict::eq(const bp::object &other)
     if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_dict;
-    return m_dict.size() == c_other_dict.size() &&
-        std::equal(m_dict.begin(), m_dict.end(), c_other_dict.begin());
+    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_rep->m_dict;
+
+    return m_rep->m_dict.size() == c_other_dict.size() &&
+        std::equal(
+            m_rep->m_dict.begin(),
+            m_rep->m_dict.end(),
+            c_other_dict.begin());
 }
 
 bool NocaseDict::gt(const bp::object &other)
@@ -339,8 +371,8 @@ bool NocaseDict::gt(const bp::object &other)
     if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_dict;
-    return m_dict > c_other_dict;
+    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_rep->m_dict;
+    return m_rep->m_dict > c_other_dict;
 }
 
 bool NocaseDict::lt(const bp::object &other)
@@ -348,8 +380,8 @@ bool NocaseDict::lt(const bp::object &other)
     if (!isinstance(other, type()))
         return false;
 
-    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_dict;
-    return m_dict < c_other_dict;
+    const nocase_map_t &c_other_dict = NocaseDict::asNative(other).m_rep->m_dict;
+    return m_rep->m_dict < c_other_dict;
 }
 
 bool NocaseDict::ge(const bp::object &other)
@@ -377,17 +409,17 @@ bp::object NocaseDictKeyIterator::create(const nocase_map_t &dict)
 
 bp::object NocaseDictKeyIterator::iter()
 {
-    return create(m_dict);
+    return create(m_rep->m_dict);
 }
 
 bp::object NocaseDictKeyIterator::next()
 {
-    if (m_iter == m_dict.end())
+    if (m_rep->m_iter == m_rep->m_dict.end())
         throw_StopIteration("Stop iteration");
 
-    bp::object py_key(StringConv::asPyUnicode(m_iter->first));
+    bp::object py_key(StringConv::asPyUnicode(m_rep->m_iter->first));
 
-    ++m_iter;
+    ++m_rep->m_iter;
 
     return py_key;
 }
@@ -406,17 +438,17 @@ bp::object NocaseDictValueIterator::create(const nocase_map_t &dict)
 
 bp::object NocaseDictValueIterator::iter()
 {
-    return create(m_dict);
+    return create(m_rep->m_dict);
 }
 
 bp::object NocaseDictValueIterator::next()
 {
-    if (m_iter == m_dict.end())
+    if (m_rep->m_iter == m_rep->m_dict.end())
         throw_StopIteration("Stop iteration");
 
-    bp::object py_value(m_iter->second);
+    bp::object py_value(m_rep->m_iter->second);
 
-    ++m_iter;
+    ++m_rep->m_iter;
 
     return py_value;
 }
@@ -435,19 +467,19 @@ bp::object NocaseDictItemIterator::create(const nocase_map_t &dict)
 
 bp::object NocaseDictItemIterator::iter()
 {
-    return create(m_dict);
+    return create(m_rep->m_dict);
 }
 
 bp::object NocaseDictItemIterator::next()
 {
-    if (m_iter == m_dict.end())
+    if (m_rep->m_iter == m_rep->m_dict.end())
         throw_StopIteration("Stop iteration");
 
     bp::object py_pair = bp::make_tuple(
-        bp::str(m_iter->first),
-        m_iter->second);
+        bp::str(m_rep->m_iter->first),
+        m_rep->m_iter->second);
 
-    ++m_iter;
+    ++m_rep->m_iter;
 
     return py_pair;
 }

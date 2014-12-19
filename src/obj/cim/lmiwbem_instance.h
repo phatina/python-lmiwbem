@@ -23,10 +23,10 @@
 #  define LMIWBEM_INSTANCE_H
 
 #  include <list>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMInstance.h>
 #  include "lmiwbem.h"
-#  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 
@@ -102,19 +102,13 @@ public:
     static bool isUninitialized(const Pegasus::CIMInstance &instance);
 
 private:
+    class CIMInstanceRep;
+
     void evalProperties();
 
     static String tomofContent(const bp::object &value);
 
-    String m_classname;
-    bp::object m_path;
-    bp::object m_properties;
-    bp::object m_qualifiers;
-    bp::object m_property_list;
-
-    RefCountedPtr<Pegasus::CIMObjectPath> m_rc_inst_path;
-    RefCountedPtr<std::list<Pegasus::CIMConstProperty> > m_rc_inst_properties;
-    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_inst_qualifiers;
+    boost::shared_ptr<CIMInstanceRep> m_rep;
 };
 
 #endif // LMIWBEM_INSTANCE_H

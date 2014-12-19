@@ -23,9 +23,9 @@
 #  define LMIWBEM_PARAMETER_H
 
 #  include <list>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
 #  include <Pegasus/Common/CIMParameter.h>
-#  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 
@@ -89,14 +89,9 @@ public:
     void setPyQualifiers(const bp::object &qualifiers);
 
 private:
-    String m_name;
-    String m_type;
-    String m_reference_class;
-    bool m_is_array;
-    int  m_array_size;
-    bp::object m_qualifiers;
+    class CIMParameterRep;
 
-    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_param_qualifiers;
+    boost::shared_ptr<CIMParameterRep> m_rep;
 };
 
 #endif // LMIWBEM_PARAMETER_H

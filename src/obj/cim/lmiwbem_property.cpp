@@ -24,6 +24,7 @@
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
 #include "lmiwbem_exception.h"
+#include "lmiwbem_refcountedptr.h"
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_property.h"
 #include "obj/cim/lmiwbem_qualifier.h"
@@ -31,7 +32,26 @@
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
-CIMProperty::CIMProperty()
+class CIMProperty::CIMPropertyRep
+{
+public:
+    CIMPropertyRep();
+
+    String m_name;
+    String m_type;
+    String m_class_origin;
+    String m_reference_class;
+    bool m_is_array;
+    bool m_is_propagated;
+    int m_array_size;
+    bp::object m_value;
+    bp::object m_qualifiers;
+
+    RefCountedPtr<Pegasus::CIMValue> m_rc_prop_value;
+    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_prop_qualifiers;
+};
+
+CIMProperty::CIMPropertyRep::CIMPropertyRep()
     : m_name()
     , m_type()
     , m_class_origin()
@@ -46,6 +66,11 @@ CIMProperty::CIMProperty()
 {
 }
 
+CIMProperty::CIMProperty()
+    : m_rep(new CIMPropertyRep)
+{
+}
+
 CIMProperty::CIMProperty(
     const bp::object &name,
     const bp::object &value,
@@ -56,27 +81,28 @@ CIMProperty::CIMProperty(
     const bp::object &qualifiers,
     const bp::object &is_array,
     const bp::object &reference_class)
+    : m_rep(new CIMPropertyRep)
 {
-    m_name = StringConv::asString(name, "name");
+    m_rep->m_name = StringConv::asString(name, "name");
     if (!isnone(type)) {
-        m_type = StringConv::asString(type, "type");
-        m_is_array = isnone(is_array) ?
+        m_rep->m_type = StringConv::asString(type, "type");
+        m_rep->m_is_array = isnone(is_array) ?
             static_cast<bool>(PyList_Check(value.ptr())) :
             Conv::as<bool>(is_array, "is_array");
-        m_array_size = Conv::as<int>(array_size, "array_size");
+        m_rep->m_array_size = Conv::as<int>(array_size, "array_size");
     } else {
         // Deduce the value type
         String value_type(CIMTypeConv::asString(value));
         if (!value_type.empty())
-            m_type = value_type;
-        m_is_array = static_cast<bool>(isarray(value));
-        m_array_size = m_is_array ? bp::len(value) : 0;
+            m_rep->m_type = value_type;
+        m_rep->m_is_array = static_cast<bool>(isarray(value));
+        m_rep->m_array_size = m_rep->m_is_array ? bp::len(value) : 0;
     }
-    m_class_origin = StringConv::asString(class_origin, "class_origin");
-    m_reference_class = StringConv::asString(reference_class, "reference_class");
-    m_is_propagated = Conv::as<bool>(propagated, "propagated");
-    m_value = value;
-    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_rep->m_class_origin = StringConv::asString(class_origin, "class_origin");
+    m_rep->m_reference_class = StringConv::asString(reference_class, "reference_class");
+    m_rep->m_is_propagated = Conv::as<bool>(propagated, "propagated");
+    m_rep->m_value = value;
+    m_rep->m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 }
 
 void CIMProperty::init_type()
@@ -180,22 +206,22 @@ bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)
 {
     bp::object py_inst = CIMBase<CIMProperty>::create();
     CIMProperty &fake_this = CIMProperty::asNative(py_inst);
-    fake_this.m_name = property.getName().getString();
-    fake_this.m_type = CIMTypeConv::asString(property.getType());
-    fake_this.m_class_origin = property.getClassOrigin().getString();
-    fake_this.m_array_size = static_cast<int>(property.getArraySize());
-    fake_this.m_is_propagated = property.getPropagated();
-    fake_this.m_is_array = property.isArray();
-    fake_this.m_reference_class = property.getReferenceClassName().getString();
+    fake_this.m_rep->m_name = property.getName().getString();
+    fake_this.m_rep->m_type = CIMTypeConv::asString(property.getType());
+    fake_this.m_rep->m_class_origin = property.getClassOrigin().getString();
+    fake_this.m_rep->m_array_size = static_cast<int>(property.getArraySize());
+    fake_this.m_rep->m_is_propagated = property.getPropagated();
+    fake_this.m_rep->m_is_array = property.isArray();
+    fake_this.m_rep->m_reference_class = property.getReferenceClassName().getString();
 
     // Store value for lazy evaluation
-    fake_this.m_rc_prop_value.set(property.getValue());
+    fake_this.m_rep->m_rc_prop_value.set(property.getValue());
 
     // Store qualifiers for lazy evaluation
-    fake_this.m_rc_prop_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
+    fake_this.m_rep->m_rc_prop_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
     const Pegasus::Uint32 cnt = property.getQualifierCount();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        fake_this.m_rc_prop_qualifiers.get()->push_back(property.getQualifier(i));
+        fake_this.m_rep->m_rc_prop_qualifiers.get()->push_back(property.getQualifier(i));
     return py_inst;
 }
 
@@ -208,17 +234,17 @@ bp::object CIMProperty::create(
 
 Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty() try
 {
-    Pegasus::CIMValue peg_value(CIMValue::asPegasusCIMValue(getPyValue(), m_type));
+    Pegasus::CIMValue peg_value(CIMValue::asPegasusCIMValue(getPyValue(), m_rep->m_type));
 
     return Pegasus::CIMProperty(
-        Pegasus::CIMName(m_name),
+        Pegasus::CIMName(m_rep->m_name),
         peg_value,
-        peg_value.isNull() ? 0 : static_cast<Pegasus::Uint32>(m_array_size),
-        m_reference_class.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_reference_class),
-        m_class_origin.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_class_origin),
-        m_is_propagated);
+        peg_value.isNull() ? 0 : static_cast<Pegasus::Uint32>(m_rep->m_array_size),
+        m_rep->m_reference_class.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_rep->m_reference_class),
+        m_rep->m_class_origin.empty() ? Pegasus::CIMName() : Pegasus::CIMName(m_rep->m_class_origin),
+        m_rep->m_is_propagated);
 } catch (const Pegasus::TypeMismatchException &e) {
-    String msg(m_name);
+    String msg(m_rep->m_name);
     msg += ": ";
     msg += e.getMessage();
     throw Pegasus::TypeMismatchException(msg);
@@ -234,16 +260,16 @@ int CIMProperty::cmp(const bp::object &other)
     CIMProperty &cim_other = CIMProperty::asNative(other);
 
     int rval;
-    if ((rval = m_name.compare(cim_other.m_name)) != 0 ||
-        (rval = m_type.compare(cim_other.m_type)) != 0 ||
-        (rval = m_class_origin.compare(cim_other.m_class_origin)) != 0 ||
-        (rval = m_reference_class.compare(cim_other.m_reference_class)) != 0 ||
-        (rval = compare(bp::object(m_is_array),
-            bp::object(cim_other.m_is_array))) != 0 ||
-        (rval = compare(bp::object(m_is_propagated),
-            bp::object(cim_other.m_is_propagated))) != 0 ||
-        (rval = compare(bp::object(m_array_size),
-            bp::object(cim_other.m_array_size))) != 0 ||
+    if ((rval = m_rep->m_name.compare(cim_other.m_rep->m_name)) != 0 ||
+        (rval = m_rep->m_type.compare(cim_other.m_rep->m_type)) != 0 ||
+        (rval = m_rep->m_class_origin.compare(cim_other.m_rep->m_class_origin)) != 0 ||
+        (rval = m_rep->m_reference_class.compare(cim_other.m_rep->m_reference_class)) != 0 ||
+        (rval = compare(bp::object(m_rep->m_is_array),
+            bp::object(cim_other.m_rep->m_is_array))) != 0 ||
+        (rval = compare(bp::object(m_rep->m_is_propagated),
+            bp::object(cim_other.m_rep->m_is_propagated))) != 0 ||
+        (rval = compare(bp::object(m_rep->m_array_size),
+            bp::object(cim_other.m_rep->m_array_size))) != 0 ||
         (rval = compare(getPyValue(), cim_other.getPyValue())) != 0 ||
         (rval = compare(getPyQualifiers(), cim_other.getPyQualifiers())) != 0)
     {
@@ -260,13 +286,13 @@ bool CIMProperty::eq(const bp::object &other)
 
     CIMProperty &cim_other = CIMProperty::asNative(other);
 
-    return m_name == cim_other.m_name &&
-        m_type == cim_other.m_type &&
-        m_class_origin == cim_other.m_class_origin &&
-        m_reference_class == cim_other.m_reference_class &&
-        m_is_array == cim_other.m_is_array &&
-        m_is_propagated == cim_other.m_is_propagated &&
-        m_array_size == cim_other.m_array_size &&
+    return m_rep->m_name == cim_other.m_rep->m_name &&
+        m_rep->m_type == cim_other.m_rep->m_type &&
+        m_rep->m_class_origin == cim_other.m_rep->m_class_origin &&
+        m_rep->m_reference_class == cim_other.m_rep->m_reference_class &&
+        m_rep->m_is_array == cim_other.m_rep->m_is_array &&
+        m_rep->m_is_propagated == cim_other.m_rep->m_is_propagated &&
+        m_rep->m_array_size == cim_other.m_rep->m_array_size &&
         compare(getValue(), cim_other.getValue(), Py_EQ) &&
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_EQ);
 }
@@ -278,13 +304,13 @@ bool CIMProperty::gt(const bp::object &other)
 
     CIMProperty &cim_other = CIMProperty::asNative(other);
 
-    return m_name > cim_other.m_name ||
-        m_type > cim_other.m_type ||
-        m_class_origin > cim_other.m_class_origin ||
-        m_reference_class > cim_other.m_reference_class ||
-        m_is_array > cim_other.m_is_array ||
-        m_is_propagated > cim_other.m_is_propagated ||
-        m_array_size > cim_other.m_array_size ||
+    return m_rep->m_name > cim_other.m_rep->m_name ||
+        m_rep->m_type > cim_other.m_rep->m_type ||
+        m_rep->m_class_origin > cim_other.m_rep->m_class_origin ||
+        m_rep->m_reference_class > cim_other.m_rep->m_reference_class ||
+        m_rep->m_is_array > cim_other.m_rep->m_is_array ||
+        m_rep->m_is_propagated > cim_other.m_rep->m_is_propagated ||
+        m_rep->m_array_size > cim_other.m_rep->m_array_size ||
         compare(getValue(), cim_other.getValue(), Py_GT) ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_GT);
 }
@@ -296,13 +322,13 @@ bool CIMProperty::lt(const bp::object &other)
 
     CIMProperty &cim_other = CIMProperty::asNative(other);
 
-    return m_name < cim_other.m_name ||
-        m_type < cim_other.m_type ||
-        m_class_origin < cim_other.m_class_origin ||
-        m_reference_class < cim_other.m_reference_class ||
-        m_is_array < cim_other.m_is_array ||
-        m_is_propagated < cim_other.m_is_propagated ||
-        m_array_size < cim_other.m_array_size ||
+    return m_rep->m_name < cim_other.m_rep->m_name ||
+        m_rep->m_type < cim_other.m_rep->m_type ||
+        m_rep->m_class_origin < cim_other.m_rep->m_class_origin ||
+        m_rep->m_reference_class < cim_other.m_rep->m_reference_class ||
+        m_rep->m_is_array < cim_other.m_rep->m_is_array ||
+        m_rep->m_is_propagated < cim_other.m_rep->m_is_propagated ||
+        m_rep->m_array_size < cim_other.m_rep->m_array_size ||
         compare(getValue(), cim_other.getValue(), Py_LT) ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_LT);
 }
@@ -321,10 +347,10 @@ bool CIMProperty::le(const bp::object &other)
 bp::object CIMProperty::repr()
 {
     std::stringstream ss;
-    ss << "CIMProperty(name=u'" << m_name
-        << "', type=u'" << m_type
+    ss << "CIMProperty(name=u'" << m_rep->m_name
+        << "', type=u'" << m_rep->m_type
         << "', value='" << ObjectConv::asString(getPyValue())
-        << "', is_array=" << (m_is_array ? "True" : "False") << ", ...)";
+        << "', is_array=" << (m_rep->m_is_array ? "True" : "False") << ", ...)";
     return StringConv::asPyUnicode(ss.str());
 }
 
@@ -334,199 +360,199 @@ bp::object CIMProperty::copy()
     CIMProperty &cim_property = CIMProperty::asNative(py_inst);
     NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
 
-    cim_property.m_name = m_name;
-    cim_property.m_type = m_type;
-    cim_property.m_class_origin = m_class_origin;
-    cim_property.m_reference_class = m_reference_class;
-    cim_property.m_is_array = m_is_array;
-    cim_property.m_is_propagated = m_is_propagated;
-    cim_property.m_array_size = m_array_size;
-    cim_property.m_value = m_value;
-    cim_property.m_qualifiers = cim_qualifiers.copy();
+    cim_property.m_rep->m_name = m_rep->m_name;
+    cim_property.m_rep->m_type = m_rep->m_type;
+    cim_property.m_rep->m_class_origin = m_rep->m_class_origin;
+    cim_property.m_rep->m_reference_class = m_rep->m_reference_class;
+    cim_property.m_rep->m_is_array = m_rep->m_is_array;
+    cim_property.m_rep->m_is_propagated = m_rep->m_is_propagated;
+    cim_property.m_rep->m_array_size = m_rep->m_array_size;
+    cim_property.m_rep->m_value = m_rep->m_value;
+    cim_property.m_rep->m_qualifiers = cim_qualifiers.copy();
 
     return py_inst;
 }
 
 String CIMProperty::getName() const
 {
-    return m_name;
+    return m_rep->m_name;
 }
 
 String CIMProperty::getType() const
 {
-    return m_name;
+    return m_rep->m_name;
 }
 
 String CIMProperty::getClassOrigin() const
 {
-    return m_class_origin;
+    return m_rep->m_class_origin;
 }
 
 String CIMProperty::getReferenceClass() const
 {
-    return m_reference_class;
+    return m_rep->m_reference_class;
 }
 
 int CIMProperty::getArraySize() const
 {
-    return m_array_size;
+    return m_rep->m_array_size;
 }
 
 bool CIMProperty::getIsArray() const
 {
-    return m_is_array;
+    return m_rep->m_is_array;
 }
 
 bool CIMProperty::getIsPropagated() const
 {
-    return m_is_propagated;
+    return m_rep->m_is_propagated;
 }
 
 bp::object CIMProperty::getPyName() const
 {
-    return StringConv::asPyUnicode(m_name);
+    return StringConv::asPyUnicode(m_rep->m_name);
 }
 
 bp::object CIMProperty::getPyType() const
 {
-    return StringConv::asPyUnicode(m_type);
+    return StringConv::asPyUnicode(m_rep->m_type);
 }
 
 bp::object CIMProperty::getPyClassOrigin() const
 {
-    return StringConv::asPyUnicode(m_class_origin);
+    return StringConv::asPyUnicode(m_rep->m_class_origin);
 }
 
 bp::object CIMProperty::getPyReferenceClass() const
 {
-    return StringConv::asPyUnicode(m_reference_class);
+    return StringConv::asPyUnicode(m_rep->m_reference_class);
 }
 
 bp::object CIMProperty::getPyArraySize() const
 {
-    return bp::object(m_array_size);
+    return bp::object(m_rep->m_array_size);
 }
 
 bp::object CIMProperty::getPyIsArray() const
 {
-    return bp::object(m_is_array);
+    return bp::object(m_rep->m_is_array);
 }
 
 bp::object CIMProperty::getPyIsPropagated() const
 {
-    return bp::object(m_is_propagated);
+    return bp::object(m_rep->m_is_propagated);
 }
 
 bp::object CIMProperty::getPyValue()
 {
-    if (!m_rc_prop_value.empty()) {
-        m_value = CIMValue::asLMIWbemCIMValue(*m_rc_prop_value.get());
-        m_rc_prop_value.release();
+    if (!m_rep->m_rc_prop_value.empty()) {
+        m_rep->m_value = CIMValue::asLMIWbemCIMValue(*m_rep->m_rc_prop_value.get());
+        m_rep->m_rc_prop_value.release();
     }
 
-    return m_value;
+    return m_rep->m_value;
 }
 
 bp::object CIMProperty::getPyQualifiers()
 {
-    if (!m_rc_prop_qualifiers.empty()) {
-        m_qualifiers = NocaseDict::create();
+    if (!m_rep->m_rc_prop_qualifiers.empty()) {
+        m_rep->m_qualifiers = NocaseDict::create();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
-        for (it = m_rc_prop_qualifiers.get()->begin();
-             it != m_rc_prop_qualifiers.get()->end(); ++it)
+        for (it = m_rep->m_rc_prop_qualifiers.get()->begin();
+             it != m_rep->m_rc_prop_qualifiers.get()->end(); ++it)
         {
-            m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
+            m_rep->m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
         }
 
-        m_rc_prop_qualifiers.release();
+        m_rep->m_rc_prop_qualifiers.release();
     }
 
-    return m_qualifiers;
+    return m_rep->m_qualifiers;
 }
 
 void CIMProperty::setName(const String &name)
 {
-    m_name = name;
+    m_rep->m_name = name;
 }
 
 void CIMProperty::setType(const String &type)
 {
-    m_type = type;
+    m_rep->m_type = type;
 }
 
 void CIMProperty::setClassOrigin(const String &class_origin)
 {
-    m_class_origin = class_origin;
+    m_rep->m_class_origin = class_origin;
 }
 
 void CIMProperty::setReferenceClass(const String &reference_class)
 {
-    m_reference_class = reference_class;
+    m_rep->m_reference_class = reference_class;
 }
 
 void CIMProperty::setArraySize(int array_size)
 {
-    m_array_size = array_size;
+    m_rep->m_array_size = array_size;
 }
 
 void CIMProperty::setIsArray(bool is_array)
 {
-    m_is_array = is_array;
+    m_rep->m_is_array = is_array;
 }
 
 void CIMProperty::setIsPropagated(bool is_propagated)
 {
-    m_is_propagated = is_propagated;
+    m_rep->m_is_propagated = is_propagated;
 }
 
 void CIMProperty::setPyName(const bp::object &name)
 {
-    m_name = StringConv::asString(name, "name");
+    m_rep->m_name = StringConv::asString(name, "name");
 }
 
 void CIMProperty::setPyType(const bp::object &type)
 {
-    m_type = StringConv::asString(type, "type");
+    m_rep->m_type = StringConv::asString(type, "type");
 }
 
 void CIMProperty::setPyValue(const bp::object &value)
 {
-    m_value = value;
+    m_rep->m_value = value;
 
     // Unref cached resource, it will never be used
-    m_rc_prop_value.release();
+    m_rep->m_rc_prop_value.release();
 }
 
 void CIMProperty::setPyClassOrigin(const bp::object &class_origin)
 {
-    m_class_origin = StringConv::asString(class_origin, "class_origin");
+    m_rep->m_class_origin = StringConv::asString(class_origin, "class_origin");
 }
 
 void CIMProperty::setPyReferenceClass(const bp::object &reference_class)
 {
-    m_reference_class = StringConv::asString(
+    m_rep->m_reference_class = StringConv::asString(
         reference_class, "reference_class");
 }
 
 void CIMProperty::setPyArraySize(const bp::object &array_size)
 {
-    m_array_size = Conv::as<int>(array_size, "array_size");
+    m_rep->m_array_size = Conv::as<int>(array_size, "array_size");
 }
 
 void CIMProperty::setPyIsArray(const bp::object &is_array)
 {
-    m_is_array = Conv::as<bool>(is_array, "is_array");
+    m_rep->m_is_array = Conv::as<bool>(is_array, "is_array");
 }
 
 void CIMProperty::setPyIsPropagated(const bp::object &propagated)
 {
-    m_is_propagated = Conv::as<bool>(propagated, "propagated");
+    m_rep->m_is_propagated = Conv::as<bool>(propagated, "propagated");
 }
 
 void CIMProperty::setPyQualifiers(const bp::object &qualifiers)
 {
-    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_rep->m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_prop_qualifiers.release();
+    m_rep->m_rc_prop_qualifiers.release();
 }

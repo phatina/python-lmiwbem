@@ -29,6 +29,37 @@
 #include <string.h>
 #include "lmiwbem_urlinfo.h"
 
+class URLInfo::URLInfoRep
+{
+public:
+    URLInfoRep();
+    URLInfoRep(const URLInfoRep &copy);
+
+    String m_url;
+    String m_hostname;
+    uint32_t m_port;
+    bool m_is_https;
+    bool m_is_local;
+};
+
+URLInfo::URLInfoRep::URLInfoRep()
+    : m_url("https://unknown")
+    , m_hostname("unknown")
+    , m_port(URLInfo::DEF_HTTPS_PORT)
+    , m_is_https(true)
+    , m_is_local(false)
+{
+}
+
+URLInfo::URLInfoRep::URLInfoRep(const URLInfo::URLInfoRep &copy)
+    : m_url(copy.m_url)
+    , m_hostname(copy.m_hostname)
+    , m_port(copy.m_port)
+    , m_is_https(copy.m_is_https)
+    , m_is_local(copy.m_is_local)
+{
+}
+
 namespace {
 
 const unsigned int BUFLEN = 1024;
@@ -63,26 +94,18 @@ String get_fqdn() {
 } // unnamed namespace
 
 URLInfo::URLInfo()
-    : m_url("https://unknown")
-    , m_hostname("unknown")
-    , m_port(URLInfo::DEF_HTTPS_PORT)
-    , m_is_https(true)
-    , m_is_local(false)
+    : m_rep(new URLInfoRep)
 {
 }
 
 URLInfo::URLInfo(const URLInfo &copy)
-    : m_url(copy.m_url)
-    , m_hostname(copy.m_hostname)
-    , m_port(copy.m_port)
-    , m_is_https(copy.m_is_https)
-    , m_is_local(copy.m_is_local)
+    : m_rep(new URLInfoRep(*copy.m_rep))
 {
 }
 
 bool URLInfo::set(String url)
 {
-    m_url = url;
+    m_rep->m_url = url;
 
     /* Handle local connection */
     if (url.substr(0, 7) == "file://" ||
@@ -94,36 +117,36 @@ bool URLInfo::set(String url)
         url == "localhost6.localdomain6" ||
         url == "127.0.0.1" || url == "::1")
     {
-        m_is_https = false;
-        m_is_local = true;
-        m_hostname = get_fqdn();
-        m_port = 0;
+        m_rep->m_is_https = false;
+        m_rep->m_is_local = true;
+        m_rep->m_hostname = get_fqdn();
+        m_rep->m_port = 0;
         return true;
     }
 
     /* Handle remote connection */
     if (url.substr(0, 7) == "http://") {
         url.erase(0, 7);
-        m_port = URLInfo::DEF_HTTP_PORT;
-        m_is_https = false;
+        m_rep->m_port = URLInfo::DEF_HTTP_PORT;
+        m_rep->m_is_https = false;
     } else if (url.substr(0, 8) == "https://") {
         url.erase(0, 8);
-        m_port = URLInfo::DEF_HTTPS_PORT;
-        m_is_https = true;
+        m_rep->m_port = URLInfo::DEF_HTTPS_PORT;
+        m_rep->m_is_https = true;
     } else {
         return false;
     }
 
     size_t pos = url.rfind(':');
     if (pos != String::npos) {
-        m_hostname = url.substr(0, pos);
+        m_rep->m_hostname = url.substr(0, pos);
         long int port = strtol(url.substr(pos + 1,
             url.size() - pos - 1).c_str(), NULL, 10);
         if (errno == ERANGE || port < 0 || port > 65535)
             return false;
-        m_port = static_cast<uint32_t>(port);
+        m_rep->m_port = static_cast<uint32_t>(port);
     } else {
-        m_hostname = url;
+        m_rep->m_hostname = url;
     }
 
     return true;
@@ -131,47 +154,47 @@ bool URLInfo::set(String url)
 
 String URLInfo::url() const
 {
-    return m_url;
+    return m_rep->m_url;
 }
 
 String URLInfo::hostname() const
 {
-    return m_hostname;
+    return m_rep->m_hostname;
 }
 
 uint32_t URLInfo::port() const
 {
-    return m_port;
+    return m_rep->m_port;
 }
 
 bool URLInfo::isHttps() const
 {
-    return m_is_https;
+    return m_rep->m_is_https;
 }
 
 bool URLInfo::isLocal() const
 {
-    return m_is_local;
+    return m_rep->m_is_local;
 }
 
 String URLInfo::asString() const
 {
     std::stringstream ss;
 
-    if (m_is_https)
+    if (m_rep->m_is_https)
         ss << "https://";
     else
         ss << "http://";
 
-    ss << m_hostname << ':' << m_port;
+    ss << m_rep->m_hostname << ':' << m_rep->m_port;
 
     return String(ss.str());
 }
 
 URLInfo &URLInfo::operator =(const URLInfo &rhs)
 {
-    m_hostname = rhs.m_hostname;
-    m_port = rhs.m_port;
-    m_is_https = rhs.m_is_https;
+    m_rep->m_hostname = rhs.m_rep->m_hostname;
+    m_rep->m_port = rhs.m_rep->m_port;
+    m_rep->m_is_https = rhs.m_rep->m_is_https;
     return *this;
 }

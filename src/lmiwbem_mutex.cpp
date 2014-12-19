@@ -21,45 +21,60 @@
 
 #include "lmiwbem_mutex.h"
 
-Mutex::Mutex()
+class Mutex::MutexRep
+{
+public:
+    MutexRep();
+
+    bool m_good;
+    bool m_locked;
+    pthread_mutex_t m_mutex;
+};
+
+Mutex::MutexRep::MutexRep()
     : m_good(false)
     , m_locked(false)
 {
-    m_good = pthread_mutex_init(&m_mutex, NULL) == 0;
+}
+
+Mutex::Mutex()
+    : m_rep(new MutexRep)
+{
+    m_rep->m_good = pthread_mutex_init(&m_rep->m_mutex, NULL) == 0;
 }
 
 Mutex::~Mutex()
 {
-    pthread_mutex_destroy(&m_mutex);
+    pthread_mutex_destroy(&m_rep->m_mutex);
 }
 
 bool Mutex::lock()
 {
     // We can't lock the mutex, initialization failed.
-    if (!m_good)
+    if (!m_rep->m_good)
         return false;
 
-    if (pthread_mutex_lock(&m_mutex) == 0)
-        m_locked = true;
+    if (pthread_mutex_lock(&m_rep->m_mutex) == 0)
+        m_rep->m_locked = true;
 
-    return m_locked;
+    return m_rep->m_locked;
 }
 
 bool Mutex::unlock()
 {
     // We can't unlock the mutex, initialization failed.
-    if (!m_good)
+    if (!m_rep->m_good)
         return false;
 
-    if (pthread_mutex_unlock(&m_mutex) == 0)
-        m_locked = false;
+    if (pthread_mutex_unlock(&m_rep->m_mutex) == 0)
+        m_rep->m_locked = false;
 
-    return m_locked;
+    return m_rep->m_locked;
 }
 
 bool Mutex::isLocked() const
 {
-    return m_locked;
+    return m_rep->m_locked;
 }
 
 ScopedMutex::ScopedMutex(Mutex &m)

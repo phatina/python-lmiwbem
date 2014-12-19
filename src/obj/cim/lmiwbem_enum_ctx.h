@@ -59,9 +59,9 @@ public:
     void clear();
 
 private:
-    boost::shared_ptr<Pegasus::CIMEnumerationContext> m_enum_ctx_ptr;
-    bool m_is_with_paths;
-    String m_namespace;
+    class CIMEnumerationContextRep;
+
+    boost::shared_ptr<CIMEnumerationContextRep> m_rep;
 };
 
 #endif // LMIWBEM_ENUM_CTX_H

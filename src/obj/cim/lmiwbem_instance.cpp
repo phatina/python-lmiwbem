@@ -25,6 +25,7 @@
 #include <boost/python/dict.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
+#include "lmiwbem_refcountedptr.h"
 #include "obj/cim/lmiwbem_instance.h"
 #include "obj/cim/lmiwbem_instance_name.h"
 #include "obj/lmiwbem_nocasedict.h"
@@ -36,7 +37,23 @@
 
 namespace bp = boost::python;
 
-CIMInstance::CIMInstance()
+class CIMInstance::CIMInstanceRep
+{
+public:
+    CIMInstanceRep();
+
+    String m_classname;
+    bp::object m_path;
+    bp::object m_properties;
+    bp::object m_qualifiers;
+    bp::object m_property_list;
+
+    RefCountedPtr<Pegasus::CIMObjectPath> m_rc_inst_path;
+    RefCountedPtr<std::list<Pegasus::CIMConstProperty> > m_rc_inst_properties;
+    RefCountedPtr<std::list<Pegasus::CIMConstQualifier> > m_rc_inst_qualifiers;
+};
+
+CIMInstance::CIMInstanceRep::CIMInstanceRep()
     : m_classname()
     , m_path()
     , m_properties()
@@ -48,23 +65,29 @@ CIMInstance::CIMInstance()
 {
 }
 
+CIMInstance::CIMInstance()
+    : m_rep(new CIMInstanceRep)
+{
+}
+
 CIMInstance::CIMInstance(
     const bp::object &classname,
     const bp::object &properties,
     const bp::object &qualifiers,
     const bp::object &path,
     const bp::object &property_list)
+    : m_rep(new CIMInstanceRep)
 {
-    m_classname = StringConv::asString(classname, "classname");
+    m_rep->m_classname = StringConv::asString(classname, "classname");
 
     // We store properties in NocaseDict. Convert python's dict, if necessary.
     if (isnone(properties))
-        m_properties = NocaseDict::create();
+        m_rep->m_properties = NocaseDict::create();
     else
-        m_properties = NocaseDict::create(properties);
+        m_rep->m_properties = NocaseDict::create(properties);
 
     // Convert plain values
-    NocaseDict &prop_dict = NocaseDict::asNative(m_properties);
+    NocaseDict &prop_dict = NocaseDict::asNative(m_rep->m_properties);
     nocase_map_t::iterator it;
     for (it = prop_dict.begin(); it != prop_dict.end(); ++it) {
         if (!isinstance(it->second, CIMProperty::type()))
@@ -73,15 +96,15 @@ CIMInstance::CIMInstance(
 
     // We store qualifiers in NocaseDict. Convert python's dict, if necessary.
     if (isnone(qualifiers))
-        m_qualifiers = NocaseDict::create();
+        m_rep->m_qualifiers = NocaseDict::create();
     else
-        m_qualifiers = NocaseDict::create(qualifiers);
+        m_rep->m_qualifiers = NocaseDict::create(qualifiers);
 
     if (!isnone(path))
-        m_path = Conv::get<CIMInstanceName>(path, "path");
+        m_rep->m_path = Conv::get<CIMInstanceName>(path, "path");
 
     if (!isnone(property_list))
-        m_property_list = Conv::get<bp::list>(property_list, "property_list");
+        m_rep->m_property_list = Conv::get<bp::list>(property_list, "property_list");
 }
 
 void CIMInstance::init_type()
@@ -193,22 +216,22 @@ bp::object CIMInstance::create(const Pegasus::CIMInstance &instance)
 
     bp::object py_inst = CIMBase<CIMInstance>::create();
     CIMInstance &fake_this = CIMInstance::asNative(py_inst);
-    fake_this.m_classname = instance.getClassName().getString();
+    fake_this.m_rep->m_classname = instance.getClassName().getString();
 
     // Store path for lazy evaluation
-    fake_this.m_rc_inst_path.set(instance.getPath());
+    fake_this.m_rep->m_rc_inst_path.set(instance.getPath());
 
     // Store list of properties for lazy evaluation
-    fake_this.m_rc_inst_properties.set(std::list<Pegasus::CIMConstProperty>());
+    fake_this.m_rep->m_rc_inst_properties.set(std::list<Pegasus::CIMConstProperty>());
     Pegasus::Uint32 cnt = instance.getPropertyCount();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        fake_this.m_rc_inst_properties.get()->push_back(instance.getProperty(i));
+        fake_this.m_rep->m_rc_inst_properties.get()->push_back(instance.getProperty(i));
 
     // Store list of qualifiers for lazy evaluation
-    fake_this.m_rc_inst_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
+    fake_this.m_rep->m_rc_inst_qualifiers.set(std::list<Pegasus::CIMConstQualifier>());
     cnt = instance.getQualifierCount();
     for (Pegasus::Uint32 i = 0; i < cnt; ++i)
-        fake_this.m_rc_inst_qualifiers.get()->push_back(instance.getQualifier(i));
+        fake_this.m_rep->m_rc_inst_qualifiers.get()->push_back(instance.getQualifier(i));
 
     return py_inst;
 }
@@ -222,7 +245,7 @@ Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
 {
     // Doubled parenthesis are used due to the C++ ambiguity known also as
     // The most vexing parse.
-    Pegasus::CIMInstance peg_instance((Pegasus::CIMName(m_classname)));
+    Pegasus::CIMInstance peg_instance((Pegasus::CIMName(m_rep->m_classname)));
 
     if (!isnone(getPyPath())) {
         // Set CIMObjectPath
@@ -257,7 +280,7 @@ int CIMInstance::cmp(const bp::object &other)
     CIMInstance &cim_other = CIMInstance::asNative(other);
 
     int rval;
-    if ((rval = m_classname.compare(cim_other.m_classname)) != 0 ||
+    if ((rval = m_rep->m_classname.compare(cim_other.m_rep->m_classname)) != 0 ||
         (rval = compare(getPyPath(), cim_other.getPyPath())) != 0 ||
         (rval = compare(getPyProperties(), cim_other.getPyProperties())) != 0 ||
         (rval = compare(getPyQualifiers(), cim_other.getPyQualifiers())) != 0)
@@ -275,7 +298,7 @@ bool CIMInstance::eq(const bp::object &other)
 
     CIMInstance &cim_other = CIMInstance::asNative(other);
 
-    return m_classname == cim_other.m_classname &&
+    return m_rep->m_classname == cim_other.m_rep->m_classname &&
         compare(getPyPath(), cim_other.getPyPath(), Py_EQ) &&
         compare(getPyProperties(), cim_other.getPyProperties(), Py_EQ) &&
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_EQ);
@@ -288,7 +311,7 @@ bool CIMInstance::gt(const bp::object &other)
 
     CIMInstance &cim_other = CIMInstance::asNative(other);
 
-    return m_classname > cim_other.m_classname ||
+    return m_rep->m_classname > cim_other.m_rep->m_classname ||
         compare(getPyPath(), cim_other.getPyPath(), Py_GT) ||
         compare(getPyProperties(), cim_other.getPyProperties(), Py_GT) ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_GT);
@@ -301,7 +324,7 @@ bool CIMInstance::lt(const bp::object &other)
 
     CIMInstance &cim_other = CIMInstance::asNative(other);
 
-    return m_classname < cim_other.m_classname ||
+    return m_rep->m_classname < cim_other.m_rep->m_classname ||
         compare(getPyPath(), cim_other.getPyPath(), Py_LT) ||
         compare(getPyProperties(), cim_other.getPyProperties(), Py_LT) ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_LT);
@@ -321,7 +344,7 @@ bool CIMInstance::le(const bp::object &other)
 bp::object CIMInstance::repr()
 {
     std::stringstream ss;
-    ss << "CIMInstance(classname=u'" << m_classname << "', ...)";
+    ss << "CIMInstance(classname=u'" << m_rep->m_classname << "', ...)";
     return StringConv::asPyUnicode(ss.str());
 }
 
@@ -329,13 +352,13 @@ bp::object CIMInstance::getitem(const bp::object &key)
 {
     evalProperties();
 
-    bp::object py_item = m_properties[key];
+    bp::object py_item = m_rep->m_properties[key];
     if (isinstance(py_item, CIMProperty::type())) {
         CIMProperty &property = CIMProperty::asNative(py_item);
         return property.getPyValue();
     }
 
-    return m_properties[key];
+    return m_rep->m_properties[key];
 }
 
 void CIMInstance::setitem(const bp::object &key, const bp::object &value)
@@ -343,11 +366,11 @@ void CIMInstance::setitem(const bp::object &key, const bp::object &value)
     evalProperties();
 
     if (isinstance(value, CIMProperty::type())) {
-        m_properties[key] = value;
-    } else if (m_properties.contains(key) &&
-        isinstance(m_properties[key], CIMProperty::type()))
+        m_rep->m_properties[key] = value;
+    } else if (m_rep->m_properties.contains(key) &&
+        isinstance(m_rep->m_properties[key], CIMProperty::type()))
     {
-        CIMProperty &cim_prop = CIMProperty::asNative(m_properties[key]);
+        CIMProperty &cim_prop = CIMProperty::asNative(m_rep->m_properties[key]);
         cim_prop.setPyValue(value);
 
         String type(CIMTypeConv::asString(value));
@@ -359,7 +382,7 @@ void CIMInstance::setitem(const bp::object &key, const bp::object &value)
         if (is_array)
             cim_prop.setArraySize(bp::len(value));
     } else {
-        m_properties[key] = CIMProperty::create(key, value);
+        m_rep->m_properties[key] = CIMProperty::create(key, value);
     }
 }
 
@@ -448,13 +471,13 @@ bp::object CIMInstance::copy()
     NocaseDict &cim_properties = NocaseDict::asNative(getPyProperties());
     NocaseDict &cim_qualifiers = NocaseDict::asNative(getPyQualifiers());
 
-    cim_inst.m_classname = m_classname;
-    if (!isnone(m_path))
-        cim_inst.m_path = cim_path.copy();
-    cim_inst.m_properties = cim_properties.copy();
-    cim_inst.m_qualifiers = cim_qualifiers.copy();
-    if (!isnone(m_property_list))
-        cim_inst.m_property_list = bp::list(getPyPropertyList());
+    cim_inst.m_rep->m_classname = m_rep->m_classname;
+    if (!isnone(m_rep->m_path))
+        cim_inst.m_rep->m_path = cim_path.copy();
+    cim_inst.m_rep->m_properties = cim_properties.copy();
+    cim_inst.m_rep->m_qualifiers = cim_qualifiers.copy();
+    if (!isnone(m_rep->m_property_list))
+        cim_inst.m_rep->m_property_list = bp::list(getPyPropertyList());
 
     return py_inst;
 }
@@ -486,7 +509,7 @@ String CIMInstance::tomofContent(const bp::object &value)
 bp::object CIMInstance::tomof()
 {
     std::stringstream ss;
-    ss << "instance of " << m_classname << " {\n";
+    ss << "instance of " << m_rep->m_classname << " {\n";
 
     NocaseDict &cim_properties = NocaseDict::asNative(getPyProperties());
     nocase_map_t::iterator it;
@@ -515,105 +538,105 @@ const CIMInstanceName &CIMInstance::getPath() const
 
 String CIMInstance::getClassname() const
 {
-    return m_classname;
+    return m_rep->m_classname;
 }
 
 bp::object CIMInstance::getPyClassname() const
 {
-    return StringConv::asPyUnicode(m_classname);
+    return StringConv::asPyUnicode(m_rep->m_classname);
 }
 
 bp::object CIMInstance::getPyPath()
 {
-    if (!m_rc_inst_path.empty()) {
-        m_path = CIMInstanceName::create(*m_rc_inst_path.get());
-        m_rc_inst_path.release();
+    if (!m_rep->m_rc_inst_path.empty()) {
+        m_rep->m_path = CIMInstanceName::create(*m_rep->m_rc_inst_path.get());
+        m_rep->m_rc_inst_path.release();
     }
 
-    return m_path;
+    return m_rep->m_path;
 }
 
 bp::object CIMInstance::getPyProperties()
 {
     evalProperties();
-    return m_properties;
+    return m_rep->m_properties;
 }
 
 bp::object CIMInstance::getPyQualifiers()
 {
-    if (!m_rc_inst_qualifiers.empty()) {
-        m_qualifiers = NocaseDict::create();
-        std::list<Pegasus::CIMConstQualifier> &cim_qualifiers = *m_rc_inst_qualifiers.get();
+    if (!m_rep->m_rc_inst_qualifiers.empty()) {
+        m_rep->m_qualifiers = NocaseDict::create();
+        std::list<Pegasus::CIMConstQualifier> &cim_qualifiers = *m_rep->m_rc_inst_qualifiers.get();
         std::list<Pegasus::CIMConstQualifier>::const_iterator it;
         for (it = cim_qualifiers.begin(); it != cim_qualifiers.end(); ++it)
-            m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
-        m_rc_inst_qualifiers.release();
+            m_rep->m_qualifiers[bp::object(it->getName())] = CIMQualifier::create(*it);
+        m_rep->m_rc_inst_qualifiers.release();
     }
 
-    return m_qualifiers;
+    return m_rep->m_qualifiers;
 }
 
 bp::object CIMInstance::getPyPropertyList()
 {
     evalProperties();
-    return m_property_list;
+    return m_rep->m_property_list;
 }
 
 void CIMInstance::setClassname(const String &classname)
 {
-    m_classname = classname;
+    m_rep->m_classname = classname;
 }
 
 void CIMInstance::setPyClassname(const bp::object &classname)
 {
-    m_classname = StringConv::asString(classname, "classname");
+    m_rep->m_classname = StringConv::asString(classname, "classname");
 }
 
 void CIMInstance::setPyPath(const bp::object &path)
 {
-    m_path = Conv::get<CIMInstanceName>(path, "path");
+    m_rep->m_path = Conv::get<CIMInstanceName>(path, "path");
 
     // Unref cached resource, it will never be used
-    m_rc_inst_path.release();
+    m_rep->m_rc_inst_path.release();
 }
 
 void CIMInstance::setPyProperties(const bp::object &properties)
 {
     evalProperties();
 
-    m_properties = Conv::get<NocaseDict, bp::dict>(properties, "properties");
+    m_rep->m_properties = Conv::get<NocaseDict, bp::dict>(properties, "properties");
 
     // Unref cached resource, it will never be used
-    m_rc_inst_properties.release();
+    m_rep->m_rc_inst_properties.release();
 }
 
 void CIMInstance::setPyQualifiers(const bp::object &qualifiers)
 {
-    m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
+    m_rep->m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
 
     // Unref cached resource, it will never be used
-    m_rc_inst_qualifiers.release();
+    m_rep->m_rc_inst_qualifiers.release();
 }
 
 void CIMInstance::setPyPropertyList(const bp::object &property_list)
 {
     evalProperties();
 
-    m_property_list = Conv::get<bp::list>(property_list);
+    m_rep->m_property_list = Conv::get<bp::list>(property_list);
 
     // Unref cached resource, it will never be used
-    m_rc_inst_properties.release();
+    m_rep->m_rc_inst_properties.release();
 }
 
 void CIMInstance::evalProperties()
 {
-    if (m_rc_inst_properties.empty())
+    if (m_rep->m_rc_inst_properties.empty())
         return;
 
-    m_properties = NocaseDict::create();
+    m_rep->m_properties = NocaseDict::create();
     bp::list py_property_list;
     std::list<Pegasus::CIMConstProperty>::const_iterator it;
-    std::list<Pegasus::CIMConstProperty> &properties = *m_rc_inst_properties.get();
+    std::list<Pegasus::CIMConstProperty> &properties = *m_rep->m_rc_inst_properties.get();
     for (it = properties.begin(); it != properties.end(); ++it) {
         bp::object py_prop_name(it->getName());
         if (it->getValue().getType() == Pegasus::CIMTYPE_REFERENCE) {
@@ -629,15 +652,15 @@ void CIMInstance::evalProperties()
             peg_value.set(peg_iname);
             peg_property.setValue(peg_value);
 
-            m_properties[py_prop_name] = CIMProperty::create(peg_property);
+            m_rep->m_properties[py_prop_name] = CIMProperty::create(peg_property);
         } else {
-            m_properties[py_prop_name] = CIMProperty::create(*it);
+            m_rep->m_properties[py_prop_name] = CIMProperty::create(*it);
         }
         py_property_list.append(py_prop_name);
     }
 
-    m_property_list = py_property_list;
-    m_rc_inst_properties.release();
+    m_rep->m_property_list = py_property_list;
+    m_rep->m_rc_inst_properties.release();
 }
 
 void CIMInstance::updatePegasusCIMInstanceNamespace(
