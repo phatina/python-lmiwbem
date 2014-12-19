@@ -23,11 +23,14 @@
 #  define LMIWBEM_EXCEPTION_H
 
 #  include <sstream>
-#  include <boost/python/errors.hpp>
-#  include <boost/python/object.hpp>
-#  include <Pegasus/Common/Exception.h>
+#  include "lmiwbem.h"
 #  include "lmiwbem_traits.h"
 #  include "util/lmiwbem_string.h"
+
+PEGASUS_BEGIN
+class Exception;
+class CIMException;
+PEGASUS_END
 
 namespace bp = boost::python;
 

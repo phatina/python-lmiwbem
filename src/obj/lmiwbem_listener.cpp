@@ -23,6 +23,7 @@
 #include <sstream>
 #include <Pegasus/Common/SSLContext.h>
 #include <Pegasus/Consumer/CIMIndicationConsumer.h>
+#include <Pegasus/Listener/CIMListener.h>
 #include <boost/python/class.hpp>
 #include "lmiwbem_config.h"
 #include "lmiwbem_exception.h"

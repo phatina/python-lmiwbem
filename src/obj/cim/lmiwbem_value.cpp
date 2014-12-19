@@ -23,6 +23,12 @@
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/object_attributes.hpp>
+#include <Pegasus/Common/CIMClass.h>
+#include <Pegasus/Common/CIMDateTime.h>
+#include <Pegasus/Common/CIMInstance.h>
+#include <Pegasus/Common/CIMObject.h>
+#include <Pegasus/Common/CIMObjectPath.h>
+#include <Pegasus/Common/CIMValue.h>
 #include "obj/cim/lmiwbem_class.h"
 #include "obj/cim/lmiwbem_class_name.h"
 #include "obj/cim/lmiwbem_instance.h"

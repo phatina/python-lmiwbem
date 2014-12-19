@@ -24,6 +24,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <Pegasus/Common/CIMObjectPath.h>
 #include <Pegasus/Common/CIMValue.h>
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_instance_name.h"

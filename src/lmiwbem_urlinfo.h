@@ -27,7 +27,6 @@ extern "C" {
 // least C++ 2011.
 #  include <stdint.h>
 }
-#  include <Pegasus/Common/CIMType.h>
 #  include "util/lmiwbem_string.h"
 
 class URLInfo

@@ -24,13 +24,17 @@
 
 #  include <list>
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Common/CIMProperty.h>
-#  include <Pegasus/Common/CIMType.h>
-#  include <Pegasus/Common/CIMQualifier.h>
-#  include <Pegasus/Common/CIMValue.h>
+#  include "lmiwbem.h"
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+BOOST_PYTHON_BEGIN
+class CIMConstQualifier;
+class CIMProperty;
+class CIMType;
+class CIMValue;
+BOOST_PYTHON_END
 
 namespace bp = boost::python;
 

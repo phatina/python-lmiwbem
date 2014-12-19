@@ -24,6 +24,7 @@
 #include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <Pegasus/Common/CIMMethod.h>
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_method.h"
 #include "obj/cim/lmiwbem_parameter.h"

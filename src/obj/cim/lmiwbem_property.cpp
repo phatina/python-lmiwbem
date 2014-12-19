@@ -23,6 +23,10 @@
 #include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <Pegasus/Common/CIMProperty.h>
+#include <Pegasus/Common/CIMType.h>
+#include <Pegasus/Common/CIMQualifier.h>
+#include <Pegasus/Common/CIMValue.h>
 #include "lmiwbem_exception.h"
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_property.h"

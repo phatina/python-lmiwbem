@@ -25,6 +25,7 @@
 #include <boost/python/dict.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/str.hpp>
+#include <Pegasus/Common/CIMInstance.h>
 #include "obj/cim/lmiwbem_instance.h"
 #include "obj/cim/lmiwbem_instance_name.h"
 #include "obj/lmiwbem_nocasedict.h"

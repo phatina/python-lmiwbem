@@ -23,8 +23,6 @@
 #  define LMIWBEM_CLIENT_H
 
 #  include <Pegasus/Client/CIMClient.h>
-#  include <Pegasus/Common/CIMType.h>
-#  include <Pegasus/Common/SSLContext.h>
 #  include "lmiwbem_urlinfo.h"
 #  include "lmiwbem_mutex.h"
 #  include "util/lmiwbem_string.h"

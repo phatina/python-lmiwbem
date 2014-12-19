@@ -24,12 +24,16 @@
 
 #  include <map>
 #  include <Pegasus/Consumer/CIMIndicationConsumer.h>
-#  include <Pegasus/Listener/CIMListener.h>
+#  include "lmiwbem.h"
 #  include <boost/python/object.hpp>
 #  include <boost/shared_ptr.hpp>
 #  include "obj/lmiwbem_cimbase.h"
 #  include "obj/cim/lmiwbem_instance.h"
 #  include "util/lmiwbem_string.h"
+
+PEGASUS_BEGIN
+class CIMListener;
+PEGASUS_END
 
 namespace bp = boost::python;
 

@@ -24,11 +24,14 @@
 
 #  include <list>
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Common/CIMInstance.h>
 #  include "lmiwbem.h"
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+PEGASUS_BEGIN
+class CIMInstance;
+PEGASUS_END
 
 namespace bp = boost::python;
 

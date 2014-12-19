@@ -24,7 +24,7 @@
 
 #  include <boost/shared_ptr.hpp>
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Client/CIMEnumerationContext.h>
+#  include "lmiwbem.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 

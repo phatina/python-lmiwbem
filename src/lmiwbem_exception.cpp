@@ -23,6 +23,7 @@
 #include <boost/python/object.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
+#include <Pegasus/Common/Exception.h>
 #include <Pegasus/Client/CIMClientException.h>
 #include "lmiwbem.h"
 #include "lmiwbem_exception.h"

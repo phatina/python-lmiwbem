@@ -23,9 +23,13 @@
 #  define LMIWBEM_INSTANCE_NAME_H
 
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Common/CIMObjectPath.h>
+#  include "lmiwbem.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+PEGASUS_BEGIN
+class CIMObjectPath;
+PEGASUS_END
 
 namespace bp = boost::python;
 

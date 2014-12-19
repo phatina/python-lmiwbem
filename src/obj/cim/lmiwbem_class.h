@@ -24,10 +24,17 @@
 
 #  include <list>
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Common/CIMClass.h>
+#  include "lmiwbem.h"
 #  include "lmiwbem_refcountedptr.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+PEGASUS_BEGIN
+class CIMClass;
+class CIMConstMethod;
+class CIMConstProperty;
+class CIMConstQualifier;
+PEGASUS_END
 
 namespace bp = boost::python;
 

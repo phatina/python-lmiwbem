@@ -26,13 +26,12 @@
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
 #  include "lmiwbem_client.h"
-#  include "lmiwbem_gil.h"
 #  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN
-    class dict;
-    class object;
-    class tuple;
+class dict;
+class object;
+class tuple;
 BOOST_PYTHON_END
 
 namespace bp = boost::python;

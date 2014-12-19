@@ -23,9 +23,13 @@
 #  define LMIWBEM_SLP_H
 
 #  include <slp.h>
-#  include <boost/python/object.hpp>
+#  include "lmiwbem.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+BOOST_PYTHON_BEGIN
+class object;
+BOOST_PYTHON_END
 
 namespace bp = boost::python;
 

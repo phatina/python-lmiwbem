@@ -22,9 +22,13 @@
 #ifndef   LMIWBEM_CLASS_NAME_H
 #  define LMIWBEM_CLASS_NAME_H
 
-#  include <boost/python/object.hpp>
+#  include "lmiwbem.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+BOOST_PYTHON_BEGIN
+class object;
+BOOST_PYTHON_END
 
 namespace bp = boost::python;
 

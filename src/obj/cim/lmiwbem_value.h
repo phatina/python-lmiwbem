@@ -23,8 +23,12 @@
 #  define LMIWBEM_VALUE_H
 
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Common/CIMValue.h>
+#  include "lmiwbem.h"
 #  include "util/lmiwbem_string.h"
+
+PEGASUS_BEGIN
+class CIMValue;
+PEGASUS_END
 
 class CIMValue
 {

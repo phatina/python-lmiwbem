@@ -22,6 +22,7 @@
 #include <config.h>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <Pegasus/Common/CIMClass.h>
 #include <Pegasus/Common/CIMProperty.h>
 #include <Pegasus/Common/CIMQualifier.h>
 #include <Pegasus/Common/CIMMethod.h>

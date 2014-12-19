@@ -23,10 +23,13 @@
 #  define LMIWBEM_QUALIFIER_H
 
 #  include <boost/python/object.hpp>
-#  include <Pegasus/Common/CIMQualifier.h>
 #  include "lmiwbem.h"
 #  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
+
+BOOST_PYTHON_BEGIN
+class CIMConstQualifier;
+BOOST_PYTHON_END
 
 namespace bp = boost::python;
 

@@ -23,6 +23,7 @@
 #include <sstream>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <boost/python/object.hpp>
 #include "obj/cim/lmiwbem_class_name.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"

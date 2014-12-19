@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <boost/python/class.hpp>
+#include <Pegasus/Client/CIMEnumerationContext.h>
 #include "obj/cim/lmiwbem_enum_ctx.h"
 
 CIMEnumerationContext::CIMEnumerationContext()

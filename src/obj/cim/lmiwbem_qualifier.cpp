@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <boost/python/class.hpp>
+#include <Pegasus/Common/CIMQualifier.h>
 #include "obj/cim/lmiwbem_qualifier.h"
 #include "obj/cim/lmiwbem_value.h"
 #include "util/lmiwbem_convert.h"
