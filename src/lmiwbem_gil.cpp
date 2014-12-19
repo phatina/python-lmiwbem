@@ -19,33 +19,51 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef   LMIWBEM_GIL_H
-#  define LMIWBEM_GIL_H
+#include <Python.h>
+#include "lmiwbem_gil.h"
 
-#  include <boost/shared_ptr.hpp>
-
-class ScopedGILAcquire
+class ScopedGILAcquire::ScopedGILAcquireRep
 {
 public:
-    ScopedGILAcquire();
-    ~ScopedGILAcquire();
+    ScopedGILAcquireRep();
 
-private:
-    class ScopedGILAcquireRep;
-
-    boost::shared_ptr<ScopedGILAcquireRep> m_rep;
+    PyGILState_STATE m_state;
 };
 
-class ScopedGILRelease
+class ScopedGILRelease::ScopedGILReleaseRep
 {
 public:
-    ScopedGILRelease();
-    ~ScopedGILRelease();
+    ScopedGILReleaseRep();
 
-private:
-    class ScopedGILReleaseRep;
-
-    boost::shared_ptr<ScopedGILReleaseRep> m_rep;
+    PyThreadState *m_thread_state;
 };
 
-#endif // LMIWBEM_GIL_H
+ScopedGILAcquire::ScopedGILAcquireRep::ScopedGILAcquireRep()
+{
+}
+
+ScopedGILRelease::ScopedGILReleaseRep::ScopedGILReleaseRep()
+    : m_thread_state(NULL)
+{
+}
+
+ScopedGILAcquire::ScopedGILAcquire()
+    : m_rep(new ScopedGILAcquireRep)
+{
+    m_rep->m_state = PyGILState_Ensure();
+}
+
+ScopedGILAcquire::~ScopedGILAcquire()
+{
+    PyGILState_Release(m_rep->m_state);
+}
+
+ScopedGILRelease::ScopedGILRelease()
+{
+    m_rep->m_thread_state = PyEval_SaveThread();
+}
+
+ScopedGILRelease::~ScopedGILRelease()
+{
+    PyEval_RestoreThread(m_rep->m_thread_state);
+}

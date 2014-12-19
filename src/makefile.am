@@ -30,6 +30,7 @@ lmiwbem_core_la_SOURCES      =            \
 	lmiwbem_make_method.h             \
 	lmiwbem.h                         \
 	lmiwbem_exception.cpp             \
+	lmiwbem_gil.cpp                   \
 	obj/lmiwbem_connection.cpp        \
 	obj/lmiwbem_nocasedict.cpp        \
 	obj/cim/lmiwbem_class.cpp         \
