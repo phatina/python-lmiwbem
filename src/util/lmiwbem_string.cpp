@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include "util/lmiwbem_string.h"
 
 String::String()

@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include <Python.h>
 #include "lmiwbem_gil.h"
 

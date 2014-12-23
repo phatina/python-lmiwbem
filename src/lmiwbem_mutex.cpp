@@ -19,6 +19,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <config.h>
 #include "lmiwbem_mutex.h"
 
 Mutex::Mutex()
