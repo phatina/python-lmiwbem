@@ -22,20 +22,49 @@
 #ifndef   LMIWBEM_CONFIG_H
 #  define LMIWBEM_CONFIG_H
 
+#  include "obj/lmiwbem_cimbase.h"
 #  include "util/lmiwbem_string.h"
 
-class Config
+namespace bp = boost::python;
+
+BOOST_PYTHON_BEGIN
+class object;
+BOOST_PYTHON_END
+
+class Config: public CIMBase<Config>
 {
 public:
+    Config();
+
+    static Config *instance();
     static void init_type();
 
+    bp::object repr() const;
+
+    String getDefaultNamespace() const;
+    String getDefaultTrustStore() const;
+    int getExceptionVerbosity() const;
     static String defaultNamespace();
     static String defaultTrustStore();
-
     static int exceptionVerbosity();
+    void setDefaultNamespace(const String &def_namespace);
+    void setDefaultTrustStore(const String &def_trust_store);
+    void setExcVerbosity(const int verbosity);
+
+    bool getIsVerbose() const;
+    bool getIsVerboseCall() const;
+    bool getIsVerboseMore() const;
     static bool isVerbose();
     static bool isVerboseCall();
     static bool isVerboseMore();
+
+    bp::object getPyDefaultNamespace() const;
+    bp::object getPyDefaultTrustStore() const;
+    bp::object getPyExcVerbosity() const;
+    bp::object getPySupportsPullOp() const;
+    void setPyDefaultNamespace(const bp::object &def_namespace);
+    void setPyDefaultTrustStore(const bp::object &def_trust_store);
+    void setPyExcVerbosity(const bp::object &exc_verbosity);
 
 private:
     enum {
@@ -44,9 +73,11 @@ private:
         EXC_VERB_MORE
     };
 
-    static const String DEF_NAMESPACE;
-    static const String DEF_TRUST_STORE;
-    static const int DEF_EXC_VERBOSITY;
+    static boost::shared_ptr<Config> s_inst_ptr;
+
+    String m_def_namespace;
+    String m_def_trust_store;
+    int m_exc_verbosity;
 };
 
 #endif // LMIWBEM_CONFIG_H

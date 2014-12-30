@@ -23,7 +23,7 @@
 #include <boost/python/def.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
-#include "lmiwbem_config.h"
+#include "obj/lmiwbem_config.h"
 #include "obj/lmiwbem_connection.h"
 #include "obj/cim/lmiwbem_instance.h"
 #include "obj/cim/lmiwbem_instance_name.h"

@@ -26,8 +26,8 @@
 #include <boost/python/module.hpp>
 #include <boost/python/object.hpp>
 #include <boost/python/scope.hpp>
-#include "lmiwbem_config.h"
 #include "lmiwbem_exception.h"
+#include "obj/lmiwbem_config.h"
 #include "obj/lmiwbem_connection.h"
 #ifdef HAVE_PEGASUS_LISTENER
 #  include "obj/lmiwbem_listener.h"

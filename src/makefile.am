@@ -8,6 +8,7 @@ lmiwbem_core_la_SOURCES      =            \
 	lmiwbem_traits.h                  \
 	lmiwbem_gil.h                     \
 	obj/lmiwbem_cimbase.h             \
+	obj/lmiwbem_config.h              \
 	obj/lmiwbem_connection.h          \
 	obj/lmiwbem_nocasedict.h          \
 	obj/cim/lmiwbem_property.h        \
@@ -26,11 +27,11 @@ lmiwbem_core_la_SOURCES      =            \
 	util/lmiwbem_util.h               \
 	lmiwbem_mutex.h                   \
 	lmiwbem_urlinfo.h                 \
-	lmiwbem_config.h                  \
 	lmiwbem_make_method.h             \
 	lmiwbem.h                         \
 	lmiwbem_exception.cpp             \
 	lmiwbem_gil.cpp                   \
+	obj/lmiwbem_config.cpp            \
 	obj/lmiwbem_connection.cpp        \
 	obj/lmiwbem_nocasedict.cpp        \
 	obj/cim/lmiwbem_class.cpp         \
@@ -49,7 +50,6 @@ lmiwbem_core_la_SOURCES      =            \
 	util/lmiwbem_util.cpp             \
 	lmiwbem_mutex.cpp                 \
 	lmiwbem_urlinfo.cpp               \
-	lmiwbem_config.cpp                \
 	lmiwbem.cpp                       \
 	lmiwbem_client.cpp
 

@@ -27,9 +27,9 @@
 #include <boost/python/tuple.hpp>
 #include <Pegasus/Common/CIMName.h>
 #include <Pegasus/Common/CIMPropertyList.h>
-#include "lmiwbem_config.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_make_method.h"
+#include "obj/lmiwbem_config.h"
 #include "obj/lmiwbem_connection.h"
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_class.h"
