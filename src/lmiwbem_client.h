@@ -64,9 +64,11 @@ public:
     bool isConnected() const;
 
     void setVerifyCertificate(bool verify = true);
+    bool setUrl(const String &url);
     bool getVerifyCertificate() const;
     URLInfo getURLInfo() const;
-    String hostname() const;
+    String getHostname() const;
+    String getUrl() const;
 
 private:
     // We hide these from Pegasus::CIMClient

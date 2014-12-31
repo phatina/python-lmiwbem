@@ -112,6 +112,11 @@ void CIMClient::setVerifyCertificate(bool verify)
     m_verify_cert = verify;
 }
 
+bool CIMClient::setUrl(const String &url)
+{
+    return m_url_info.set(url);
+}
+
 bool CIMClient::getVerifyCertificate() const
 {
     return m_verify_cert;
@@ -122,9 +127,14 @@ URLInfo CIMClient::getURLInfo() const
     return m_url_info;
 }
 
-String CIMClient::hostname() const
+String CIMClient::getHostname() const
 {
     return m_url_info.hostname();
+}
+
+String CIMClient::getUrl() const
+{
+    return m_url_info.url();
 }
 
 #ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA

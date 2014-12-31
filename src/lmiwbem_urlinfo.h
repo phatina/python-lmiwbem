@@ -43,6 +43,7 @@ public:
 
     bool isHttps() const;
     bool isLocal() const;
+    bool isValid() const;
 
     String asString() const;
 
@@ -57,6 +58,7 @@ private:
     uint32_t m_port;
     bool m_is_https;
     bool m_is_local;
+    bool m_is_valid;
 };
 
 #endif // WBEM_CLIENT_ADDRESS_H

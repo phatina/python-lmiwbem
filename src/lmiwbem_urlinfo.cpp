@@ -68,6 +68,7 @@ URLInfo::URLInfo()
     , m_port(URLInfo::DEF_HTTPS_PORT)
     , m_is_https(true)
     , m_is_local(false)
+    , m_is_valid(false)
 {
 }
 
@@ -77,6 +78,7 @@ URLInfo::URLInfo(const URLInfo &copy)
     , m_port(copy.m_port)
     , m_is_https(copy.m_is_https)
     , m_is_local(copy.m_is_local)
+    , m_is_valid(copy.m_is_valid)
 {
 }
 
@@ -98,7 +100,7 @@ bool URLInfo::set(String url)
         m_is_local = true;
         m_hostname = get_fqdn();
         m_port = 0;
-        return true;
+        return m_is_valid = true;
     }
 
     /* Handle remote connection */
@@ -111,7 +113,7 @@ bool URLInfo::set(String url)
         m_port = URLInfo::DEF_HTTPS_PORT;
         m_is_https = true;
     } else {
-        return false;
+        return m_is_valid = false;
     }
 
     size_t pos = url.rfind(':');
@@ -120,13 +122,13 @@ bool URLInfo::set(String url)
         long int port = strtol(url.substr(pos + 1,
             url.size() - pos - 1).c_str(), NULL, 10);
         if (errno == ERANGE || port < 0 || port > 65535)
-            return false;
+            return m_is_valid = false;
         m_port = static_cast<uint32_t>(port);
     } else {
         m_hostname = url;
     }
 
-    return true;
+    return m_is_valid = true;
 }
 
 String URLInfo::url() const
@@ -152,6 +154,11 @@ bool URLInfo::isHttps() const
 bool URLInfo::isLocal() const
 {
     return m_is_local;
+}
+
+bool URLInfo::isValid() const
+{
+    return m_is_valid;
 }
 
 String URLInfo::asString() const

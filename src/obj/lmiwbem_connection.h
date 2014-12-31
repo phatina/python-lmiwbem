@@ -98,7 +98,9 @@ public:
     void connectLocally();
     void disconnect();
     bool isConnected() const;
+
     bp::object getHostname() const;
+    bp::object getPyUrl() const;
 
     bool getVerifyCertificate() const;
     void setVerifyCertificate(bool verify_cert);
@@ -306,7 +308,6 @@ protected:
 
     bool m_connected_tmp;
     bool m_connect_locally;
-    String m_url;
     String m_username;
     String m_password;
     String m_cert_file;

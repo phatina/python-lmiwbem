@@ -52,13 +52,13 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
     } else if (m_conn->m_connect_locally) {
         m_conn->m_client.connectLocally();
         return;
-    } else if (m_conn->m_url.empty()) {
-        throw_ValueError("WBEMConnection constructed without url parameter");
+    } else if (not m_conn->m_client.getURLInfo().isValid()) {
+        throw_ValueError("WBEMConnection constructed with invalid url parameter");
     }
 
     try {
         m_conn->m_client.connect(
-            m_conn->m_url,
+            m_conn->m_client.getUrl(),
             m_conn->m_username,
             m_conn->m_password,
             m_conn->m_cert_file,
@@ -102,7 +102,6 @@ WBEMConnection::WBEMConnection(
     const bp::object &connect_locally)
     : m_connected_tmp(false)
     , m_connect_locally(false)
-    , m_url()
     , m_username()
     , m_password()
     , m_cert_file()
@@ -117,8 +116,14 @@ WBEMConnection::WBEMConnection(
     if (m_connect_locally)
         return;
 
-    if (!isnone(url))
-        m_url = StringConv::asString(url, "url");
+    if (!isnone(url)) {
+        String c_url(StringConv::asString(url, "url"));
+        if (!m_client.setUrl(c_url)) {
+            std::stringstream ss;
+            ss << "Invalid URL: '" << c_url << '\'';
+            throw_ValueError(ss.str());
+        }
+    }
 
     if (!isnone(creds))
         setCredentials(creds);
@@ -227,6 +232,10 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
     .add_property("hostname",
         &WBEMConnection::getHostname,
         "Property returning CIMOM hostname.\n\n"
+        ":rtype: str")
+    .add_property("url",
+        &WBEMConnection::getPyUrl,
+        "Property returning connection URL.\n\n"
         ":rtype: str")
     .add_property("no_verification",
         &WBEMConnection::getVerifyCertificate,
@@ -653,7 +662,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
 String WBEMConnection::repr() const
 {
     std::stringstream ss;
-    ss << "WBEMConnection(url=u'" << m_url << "', ...)";
+    ss << "WBEMConnection(url=u'" << m_client.getUrl() << "', ...)";
     return ss.str();
 }
 
@@ -674,7 +683,7 @@ void WBEMConnection::connect(
 
     // All three parameters can be omitted, WBEMConnection was has been
     // with such parameters; WBEMConnection(url, (username, password)).
-    String c_url(m_url);
+    String c_url(m_client.getUrl());
     String c_cert_file(m_cert_file);
     String c_key_file(m_key_file);
 
@@ -744,7 +753,12 @@ bool WBEMConnection::isConnected() const
 
 bp::object WBEMConnection::getHostname() const
 {
-    return StringConv::asPyUnicode(m_client.hostname());
+    return StringConv::asPyUnicode(m_client.getHostname());
+}
+
+bp::object WBEMConnection::getPyUrl() const
+{
+    return StringConv::asPyUnicode(m_client.getUrl());
 }
 
 bool WBEMConnection::getVerifyCertificate() const
@@ -869,7 +883,7 @@ bp::object WBEMConnection::createInstance(
     // CIMClient::createInstance() does not set namespace and hostname
     // in newly created CIMInstanceName. We need to do that manually.
     peg_new_inst_name.setNameSpace(Pegasus::CIMNamespaceName(c_ns));
-    peg_new_inst_name.setHost(m_client.hostname());
+    peg_new_inst_name.setHost(m_client.getHostname());
 
     return CIMInstanceName::create(peg_new_inst_name);
 } catch (...) {
@@ -982,7 +996,7 @@ bp::object WBEMConnection::enumerateInstances(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_instances, c_ns, m_client.hostname());
+        peg_instances, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1020,7 +1034,7 @@ bp::object WBEMConnection::enumerateInstanceNames(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        peg_instance_names, c_ns, m_client.hostname());
+        peg_instance_names, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1280,7 +1294,7 @@ bp::object WBEMConnection::execQuery(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_instances, c_ns, m_client.hostname());
+        peg_instances, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1402,7 +1416,7 @@ bp::object WBEMConnection::getAssociators(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_associators, c_ns, m_client.hostname());
+        peg_associators, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1464,7 +1478,7 @@ bp::object WBEMConnection::getAssociatorNames(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        peg_associator_names, c_ns, m_client.hostname());
+        peg_associator_names, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1522,7 +1536,7 @@ bp::object WBEMConnection::getReferences(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceList(
-        peg_references, c_ns, m_client.hostname());
+        peg_references, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -1570,7 +1584,7 @@ bp::object WBEMConnection::getReferenceNames(
     ScopedTransactionEnd();
 
     return ListConv::asPyCIMInstanceNameList(
-        peg_reference_names, c_ns, m_client.hostname());
+        peg_reference_names, c_ns, m_client.getHostname());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
