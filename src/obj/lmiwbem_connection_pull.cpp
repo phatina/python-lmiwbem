@@ -960,7 +960,7 @@ bp::object WBEMConnection::openExecQuery(
         ListConv::asPyCIMInstanceList(
             peg_instances,
             peg_ns.getString(),
-            m_client.hostname()),
+            m_client.getHostname()),
         CIMEnumerationContext::create(
             ctx_ptr,
             false, /* with_paths */
@@ -1009,7 +1009,7 @@ bp::object WBEMConnection::pullInstances(
         ListConv::asPyCIMInstanceList(
             peg_instances,
             ctx_.getNamespace(),
-            m_client.hostname()),
+            m_client.getHostname()),
         ctx,
         bp::object(peg_end_of_sequence));
 } catch (...) {
