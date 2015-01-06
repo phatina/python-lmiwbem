@@ -58,7 +58,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
         "OpenEnumerateInstances(ClassName, namespace=None, "
-        "DeepInheritance=True, IncludeQualifiers=False, IncludeClassOrigin=False, "
+        "DeepInheritance=True, IncludeClassOrigin=False, "
         "PropertyList=None, QueryLang=None, Query=None, "
         "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
         "Opens an enumeration sequence of :py:class:`.CIMInstance`.\n\n"
