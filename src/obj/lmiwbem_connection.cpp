@@ -972,7 +972,7 @@ bp::object WBEMConnection::enumerateInstances(
     const bool include_class_origin,
     const bp::object &property_list) try
 {
-    String c_cls(StringConv::asString(cls, "cls"));
+    String c_cls(StringConv::asString(cls, "ClassName"));
     String c_ns(m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
@@ -1018,7 +1018,7 @@ bp::object WBEMConnection::enumerateInstanceNames(
     const bp::object &cls,
     const bp::object &ns) try
 {
-    String c_cls(StringConv::asString(cls, "cls"));
+    String c_cls(StringConv::asString(cls, "ClassName"));
     String c_ns(m_default_namespace);
     if (!isnone(ns))
         c_ns = StringConv::asString(ns, "namespace");
@@ -1232,7 +1232,7 @@ bp::object WBEMConnection::enumerateClassNames(
 
     Pegasus::CIMName peg_classname;
     if (!isnone(cls)) {
-        String c_cls(StringConv::asString(cls, "cls"));
+        String c_cls(StringConv::asString(cls, "ClassName"));
         peg_classname = Pegasus::CIMName(c_cls);
     }
 
