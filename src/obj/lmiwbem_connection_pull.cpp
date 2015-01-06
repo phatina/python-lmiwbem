@@ -381,17 +381,19 @@ bp::object WBEMConnection::openEnumerateInstances(
     const bp::object &continue_on_error,
     const bp::object &max_object_cnt) try
 {
-    Pegasus::CIMName peg_class(StringConv::asPegasusString(cls, "ClassName"));
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    String c_cls(StringConv::asString(cls, "ClassName"));
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        peg_ns = StringConv::asPegasusString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
+    Pegasus::CIMName peg_cls(c_cls);
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     String c_query_lang;
     String c_query;
     if (!isnone(query_lang))
-        c_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asString(query_lang);
     if (!isnone(query))
-        c_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asString(query);
 
     Pegasus::Boolean peg_deep_inheritance = Conv::as<Pegasus::Boolean>(
         deep_inheritance, "DeepInheritance");
@@ -421,7 +423,7 @@ bp::object WBEMConnection::openEnumerateInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
-        peg_class,
+        peg_cls,
         peg_deep_inheritance,
         peg_include_class_origin,
         peg_property_list,
@@ -462,17 +464,19 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     const bp::object &continue_on_error,
     const bp::object &max_object_cnt) try
 {
-    Pegasus::CIMName peg_class(StringConv::asPegasusString(cls, "ClassName"));
-    Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
+    String c_cls(StringConv::asString(cls, "ClassName"));
+    String c_ns(m_default_namespace);
     if (!isnone(ns))
-        peg_ns = StringConv::asPegasusString(ns, "namespace");
+        c_ns = StringConv::asString(ns, "namespace");
+    Pegasus::CIMName peg_cls(c_cls);
+    Pegasus::CIMNamespaceName peg_ns(c_ns);
 
     String c_query_lang;
     String c_query;
     if (!isnone(query_lang))
-        c_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asString(query_lang);
     if (!isnone(query))
-        c_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -495,7 +499,7 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
-        peg_class,
+        peg_cls,
         c_query_lang,
         c_query,
         peg_operation_timeout,
@@ -548,26 +552,20 @@ bp::object WBEMConnection::openAssociators(
         peg_ns = peg_path.getNameSpace().getString();
 
     Pegasus::CIMName peg_assoc_class;
-    if (!isnone(assoc_class)) {
-        peg_assoc_class = StringConv::asPegasusString(
-            assoc_class, "AssocClass");
-    }
+    if (!isnone(assoc_class))
+        peg_assoc_class = StringConv::asString(assoc_class, "AssocClass");
 
     Pegasus::CIMName peg_result_class;
-    if (!isnone(result_class)) {
-        peg_result_class = StringConv::asPegasusString(
-            result_class, "ResultClass");
-    }
+    if (!isnone(result_class))
+        peg_result_class = StringConv::asString(result_class, "ResultClass");
 
     String c_role;
     if (!isnone(role))
-        c_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
 
     String c_result_role;
-    if (!isnone(result_role)) {
-        c_result_role = StringConv::asPegasusString(
-            result_role, "ResultRole");
-    }
+    if (!isnone(result_role))
+        c_result_role = StringConv::asString(result_role, "ResultRole");
 
     Pegasus::Boolean peg_include_class_origin = \
         Conv::as<Pegasus::Boolean>(include_class_origin, "IncludeClassOrigin");
@@ -578,9 +576,9 @@ bp::object WBEMConnection::openAssociators(
     String c_query_lang;
     String c_query;
     if (!isnone(query_lang))
-        c_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asString(query_lang);
     if (!isnone(query))
-        c_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -655,33 +653,27 @@ bp::object WBEMConnection::openAssociatorNames(
         peg_ns = peg_path.getNameSpace().getString();
 
     Pegasus::CIMName peg_assoc_class;
-    if (!isnone(assoc_class)) {
-        peg_assoc_class = StringConv::asPegasusString(
-            assoc_class, "AssocClass");
-    }
+    if (!isnone(assoc_class))
+        peg_assoc_class = StringConv::asString(assoc_class, "AssocClass");
 
     Pegasus::CIMName peg_result_class;
-    if (!isnone(result_class)) {
-        peg_result_class = StringConv::asPegasusString(
-            result_class, "ResultClass");
-    }
+    if (!isnone(result_class))
+        peg_result_class = StringConv::asString(result_class, "ResultClass");
 
     String c_role;
     if (!isnone(role))
-        c_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
 
     String c_result_role;
-    if (!isnone(result_role)) {
-        c_result_role = StringConv::asPegasusString(
-            result_role, "ResultRole");
-    }
+    if (!isnone(result_role))
+        c_result_role = StringConv::asString(result_role, "ResultRole");
 
     String c_query_lang;
     String c_query;
     if (!isnone(query_lang))
-        c_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asString(query_lang);
     if (!isnone(query))
-        c_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -754,14 +746,12 @@ bp::object WBEMConnection::openReferences(
         peg_ns = peg_path.getNameSpace().getString();
 
     Pegasus::CIMName peg_result_class;
-    if (!isnone(result_class)) {
-        peg_result_class = StringConv::asPegasusString(
-            result_class, "ResultClass");
-    }
+    if (!isnone(result_class))
+        peg_result_class = StringConv::asString(result_class, "ResultClass");
 
     String c_role;
     if (!isnone(role))
-        c_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
 
     Pegasus::Boolean peg_include_class_origin = \
         Conv::as<Pegasus::Boolean>(include_class_origin, "IncludeClassOrigin");
@@ -772,9 +762,9 @@ bp::object WBEMConnection::openReferences(
     String c_query_lang;
     String c_query;
     if (!isnone(query_lang))
-        c_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asString(query_lang);
     if (!isnone(query))
-        c_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -845,21 +835,19 @@ bp::object WBEMConnection::openReferenceNames(
         peg_ns = peg_path.getNameSpace().getString();
 
     Pegasus::CIMName peg_result_class;
-    if (!isnone(result_class)) {
-        peg_result_class = StringConv::asPegasusString(
-            result_class, "ResultClass");
-    }
+    if (!isnone(result_class))
+        peg_result_class = StringConv::asString(result_class, "ResultClass");
 
     String c_role;
     if (!isnone(role))
-        c_role = StringConv::asPegasusString(role, "Role");
+        c_role = StringConv::asString(role, "Role");
 
     String c_query_lang;
     String c_query;
     if (!isnone(query_lang))
-        c_query_lang = StringConv::asPegasusString(query_lang);
+        c_query_lang = StringConv::asString(query_lang);
     if (!isnone(query))
-        c_query = StringConv::asPegasusString(query);
+        c_query = StringConv::asString(query);
 
     Pegasus::Boolean peg_continue_on_error = Conv::as<Pegasus::Boolean>(
         continue_on_error, "ContinueOnError");
@@ -917,14 +905,14 @@ bp::object WBEMConnection::openExecQuery(
     const bp::object &max_object_cnt) try
 {
     String c_query_lang(
-        StringConv::asPegasusString(query_lang, "QueryLanguage"));
+        StringConv::asString(query_lang, "QueryLanguage"));
     String c_query(
-        StringConv::asPegasusString(query, "Query"));
+        StringConv::asString(query, "Query"));
     Pegasus::CIMClass c_query_cls;
 
     Pegasus::CIMNamespaceName peg_ns(m_default_namespace);
     if (!isnone(ns))
-        peg_ns = StringConv::asPegasusString(ns, "namespace");
+        peg_ns = StringConv::asString(ns, "namespace");
 
     Pegasus::Uint32Arg peg_operation_timeout;
     if (!isnone(operation_timeout)) {
