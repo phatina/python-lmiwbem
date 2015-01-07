@@ -1365,7 +1365,7 @@ bp::object WBEMConnection::getAssociators(
     const bp::object &result_role,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object property_list) try
+    const bp::object &property_list) try
 {
     const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");

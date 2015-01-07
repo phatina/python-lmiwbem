@@ -185,7 +185,7 @@ public:
         const bp::object &result_role,
         const bool include_qualifiers,
         const bool include_class_origin,
-        const bp::object property_list);
+        const bp::object &property_list);
 
     bp::object getAssociatorNames(
         const bp::object &object_path,
