@@ -135,7 +135,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("MaxObjectCnt") = 0),
         "OpenAssociators(ObjectName, namespace=None, AssocClass=None, "
         "ResultClass=None, Role=None, ResultRole=None, "
-        "IncludeClassOrigin=false, PropertyList=None, QueryLanguage=None, "
+        "IncludeClassOrigin=False, PropertyList=None, QueryLanguage=None, "
         "Query=None, OperationTimeout=None, ContinueOnError=False, "
         "MaxObjectCnt=0)\n\n"
         "Opens an enumeration for associated :py:class:`.CIMInstance` objects "
