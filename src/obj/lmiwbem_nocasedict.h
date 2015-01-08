@@ -62,7 +62,7 @@ public:
     nocase_map_t::const_iterator begin() const;
     nocase_map_t::const_iterator end() const;
 
-    bool empty();
+    bool empty() const;
 
     void delitem(const bp::object &key);
     void setitem(const bp::object &key, const bp::object &value);

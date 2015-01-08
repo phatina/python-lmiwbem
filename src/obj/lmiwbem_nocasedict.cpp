@@ -123,7 +123,7 @@ nocase_map_t::const_iterator NocaseDict::end() const
     return m_dict.end();
 }
 
-bool NocaseDict::empty()
+bool NocaseDict::empty() const
 {
     return m_dict.empty();
 }

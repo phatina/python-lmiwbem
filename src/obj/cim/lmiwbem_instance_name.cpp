@@ -359,9 +359,13 @@ String CIMInstanceName::asString() const
         ss << "//" << m_hostname << '/';
     if (!m_namespace.empty())
         ss << m_namespace << ':';
-    ss << m_classname << '.';
+    ss << m_classname;
 
     const NocaseDict &cim_keybindings = NocaseDict::asNative(m_keybindings);
+
+    if (!cim_keybindings.empty())
+         ss << '.';
+
     nocase_map_t::const_iterator it;
     for (it = cim_keybindings.begin(); it != cim_keybindings.end(); ++it) {
         ss << it->first << '=';
