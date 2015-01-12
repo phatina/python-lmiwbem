@@ -62,7 +62,9 @@ void CIMClient::connect(
             CIMConstants::CON_ERR_INVALID_LOCATOR);
     }
 
-    if (!m_url_info.isHttps()) {
+    if (m_url_info.isLocal()) {
+        connectLocally();
+    } else if (!m_url_info.isHttps()) {
         Pegasus::CIMClient::connect(
             m_url_info.hostname(),
             m_url_info.port(),
