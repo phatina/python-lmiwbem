@@ -12,22 +12,24 @@ Unclassified
    This variable is used, when no namespace parameter is provided to
    :py:class:`.WBEMConnection`.
 
-.. autoattribute:: lmiwbem.lmiwbem_core.DEFAULT_TRUST_STORE
+.. autoattribute:: lmiwbem.lmiwbem_core.config
 
-   This variable is used, when SSL connection is applied.
+   .. autoattribute:: lmiwbem.lmiwbem_core.config.DEFAULT_TRUST_STORE
 
-.. autoattribute:: lmiwbem.lmiwbem_core.EXCEPTION_VERBOSITY
+      This variable is used, when SSL connection is applied.
 
-   This attribute defines the exceptions verbosity. There are 3 applicable levels:
+   .. autoattribute:: lmiwbem.lmiwbem_core.config.EXCEPTION_VERBOSITY
 
-   .. autoattribute:: lmiwbem.lmiwbem_core.EXC_VERB_NONE
+      This attribute defines the exceptions verbosity. There are 3 applicable levels:
 
-      No additional information is added to exceptions' args.
+      .. autoattribute:: lmiwbem.lmiwbem_core.EXC_VERB_NONE
 
-   .. autoattribute:: lmiwbem.lmiwbem_core.EXC_VERB_CALL
+         No additional information is added to exceptions' args.
 
-      Call prototype is added to excetionss' args.
+      .. autoattribute:: lmiwbem.lmiwbem_core.EXC_VERB_CALL
 
-   .. autoattribute:: lmiwbem.lmiwbem_core.EXC_VERB_MORE
+         Call prototype is added to exceptions' args.
 
-      Call prototype and other useful information is added to exceptions' args.
+      .. autoattribute:: lmiwbem.lmiwbem_core.EXC_VERB_MORE
+
+         Call prototype and other useful information is added to exceptions' args.
