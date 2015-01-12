@@ -56,7 +56,7 @@ void CIMClient::connect(
     const String &key_file,
     const String &trust_store)
 {
-    if (!m_url_info.set(uri)) {
+    if (!m_url_info.isValid()) {
         throw_ConnectionError(
             "Invalid locator",
             CIMConstants::CON_ERR_INVALID_LOCATOR);
