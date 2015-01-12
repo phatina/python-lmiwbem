@@ -62,14 +62,16 @@ void CIMClient::connect(
             CIMConstants::CON_ERR_INVALID_LOCATOR);
     }
 
+    bool is_creds_valid = m_url_info.isCredsValid();
+
     if (m_url_info.isLocal()) {
         connectLocally();
     } else if (!m_url_info.isHttps()) {
         Pegasus::CIMClient::connect(
             m_url_info.hostname(),
             m_url_info.port(),
-            username,
-            password);
+            is_creds_valid ? m_url_info.username() : username,
+            is_creds_valid ? m_url_info.password() : password);
     } else {
         Pegasus::SSLContext ctx(
             trust_store,
@@ -85,8 +87,8 @@ void CIMClient::connect(
             m_url_info.hostname(),
             m_url_info.port(),
             ctx,
-            username,
-            password);
+            is_creds_valid ? m_url_info.username() : username,
+            is_creds_valid ? m_url_info.password() : password);
     }
     m_is_connected = true;
 }

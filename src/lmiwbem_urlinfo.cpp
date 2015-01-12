@@ -65,20 +65,26 @@ String get_fqdn() {
 URLInfo::URLInfo()
     : m_url("https://unknown")
     , m_hostname("unknown")
+    , m_username()
+    , m_password()
     , m_port(URLInfo::DEF_HTTPS_PORT)
     , m_is_https(true)
     , m_is_local(false)
     , m_is_valid(false)
+    , m_is_creds_valid(false)
 {
 }
 
 URLInfo::URLInfo(const URLInfo &copy)
     : m_url(copy.m_url)
     , m_hostname(copy.m_hostname)
+    , m_username(copy.m_username)
+    , m_password(copy.m_password)
     , m_port(copy.m_port)
     , m_is_https(copy.m_is_https)
     , m_is_local(copy.m_is_local)
     , m_is_valid(copy.m_is_valid)
+    , m_is_creds_valid(copy.m_is_creds_valid)
 {
 }
 
@@ -104,11 +110,14 @@ bool URLInfo::set(String url)
     }
 
     /* Handle remote connection */
+    size_t spos = String::npos;
     if (url.substr(0, 7) == "http://") {
+        spos = 7;
         url.erase(0, 7);
         m_port = URLInfo::DEF_HTTP_PORT;
         m_is_https = false;
     } else if (url.substr(0, 8) == "https://") {
+        spos = 8;
         url.erase(0, 8);
         m_port = URLInfo::DEF_HTTPS_PORT;
         m_is_https = true;
@@ -116,8 +125,27 @@ bool URLInfo::set(String url)
         return m_is_valid = false;
     }
 
-    size_t pos = url.rfind(':');
+    size_t pos = url.find('@');
     if (pos != String::npos) {
+        // We have credentials embedded into URL.
+        String creds = url.substr(0, pos);
+        size_t cpos = creds.find(':');
+        if (cpos != String::npos) {
+            m_username = creds.substr(0, cpos);
+            m_password = creds.substr(cpos + 1);
+            m_is_creds_valid = true;
+        } else {
+            m_is_creds_valid = false;
+        }
+
+        // Remove username:password information from the URL.
+        m_url.erase(spos, creds.length() + 1);
+        url.erase(0, creds.length() + 1);
+    }
+
+    pos = url.rfind(':');
+    if (pos != String::npos) {
+        // We have port information right after the hostname.
         m_hostname = url.substr(0, pos);
         long int port = strtol(url.substr(pos + 1,
             url.size() - pos - 1).c_str(), NULL, 10);
@@ -141,6 +169,16 @@ String URLInfo::hostname() const
     return m_hostname;
 }
 
+String URLInfo::username() const
+{
+    return m_username;
+}
+
+String URLInfo::password() const
+{
+    return m_password;
+}
+
 uint32_t URLInfo::port() const
 {
     return m_port;
@@ -161,6 +199,11 @@ bool URLInfo::isValid() const
     return m_is_valid;
 }
 
+bool URLInfo::isCredsValid() const
+{
+    return m_is_creds_valid;
+}
+
 String URLInfo::asString() const
 {
     std::stringstream ss;
@@ -175,10 +218,16 @@ String URLInfo::asString() const
     return String(ss.str());
 }
 
-URLInfo &URLInfo::operator =(const URLInfo &rhs)
+URLInfo &URLInfo::operator=(const URLInfo &rhs)
 {
+    m_url = rhs.m_url;
     m_hostname = rhs.m_hostname;
+    m_username = rhs.m_username;
+    m_password = rhs.m_password;
     m_port = rhs.m_port;
     m_is_https = rhs.m_is_https;
+    m_is_local = rhs.m_is_local;
+    m_is_valid = rhs.m_is_valid;
+    m_is_creds_valid = rhs.m_is_creds_valid;
     return *this;
 }

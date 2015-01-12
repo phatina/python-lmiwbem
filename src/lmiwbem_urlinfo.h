@@ -39,11 +39,14 @@ public:
 
     String url() const;
     String hostname() const;
+    String username() const;
+    String password() const;
     uint32_t port() const;
 
     bool isHttps() const;
     bool isLocal() const;
     bool isValid() const;
+    bool isCredsValid() const;
 
     String asString() const;
 
@@ -55,10 +58,13 @@ public:
 private:
     String m_url;
     String m_hostname;
+    String m_username;
+    String m_password;
     uint32_t m_port;
     bool m_is_https;
     bool m_is_local;
     bool m_is_valid;
+    bool m_is_creds_valid;
 };
 
 #endif // WBEM_CLIENT_ADDRESS_H

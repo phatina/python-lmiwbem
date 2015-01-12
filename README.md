@@ -132,7 +132,18 @@ possible to create and maintain a connection with a CIMOM:
 import lmiwbem
 
 conn = lmiwbem.WBEMConnection()
-conn.connect("hostname", "username", "password")
+conn.connect('hostname', 'username', 'password')
+...
+conn.disconnect()
+```
+
+or:
+
+``` python
+import lmiwbem
+
+conn = lmiwbem.WBEMConnection('https://username:password@hostname:port')
+conn.connect()
 ...
 conn.disconnect()
 ```
@@ -142,7 +153,7 @@ It is possible to create connections in PyWBEM's way:
 ``` python
 import lmiwbem
 
-conn = lmiwbem.WBEMConnection("hostname", ("username", "password"))
+conn = lmiwbem.WBEMConnection('hostname', ('username', 'password'))
 ...
 ```
 
