@@ -49,7 +49,9 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
     cls.def("OpenEnumerateInstances", &WBEMConnection::openEnumerateInstances,
         (bp::arg("ClassName"),
          bp::arg("namespace") = None,
+         bp::arg("LocalOnly") = true,
          bp::arg("DeepInheritance") = true,
+         bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
          bp::arg("PropertyList") = None,
          bp::arg("QueryLanguage") = None,
@@ -57,17 +59,20 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenEnumerateInstances(ClassName, namespace=None, "
-        "DeepInheritance=True, IncludeClassOrigin=False, "
-        "PropertyList=None, QueryLang=None, Query=None, "
-        "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
+        "OpenEnumerateInstances(ClassName, namespace=None, LocalOnly=True, "
+        "DeepInheritance=True, IncludeQualifiers=False, "
+        "IncludeClassOrigin=False, PropertyList=None, QueryLang=None, "
+        "Query=None, OperationTimeout=None, ContinueOnError=False, "
+        "MaxObjectCnt=0)\n\n"
         "Opens an enumeration sequence of :py:class:`.CIMInstance`.\n\n"
         ":param str ClassName: String containing class name of instances to be "
         "retrieved.\n"
         ":param str namespace: String containing namespace, from which the "
         "instances should be retrieved.\n"
+        ":param bool LocalOnly: Unused\n"
         ":param bool DeepInheritance: Boolean indicating whether the "
         "enumeration should include all levels of derivation.\n"
+        ":param bool IncludeQualifiers: Unused\n"
         ":param bool IncludeClassOrigin: Boolean indicating whether the "
         "`CLASS ORIGIN` attribute is to be included in elements of the "
         "returned instance.\n"
@@ -126,6 +131,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("ResultClass") = None,
          bp::arg("Role") = None,
          bp::arg("ResultRole") = None,
+         bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
          bp::arg("PropertyList") = None,
          bp::arg("QueryLanguage") = None,
@@ -135,9 +141,9 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("MaxObjectCnt") = 0),
         "OpenAssociators(ObjectName, namespace=None, AssocClass=None, "
         "ResultClass=None, Role=None, ResultRole=None, "
-        "IncludeClassOrigin=False, PropertyList=None, QueryLanguage=None, "
-        "Query=None, OperationTimeout=None, ContinueOnError=False, "
-        "MaxObjectCnt=0)\n\n"
+        "IncludeQualifiers=False, IncludeClassOrigin=False, "
+        "PropertyList=None, QueryLanguage=None, Query=None, "
+        "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
         "Opens an enumeration for associated :py:class:`.CIMInstance` objects "
         "with an input ObjectName.\n\n"
         ":param CIMInstanceName ObjectName: Object path that is the basis "
@@ -152,6 +158,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
         "instances to be returned.\n"
         ":param str ResultRole: Defines a filter on the result roles of "
         "associated instances.\n"
+        ":param bool IncludeQualifiers: Unused\n"
         ":param bool IncludeClassOrigin: Boolean indicating whether the "
         "`CLASS ORIGIN` attribute is to be included in elements of the "
         "returned instance.\n"
@@ -222,6 +229,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("namespace") = None,
          bp::arg("ResultClass") = None,
          bp::arg("Role") = None,
+         bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
          bp::arg("PropertyList") = None,
          bp::arg("QueryLanguage") = None,
@@ -230,9 +238,9 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
         "OpenReferences(ObjectName, ns=None, ResultClass=None, Role=None, "
-        "IncludeClassOrigin=False, PropertyList=None, QueryLanguage=None, "
-        "Query=None, OperationTimeout=None, ContinueOnError=False, "
-        "MaxObjectCnt=0)\n\n"
+        "IncludeQualifiers=False, IncludeClassOrigin=False, "
+        "PropertyList=None, QueryLanguage=None, Query=None, "
+        "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
         "Opens an enumeration for association :py:class:`.CIMInstance` "
         "objects with an input instance name.\n\n"
         ":param CIMInstanceName ObjectName: Object path that is the basis "
@@ -243,6 +251,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
         "set to be returned.\n"
         ":param str Role: Defines a filter on the roles of references "
         "instances to be returned.\n"
+        ":param bool IncludeQualifiers: Unused\n"
         ":param bool IncludeClassOrigin: Indicates whether the `CLASS ORIGIN` "
         "attribute is to be included in elements of the returned instance.\n"
         ":param list PropertyList: List of properties available in returned "
@@ -372,7 +381,9 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
 bp::object WBEMConnection::openEnumerateInstances(
     const bp::object &cls,
     const bp::object &ns,
+    const bp::object &local_only,          // Unused
     const bp::object &deep_inheritance,
+    const bp::object &include_qualifiers,  // Unused
     const bp::object &include_class_origin,
     const bp::object &property_list,
     const bp::object &query_lang,
@@ -535,6 +546,7 @@ bp::object WBEMConnection::openAssociators(
     const bp::object &result_class,
     const bp::object &role,
     const bp::object &result_role,
+    const bp::object &include_qualifiers,
     const bp::object &include_class_origin,
     const bp::object &property_list,
     const bp::object &query_lang,
@@ -729,6 +741,7 @@ bp::object WBEMConnection::openReferences(
     const bp::object &ns,
     const bp::object &result_class,
     const bp::object &role,
+    const bp::object &include_qualifiers,
     const bp::object &include_class_origin,
     const bp::object &property_list,
     const bp::object &query_lang,

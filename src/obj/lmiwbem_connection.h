@@ -185,14 +185,16 @@ public:
         const bp::object &result_role,
         const bool include_qualifiers,
         const bool include_class_origin,
-        const bp::object &property_list);
+        const bp::object &property_list,
+        const bp::object &ns);
 
     bp::object getAssociatorNames(
         const bp::object &object_path,
         const bp::object &assoc_class,
         const bp::object &result_class,
         const bp::object &role,
-        const bp::object &result_role);
+        const bp::object &result_role,
+        const bp::object &ns);
 
     bp::object getReferences(
         const bp::object &object_path,
@@ -200,18 +202,22 @@ public:
         const bp::object &role,
         const bool include_qualifiers,
         const bool include_class_origin,
-        const bp::object &property_list);
+        const bp::object &property_list,
+        const bp::object &ns);
 
     bp::object getReferenceNames(
         const bp::object &object_path,
         const bp::object &result_class,
-        const bp::object &role);
+        const bp::object &role,
+        const bp::object &ns);
 
 #  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
     bp::object openEnumerateInstances(
         const bp::object &cls,
         const bp::object &ns,
+        const bp::object &local_only,          // Unused
         const bp::object &deep_inheritance,
+        const bp::object &include_qualifiers,  // Unused
         const bp::object &include_class_origin,
         const bp::object &property_list,
         const bp::object &query_lang,
@@ -236,6 +242,7 @@ public:
         const bp::object &result_class,
         const bp::object &role,
         const bp::object &result_role,
+        const bp::object &include_qualifiers,
         const bp::object &include_class_origin,
         const bp::object &property_list,
         const bp::object &query_lang,
@@ -262,6 +269,7 @@ public:
         const bp::object &ns,
         const bp::object &result_class,
         const bp::object &role,
+        const bp::object &include_qualifiers,
         const bp::object &include_class_origin,
         const bp::object &property_list,
         const bp::object &query_lang,

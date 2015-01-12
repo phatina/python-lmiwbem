@@ -520,10 +520,11 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("ResultRole") = None,
          bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = None),
+         bp::arg("PropertyList") = None,
+         bp::arg("namespace") = None),
         "Associators(ObjectName, AssocClass=None, ResultClass=None, Role=None, "
         "ResultRole=None, IncludeQualifiers=False, IncludeClassOrigin=False, "
-        "PropertyList=None)\n\n"
+        "PropertyList=None, namespace=None)\n\n"
         "Returns a list of associated :py:class:`.CIMInstance` objects with an input\n"
         "instance name.\n\n"
         ":param CIMInstanceName ObjectName: specifies CIM object for which the associated\n"
@@ -555,6 +556,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "\tbe present on all appropriate elements in each returned object. Default value\n"
         "\tis False.\n"
         ":param list PropertyList: if not None, the members of the array define one or more\n"
+        ":param str namespace: String containing namespace, from which the "
+        "elements should be retrieved.\n"
         "\tproperty names. Each returned object shall not include elements for any\n"
         "\tproperties missing from this list. If PropertyList is an empty list, no\n"
         "\tproperties are included in each returned object. If it is None, no additional\n"
@@ -568,9 +571,10 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("AssocClass") = None,
          bp::arg("ResultClass") = None,
          bp::arg("Role") = None,
-         bp::arg("ResultRole") = None),
+         bp::arg("ResultRole") = None,
+         bp::arg("namespace") = None),
         "AssociatorNames(ObjectName, AssocClass=None, ResultClass=None, Role=None, "
-        "ResultRole=None)\n\n"
+        "ResultRole=None, namespace=None)\n\n"
         "Returns a list of associated :py:class:`.CIMInstanceName` objects with an input\n"
         "instance name.\n\n"
         ":param CIMInstanceName ObjectName: specifies CIM object for which the associated\n"
@@ -595,6 +599,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "\tnamed returned object plays the specified role. That is, the name of the\n"
         "\tproperty in the association class that refers to the returned object shall\n"
         "\tmatch the value of this parameter.\n"
+        ":param str namespace: String containing namespace, from which the "
+        "elements should be retrieved.\n"
         ":returns: list of associated :py:class:`.CIMInstanceName` objects with\n"
         "\tan input instance\n"
         ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
@@ -605,9 +611,10 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("Role") = None,
          bp::arg("IncludeQualifiers") = false,
          bp::arg("IncludeClassOrigin") = false,
-         bp::arg("PropertyList") = None),
+         bp::arg("PropertyList") = None,
+         bp::arg("namespace") = None),
         "References(ObjectName, ResultClass=None, Role=None, IncludeQualifiers=False, "
-        "IncludeClassOrigin=False, PropertyList=None)\n\n"
+        "IncludeClassOrigin=False, PropertyList=None, namespace=None)\n\n"
         "Returns a list of association :py:class:`.CIMInstance` objects with an input\n"
         "instance name.\n\n"
         ":param CIMInstanceName ObjectName: specifies CIM object for which the association\n"
@@ -632,6 +639,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "\tproperties missing from this list. If PropertyList is an empty list, no\n"
         "\tproperties are included in each returned object. If PropertyList is None, no\n"
         "\tadditional filtering is defined. Default value is None.\n"
+        ":param str namespace: String containing namespace, from which the\n"
+        "\tinstances should be retrieved.\n"
         ":returns: list of association :py:class:`.CIMInstance` objects with an input\n"
         "\tinstance\n"
         ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
@@ -639,8 +648,9 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
     .def("ReferenceNames", &WBEMConnection::getReferenceNames,
         (bp::arg("ObjectName"),
          bp::arg("ResultClass") = None,
-         bp::arg("Role") = None),
-        "ReferenceNames(ObjectName, ResultClass=None, Role=None)\n\n"
+         bp::arg("Role") = None,
+         bp::arg("namespace") = None),
+        "ReferenceNames(ObjectName, ResultClass=None, Role=None, namespace=None)\n\n"
         "Returns a list of association :py:class:`.CIMInstanceName` objects with an\n"
         "input instance.\n\n"
         ":param CIMInstanceName ObjectName: specifies CIM object for which the association\n"
@@ -653,6 +663,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         "\tof object names by mandating that each returned object name shall identify an\n"
         "\tobject that refers to the target instance through a property with a name that\n"
         "\tmatches the value of this parameter.\n"
+        ":param str namespace: String containing namespace, from which the\n"
+        "\tinstances should be retrieved.\n"
         ":returns: list of association :py:class:`.CIMInstanceName` objects with an input\n"
         "\tinstance\n"
         ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`\n\n"
@@ -1365,14 +1377,17 @@ bp::object WBEMConnection::getAssociators(
     const bp::object &result_role,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object &property_list) try
+    const bp::object &property_list,
+    const bp::object &ns) try
 {
     const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
     String c_ns(m_default_namespace);
-    if (!peg_path.getNameSpace().isNull())
+    if (!isnone(ns))
+        c_ns = StringConv::asString(ns, "namespace");
+    else if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
     String c_assoc_class;
@@ -1434,14 +1449,17 @@ bp::object WBEMConnection::getAssociatorNames(
     const bp::object &assoc_class,
     const bp::object &result_class,
     const bp::object &role,
-    const bp::object &result_role) try
+    const bp::object &result_role,
+    const bp::object &ns) try
 {
     const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
     String c_ns(m_default_namespace);
-    if (!peg_path.getNameSpace().isNull())
+    if (!isnone(ns))
+        c_ns = StringConv::asString(ns, "namespace");
+    else if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
     String c_assoc_class;
@@ -1497,14 +1515,17 @@ bp::object WBEMConnection::getReferences(
     const bp::object &role,
     const bool include_qualifiers,
     const bool include_class_origin,
-    const bp::object &property_list) try
+    const bp::object &property_list,
+    const bp::object &ns) try
 {
     const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
     String c_ns(m_default_namespace);
-    if (!peg_path.getNameSpace().isNull())
+    if (!isnone(ns))
+        c_ns = StringConv::asString(ns, "namespace");
+    else if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
     String c_result_class;
@@ -1552,14 +1573,17 @@ bp::object WBEMConnection::getReferences(
 bp::object WBEMConnection::getReferenceNames(
     const bp::object &object_path,
     const bp::object &result_class,
-    const bp::object &role) try
+    const bp::object &role,
+    const bp::object &ns) try
 {
     const CIMInstanceName &cim_inst_name = CIMInstanceName::asNative(
         object_path, "ObjectName");
     Pegasus::CIMObjectPath peg_path = cim_inst_name.asPegasusCIMObjectPath();
 
     String c_ns(m_default_namespace);
-    if (!peg_path.getNameSpace().isNull())
+    if (!isnone(ns))
+        c_ns = StringConv::asString(ns, "namespace");
+    else if (!peg_path.getNameSpace().isNull())
         c_ns = peg_path.getNameSpace().getString();
 
     String c_result_class;
