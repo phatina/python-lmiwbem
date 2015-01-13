@@ -1,3 +1,17 @@
+New in version 0.6.0:
+* WBEMConnection can parse username:password from URL
+* added compatibility parameters in pull operations
+* added missing CIM error constants for pull operations
+* lmiwbem.config object
+  - DEFAULT_NAMESPACE
+  - DEFAULT_TRUST_STORE
+  - SUPPORTS_PULL_OPERATIONS
+* fixed overflow error for large int on 64-bit
+* proper hostname is set for local connections
+* unified string for whole code base
+* source tree reorganization
+* various fixes and improvements
+
 New in version 0.5.0:
 * pull operations
 * fixed CIMIndicationListener port value, when multiple bind retries are allowed
