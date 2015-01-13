@@ -3,7 +3,7 @@ AC_PREREQ([2.60])
 dnl lmiwbem version number
 m4_define(lmiwbem_version_major, 0)
 m4_define(lmiwbem_version_minor, 6)
-m4_define(lmiwbem_version_patch, 0)
+m4_define(lmiwbem_version_patch, 1-pre)
 m4_define(lmiwbem_version, lmiwbem_version_major.lmiwbem_version_minor.lmiwbem_version_patch)
 
 AC_INIT([lmiwbem], [lmiwbem_version], [phatina@redhat.com])
