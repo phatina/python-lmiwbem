@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>WBEMConnection &mdash; LMIWBEM 0.5.1-pre documentation</title>
+  <title>WBEMConnection &mdash; LMIWBEM 0.6.1-pre documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="LMIWBEM 0.5.1-pre documentation" href="../index.html"/>
+    <link rel="top" title="LMIWBEM 0.6.1-pre documentation" href="../index.html"/>
         <link rel="up" title="lmiwbem_core Package" href="api_lmiwbem_core.html"/>
         <link rel="next" title="lmiwbem_types Package" href="api_lmiwbem_types.html"/>
         <link rel="prev" title="Unclassified" href="api_lmiwbem_core_unclassified.html"/> 
@@ -267,22 +267,6 @@ instance</p>
 </tbody>
 </table>
 <p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_associators.html#example-associators"><em>Associators</em></a></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.CloseEnumeration">
-<tt class="descname">CloseEnumeration</tt><big>(</big><em>Context</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.CloseEnumeration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Closes an enumeration sequence.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Context</strong> (<em>CIMEnumerationContext</em>) &#8211; Enumeration context to close.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -665,279 +649,6 @@ from the current values in the instance are designated to be modified.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociatorNames">
-<tt class="descname">OpenAssociatorNames</tt><big>(</big><em>ObjectName</em>, <em>namespace=None</em>, <em>AssocClass=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>ResultRole=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociatorNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration for associated <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an input ObjectName.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for the enumeration.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
-<li><strong>AssocClass</strong> (<em>str</em>) &#8211; Defines a filter on the reference instances set to be returned.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; Defines a filter on the reference instances set to be returned.</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; Defines a filter on the roles of associated instances to be returned.</li>
-<li><strong>ResultRole</strong> (<em>str</em>) &#8211; Defines a filter on the result roles of associated instances to be returned.</li>
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociators">
-<tt class="descname">OpenAssociators</tt><big>(</big><em>ObjectName</em>, <em>namespace=None</em>, <em>AssocClass=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>ResultRole=None</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociators" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration for associated <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input ObjectName.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for the enumeration.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
-<li><strong>AssocClass</strong> (<em>str</em>) &#8211; Defines a filter on the reference instances set to be returned.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; Defines a filter on the reference instances set to be returned.</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; Defines a filter on the roles of associated instances to be returned.</li>
-<li><strong>ResultRole</strong> (<em>str</em>) &#8211; Defines a filter on the result roles of associated instances.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Unused</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; Boolean indicating whether the <cite>CLASS ORIGIN</cite> attribute is to be included in elements of the returned instance.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; List of properties available in returned instances.</li>
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstanceNames">
-<tt class="descname">OpenEnumerateInstanceNames</tt><big>(</big><em>ClassName</em>, <em>namespace=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstanceNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration sequence of <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; String containing class name of elements to be retrieved.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstances">
-<tt class="descname">OpenEnumerateInstances</tt><big>(</big><em>ClassName</em>, <em>namespace=None</em>, <em>LocalOnly=True</em>, <em>DeepInheritance=True</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>QueryLang=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstances" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration sequence of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; String containing class name of instances to be retrieved.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the instances should be retrieved.</li>
-<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; Unused</li>
-<li><strong>DeepInheritance</strong> (<em>bool</em>) &#8211; Boolean indicating whether the enumeration should include all levels of derivation.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Unused</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; Boolean indicating whether the <cite>CLASS ORIGIN</cite> attribute is to be included in elements of the returned instance.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; List of properties available in returned instances.</li>
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return instances subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects, enumeration context and boolean which defines if all the instanceshave been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenExecQuery">
-<tt class="descname">OpenExecQuery</tt><big>(</big><em>QueryLanguage</em>, <em>Query</em>, <em>namespace=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenExecQuery" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration for Query.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Defines the query language in which the query parameter is expressed.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Specified the query to be executed.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenReferenceNames">
-<tt class="descname">OpenReferenceNames</tt><big>(</big><em>ObjectName</em>, <em>namespace=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenReferenceNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration for association <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an input instance name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for the enumeration.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; Defines a filter on the reference instances set to be returned.</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; Defines a filter on the roles of references instances to be returned.</li>
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenReferences">
-<tt class="descname">OpenReferences</tt><big>(</big><em>ObjectName</em>, <em>ns=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenReferences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens an enumeration for association <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input instance name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for the enumeration.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; Defines a filter on the reference instances set to be returned.</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; Defines a filter on the roles of references instances to be returned.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Unused</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; Indicates whether the <cite>CLASS ORIGIN</cite> attribute is to be included in elements of the returned instance.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; List of properties available in returned instances.</li>
-<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
-<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
-<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds between the response and subsequent request operations of an enumeration sequence.</li>
-<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the server.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames">
-<tt class="descname">PullInstanceNames</tt><big>(</big><em>Context</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves a list of <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> for an open enumeration sequence opened by an openQueryInstances operation and represented by an enumeration context returned by the original open or previous <a class="reference internal" href="#lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames" title="lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames"><tt class="xref py py-meth docutils literal"><span class="pre">WBEMConnection.PullInstanceNames()</span></tt></a> operation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Context</strong> (<em>CIMEnumerationContext</em>) &#8211; Identifier for the enumeration sequence.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="lmiwbem.lmiwbem_core.WBEMConnection.PullInstances">
-<tt class="descname">PullInstances</tt><big>(</big><em>Context</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.PullInstances" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves a list of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> for an open enumeration sequence opened by an openQueryInstances operation and represented by an enumeration context returned by the original open or previous <tt class="xref py py-meth docutils literal"><span class="pre">WBEMConnection.PullInstancesWithPath()</span></tt> operation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Context</strong> (<em>CIMEnumerationContext</em>) &#8211; Identifier for the enumeration sequence.</li>
-<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open operation can return.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing a list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects, enumeration context and boolean which defines if all the instances have been retrieved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.ReferenceNames">
 <tt class="descname">ReferenceNames</tt><big>(</big><em>ObjectName</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>namespace=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.ReferenceNames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of association <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an
@@ -1238,7 +949,7 @@ will be used; HTTP(S) otherwise.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.1-pre',
+            VERSION:'0.6.1-pre',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
