@@ -26,7 +26,19 @@ Reasons why the library was created:
 LATEST VERSION
 ==============
 
-Latest sources of the software can be found at: [lmiwbem][]
+Latest sources of the software can be found at:
+**[github repository][lmiwbem]**.
+
+
+DOCUMENTATION
+=============
+
+Extensive documentation be found at **[documentation][lmiwbem doc]**.
+
+Full source code examples can be also found at
+**[examples][lmiwbem doc examples]**.
+
+API documentation is located at **[API documentation][lmiwbem doc api]**.
 
 
 INSTALLATION
@@ -123,8 +135,6 @@ Currently supported intrinsic methods:
 - OpenReferences()
 - OpenReferenceNames()
 
-**NOTE:** See the directory `examples`.
-
 There is major difference when compared to PyWBEM: using LMIWBEM, it is
 possible to create and maintain a connection with a CIMOM:
 
@@ -216,8 +226,12 @@ module itself.  This can be seen in memory results.
 BUG REPORTS
 ===========
 
-Report bugs to [phatina@redhat.com](mailto:phatina@redhat.com) or [lmiwbem issues][].
+Report bugs to **[phatina@redhat.com](mailto:phatina@redhat.com)**
+or **[lmiwbem issues][]**.
 
 [lmiwbem]: https://github.com/phatina/lmiwbem "lmiwbem repository on github"
+[lmiwbem doc]: http://phatina.github.io/lmiwbem "lmiwbem documentation"
+[lmiwbem doc api]: http://phatina.github.io/lmiwbem/api.html "lmiwbem API documentation"
+[lmiwbem doc examples]: http://phatina.github.io/lmiwbem/examples.html "examples of usage"
 [lmiwbem issues]: https://github.com/phatina/lmiwbem/issues "Report a bug"
 [LMI Meta-Command]: https://git.fedorahosted.org/git/openlmi-tools.git
