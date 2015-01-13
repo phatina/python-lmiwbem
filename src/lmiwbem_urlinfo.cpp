@@ -51,7 +51,7 @@ String get_fqdn() {
     if ((gai_result = getaddrinfo(name, port, &hints, &info)) == 0) {
         for (p = info; p != NULL; p = p->ai_next) {
             if (p->ai_canonname != NULL) {
-                snprintf(name, BUFLEN, p->ai_canonname);
+                snprintf(name, BUFLEN, "%s", p->ai_canonname);
                 break;
             }
         }
