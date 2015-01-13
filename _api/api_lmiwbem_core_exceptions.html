@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Exceptions &mdash; LMIWBEM 0.5.1-pre documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="LMIWBEM 0.5.1-pre documentation" href="../index.html"/>
+        <link rel="up" title="lmiwbem_core Package" href="api_lmiwbem_core.html"/>
+        <link rel="next" title="NocaseDict" href="api_lmiwbem_core_nocasedict.html"/>
+        <link rel="prev" title="CIMQualifier" href="api_lmiwbem_core_qualifier.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> LMIWBEM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">LMIWBEM Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#connecting-to-cimom">Connecting to CIMOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#supported-cim-operations">Supported CIM operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#indication-listener">Indication Listener</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="api_lmiwbem_core.html">lmiwbem_core Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lmiwbem_types.html">lmiwbem_types Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Source code examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_associator_names.html">AssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_associators.html">Associators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_create_instance.html">CreateInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_delete_instance.html">DeleteInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_class_names.html">EnumerateClassNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_classes.html">EnumerateClasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_instance_names.html">EnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_instances.html">EnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_exec_query.html">ExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_get_class.html">GetClass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_get_instance.html">GetInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_invoke_method.html">InvokeMethod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_modify_instance.html">ModifyInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_reference_names.html">ReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_references.html">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_associator_names.html">OpenAssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_associators.html">OpenAssociators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_enumerate_instance_names.html">OpenEnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_enumerate_instances.html">OpenEnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_exec_query.html">OpenExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_reference_names.html">OpenReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_references.html">OpenReferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_slp_discovery.html">SLP Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_slp_discovery_attrs.html">SLP Attributes Discovery</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">LMIWBEM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../api.html">API Documentation</a> &raquo;</li>
+      
+          <li><a href="api_lmiwbem_core.html">lmiwbem_core Package</a> &raquo;</li>
+      
+    <li>Exceptions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/_api/api_lmiwbem_core_exceptions.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="exceptions">
+<h1>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h1>
+<dl class="exception">
+<dt id="lmiwbem.lmiwbem_core.CIMError">
+<em class="property">exception </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMError</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a CIM operations fails. Following constants may be used to
+identify error type:</p>
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_FAILED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_FAILED</tt><em class="property"> = 1</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_FAILED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_ACCESS_DENIED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_ACCESS_DENIED</tt><em class="property"> = 2</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_ACCESS_DENIED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_NAMESPACE">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_INVALID_NAMESPACE</tt><em class="property"> = 3</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_NAMESPACE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_PARAMETER">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_INVALID_PARAMETER</tt><em class="property"> = 4</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_PARAMETER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_CLASS">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_INVALID_CLASS</tt><em class="property"> = 5</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_CLASS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_NOT_FOUND">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_NOT_FOUND</tt><em class="property"> = 6</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_NOT_FOUND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_NOT_SUPPORTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_NOT_SUPPORTED</tt><em class="property"> = 7</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_NOT_SUPPORTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_CLASS_HAS_CHILDREN">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_CLASS_HAS_CHILDREN</tt><em class="property"> = 8</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_CLASS_HAS_CHILDREN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_CLASS_HAS_INSTANCES">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_CLASS_HAS_INSTANCES</tt><em class="property"> = 9</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_CLASS_HAS_INSTANCES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_SUPERCLASS">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_INVALID_SUPERCLASS</tt><em class="property"> = 10</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_SUPERCLASS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_ALREADY_EXISTS">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_ALREADY_EXISTS</tt><em class="property"> = 11</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_ALREADY_EXISTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_NO_SUCH_PROPERTY">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_NO_SUCH_PROPERTY</tt><em class="property"> = 12</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_NO_SUCH_PROPERTY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_TYPE_MISMATCH">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_TYPE_MISMATCH</tt><em class="property"> = 13</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_TYPE_MISMATCH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED</tt><em class="property"> = 14</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_QUERY">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_INVALID_QUERY</tt><em class="property"> = 15</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_INVALID_QUERY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_METHOD_NOT_AVAILABLE">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_METHOD_NOT_AVAILABLE</tt><em class="property"> = 16</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_METHOD_NOT_AVAILABLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.CIMError.lmiwbem_core.CIM_ERR_METHOD_NOT_FOUND">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CIM_ERR_METHOD_NOT_FOUND</tt><em class="property"> = 17</em><a class="headerlink" href="#lmiwbem.CIMError.lmiwbem_core.CIM_ERR_METHOD_NOT_FOUND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="lmiwbem.lmiwbem_core.ConnectionError">
+<em class="property">exception </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">ConnectionError</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.ConnectionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a connection to CIMOM fails. Following constants may be used to
+identify error type:</p>
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_OTHER">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_OTHER</tt><em class="property"> = 40</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_OTHER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_ALREADY_CONNECTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_ALREADY_CONNECTED</tt><em class="property"> = 41</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_ALREADY_CONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_NOT_CONNECTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_NOT_CONNECTED</tt><em class="property"> = 42</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_NOT_CONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_INVALID_LOCATOR">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_INVALID_LOCATOR</tt><em class="property"> = 43</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_INVALID_LOCATOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_CANNOT_CREATE_SOCKET">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_CANNOT_CREATE_SOCKET</tt><em class="property"> = 44</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_CANNOT_CREATE_SOCKET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_CANNOT_CONNECT">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_CANNOT_CONNECT</tt><em class="property"> = 45</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_CANNOT_CONNECT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_CONNECTION_TIMEOUT">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_CONNECTION_TIMEOUT</tt><em class="property"> = 46</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_CONNECTION_TIMEOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_SSL_EXCEPTION">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_SSL_EXCEPTION</tt><em class="property"> = 47</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_SSL_EXCEPTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_BIND">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">CON_ERR_BIND</tt><em class="property"> = 48</em><a class="headerlink" href="#lmiwbem.ConnectionError.lmiwbem_core.CON_ERR_BIND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="lmiwbem.lmiwbem_core.SLPError">
+<em class="property">exception </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">SLPError</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a SLP error occurs. Following constants may be used to
+identify error type:</p>
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_LANGUAGE_NOT_SUPPORTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_LANGUAGE_NOT_SUPPORTED</tt><em class="property"> = -1</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_LANGUAGE_NOT_SUPPORTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_PARSE_ERROR">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_PARSE_ERROR</tt><em class="property"> = -2</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_PARSE_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_INVALID_REGISTRATION">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_INVALID_REGISTRATION</tt><em class="property"> = -3</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_INVALID_REGISTRATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_SCOPE_NOT_SUPPORTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_SCOPE_NOT_SUPPORTED</tt><em class="property"> = -4</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_SCOPE_NOT_SUPPORTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_AUTHENTICATION_ABSENT">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_AUTHENTICATION_ABSENT</tt><em class="property"> = -6</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_AUTHENTICATION_ABSENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_AUTHENTICATION_FAILED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_AUTHENTICATION_FAILED</tt><em class="property"> = -7</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_AUTHENTICATION_FAILED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_INVALID_UPDATE">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_INVALID_UPDATE</tt><em class="property"> = -13</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_INVALID_UPDATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_REFRESH_REJECTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_REFRESH_REJECTED</tt><em class="property"> = -15</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_REFRESH_REJECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NOT_IMPLEMENTED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_NOT_IMPLEMENTED</tt><em class="property"> = -17</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NOT_IMPLEMENTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_BUFFER_OVERFLOW">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_BUFFER_OVERFLOW</tt><em class="property"> = -18</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_BUFFER_OVERFLOW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NETWORK_TIMED_OUT">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_NETWORK_TIMED_OUT</tt><em class="property"> = -19</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NETWORK_TIMED_OUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NETWORK_INIT_FAILED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_NETWORK_INIT_FAILED</tt><em class="property"> = -20</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NETWORK_INIT_FAILED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_MEMORY_ALLOC_FAILED">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_MEMORY_ALLOC_FAILED</tt><em class="property"> = -21</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_MEMORY_ALLOC_FAILED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_PARAMETER_BAD">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_PARAMETER_BAD</tt><em class="property"> = -22</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_PARAMETER_BAD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NETWORK_ERROR">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_NETWORK_ERROR</tt><em class="property"> = -23</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_NETWORK_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_INTERNAL_SYSTEM_ERROR">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_INTERNAL_SYSTEM_ERROR</tt><em class="property"> = -24</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_INTERNAL_SYSTEM_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_HANDLE_IN_USE">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_HANDLE_IN_USE</tt><em class="property"> = -25</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_HANDLE_IN_USE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.SLPError.lmiwbem_core.SLP_ERR_TYPE_ERROR">
+<tt class="descclassname">lmiwbem_core.</tt><tt class="descname">SLP_ERR_TYPE_ERROR</tt><em class="property"> = -26</em><a class="headerlink" href="#lmiwbem.SLPError.lmiwbem_core.SLP_ERR_TYPE_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_lmiwbem_core_nocasedict.html" class="btn btn-neutral float-right" title="NocaseDict"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api_lmiwbem_core_qualifier.html" class="btn btn-neutral" title="CIMQualifier"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Peter Hatina.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.1-pre',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

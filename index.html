@@ -1,0 +1,293 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LMIWBEM 0.5.1-pre &mdash; LMIWBEM 0.5.1-pre documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="LMIWBEM 0.5.1-pre documentation" href="#"/>
+        <link rel="next" title="LMIWBEM Usage Examples" href="usage.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="#" class="fa fa-home"> LMIWBEM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">LMIWBEM Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#connecting-to-cimom">Connecting to CIMOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#supported-cim-operations">Supported CIM operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#indication-listener">Indication Listener</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_api/api_lmiwbem_core.html">lmiwbem_core Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_api/api_lmiwbem_types.html">lmiwbem_types Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Source code examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_associator_names.html">AssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_associators.html">Associators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_create_instance.html">CreateInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_delete_instance.html">DeleteInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_class_names.html">EnumerateClassNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_classes.html">EnumerateClasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_instance_names.html">EnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_instances.html">EnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_exec_query.html">ExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_get_class.html">GetClass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_get_instance.html">GetInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_invoke_method.html">InvokeMethod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_modify_instance.html">ModifyInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_reference_names.html">ReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_references.html">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_associator_names.html">OpenAssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_associators.html">OpenAssociators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_enumerate_instance_names.html">OpenEnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_enumerate_instances.html">OpenEnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_exec_query.html">OpenExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_reference_names.html">OpenReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_references.html">OpenReferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_slp_discovery.html">SLP Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_slp_discovery_attrs.html">SLP Attributes Discovery</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">LMIWBEM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>LMIWBEM 0.5.1-pre</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="lmiwbem-version">
+<h1>LMIWBEM 0.5.1-pre<a class="headerlink" href="#lmiwbem-version" title="Permalink to this headline">¶</a></h1>
+<p><em>LMIWBEM is a Python library that performs CIM operations using CIM-XML
+protocol. The library tries to mimic PyWBEM, but does things in different way:</em></p>
+<ul class="simple">
+<li>TOG-Pegasus client&#8217;s library is used for communication</li>
+<li>lazy evaluation of CIM objects is used</li>
+<li>some minor API was added for performance reasons</li>
+</ul>
+<p><strong>Benefits of the library:</strong></p>
+<ul>
+<li><p class="first"><strong>Performance</strong> – Using <em>TOG-Pegasus</em> client&#8217;s library, <em>Boost::Python</em> and C++ STL,
+CIM operations are executed faster (e.g. ~60% faster Instance enumeration
+compared to PyWBEM).</p>
+<p><strong>NOTE:</strong> performance gain depends on CIM operation; there are CIM operations
+where the percentage is even higher.</p>
+</li>
+<li><p class="first"><strong>Memory</strong> – Using PyWBEM, the Python&#8217;s interpreter can eat up several GB of
+memory. In LMIWBEM, C++ allocator for CIM objects is used and unnecessary
+memory blocks are properly freed and returned to OS. <em>Lazy evaluation</em>
+(construction) of nested objects helps to perform CIM operations faster and
+Python does not use additional space for such objects unless it&#8217;s necessary.</p>
+</li>
+</ul>
+<p><strong>Content:</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">LMIWBEM Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#connecting-to-cimom">Connecting to CIMOM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#connection-using-username-password">Connection using username/password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#connection-using-x509-certificate">Connection using X509 certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="usage.html#connection-using-unix-socket">Connection using Unix Socket</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#supported-cim-operations">Supported CIM operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#indication-listener">Indication Listener</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_api/api_lmiwbem_core.html">lmiwbem_core Package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_class_name.html">CIMClassName</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_class.html">CIMClass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_instance_name.html">CIMInstanceName</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_instance.html">CIMInstance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_listener.html">CIMIndicationListener</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_method.html">CIMMethod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_parameter.html">CIMParameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_property.html">CIMProperty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_qualifier.html">CIMQualifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_exceptions.html">Exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_nocasedict.html">NocaseDict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_slp_result.html">SLPResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_unclassified.html">Unclassified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_api/api_lmiwbem_core_connection.html">WBEMConnection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="_api/api_lmiwbem_types.html">lmiwbem_types Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Source code examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_associator_names.html">AssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_associators.html">Associators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_create_instance.html">CreateInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_delete_instance.html">DeleteInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_class_names.html">EnumerateClassNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_classes.html">EnumerateClasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_instance_names.html">EnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_enumerate_instances.html">EnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_exec_query.html">ExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_get_class.html">GetClass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_get_instance.html">GetInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_invoke_method.html">InvokeMethod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_modify_instance.html">ModifyInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_reference_names.html">ReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_references.html">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_associator_names.html">OpenAssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_associators.html">OpenAssociators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_enumerate_instance_names.html">OpenEnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_enumerate_instances.html">OpenEnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_exec_query.html">OpenExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_reference_names.html">OpenReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_pull_references.html">OpenReferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_slp_discovery.html">SLP Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_examples/example_slp_discovery_attrs.html">SLP Attributes Discovery</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="usage.html" class="btn btn-neutral float-right" title="LMIWBEM Usage Examples"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Peter Hatina.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.1-pre',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

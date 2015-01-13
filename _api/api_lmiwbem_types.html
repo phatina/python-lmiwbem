@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>lmiwbem_types Package &mdash; LMIWBEM 0.5.1-pre documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="LMIWBEM 0.5.1-pre documentation" href="../index.html"/>
+        <link rel="up" title="API Documentation" href="../api.html"/>
+        <link rel="next" title="Source code examples" href="../examples.html"/>
+        <link rel="prev" title="WBEMConnection" href="api_lmiwbem_core_connection.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> LMIWBEM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">LMIWBEM Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#connecting-to-cimom">Connecting to CIMOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#supported-cim-operations">Supported CIM operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#indication-listener">Indication Listener</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api_lmiwbem_core.html">lmiwbem_core Package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">lmiwbem_types Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Source code examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_associator_names.html">AssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_associators.html">Associators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_create_instance.html">CreateInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_delete_instance.html">DeleteInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_class_names.html">EnumerateClassNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_classes.html">EnumerateClasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_instance_names.html">EnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_instances.html">EnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_exec_query.html">ExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_get_class.html">GetClass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_get_instance.html">GetInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_invoke_method.html">InvokeMethod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_modify_instance.html">ModifyInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_reference_names.html">ReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_references.html">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_associator_names.html">OpenAssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_associators.html">OpenAssociators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_enumerate_instance_names.html">OpenEnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_enumerate_instances.html">OpenEnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_exec_query.html">OpenExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_reference_names.html">OpenReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_references.html">OpenReferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_slp_discovery.html">SLP Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_slp_discovery_attrs.html">SLP Attributes Discovery</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">LMIWBEM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../api.html">API Documentation</a> &raquo;</li>
+      
+    <li>lmiwbem_types Package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/_api/api_lmiwbem_types.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="lmiwbem-types-package">
+<h1>lmiwbem_types Package<a class="headerlink" href="#lmiwbem-types-package" title="Permalink to this headline">¶</a></h1>
+<p>CIM types implementation.</p>
+<span class="target" id="module-lmiwbem.lmiwbem_types"></span><dl class="class">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">CIMDateTime</tt><big>(</big><em>dtarg</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>A CIM DateTime</p>
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.datetime">
+<tt class="descname">datetime</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.datetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.datetime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.fromtimestamp">
+<em class="property">classmethod </em><tt class="descname">fromtimestamp</tt><big>(</big><em>ts</em>, <em>tzi=None</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.fromtimestamp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.fromtimestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.get_local_utcoffset">
+<em class="property">static </em><tt class="descname">get_local_utcoffset</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.get_local_utcoffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.get_local_utcoffset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return minutes +/- UTC for the local timezone</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.is_interval">
+<tt class="descname">is_interval</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.is_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.is_interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.minutes_from_utc">
+<tt class="descname">minutes_from_utc</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.minutes_from_utc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.minutes_from_utc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the timezone as +/- minutes from UTC</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.now">
+<em class="property">classmethod </em><tt class="descname">now</tt><big>(</big><em>tzi=None</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.now"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.now" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.CIMDateTime.timedelta">
+<tt class="descname">timedelta</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMDateTime.timedelta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMDateTime.timedelta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.CIMFloat">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">CIMFloat</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMFloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMFloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.CIMInt">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">CIMInt</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMInt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMInt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.CIMType">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">CIMType</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#CIMType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.CIMType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base type for all CIM types</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.MinutesFromUTC">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">MinutesFromUTC</tt><big>(</big><em>offset</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#MinutesFromUTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.MinutesFromUTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixed offset in minutes from UTC</p>
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_types.MinutesFromUTC.dst">
+<tt class="descname">dst</tt><big>(</big><em>dt</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#MinutesFromUTC.dst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.MinutesFromUTC.dst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_types.MinutesFromUTC.utcoffset">
+<tt class="descname">utcoffset</tt><big>(</big><em>dt</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#MinutesFromUTC.utcoffset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.MinutesFromUTC.utcoffset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Real32">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Real32</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Real32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Real32" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Real32.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'real32'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Real32.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Real64">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Real64</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Real64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Real64" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Real64.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'real64'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Real64.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Sint16">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Sint16</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Sint16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint16" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Sint16.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'sint16'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint16.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Sint32">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Sint32</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Sint32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint32" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Sint32.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'sint32'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint32.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Sint64">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Sint64</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Sint64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint64" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Sint64.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'sint64'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint64.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Sint8">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Sint8</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Sint8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint8" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Sint8.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'sint8'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Sint8.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Uint16">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Uint16</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Uint16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint16" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Uint16.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'uint16'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint16.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Uint32">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Uint32</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Uint32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint32" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Uint32.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'uint32'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint32.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Uint64">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Uint64</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Uint64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint64" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Uint64.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'uint64'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint64.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_types.Uint8">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">Uint8</tt><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#Uint8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint8" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="lmiwbem.lmiwbem_types.Uint8.cimtype">
+<tt class="descname">cimtype</tt><em class="property"> = 'uint8'</em><a class="headerlink" href="#lmiwbem.lmiwbem_types.Uint8.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="lmiwbem.lmiwbem_types.cimtype">
+<tt class="descclassname">lmiwbem.lmiwbem_types.</tt><tt class="descname">cimtype</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/lmiwbem/lmiwbem_types.html#cimtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lmiwbem.lmiwbem_types.cimtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the CIM type name of an object as a string.  For a list, the
+type is the type of the first element as CIM arrays must be
+homogeneous.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../examples.html" class="btn btn-neutral float-right" title="Source code examples"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api_lmiwbem_core_connection.html" class="btn btn-neutral" title="WBEMConnection"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Peter Hatina.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.1-pre',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

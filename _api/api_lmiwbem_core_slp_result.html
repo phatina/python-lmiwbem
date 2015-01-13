@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SLPResult &mdash; LMIWBEM 0.5.1-pre documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="LMIWBEM 0.5.1-pre documentation" href="../index.html"/>
+        <link rel="up" title="lmiwbem_core Package" href="api_lmiwbem_core.html"/>
+        <link rel="next" title="Unclassified" href="api_lmiwbem_core_unclassified.html"/>
+        <link rel="prev" title="NocaseDict" href="api_lmiwbem_core_nocasedict.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> LMIWBEM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">LMIWBEM Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#connecting-to-cimom">Connecting to CIMOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#supported-cim-operations">Supported CIM operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#indication-listener">Indication Listener</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="api_lmiwbem_core.html">lmiwbem_core Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_lmiwbem_types.html">lmiwbem_types Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Source code examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_associator_names.html">AssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_associators.html">Associators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_create_instance.html">CreateInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_delete_instance.html">DeleteInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_class_names.html">EnumerateClassNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_classes.html">EnumerateClasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_instance_names.html">EnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_enumerate_instances.html">EnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_exec_query.html">ExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_get_class.html">GetClass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_get_instance.html">GetInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_invoke_method.html">InvokeMethod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_modify_instance.html">ModifyInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_reference_names.html">ReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_references.html">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_associator_names.html">OpenAssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_associators.html">OpenAssociators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_enumerate_instance_names.html">OpenEnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_enumerate_instances.html">OpenEnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_exec_query.html">OpenExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_reference_names.html">OpenReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_pull_references.html">OpenReferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_slp_discovery.html">SLP Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_examples/example_slp_discovery_attrs.html">SLP Attributes Discovery</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">LMIWBEM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../api.html">API Documentation</a> &raquo;</li>
+      
+          <li><a href="api_lmiwbem_core.html">lmiwbem_core Package</a> &raquo;</li>
+      
+    <li>SLPResult</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/_api/api_lmiwbem_core_slp_result.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="slpresult">
+<h1>SLPResult<a class="headerlink" href="#slpresult" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lmiwbem.lmiwbem_core.SLPResult">
+<em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">SLPResult</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a <a class="reference internal" href="api_lmiwbem_core_class.html#lmiwbem.lmiwbem_core.CIMClass" title="lmiwbem.lmiwbem_core.CIMClass"><tt class="xref py py-class docutils literal"><span class="pre">CIMClass</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>srvtype</strong> (<em>str</em>) &#8211; service type</li>
+<li><strong>host</strong> (<em>str</em>) &#8211; host name</li>
+<li><strong>port</strong> (<em>int</em>) &#8211; service port</li>
+<li><strong>family</strong> (<em>str</em>) &#8211; network address family</li>
+<li><strong>srvpart</strong> (<em>str</em>) &#8211; remainder of a URL (see SLP)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.SLPResult.family">
+<tt class="descname">family</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPResult.family" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property storing network address of the service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.SLPResult.host">
+<tt class="descname">host</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPResult.host" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property storing host name of the service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.SLPResult.port">
+<tt class="descname">port</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPResult.port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property storing port of the service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.SLPResult.srvpart">
+<tt class="descname">srvpart</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPResult.srvpart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property storing remainder of the service URL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.SLPResult.srvtype">
+<tt class="descname">srvtype</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.SLPResult.srvtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property storing service type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_lmiwbem_core_unclassified.html" class="btn btn-neutral float-right" title="Unclassified"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api_lmiwbem_core_nocasedict.html" class="btn btn-neutral" title="NocaseDict"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Peter Hatina.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5.1-pre',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

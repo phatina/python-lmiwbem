@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>lmiwbem.lmiwbem_types &mdash; LMIWBEM 0.5.1-pre documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="LMIWBEM 0.5.1-pre documentation" href="../../index.html"/>
+        <link rel="up" title="lmiwbem" href="../lmiwbem.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> LMIWBEM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">LMIWBEM Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage.html#connecting-to-cimom">Connecting to CIMOM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage.html#supported-cim-operations">Supported CIM operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage.html#indication-listener">Indication Listener</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_api/api_lmiwbem_core.html">lmiwbem_core Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_api/api_lmiwbem_types.html">lmiwbem_types Package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Source code examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_associator_names.html">AssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_associators.html">Associators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_create_instance.html">CreateInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_delete_instance.html">DeleteInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_enumerate_class_names.html">EnumerateClassNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_enumerate_classes.html">EnumerateClasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_enumerate_instance_names.html">EnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_enumerate_instances.html">EnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_exec_query.html">ExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_get_class.html">GetClass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_get_instance.html">GetInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_invoke_method.html">InvokeMethod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_modify_instance.html">ModifyInstance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_reference_names.html">ReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_references.html">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_associator_names.html">OpenAssociatorNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_associators.html">OpenAssociators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_enumerate_instance_names.html">OpenEnumerateInstanceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_enumerate_instances.html">OpenEnumerateInstances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_exec_query.html">OpenExecQuery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_reference_names.html">OpenReferenceNames</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_pull_references.html">OpenReferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_slp_discovery.html">SLP Discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../_examples/example_slp_discovery_attrs.html">SLP Attributes Discovery</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">LMIWBEM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../lmiwbem.html">lmiwbem</a> &raquo;</li>
+      
+    <li>lmiwbem.lmiwbem_types</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for lmiwbem.lmiwbem_types</h1><div class="highlight"><pre>
+<span class="c"># ##### BEGIN LICENSE BLOCK #####</span>
+<span class="c">#</span>
+<span class="c">#   (C) Copyright 2003, 2004 Hewlett-Packard Development Company, L.P.</span>
+<span class="c">#   (C) Copyright 2006, 2007 Novell, Inc.</span>
+<span class="c">#   (C) Copyright 2014, 2015 Red Hat, Inc.</span>
+<span class="c">#</span>
+<span class="c">#   Copyright (C) 2014-2015, Peter Hatina &lt;phatina@redhat.com&gt;</span>
+<span class="c">#</span>
+<span class="c">#   This library is free software; you can redistribute it and/or modify</span>
+<span class="c">#   it under the terms of the GNU Lesser General Public License as</span>
+<span class="c">#   published by the Free Software Foundation, either version 2.1 of the</span>
+<span class="c">#   License, or (at your option) any later version.</span>
+<span class="c">#</span>
+<span class="c">#   This library is distributed in the hope that it will be useful,</span>
+<span class="c">#   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the</span>
+<span class="c">#   GNU Lesser General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c">#   You should have received a copy of the GNU Lesser General Public</span>
+<span class="c">#   License along with this program; if not, write to the Free Software</span>
+<span class="c">#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,</span>
+<span class="c">#   MA 02110-1301 USA</span>
+<span class="c">#</span>
+<span class="c">#   The code is taken from pywbem-0.6</span>
+<span class="c">#</span>
+<span class="c">#   Authors: Tim Potter    &lt;tpot@hp.com&gt;</span>
+<span class="c">#            Bart Whiteley &lt;bwhiteley@suse.de&gt;</span>
+<span class="c">#            Peter Hatina  &lt;phatina@redhat.com&gt;</span>
+<span class="c">#</span>
+<span class="c"># ##### END LICENSE BLOCK #####</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">tzinfo</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+
+<div class="viewcode-block" id="MinutesFromUTC"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.MinutesFromUTC">[docs]</a><span class="k">class</span> <span class="nc">MinutesFromUTC</span><span class="p">(</span><span class="n">tzinfo</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fixed offset in minutes from UTC</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MinutesFromUTC.utcoffset"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.MinutesFromUTC.utcoffset">[docs]</a>    <span class="k">def</span> <span class="nf">utcoffset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__offset</span>
+</div>
+<div class="viewcode-block" id="MinutesFromUTC.dst"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.MinutesFromUTC.dst">[docs]</a>    <span class="k">def</span> <span class="nf">dst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="CIMType"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMType">[docs]</a><span class="k">class</span> <span class="nc">CIMType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Base type for all CIM types</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+</div>
+<div class="viewcode-block" id="CIMDateTime"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime">[docs]</a><span class="k">class</span> <span class="nc">CIMDateTime</span><span class="p">(</span><span class="n">CIMType</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A CIM DateTime</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtarg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;datetime&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtarg</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="n">date_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})\.(\d{6})([+|-])(\d{3})&#39;</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">date_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dtarg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">g</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;-&#39;</span><span class="p">:</span>
+                    <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="n">MinutesFromUTC</span><span class="p">(</span><span class="n">offset</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tv_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;^(\d{8})(\d{2})(\d{2})(\d{2})\.(\d{6})(:)(000)&#39;</span><span class="p">)</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">tv_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dtarg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid Datetime format </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">dtarg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">g</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span>
+                        <span class="n">days</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="n">hours</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="n">minutes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                        <span class="n">seconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                        <span class="n">microseconds</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtarg</span><span class="p">,</span> <span class="n">datetime</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span> <span class="o">=</span> <span class="n">dtarg</span><span class="p">;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtarg</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span> <span class="o">=</span> <span class="n">dtarg</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtarg</span><span class="p">,</span> <span class="n">CIMDateTime</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span> <span class="o">=</span> <span class="n">dtarg</span><span class="o">.</span><span class="n">__datetime</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span> <span class="o">=</span> <span class="n">dtarg</span><span class="o">.</span><span class="n">__timedelta</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Expected datetime, timedelta, or string&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CIMDateTime.minutes_from_utc"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.minutes_from_utc">[docs]</a>    <span class="k">def</span> <span class="nf">minutes_from_utc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return the timezone as +/- minutes from UTC</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span><span class="o">.</span><span class="n">seconds</span> <span class="o">/</span> <span class="mi">60</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span><span class="o">.</span><span class="n">days</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">60</span><span class="o">*</span><span class="mi">24</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">offset</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CIMDateTime.datetime"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.datetime">[docs]</a>    <span class="k">def</span> <span class="nf">datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CIMDateTime.timedelta"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.timedelta">[docs]</a>    <span class="k">def</span> <span class="nf">timedelta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="CIMDateTime.is_interval"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.is_interval">[docs]</a>    <span class="k">def</span> <span class="nf">is_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="CIMDateTime.get_local_utcoffset"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.get_local_utcoffset">[docs]</a>    <span class="k">def</span> <span class="nf">get_local_utcoffset</span><span class="p">():</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return minutes +/- UTC for the local timezone</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">utc</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">local</span> <span class="o">&lt;</span> <span class="n">utc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">((</span><span class="n">utc</span> <span class="o">-</span> <span class="n">local</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">((</span><span class="n">local</span> <span class="o">-</span> <span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CIMDateTime.now"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.now">[docs]</a>    <span class="k">def</span> <span class="nf">now</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">tzi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tzi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">tzi</span> <span class="o">=</span> <span class="n">MinutesFromUTC</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">get_local_utcoffset</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tzi</span><span class="p">))</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CIMDateTime.fromtimestamp"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMDateTime.fromtimestamp">[docs]</a>    <span class="k">def</span> <span class="nf">fromtimestamp</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">tzi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tzi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">tzi</span> <span class="o">=</span> <span class="n">MinutesFromUTC</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">get_local_utcoffset</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">tzi</span><span class="p">))</span>
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_interval</span><span class="p">:</span>
+            <span class="n">hour</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span><span class="o">.</span><span class="n">seconds</span> <span class="o">/</span> <span class="mi">3600</span>
+            <span class="n">minute</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span><span class="o">.</span><span class="n">seconds</span> <span class="o">-</span> <span class="n">hour</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span>
+            <span class="n">second</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span><span class="o">.</span><span class="n">seconds</span> <span class="o">-</span> <span class="n">hour</span> <span class="o">*</span> <span class="mi">3600</span> <span class="o">-</span> <span class="n">minute</span> <span class="o">*</span> <span class="mi">60</span>
+            <span class="k">return</span> <span class="s">&#39;</span><span class="si">%08d%02d%02d%02d</span><span class="s">.</span><span class="si">%06d</span><span class="s">:000&#39;</span> <span class="o">%</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span><span class="o">.</span><span class="n">days</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span><span class="o">.</span><span class="n">microseconds</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minutes_from_utc</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="s">&#39;+&#39;</span>
+            <span class="k">if</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sign</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="n">offset</span>
+            <span class="k">return</span> <span class="s">&#39;</span><span class="si">%d%02d%02d%02d%02d%02d</span><span class="s">.</span><span class="si">%06d%s%03d</span><span class="s">&#39;</span> <span class="o">%</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">day</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">minute</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">second</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="o">.</span><span class="n">microsecond</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">)&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__cmp__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">other</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">CIMDateTime</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__datetime</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">__datetime</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="nb">cmp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timedelta</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">__timedelta</span><span class="p">))</span>
+
+
+<span class="c"># CIM integer types</span></div>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="c"># Python3 no longer uses &#39;long&#39; type.</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="nb">long</span>
+<div class="viewcode-block" id="CIMInt"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMInt">[docs]</a><span class="k">class</span> <span class="nc">CIMInt</span><span class="p">(</span><span class="n">CIMType</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
+    <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Uint8"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Uint8">[docs]</a><span class="k">class</span> <span class="nc">Uint8</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;uint8&#39;</span>
+</div>
+<div class="viewcode-block" id="Sint8"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Sint8">[docs]</a><span class="k">class</span> <span class="nc">Sint8</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;sint8&#39;</span>
+</div>
+<div class="viewcode-block" id="Uint16"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Uint16">[docs]</a><span class="k">class</span> <span class="nc">Uint16</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;uint16&#39;</span>
+</div>
+<div class="viewcode-block" id="Sint16"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Sint16">[docs]</a><span class="k">class</span> <span class="nc">Sint16</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;sint16&#39;</span>
+</div>
+<div class="viewcode-block" id="Uint32"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Uint32">[docs]</a><span class="k">class</span> <span class="nc">Uint32</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;uint32&#39;</span>
+</div>
+<div class="viewcode-block" id="Sint32"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Sint32">[docs]</a><span class="k">class</span> <span class="nc">Sint32</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;sint32&#39;</span>
+</div>
+<div class="viewcode-block" id="Uint64"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Uint64">[docs]</a><span class="k">class</span> <span class="nc">Uint64</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;uint64&#39;</span>
+</div>
+<div class="viewcode-block" id="Sint64"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Sint64">[docs]</a><span class="k">class</span> <span class="nc">Sint64</span><span class="p">(</span><span class="n">CIMInt</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;sint64&#39;</span>
+
+<span class="c"># CIM float types</span></div>
+<div class="viewcode-block" id="CIMFloat"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.CIMFloat">[docs]</a><span class="k">class</span> <span class="nc">CIMFloat</span><span class="p">(</span><span class="n">CIMType</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Real32"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Real32">[docs]</a><span class="k">class</span> <span class="nc">Real32</span><span class="p">(</span><span class="n">CIMFloat</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;real32&#39;</span>
+</div>
+<div class="viewcode-block" id="Real64"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.Real64">[docs]</a><span class="k">class</span> <span class="nc">Real64</span><span class="p">(</span><span class="n">CIMFloat</span><span class="p">):</span>
+    <span class="n">cimtype</span> <span class="o">=</span> <span class="s">&#39;real64&#39;</span>
+</div>
+<div class="viewcode-block" id="cimtype"><a class="viewcode-back" href="../../_api/api_lmiwbem_types.html#lmiwbem.lmiwbem_types.cimtype">[docs]</a><span class="k">def</span> <span class="nf">cimtype</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return the CIM type name of an object as a string.  For a list, the</span>
+<span class="sd">    type is the type of the first element as CIM arrays must be</span>
+<span class="sd">    homogeneous.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">CIMType</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">cimtype</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;boolean&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="s">&#39;string&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cimtype</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="s">&#39;datetime&#39;</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Invalid CIM type for </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Peter Hatina.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5.1-pre',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
