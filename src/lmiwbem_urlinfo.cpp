@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <cerrno>
+#include <algorithm>
 #include <sstream>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -33,7 +34,8 @@ namespace {
 
 const unsigned int BUFLEN = 1024;
 
-String get_fqdn() {
+String get_fqdn()
+{
     struct addrinfo hints, *info, *p;
     int gai_result;
     char name[BUFLEN + 1];
@@ -47,7 +49,7 @@ String get_fqdn() {
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_CANONNAME;
 
-    snprintf(port, BUFLEN, "%d", URLInfo::DEF_HTTPS_PORT);
+    snprintf(port, BUFLEN, "%d", URLInfo::PORT_CIMXML_HTTPS);
     if ((gai_result = getaddrinfo(name, port, &hints, &info)) == 0) {
         for (p = info; p != NULL; p = p->ai_next) {
             if (p->ai_canonname != NULL) {
@@ -60,6 +62,22 @@ String get_fqdn() {
     return String(name);
 }
 
+bool is_path_delimiter(int i)
+{
+    // A bit simplified version how to determine a URL's path. This should work
+    // for most of occasions. If an bug occurs, we would need to implement
+    // delimiter wrt:
+    //
+    //    path = path-abempty    ; begins with "/" or is empty
+    //         | path-absolute   ; begins with "/" but not "//"
+    //         | path-noscheme   ; begins with a non-colon segment
+    //         | path-rootless   ; begins with a segment
+    //         | path-empty      ; zero characters
+    //
+    // See RFC 3986; https://tools.ietf.org/html/rfc3986
+    return i == '/';
+}
+
 } // unnamed namespace
 
 URLInfo::URLInfo()
@@ -67,7 +85,8 @@ URLInfo::URLInfo()
     , m_hostname("unknown")
     , m_username()
     , m_password()
-    , m_port(URLInfo::DEF_HTTPS_PORT)
+    , m_path()
+    , m_port(URLInfo::PORT_NOT_SET)
     , m_is_https(true)
     , m_is_local(false)
     , m_is_valid(false)
@@ -75,11 +94,17 @@ URLInfo::URLInfo()
 {
 }
 
+URLInfo::URLInfo(const String &url)
+{
+    set(url);
+}
+
 URLInfo::URLInfo(const URLInfo &copy)
     : m_url(copy.m_url)
     , m_hostname(copy.m_hostname)
     , m_username(copy.m_username)
     , m_password(copy.m_password)
+    , m_path(copy.m_path)
     , m_port(copy.m_port)
     , m_is_https(copy.m_is_https)
     , m_is_local(copy.m_is_local)
@@ -88,20 +113,12 @@ URLInfo::URLInfo(const URLInfo &copy)
 {
 }
 
-bool URLInfo::set(String url)
+bool URLInfo::set(const String &url)
 {
     m_url = url;
 
-    /* Handle local connection */
-    if (url.substr(0, 7) == "file://" ||
-        url == "localhost" ||
-        url == "localhost.localdomain" ||
-        url == "localhost4" ||
-        url == "localhost4.localdomain4" ||
-        url == "localhost6" ||
-        url == "localhost6.localdomain6" ||
-        url == "127.0.0.1" || url == "::1")
-    {
+    // Handle local connection.
+    if (isLocalhost(m_url)) {
         m_is_https = false;
         m_is_local = true;
         m_hostname = get_fqdn();
@@ -109,26 +126,23 @@ bool URLInfo::set(String url)
         return m_is_valid = true;
     }
 
-    /* Handle remote connection */
-    size_t spos = String::npos;
-    if (url.substr(0, 7) == "http://") {
+    // Handle remote connection
+    size_t spos;
+    m_port = PORT_NOT_SET;
+    if (m_url.substr(0, 7) == "http://") {
         spos = 7;
-        url.erase(0, 7);
-        m_port = URLInfo::DEF_HTTP_PORT;
         m_is_https = false;
-    } else if (url.substr(0, 8) == "https://") {
+    } else if (m_url.substr(0, 8) == "https://") {
         spos = 8;
-        url.erase(0, 8);
-        m_port = URLInfo::DEF_HTTPS_PORT;
         m_is_https = true;
     } else {
         return m_is_valid = false;
     }
 
-    size_t pos = url.find('@');
+    // Parse username:password from URL.
+    size_t pos = m_url.find('@', spos);
     if (pos != String::npos) {
-        // We have credentials embedded into URL.
-        String creds = url.substr(0, pos);
+        String creds = m_url.substr(spos, pos - spos);
         size_t cpos = creds.find(':');
         if (cpos != String::npos) {
             m_username = creds.substr(0, cpos);
@@ -140,28 +154,64 @@ bool URLInfo::set(String url)
 
         // Remove username:password information from the URL.
         m_url.erase(spos, creds.length() + 1);
-        url.erase(0, creds.length() + 1);
     }
 
-    pos = url.rfind(':');
+    // Parse port from URL.
+    pos = m_url.find(':', spos);
     if (pos != String::npos) {
-        // We have port information right after the hostname.
-        m_hostname = url.substr(0, pos);
-        long int port = strtol(url.substr(pos + 1,
-            url.size() - pos - 1).c_str(), NULL, 10);
-        if (errno == ERANGE || port < 0 || port > 65535)
+        // Store a hostname.
+        m_hostname = m_url.substr(spos, pos - spos);
+
+        // Search for the end of port.
+        String::iterator begin = m_url.begin() + pos + 1;
+        String::iterator end = std::find_if(
+            begin, m_url.end(), is_path_delimiter);
+        size_t len = end - begin;
+        if (len == 0 || len > 5)
+            return m_is_valid = false;
+
+        // Store a port.
+        char *pend;
+        long int port = strtol(m_url.substr(pos + 1, len).c_str(), &pend, 10);
+        if (*pend != '\0' || errno == ERANGE || port < 0 || port > 65535)
             return m_is_valid = false;
         m_port = static_cast<uint32_t>(port);
+
+        spos = pos + len + 1;
     } else {
-        m_hostname = url;
+        pos = m_url.find('/', spos);
+        m_hostname = m_url.substr(spos, pos - spos);
+        spos += pos - spos;
     }
 
-    return m_is_valid = true;
+    // If we haven't reached the end of URL, the rest is path.
+    if (spos != String::npos)
+        m_path = m_url.substr(spos, String::npos);
+
+    // Now that we have read all the URL string, we can assign a default port
+    // value to m_port, if it's not set.
+    if (m_port == PORT_NOT_SET) {
+        if (m_path == "/wsman")
+            m_port = m_is_https ? PORT_WSMAN_HTTPS : PORT_WSMAN_HTTP;
+        else
+            m_port = m_is_https ? PORT_CIMXML_HTTPS : PORT_CIMXML_HTTP;
+    }
+
+    return m_is_valid = !m_hostname.empty();
 }
 
 String URLInfo::url() const
 {
-    return m_url;
+    std::stringstream ss;
+
+    if (m_is_https)
+        ss << "https://";
+    else
+        ss << "http://";
+
+    ss << m_hostname << ':' << m_port << m_path;
+
+    return String(ss.str());
 }
 
 String URLInfo::hostname() const
@@ -177,6 +227,11 @@ String URLInfo::username() const
 String URLInfo::password() const
 {
     return m_password;
+}
+
+String URLInfo::path() const
+{
+    return m_path;
 }
 
 uint32_t URLInfo::port() const
@@ -204,26 +259,13 @@ bool URLInfo::isCredsValid() const
     return m_is_creds_valid;
 }
 
-String URLInfo::asString() const
-{
-    std::stringstream ss;
-
-    if (m_is_https)
-        ss << "https://";
-    else
-        ss << "http://";
-
-    ss << m_hostname << ':' << m_port;
-
-    return String(ss.str());
-}
-
 URLInfo &URLInfo::operator=(const URLInfo &rhs)
 {
     m_url = rhs.m_url;
     m_hostname = rhs.m_hostname;
     m_username = rhs.m_username;
     m_password = rhs.m_password;
+    m_path = rhs.m_path;
     m_port = rhs.m_port;
     m_is_https = rhs.m_is_https;
     m_is_local = rhs.m_is_local;
@@ -231,3 +273,47 @@ URLInfo &URLInfo::operator=(const URLInfo &rhs)
     m_is_creds_valid = rhs.m_is_creds_valid;
     return *this;
 }
+
+bool URLInfo::isLocalhost(const String &url)
+{
+    return url.substr(0, 7) == "file://" ||
+        url == "localhost" ||
+        url == "localhost.localdomain" ||
+        url == "localhost4" ||
+        url == "localhost4.localdomain4" ||
+        url == "localhost6" ||
+        url == "localhost6.localdomain6" ||
+        url == "127.0.0.1" || url == "::1";
+}
+
+#ifdef DEBUG
+#  include <iostream>
+
+int main(int argc, char **argv)
+{
+    if (argc != 2) {
+        std::cerr << "Wrong argument count!" << std::endl << std::endl
+                  << "Usage: " << argv[0] << " [URL]" << std::endl;
+        return 1;
+    }
+
+    URLInfo info(argv[1]);
+
+    if (!info.isValid())
+        return 2;
+
+    std::cout << "hostname: " << info.hostname() << std::endl;
+    std::cout << "port    : " << info.port() << std::endl;
+    std::cout << "path    : " << info.path() << std::endl;
+
+    if (info.isCredsValid()) {
+        std::cout << "username: " << info.username() << std::endl;
+        std::cout << "password: " << info.password() << std::endl;
+    }
+
+    std::cout << std::endl << info.url() << std::endl;
+
+    return 0;
+}
+
+#endif

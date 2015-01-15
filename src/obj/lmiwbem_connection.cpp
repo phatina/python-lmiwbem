@@ -74,7 +74,7 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
                 ss << "connect(";
 
             if (Config::isVerboseMore() && !connect_locally) {
-                ss << "url='" << m_conn->m_client.getURLInfo().asString() << '\'';
+                ss << "url='" << m_conn->m_client.getURLInfo().url() << '\'';
             }
             ss << ')';
         }
@@ -735,7 +735,7 @@ void WBEMConnection::connect(
         if (Config::isVerbose()) {
             ss << "connect(";
             if (Config::isVerboseMore())
-                ss << "url='" << m_client.getURLInfo().asString() << '\'';
+                ss << "url='" << m_client.getURLInfo().url() << '\'';
             ss << ')';
         }
         handle_all_exceptions(ss);

@@ -33,14 +33,16 @@ class URLInfo
 {
 public:
     URLInfo();
+    URLInfo(const String &url);
     URLInfo(const URLInfo &copy);
 
-    bool set(String url);
+    bool set(const String &url);
 
     String url() const;
     String hostname() const;
     String username() const;
     String password() const;
+    String path() const;
     uint32_t port() const;
 
     bool isHttps() const;
@@ -48,18 +50,22 @@ public:
     bool isValid() const;
     bool isCredsValid() const;
 
-    String asString() const;
-
     URLInfo &operator =(const URLInfo &rhs);
 
-    static const uint32_t DEF_HTTPS_PORT = 5989;
-    static const uint32_t DEF_HTTP_PORT  = 5988;
+    static bool isLocalhost(const String &url);
+
+    static const uint32_t PORT_NOT_SET      = ~0;
+    static const uint32_t PORT_WSMAN_HTTP   = 5986;
+    static const uint32_t PORT_WSMAN_HTTPS  = 5987;
+    static const uint32_t PORT_CIMXML_HTTP  = 5988;
+    static const uint32_t PORT_CIMXML_HTTPS = 5989;
 
 private:
     String m_url;
     String m_hostname;
     String m_username;
     String m_password;
+    String m_path;
     uint32_t m_port;
     bool m_is_https;
     bool m_is_local;
