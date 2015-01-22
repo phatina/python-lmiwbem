@@ -95,6 +95,16 @@ URLInfo::URLInfo()
 }
 
 URLInfo::URLInfo(const String &url)
+    : m_url("https://unknown")
+    , m_hostname("unknown")
+    , m_username()
+    , m_password()
+    , m_path()
+    , m_port(URLInfo::PORT_NOT_SET)
+    , m_is_https(true)
+    , m_is_local(false)
+    , m_is_valid(false)
+    , m_is_creds_valid(false)
 {
     set(url);
 }
