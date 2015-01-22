@@ -33,6 +33,7 @@ public:
     String(const char *str, size_t pos, size_t len = npos);
     String(const std::string &str);
     String(const Pegasus::String &str);
+    String(size_t n, char c = '\0');
 
     // Unification methods
     std::string asStdString() const;
@@ -46,6 +47,7 @@ public:
     String &operator=(const Pegasus::String &rhs);
 
     String &operator+=(const Pegasus::String &rhs);
+    String  operator+(const String &rhs);
 
     using std::string::npos;
 };

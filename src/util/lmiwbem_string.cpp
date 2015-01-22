@@ -47,6 +47,11 @@ String::String(const Pegasus::String &str)
 {
 }
 
+String::String(size_t n, char c)
+    : std::string(n, c)
+{
+}
+
 std::string String::asStdString() const
 {
     return *this;
@@ -96,4 +101,11 @@ String &String::operator+=(const Pegasus::String &rhs)
 {
     std::string::operator+=(rhs.getCString());
     return *this;
+}
+
+String String::operator+(const String &rhs)
+{
+    String result(*this);
+    result += rhs;
+    return result;
 }
