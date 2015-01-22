@@ -20,6 +20,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <config.h>
+#include <cctype>
 #include <cerrno>
 #include <algorithm>
 #include <sstream>
@@ -267,6 +268,14 @@ bool URLInfo::isValid() const
 bool URLInfo::isCredsValid() const
 {
     return m_is_creds_valid;
+}
+
+bool URLInfo::isWSMAN() const
+{
+    String path(m_path.length());
+    std::transform(m_path.begin(), m_path.end(), path.begin(), ::tolower);
+
+    return path == String("/wsman");
 }
 
 URLInfo &URLInfo::operator=(const URLInfo &rhs)

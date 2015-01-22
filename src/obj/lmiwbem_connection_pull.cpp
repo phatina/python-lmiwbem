@@ -430,7 +430,7 @@ bp::object WBEMConnection::openEnumerateInstances(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instances = m_client.openEnumerateInstances(
+    peg_instances = client()->openEnumerateInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -506,7 +506,7 @@ bp::object WBEMConnection::openEnumerateInstanceNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instance_names = m_client.openEnumerateInstancePaths(
+    peg_instance_names = client()->openEnumerateInstancePaths(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -609,7 +609,7 @@ bp::object WBEMConnection::openAssociators(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_associators = m_client.openAssociatorInstances(
+    peg_associators = client()->openAssociatorInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -704,7 +704,7 @@ bp::object WBEMConnection::openAssociatorNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_associator_names = m_client.openAssociatorInstancePaths(
+    peg_associator_names = client()->openAssociatorInstancePaths(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -796,7 +796,7 @@ bp::object WBEMConnection::openReferences(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_references = m_client.openReferenceInstances(
+    peg_references = client()->openReferenceInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -879,7 +879,7 @@ bp::object WBEMConnection::openReferenceNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_reference_names = m_client.openReferenceInstancePaths(
+    peg_reference_names = client()->openReferenceInstancePaths(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -944,7 +944,7 @@ bp::object WBEMConnection::openExecQuery(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instances = m_client.openQueryInstances(
+    peg_instances = client()->openQueryInstances(
         *ctx_ptr,
         peg_end_of_sequence,
         peg_ns,
@@ -961,7 +961,7 @@ bp::object WBEMConnection::openExecQuery(
         ListConv::asPyCIMInstanceList(
             peg_instances,
             peg_ns.getString(),
-            m_client.getHostname()),
+            client()->getHostname()),
         CIMEnumerationContext::create(
             ctx_ptr,
             false, /* with_paths */
@@ -994,12 +994,12 @@ bp::object WBEMConnection::pullInstances(
 
     ScopedTransactionBegin();
     if (ctx_.getIsWithPaths()) {
-        peg_instances = m_client.pullInstancesWithPath(
+        peg_instances = client()->pullInstancesWithPath(
             ctx_.getPegasusContext(),
             peg_end_of_sequence,
             peg_max_object_cnt);
     } else {
-        peg_instances = m_client.pullInstances(
+        peg_instances = client()->pullInstances(
             ctx_.getPegasusContext(),
             peg_end_of_sequence,
             peg_max_object_cnt);
@@ -1010,7 +1010,7 @@ bp::object WBEMConnection::pullInstances(
         ListConv::asPyCIMInstanceList(
             peg_instances,
             ctx_.getNamespace(),
-            m_client.getHostname()),
+            client()->getHostname()),
         ctx,
         bp::object(peg_end_of_sequence));
 } catch (...) {
@@ -1033,7 +1033,7 @@ bp::object WBEMConnection::pullInstanceNames(
     Pegasus::Boolean peg_end_of_sequence;
 
     ScopedTransactionBegin();
-    peg_instance_names = m_client.pullInstancePaths(
+    peg_instance_names = client()->pullInstancePaths(
         ctx_.getPegasusContext(),
         peg_end_of_sequence,
         peg_max_object_cnt);
@@ -1055,7 +1055,7 @@ void WBEMConnection::closeEnumeration(const bp::object &ctx) try
 {
     CIMEnumerationContext &ctx_ = CIMEnumerationContext::asNative(ctx, "Context");
     ScopedTransactionBegin();
-    m_client.closeEnumeration(ctx_.getPegasusContext());
+    client()->closeEnumeration(ctx_.getPegasusContext());
     ScopedTransactionEnd();
 } catch (...) {
     std::stringstream ss;

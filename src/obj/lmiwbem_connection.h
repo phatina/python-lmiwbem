@@ -22,10 +22,12 @@
 #ifndef   LMIWBEM_CONNECTION_H
 #  define LMIWBEM_CONNECTION_H
 
+#  include <config.h>
+#  include <boost/shared_ptr.hpp>
 #  include <boost/python/class.hpp>
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
-#  include "lmiwbem_client.h"
+#  include "lmiwbem_client_cimxml.h"
 #  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN
@@ -36,7 +38,27 @@ BOOST_PYTHON_END
 
 namespace bp = boost::python;
 
-class WBEMConnection: public CIMBase<WBEMConnection>
+class WBEMConnectionBase
+{
+public:
+    typedef enum {
+        CLIENT_CIMXML,
+        CLIENT_WSMAN
+    } CIMClientType;
+
+    WBEMConnectionBase();
+
+protected:
+    CIMClient *client() const;
+    CIMClientType clientGetType() const;
+    void clientSetType(CIMClientType type);
+
+private:
+    mutable boost::shared_ptr<CIMClient> m_client;
+    CIMClientType m_type;
+};
+
+class WBEMConnection: public WBEMConnectionBase, public CIMBase<WBEMConnection>
 {
 private:
         /* NOTE: These macros need to be used around every CIM operation.
@@ -321,7 +343,6 @@ protected:
     String m_cert_file;
     String m_key_file;
     String m_default_namespace;
-    CIMClient m_client;
 };
 
 #endif // LMIWBEM_CONNECTION_H

@@ -19,91 +19,51 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef   LMIWBEM_CLIENT_H
-#  define LMIWBEM_CLIENT_H
+#ifndef   LMIWBEM_CLIENT_CIMXML_H
+#  define LMIWBEM_CLIENT_CIMXML_H
 
-#  include <config.h>
-#  include <Pegasus/Common/Config.h> // types
-#  include <Pegasus/Common/AcceptLanguageList.h>
-#  include <Pegasus/Common/CIMClass.h>
-#  include <Pegasus/Common/CIMInstance.h>
-#  include <Pegasus/Common/CIMObject.h>
-#  include <Pegasus/Common/CIMObjectPath.h>
-#  include <Pegasus/Common/CIMParamValue.h>
-#  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
-#    include <Pegasus/Client/CIMEnumerationContext.h>
-#    include <Pegasus/Common/UintArgs.h>
-#  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
-#  include "lmiwbem_mutex.h"
-#  include "lmiwbem_urlinfo.h"
+#  include <Pegasus/Client/CIMClient.h>
+#  include "lmiwbem_client.h"
 #  include "util/lmiwbem_string.h"
 
-// Base class for CIMXML and WSMAN clients.
-class CIMClient
+class CIMXMLClient;
+
+class CIMXMLClient: public CIMClient
 {
 public:
-    // Every CIMClient operation needs to have a guard.
-    //
-    // Example:
-    //     CIMClient client;
-    //     CIMClient::ScopedCIMClientTransaction sc(client);
-    //     ... further CIM operations ...
-    class ScopedCIMClientTransaction
-    {
-    public:
-        ScopedCIMClientTransaction(CIMClient *client);
-        ~ScopedCIMClientTransaction();
-    private:
-        CIMClient *m_client;
-    };
+    CIMXMLClient();
+    virtual ~CIMXMLClient();
 
-    friend class ScopedCIMClientTransaction;
-
-public:
-    CIMClient();
-    virtual ~CIMClient() = 0;
-
-    // ------------------------------------------------------------------------
     // Connection API
-    //
     virtual void connect(
         const String &uri,
         const String &username,
         const String &password,
         const String &cert_file,
         const String &key_file,
-        const String &trust_store) = 0;
-    virtual void connectLocally() = 0;
-    virtual void disconnect() = 0;
-    virtual bool isConnected() const;
-
-    void setVerifyCertificate(bool verify = true);
-    void setUrlInfo(const URLInfo &url_info);
-    bool setUrl(const String &url);
-    bool getVerifyCertificate() const;
-    URLInfo getURLInfo() const;
-    String getHostname() const;
-    String getUrl() const;
+        const String &trust_store);
+    virtual void connectLocally();
+    virtual void disconnect();
 
     // ------------------------------------------------------------------------
     // CIM API
     //
-    virtual void setTimeout(Pegasus::Uint32 timeoutMilliseconds) = 0;
-    virtual void setRequestAcceptLanguages(const Pegasus::AcceptLanguageList& langs) = 0;
-    virtual Pegasus::Uint32 getTimeout() const = 0;
-    virtual Pegasus::AcceptLanguageList getRequestAcceptLanguages() const = 0;
+    virtual void setTimeout(Pegasus::Uint32 timeoutMilliseconds);
+    virtual void setRequestAcceptLanguages(const Pegasus::AcceptLanguageList& langs);
+    virtual Pegasus::Uint32 getTimeout() const;
+    virtual Pegasus::AcceptLanguageList getRequestAcceptLanguages() const;
 
     virtual Pegasus::CIMObjectPath createInstance(
         const Pegasus::CIMNamespaceName &nameSpace,
-        const Pegasus::CIMInstance &newInstance) = 0;
+        const Pegasus::CIMInstance &newInstance);
     virtual void deleteInstance(
         const Pegasus::CIMNamespaceName &nameSpace,
-        const Pegasus::CIMObjectPath &instanceName) = 0;
+        const Pegasus::CIMObjectPath &instanceName);
     virtual void modifyInstance(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMInstance &modifiedInstance,
         Pegasus::Boolean includeQualifiers = true,
-        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList()) = 0;
+        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList());
 
     // Enumeration
     virtual Pegasus::Array<Pegasus::CIMClass> enumerateClasses(
@@ -112,11 +72,11 @@ public:
         Pegasus::Boolean deepInheritance = false,
         Pegasus::Boolean localOnly = true,
         Pegasus::Boolean includeQualifiers = true,
-        Pegasus::Boolean includeClassOrigin = false) = 0;
+        Pegasus::Boolean includeClassOrigin = false);
     virtual Pegasus::Array<Pegasus::CIMName> enumerateClassNames(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMName &className = Pegasus::CIMName(),
-        Pegasus::Boolean deepInheritance = false) = 0;
+        Pegasus::Boolean deepInheritance = false);
     virtual Pegasus::Array<Pegasus::CIMInstance> enumerateInstances(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMName &className,
@@ -124,14 +84,14 @@ public:
         Pegasus::Boolean localOnly = true,
         Pegasus::Boolean includeQualifiers = false,
         Pegasus::Boolean includeClassOrigin = false,
-        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList()) = 0;
+        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList());
     virtual Pegasus::Array<Pegasus::CIMObjectPath> enumerateInstanceNames(
         const Pegasus::CIMNamespaceName &nameSpace,
-        const Pegasus::CIMName &className) = 0;
+        const Pegasus::CIMName &className);
     virtual Pegasus::Array<Pegasus::CIMObject> execQuery(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::String &queryLanguage,
-        const Pegasus::String &query) = 0;
+        const Pegasus::String &query);
 
     // Getters
     virtual Pegasus::CIMClass getClass(
@@ -140,14 +100,14 @@ public:
         Pegasus::Boolean localOnly = true,
         Pegasus::Boolean includeQualifiers = true,
         Pegasus::Boolean includeClassOrigin = false,
-        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList()) = 0;
+        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList());
     virtual Pegasus::CIMInstance getInstance(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMObjectPath &instanceName,
         Pegasus::Boolean localOnly = true,
         Pegasus::Boolean includeQualifiers = false,
         Pegasus::Boolean includeClassOrigin = false,
-        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList()) = 0;
+        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList());
 
     // Method call
     virtual Pegasus::CIMValue invokeMethod(
@@ -155,7 +115,7 @@ public:
         const Pegasus::CIMObjectPath &instanceName,
         const Pegasus::CIMName &methodName,
         const Pegasus::Array<Pegasus::CIMParamValue> &inParameters,
-        Pegasus::Array<Pegasus::CIMParamValue> &outParameters) = 0;
+        Pegasus::Array<Pegasus::CIMParamValue> &outParameters);
 
     // Associations
     virtual Pegasus::Array<Pegasus::CIMObject> associators(
@@ -167,14 +127,14 @@ public:
         const Pegasus::String &resultRole = Pegasus::String::EMPTY,
         Pegasus::Boolean includeQualifiers = false,
         Pegasus::Boolean includeClassOrigin = false,
-        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList()) = 0;
+        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList());
     virtual Pegasus::Array<Pegasus::CIMObjectPath> associatorNames(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMObjectPath &objectName,
         const Pegasus::CIMName &assocClass = Pegasus::CIMName(),
         const Pegasus::CIMName &resultClass = Pegasus::CIMName(),
         const Pegasus::String &role = Pegasus::String::EMPTY,
-        const Pegasus::String &resultRole = Pegasus::String::EMPTY) = 0;
+        const Pegasus::String &resultRole = Pegasus::String::EMPTY);
     virtual Pegasus::Array<Pegasus::CIMObject> references(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMObjectPath &objectName,
@@ -182,12 +142,12 @@ public:
         const Pegasus::String &role = Pegasus::String::EMPTY,
         Pegasus::Boolean includeQualifiers = false,
         Pegasus::Boolean includeClassOrigin = false,
-        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList()) = 0;
+        const Pegasus::CIMPropertyList &propertyList = Pegasus::CIMPropertyList());
     virtual Pegasus::Array<Pegasus::CIMObjectPath> referenceNames(
         const Pegasus::CIMNamespaceName &nameSpace,
         const Pegasus::CIMObjectPath &objectName,
         const Pegasus::CIMName &resultClass = Pegasus::CIMName(),
-        const Pegasus::String &role = Pegasus::String::EMPTY) = 0;
+        const Pegasus::String &role = Pegasus::String::EMPTY);
 
 #  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
     // Pull operations
@@ -203,7 +163,7 @@ public:
         const Pegasus::String &filterQuery = Pegasus::String::EMPTY,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMObjectPath> openEnumerateInstancePaths(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
@@ -213,7 +173,7 @@ public:
         const Pegasus::String &filterQuery = Pegasus::String::EMPTY,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMInstance> openReferenceInstances(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
@@ -227,7 +187,7 @@ public:
         const Pegasus::String &filterQuery = Pegasus::String::EMPTY,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMObjectPath> openReferenceInstancePaths(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
@@ -239,7 +199,7 @@ public:
         const Pegasus::String &filterQuery = Pegasus::String::EMPTY,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMInstance> openAssociatorInstances(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
@@ -255,7 +215,7 @@ public:
         const Pegasus::String &filterQuery = Pegasus::String::EMPTY,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMObjectPath> openAssociatorInstancePaths(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
@@ -269,7 +229,7 @@ public:
         const Pegasus::String &filterQuery = Pegasus::String::EMPTY,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMInstance> openQueryInstances(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
@@ -280,30 +240,35 @@ public:
         Pegasus::Boolean returnQueryResultClass = false,
         const Pegasus::Uint32Arg &operationTimeout = Pegasus::Uint32Arg(),
         Pegasus::Boolean continueOnError = false,
-        Pegasus::Uint32 maxObjectCount = 0) = 0;
+        Pegasus::Uint32 maxObjectCount = 0);
     virtual Pegasus::Array<Pegasus::CIMInstance> pullInstancesWithPath(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
-        Pegasus::Uint32 maxObjectCount) = 0;
+        Pegasus::Uint32 maxObjectCount);
     virtual Pegasus::Array<Pegasus::CIMObjectPath> pullInstancePaths(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
-        Pegasus::Uint32 maxObjectCount) = 0;
+        Pegasus::Uint32 maxObjectCount);
     virtual Pegasus::Array<Pegasus::CIMInstance> pullInstances(
         Pegasus::CIMEnumerationContext &enumerationContext,
         Pegasus::Boolean &endOfSequence,
-        Pegasus::Uint32 maxObjectCount) = 0;
+        Pegasus::Uint32 maxObjectCount);
     virtual void closeEnumeration(
-        Pegasus::CIMEnumerationContext &enumerationContext) = 0;
+        Pegasus::CIMEnumerationContext &enumerationContext);
     virtual Pegasus::Uint64Arg enumerationCount(
-        Pegasus::CIMEnumerationContext &enumerationContext) = 0;
+        Pegasus::CIMEnumerationContext &enumerationContext);
 #  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
 
-protected:
-    URLInfo m_url_info;
-    Mutex m_mutex;
-    bool m_is_connected;
-    bool m_verify_cert;
+private:
+    static bool matchPattern(const Pegasus::String &pattern, const Pegasus::String &str);
+
+#  ifdef HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
+    static Pegasus::Boolean verifyCertificate(Pegasus::SSLCertificateInfo &ci, void *data);
+#  else
+    static Pegasus::Boolean verifyCertificate(Pegasus::SSLCertificateInfo &ci);
+#  endif // HAVE_PEGASUS_VERIFICATION_CALLBACK_WITH_DATA
+
+    Pegasus::CIMClient m_client;
 };
 
-#endif // LMIWBEM_CLIENT_H
+#endif // LMIWBEM_CLIENT_CIMXML_H

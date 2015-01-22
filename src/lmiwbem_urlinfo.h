@@ -49,6 +49,7 @@ public:
     bool isLocal() const;
     bool isValid() const;
     bool isCredsValid() const;
+    bool isWSMAN() const;
 
     URLInfo &operator =(const URLInfo &rhs);
 
