@@ -8,6 +8,7 @@
 [Mm]akefile
 [Mm]akefile.in
 autom4te.cache
+compile
 configure
 config.*
 depcomp
