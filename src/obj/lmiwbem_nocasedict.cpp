@@ -28,6 +28,7 @@
 #include <boost/python/str.hpp>
 #include <boost/python/tuple.hpp>
 #include "obj/lmiwbem_nocasedict.h"
+#include "obj/lmiwbem_nocasedict_pydoc.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
@@ -54,7 +55,7 @@ NocaseDict::NocaseDict(const bp::object &d)
 void NocaseDict::init_type()
 {
     CIMBase<NocaseDict>::init_type(bp::class_<NocaseDict>("NocaseDict", bp::init<>())
-        .def(bp::init<const bp::object&>())
+        .def(bp::init<const bp::object&>(docstr_NocaseDict_init))
         .def("__getitem__", &NocaseDict::getitem)
         .def("__setitem__", &NocaseDict::setitem)
         .def("__delitem__", &NocaseDict::delitem)
@@ -82,11 +83,11 @@ void NocaseDict::init_type()
         .def("get", &NocaseDict::get,
             (bp::arg("key"),
              bp::arg("def") = None),
-            "get(key, default_value=None)")
+            docstr_NocaseDict_get)
         .def("pop", &NocaseDict::pop,
             (bp::arg("key"),
              bp::arg("def") = None),
-            "pop(key, default_value)")
+            docstr_NocaseDict_pop)
         .def("copy", &NocaseDict::copy, "copy()"));
 }
 

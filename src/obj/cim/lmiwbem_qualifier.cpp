@@ -23,6 +23,7 @@
 #include <boost/python/class.hpp>
 #include <Pegasus/Common/CIMQualifier.h>
 #include "obj/cim/lmiwbem_qualifier.h"
+#include "obj/cim/lmiwbem_qualifier_pydoc.h"
 #include "obj/cim/lmiwbem_value.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
@@ -48,9 +49,20 @@ CIMQualifier::CIMQualifier(
     const bp::object &tosubclass,
     const bp::object &toinstance,
     const bp::object &translatable)
+    : m_name()
+    , m_type()
+    , m_value()
+    , m_is_propagated(false)
+    , m_is_overridable(false)
+    , m_is_tosubclass(false)
+    , m_is_toinstance(false)
+    , m_is_translatable(false)
 {
     m_name = StringConv::asString(name, "name");
-    m_type = StringConv::asString(type, "type");
+
+    if (!isnone(type))
+        m_type = StringConv::asString(type, "type");
+
     m_value = value;
     m_is_propagated = Conv::as<bool>(propagated, "propagated");
     m_is_overridable = Conv::as<bool>(overridable, "overridable");
@@ -73,26 +85,13 @@ void CIMQualifier::init_type()
             const bp::object &>((
                 bp::arg("name"),
                 bp::arg("value"),
-                bp::arg("type") = String(),
+                bp::arg("type") = None,
                 bp::arg("propagated") = false,
                 bp::arg("overridable") = false,
                 bp::arg("tosubclass") = false,
                 bp::arg("toinstance") = false,
                 bp::arg("translatable") = false),
-                "Constructs a :py:class:`.CIMQualifier`.\n\n"
-                ":param str name: String containing the qualifier's name\n"
-                ":param value: Qualifier's value\n"
-                ":param str type: String containing the qualifier's type\n"
-                ":param bool propagated: True, if the qualifier is propadated;\n"
-                "\tFalse otherwise\n"
-                ":param bool overridable: True, if the qualifier can be overridden;\n"
-                "\tFalse otherwise\n"
-                ":param bool tosubclass: True, if the qualifier shall appear in subclass;\n"
-                "\tFalse otherwise"
-                ":param bool toinstance: True, if the qualifier shall appear in instance;\n"
-                "\tFalse otherwise"
-                ":param bool translatable: True, if the qualifier can be translated;\n"
-                "\tFalse otherwise"))
+                docstr_CIMQualifier_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMQualifier::cmp)
 #  else
@@ -102,56 +101,33 @@ void CIMQualifier::init_type()
         .def("__ge__", &CIMQualifier::ge)
         .def("__le__", &CIMQualifier::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__repr__", &CIMQualifier::repr,
-            ":returns: pretty string of the object")
-        .def("copy", &CIMQualifier::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMQualifier`")
-        .def("tomof", &CIMQualifier::tomof,
-            "tomof()\n\n"
-            ":returns: MOF representation of the object itself\n"
-            ":rtype: unicode")
+        .def("__repr__", &CIMQualifier::repr, docstr_CIMQualifier_repr)
+        .def("copy", &CIMQualifier::copy, docstr_CIMQualifier_copy)
+        .def("tomof", &CIMQualifier::tomof, docstr_CIMQualifier_tomof)
         .add_property("name",
             &CIMQualifier::getPyName,
-            &CIMQualifier::setPyName,
-            "Property storing qualifier's name.\n\n"
-            ":rtype: unicode")
+            &CIMQualifier::setPyName)
         .add_property("type",
             &CIMQualifier::getPyType,
-            &CIMQualifier::setPyType,
-            "Property storing qualifier's type.\n\n"
-            ":rtype: unicode")
+            &CIMQualifier::setPyType)
         .add_property("value",
             &CIMQualifier::getPyValue,
-            &CIMQualifier::setPyValue,
-            "Property storing qualifier's value.\n\n"
-            ":returns: qualifier's value")
+            &CIMQualifier::setPyValue)
         .add_property("propagated",
             &CIMQualifier::getPyIsPropagated,
-            &CIMQualifier::setPyIsPropagated,
-            "Property storing propagation flag of the qualifier.\n\n"
-            ":rtype: bool")
+            &CIMQualifier::setPyIsPropagated)
         .add_property("overridable",
             &CIMQualifier::getPyIsOverridable,
-            &CIMQualifier::setPyIsOverridable,
-            "Property storing overriding flag of the qualifier.\n\n"
-            ":rtype: bool")
+            &CIMQualifier::setPyIsOverridable)
         .add_property("tosubclass",
             &CIMQualifier::getPyIsToSubclass,
-            &CIMQualifier::setPyIsToSubclass,
-            "Property storing tosubclass flag.\n\n"
-            ":rtype: bool")
+            &CIMQualifier::setPyIsToSubclass)
         .add_property("toinstance",
             &CIMQualifier::getPyIsToInstance,
-            &CIMQualifier::setPyIsToInstance,
-            "Property storing toinstance flag.\n\n"
-            ":rtype: bool")
+            &CIMQualifier::setPyIsToInstance)
         .add_property("translatable",
             &CIMQualifier::getPyIsTranslatable,
-            &CIMQualifier::setPyIsTranslatable,
-            "Property storing qualifier's translation flag.\n\n"
-            ":rtype: bool"));
+            &CIMQualifier::setPyIsTranslatable));
 }
 
 bp::object CIMQualifier::create(const Pegasus::CIMQualifier &qualifier)

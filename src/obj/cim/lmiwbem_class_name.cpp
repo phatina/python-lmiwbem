@@ -25,6 +25,7 @@
 #include <boost/python/dict.hpp>
 #include <boost/python/object.hpp>
 #include "obj/cim/lmiwbem_class_name.h"
+#include "obj/cim/lmiwbem_class_name_pydoc.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
@@ -39,10 +40,17 @@ CIMClassName::CIMClassName(
     const bp::object &classname,
     const bp::object &namespace_,
     const bp::object &hostname)
+    : m_classname()
+    , m_namespace()
+    , m_hostname()
 {
     m_classname = StringConv::asString(classname, "classname");
-    m_namespace = StringConv::asString(namespace_, "namespace");
-    m_hostname  = StringConv::asString(hostname, "hostname");
+
+    if (!isnone(namespace_))
+        m_namespace = StringConv::asString(namespace_, "namespace");
+
+    if (!isnone(hostname))
+        m_hostname  = StringConv::asString(hostname, "hostname");
 }
 
 void CIMClassName::init_type()
@@ -54,12 +62,9 @@ void CIMClassName::init_type()
             const bp::object &,
             const bp::object &>((
                 bp::arg("classname"),
-                bp::arg("host") = String(),
-                bp::arg("namespace") = String()),
-                "Constructs a :py:class:`.CIMClassName`.\n\n"
-                ":param str classname: String containing class name\n"
-                ":param str host: String containing host name\n"
-                ":param str namespace: String containing namespace name"))
+                bp::arg("host") = None,
+                bp::arg("namespace") = None),
+                docstr_CIMClassName_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMClassName::cmp)
 #  else
@@ -69,27 +74,17 @@ void CIMClassName::init_type()
         .def("__ge__", &CIMClassName::ge)
         .def("__le__", &CIMClassName::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__repr__", &CIMClassName::repr,
-            ":returns: pretty string of the object")
-        .def("copy", &CIMClassName::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMClassName`")
+        .def("__repr__", &CIMClassName::repr, docstr_CIMClassName_repr)
+        .def("copy", &CIMClassName::copy, docstr_CIMClassName_copy)
         .add_property("classname",
             &CIMClassName::getPyClassname,
-            &CIMClassName::setPyClassname,
-            "Property storing class name.\n\n"
-            ":rtype: unicode")
+            &CIMClassName::setPyClassname)
         .add_property("namespace",
             &CIMClassName::getPyNamespace,
-            &CIMClassName::setPyNamespace,
-            "Property storing namespace name.\n\n"
-            ":rtype: unicode")
+            &CIMClassName::setPyNamespace)
         .add_property("host",
             &CIMClassName::getPyHostname,
-            &CIMClassName::setPyHostname,
-            "Property storing host name.\n\n"
-            ":rtype: unicode"));
+            &CIMClassName::setPyHostname));
 }
 
 bp::object CIMClassName::create(

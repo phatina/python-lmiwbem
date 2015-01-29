@@ -1,0 +1,835 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+WBEMConnection_init = {
+WBEMConnection(url=None, creds=None, x509=None, default_namespace=None, \
+no_verification=False, connect_locally=False)
+
+Args:
+    url (str): URL of CIMOM instance
+    creds (tuple):  (username, password)
+    x509 (dict): **'cert_file':** 'path_to_cert_file', **'key_file'** : 'path_to_key_file'
+    default_namespace (str): Default namespace used for CIM operations
+    no_verification (bool): If True, CIMOM's X509 certificate shall not be
+        verified
+    connect_locally (bool): If True, Unix socket will be used
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_connect = {
+connect(url=None, username=None, password=None, cert_file=None, \
+    key_file=None, no_verification=None)
+
+Connects to CIMOM.
+
+Args:
+    url (str): URL of CIMOM instance
+    username (str): Username for authentication
+    password (str): Password for authentication
+    no_verification (bool): If True, CIMOM's X509 certificate shall not be
+        verified
+
+Raises:
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_connection`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_connectLocally = {
+connectLocally()
+
+Connect to CIMOM using local Unix socket.
+
+Raises:
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_connection_socket`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_disconnect = {
+disconnect()
+
+Disconnects from CIMOM.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_is_connected = {
+Returns True, if the client is connected to a CIMOM.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_hostname = {
+Returns a CIMOM hostname.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_timeout = {
+Property for CIM operations timeout in milliseconds. Default value is 60000ms.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_request_accept_languages = {
+Property for accept languages currently configured for this client.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_default_namespace = {
+Property for default CIM namespace used for CIM operations.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_CreateInstance = {
+CreateInstance(NewInstance, ns=None)
+
+Creates a new CIM instance and returns its :py:class:`.CIMInstanceName`.
+
+Args:
+    NewInstance (CIMInstance): New local CIM instance
+    ns (str): Namespace in which the :py:class:`.CIMInstance` will be created.
+        If `ns` is ``None``, namespace will be used from
+        ``NewInstance.path.namespace``.
+
+Returns:
+    :py:class:`.CIMInstanceName` of new CIMInstance
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_create_instance`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_DeleteInstance = {
+DeleteInstance(InstanceName)
+
+Deletes a CIM instance identified by :py:class:`.CIMInstanceName`.
+
+Args:
+    InstanceName (CIMInstanceName): Object path of CIM instance
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_delete_instance`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_ModifyInstance = {
+ModifyInstance(ModifiedInstance, IncludeQualifiers=True, PropertyList=None)
+
+Modifies properties of a existing instance.
+
+Args:
+    ModifiedInstance (CIMInstance): Modified CIM instance
+    IncludeQualifiers (bool): see DMTF_
+    PropertyList (list): See DMTF_
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_modify_instance`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_EnumerateInstances = {
+EnumerateInstances(ClassName, namespace=None, LocalOnly=True, \
+DeepInheritance=True, IncludeQualifiers=False, IncludeClassOrigin=False, \
+PropertyList=None)
+
+Enumerates instances of a given class name.
+
+Args:
+    ClassName (str): String containing class name of instances to be retrieved.
+    namespace (str): String containing namespace, from which the instances
+        should be retrieved.
+    LocalOnly (bool): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+
+Returns:
+    List of :py:class:`.CIMInstance` objects
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_enumerate_instances`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_EnumerateInstanceNames = {
+EnumerateInstanceNames(ClassName, namespace=None)
+
+Enumerates instance names of a given class name.
+
+Args:
+    ClassName (str): Class name of instance names to be retrieved
+    namespace (str): Namespace name, from which the instance names will be
+        retrieved
+
+Returns:
+    List of :py:class:`.CIMInstanceName` objects.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_enumerate_instance_names`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_GetInstance = {
+GetInstance(InstanceName, namespace=None, LocalOnly=True, \
+IncludeQualifiers=False, IncludeClassOrigin=False, PropertyList=None)
+
+Fetches a :py:class:`.CIMInstance` from CIMOM identified by
+:py:class:`.CIMInstanceName`.
+
+Args:
+    InstanceName (CIMInstanceName): Identifies
+        a :py:class:`.CIMInstance`
+    namespace (str): Namespace name, from which the instance will be retrieved
+    LocalOnly (bool): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+
+Returns:
+    :py:class:`.CIMInstance` object
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_get_instance`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_EnumerateClasses = {
+EnumerateClasses(namespace=None, ClassName=None, DeepInheritance=False, \
+LocalOnly=True, IncludeQualifiers=True, IncludeClassOrigin=False)
+
+Enumerates classes managed by the CIMOM.
+
+Args:
+    namespace (str): Namespace name, from which the classes will be retrieved
+    ClassName (str): Class name, which defines the class that is the basis for
+        the enumeration
+    DeepInheritance (bool): See DMTF_
+    LocalOnly (bool): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+
+Returns:
+    List of :py:class:`.CIMClass` objects
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of ::ref:`example_enumerate_classes`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_EnumerateClassNames = {
+EnumerateClassNames(namespace=None, ClassName=None, DeepInheritance=False)
+Enumerates class names managed by the CIMOM.
+
+Args:
+    namespace (str): Namespace name, from which the classes  will be retrieved
+    ClassName (str): Class name, which defines the class that is the basis for
+        the enumeration
+    DeepInheritance (bool): See DMTF_
+
+Returns:
+    List of strings of class names
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_enumerate_class_names`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_ExecQuery = {
+ExecQuery(QueryLanguage, Query, namespace=None)
+
+Executes a query and returns a list of :py:class:`.CIMInstance` objects.
+
+Args:
+    query_lang (str): Query language
+    query (str): Query to execute
+    namespace (str): Target namespace for the query
+
+Returns:
+    List of :py:class:`.CIMInstance` objects
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also :ref:`example_exec_query` example
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_InvokeMethod = {
+InvokeMethod(MethodName, ObjectName, **params)
+
+Executes a method within a given instance.
+
+Args:
+    MethodName (str): method name
+    ObjectName (CIMInstanceName): specifies CIM object within
+        which the method will be called
+    params (dict): parameters passed to the method call
+
+Returns:
+    Tuple containing method's return value and output parameters
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_invoke_method`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_GetClass = {
+GetClass(ClassName, namespace=None, LocalOnly=True, IncludeQualifiers=True, \
+IncludeClassOrigin=False, PropertyList=None)
+
+Returns a :py:class:`.CIMClass` representing the named class.
+
+Args:
+    ClassName (str): Class name of class to be retrieved
+    namespace (str): Namespace name, from which the class will be retrieved
+    LocalOnly (bool): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+
+Returns:
+    :py:class:`.CIMClass` object
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_get_class`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_Associators = {
+Associators(ObjectName, AssocClass=None, ResultClass=None, Role=None, \
+ResultRole=None, IncludeQualifiers=False, IncludeClassOrigin=False, \
+PropertyList=None, namespace=None)
+
+Returns a list of associated :py:class:`.CIMInstance` objects with an input
+object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis for
+        the enumeration
+    AssocClass (str): See DMTF_
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    ResultRole (str): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+    namespace (str): See DMTF_
+
+Returns:
+    List of associated :py:class:`.CIMInstance` objects with an input object
+    path
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_associators`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_AssociatorNames = {
+AssociatorNames(ObjectName, AssocClass=None, ResultClass=None, Role=None, \
+ResultRole=None, namespace=None)
+
+Returns a list of associated :py:class:`.CIMInstanceName` objects with an input
+object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis for
+        the enumeration
+    AssocClass (str): See DMTF_
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    ResultRole (str): See DMTF_
+    namespace (str): See DMTF_
+
+Returns:
+    List of associated :py:class:`.CIMInstanceName` objects with an input
+    object path
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_associator_names`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_References = {
+References(ObjectName, ResultClass=None, Role=None, IncludeQualifiers=False, \
+IncludeClassOrigin=False, PropertyList=None, namespace=None)
+
+Returns a list of association :py:class:`.CIMInstance` objects with an input
+object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis for
+        the enumeration
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+    namespace (str): See DMTF_
+
+Returns:
+    List of association :py:class:`.CIMInstance` objects with an input
+    object path
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of  :ref:`example_references`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_ReferenceNames = {
+ReferenceNames(ObjectName, ResultClass=None, Role=None, namespace=None)
+
+Returns a list of association :py:class:`.CIMInstanceName` objects with an
+input object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis for
+        the enumeration
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    namespace (str): See DMTF_
+
+Returns:
+    List of association :py:class:`.CIMInstanceName` objects with an input
+    object path
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+
+See also:
+    Full example of :ref:`example_reference_names`.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenEnumerateInstances = {
+OpenEnumerateInstances(ClassName, namespace=None, LocalOnly=True, \
+DeepInheritance=True, IncludeQualifiers=False, IncludeClassOrigin=False, \
+PropertyList=None, QueryLang=None, Query=None, OperationTimeout=None, \
+ContinueOnError=False, MaxObjectCnt=0)
+
+Opens an enumeration sequence of :py:class:`.CIMInstance`.
+
+Args:
+    ClassName (str): String containing class name of instances to be retrieved.
+    namespace (str): Namespace name, from which the instances should be
+        retrieved
+    LocalOnly (bool): Unused
+    DeepInheritance (bool): See DMTF_
+    IncludeQualifiers (bool): Unused
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+    QueryLanguage (str): Query language to be used with the Query
+    Query (str): Filter query to be applied to the enumeration
+    OperationTimeout (int): Defines the interoperation timeout in
+        seconds between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return instances subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstance`
+    objects, enumeration context and boolean which defines if all the instances
+    have been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenEnumerateInstanceNames = {
+OpenEnumerateInstanceNames(ClassName, namespace=None, QueryLanguage=None, \
+Query=None, OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)
+
+Opens an enumeration sequence of :py:class:`.CIMInstanceName`.
+
+Args:
+    ClassName (str): Class name of elements to be retrieved
+    namespace (str): String containing namespace, from which the
+        elements should be retrieved.
+    QueryLanguage (str): Query language to be used with the Query
+    Query (str): Filter query to be applied to the enumeration
+    OperationTimeout (int): Defines the interoperation timeout in seconds
+        between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return elements subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstanceName` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenAssociators = {
+OpenAssociators(ObjectName, namespace=None, AssocClass=None, \
+ResultClass=None, Role=None, ResultRole=None, IncludeQualifiers=False, \
+IncludeClassOrigin=False, PropertyList=None, QueryLanguage=None, Query=None, \
+OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)
+
+Opens an enumeration for associated :py:class:`.CIMInstance` objects
+with an input object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis for
+        the enumeration
+    namespace (str): Namespace name, from which the elements should be
+        retrieved
+    AssocClass (str): See DMTF_
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    ResultRole (str): See DMTF_
+    IncludeQualifiers (bool): See DMTF_
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+    QueryLanguage (str): Query language to be used with the Query
+    Query (str): Filter query to be applied to the enumeration
+    OperationTimeout (int): Defines the interoperation timeout in seconds
+        between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return elements subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstance` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenAssociatorNames = {
+OpenAssociatorNames(ObjectName, namespace=None, AssocClass=None, \
+ResultClass=None, Role=None, ResultRole=None, QueryLanguage=None, Query=None, \
+OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)
+
+Opens an enumeration for associated :py:class:`.CIMInstanceName`
+objects with an input object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis
+        for the enumeration
+    namespace (str): Namespace name, from which the elements should be
+        retrieved
+    AssocClass (str): See DMTF_
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    ResultRole (str): See DMTF_
+    QueryLanguage (str): Query language to be used with the Query.
+    Query (str): Filter query to be applied to the enumeration
+    OperationTimeout (int): Defines the interoperation timeout in seconds
+        between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return elements subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstanceName` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenReferences = {
+OpenReferences(ObjectName, ns=None, ResultClass=None, Role=None, \
+IncludeQualifiers=False, IncludeClassOrigin=False, PropertyList=None, \
+QueryLanguage=None, Query=None, OperationTimeout=None, ContinueOnError=False, \
+MaxObjectCnt=0)
+
+Opens an enumeration for association :py:class:`.CIMInstance`
+objects with an input object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis
+        for the enumeration.
+    namespace (str): Namespace name, from which the elements should be
+        retrieved.
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    IncludeQualifiers (bool): Unused
+    IncludeClassOrigin (bool): See DMTF_
+    PropertyList (list): See DMTF_
+    QueryLanguage (str): Query language to be used with the Query
+    Query (str): Filter query to be applied to the enumeration
+    OperationTimeout (int): Defines the interoperation timeout in seconds
+        between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return elements subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstance` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenReferenceNames = {
+OpenReferenceNames(ObjectName, namespace=None, ResultClass=None, Role=None, \
+QueryLanguage=None, Query=None, OperationTimeout=None, ContinueOnError=False, \
+MaxObjectCnt=0)
+
+Opens an enumeration for association :py:class:`.CIMInstanceName`
+objects with an input object path.
+
+Args:
+    ObjectName (CIMInstanceName): Object path that is the basis
+        for the enumeration.
+    namespace (str): Namespace name, from which the elements should be
+        retrieved.
+    ResultClass (str): See DMTF_
+    Role (str): See DMTF_
+    QueryLanguage (str): Query language to be used with the Query.
+    Query (str): Filter query to be applied to the enumeration.
+    OperationTimeout (int): Defines the interoperation timeout in seconds
+        between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return elements subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstanceName` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_OpenExecQuery = {
+OpenExecQuery(QueryLanguage, Query, namespace=None, OperationTimeout=None, \
+ContinueOnError=False, MaxObjectCnt=0)
+
+Opens an enumeration for Query.
+
+Args:
+    QueryLanguage (str): Query language in which the query parameter is
+        expressed
+    Query (str): Specified the query to be executed
+    namespace (str): Namespace name, from which the elements should be
+        retrieved.
+    OperationTimeout (int): Defines the interoperation timeout in seconds
+        between the response and subsequent request operations of an
+        enumeration sequence.
+    ContinueOnError (bool): Defines whether the server should continue to
+        return elements subsequent to a :py:exc:`.CIMError` occurring in the
+        server.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstance` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_PullInstances = {
+PullInstances(Context, MaxObjectCnt=0)
+
+Retrieves a list of :py:class:`.CIMInstance` for an open enumeration sequence
+opened by an openQueryInstances operation and represented by an enumeration
+context returned by the original open or previous
+:py:meth:`.WBEMConnection.PullInstancesWithPath` operation.
+
+Args:
+    Context (CIMEnumerationContext): Identifier for the
+        enumeration sequence.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing a list of retrieved :py:class:`.CIMInstance` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_PullInstanceNames = {
+PullInstanceNames(Context, MaxObjectCnt=0)
+
+Retrieves a list of :py:class:`.CIMInstanceName` for an open enumeration
+sequence opened by an openQueryInstances operation and represented by an
+enumeration context returned by the original open or previous
+:py:meth:`.WBEMConnection.PullInstanceNames` operation.
+
+Args:
+    Context (CIMEnumerationContext): Identifier for the
+        enumeration sequence.
+    MaxObjectCnt (int): Defines the maximum number of elements that this Open
+        operation can return.
+
+Returns:
+    Tuple containing list of retrieved :py:class:`.CIMInstanceName` objects,
+    enumeration context and boolean which defines if all the instances have
+    been retrieved.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}
+
+# ------------------------------------------------------------------------------
+
+WBEMConnection_CloseEnumeration = {
+CloseEnumeration(Context)
+
+Closes an enumeration sequence.
+
+Args:
+    Context (CIMEnumerationContext): Enumeration context to close.
+
+Raises:
+    CIMError: When a CIM error occurs.
+    ConnectionError: When a connection can't be established.
+}

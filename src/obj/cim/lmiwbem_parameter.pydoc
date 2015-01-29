@@ -1,0 +1,59 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+CIMParameter_init = {
+CIMParameter(name, type, reference_class=None, is_array=False, array_size=0, \
+qualifiers=NocaseDict())
+
+Args:
+    name (str): Parameter's name
+    type (str): Parameter's type
+    reference_class (str): Reference class for the property
+    is_array (bool): True, if parameter's value is an array; False otherwise
+    array_size (int): Parameter's array size
+    qualifiers (NocaseDict): Parameter's qualifiers
+}
+
+# ------------------------------------------------------------------------------
+
+CIMParameter_repr = {
+Returns:
+    unicode: Pretty string of the object
+}
+
+# ------------------------------------------------------------------------------
+
+CIMParameter_copy = {
+copy()
+
+Returns:
+    CIMParameter: Copy of the object itself
+}
+
+# ------------------------------------------------------------------------------
+
+CIMParameter_tomof = {
+tomof()
+
+Returns:
+    unicode: MOF representation of the object itself
+}

@@ -30,6 +30,7 @@
 #include "lmiwbem_exception.h"
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_property.h"
+#include "obj/cim/lmiwbem_property_pydoc.h"
 #include "obj/cim/lmiwbem_qualifier.h"
 #include "obj/cim/lmiwbem_value.h"
 #include "util/lmiwbem_convert.h"
@@ -42,7 +43,7 @@ CIMProperty::CIMProperty()
     , m_reference_class()
     , m_is_array(false)
     , m_is_propagated(false)
-    , m_array_size(-1)
+    , m_array_size(0)
     , m_value()
     , m_qualifiers()
     , m_rc_prop_value()
@@ -60,6 +61,17 @@ CIMProperty::CIMProperty(
     const bp::object &qualifiers,
     const bp::object &is_array,
     const bp::object &reference_class)
+    : m_name()
+    , m_type()
+    , m_class_origin()
+    , m_reference_class()
+    , m_is_array(false)
+    , m_is_propagated(false)
+    , m_array_size(0)
+    , m_value()
+    , m_qualifiers()
+    , m_rc_prop_value()
+    , m_rc_prop_qualifiers()
 {
     m_name = StringConv::asString(name, "name");
     if (!isnone(type)) {
@@ -76,8 +88,13 @@ CIMProperty::CIMProperty(
         m_is_array = static_cast<bool>(isarray(value));
         m_array_size = m_is_array ? bp::len(value) : 0;
     }
-    m_class_origin = StringConv::asString(class_origin, "class_origin");
-    m_reference_class = StringConv::asString(reference_class, "reference_class");
+
+    if (!isnone(class_origin))
+        m_class_origin = StringConv::asString(class_origin, "class_origin");
+
+    if (!isnone(reference_class))
+        m_reference_class = StringConv::asString(reference_class, "reference_class");
+
     m_is_propagated = Conv::as<bool>(propagated, "propagated");
     m_value = value;
     m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
@@ -99,24 +116,13 @@ void CIMProperty::init_type()
                 bp::arg("name"),
                 bp::arg("value"),
                 bp::arg("type") = None,
-                bp::arg("class_origin") = String(),
+                bp::arg("class_origin") = None,
                 bp::arg("array_size") = 0,
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create(),
                 bp::arg("is_array") = None,
-                bp::arg("reference_class") = String()),
-                "Property of a CIM object.\n\n"
-                ":param str name: String containing the property's name\n"
-                ":param value: Property's value\n"
-                ":param str type: String containing the property's type\n"
-                ":param str class_origin: String containing property's class origin\n"
-                ":param int array_size: Array size\n"
-                ":param bool propagated: True, if the property is propagated;\n"
-                "\tFalse otherwise"
-                ":param NocaseDict qualifiers: Dictionary containing propert's qualifiers\n"
-                ":param bool is_array: True, if the property's value is array;\n"
-                "\tFalse otherwise"
-                ":param str reference_class: String containing property's reference class"))
+                bp::arg("reference_class") = None),
+                docstr_CIMProperty_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMProperty::cmp)
 #  else
@@ -126,58 +132,35 @@ void CIMProperty::init_type()
         .def("__ge__", &CIMProperty::ge)
         .def("__le__", &CIMProperty::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__repr__", &CIMProperty::repr,
-            ":returns: pretty string of the object")
-        .def("copy", &CIMProperty::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMProperty`")
+        .def("__repr__", &CIMProperty::repr, docstr_CIMProperty_repr)
+        .def("copy", &CIMProperty::copy, docstr_CIMProperty_copy)
         .add_property("name",
             &CIMProperty::getPyName,
-            &CIMProperty::setPyName,
-            "Property storing name of the property.\n\n"
-            ":rtype: unicode")
+            &CIMProperty::setPyName)
         .add_property("value",
             &CIMProperty::getPyValue,
-            &CIMProperty::setPyValue,
-            "Property storing value of the property.\n\n"
-            ":returns: property's value")
+            &CIMProperty::setPyValue)
         .add_property("type",
             &CIMProperty::getPyType,
-            &CIMProperty::setPyType,
-            "Property storing type of the property.\n\n"
-            ":rtype: unicode")
+            &CIMProperty::setPyType)
         .add_property("class_origin",
             &CIMProperty::getPyClassOrigin,
-            &CIMProperty::setPyClassOrigin,
-            "Property storing class origin of the property.\n\n"
-            ":rtype: unicode")
+            &CIMProperty::setPyClassOrigin)
         .add_property("array_size",
             &CIMProperty::getPyArraySize,
-            &CIMProperty::setPyArraySize,
-            "Property storing array size of the property.\n\n"
-            ":rtype: int")
+            &CIMProperty::setPyArraySize)
         .add_property("propagated",
             &CIMProperty::getPyIsPropagated,
-            &CIMProperty::setPyIsPropagated,
-            "Property storing propagation flag of the property.\n\n"
-            ":rtype: bool")
+            &CIMProperty::setPyIsPropagated)
         .add_property("qualifiers",
             &CIMProperty::getPyQualifiers,
-            &CIMProperty::setPyQualifiers,
-            "Property storing qualifiers of the property.\n\n"
-            ":rtype: :py:class:`.NocaseDict`")
+            &CIMProperty::setPyQualifiers)
         .add_property("is_array",
             &CIMProperty::getPyIsArray,
-            &CIMProperty::setPyIsArray,
-            "Property storing flag, which indicates, if the property's value is\n"
-            "\tarray.\n\n"
-            ":rtype: bool")
+            &CIMProperty::setPyIsArray)
         .add_property("reference_class",
             &CIMProperty::getPyReferenceClass,
-            &CIMProperty::setPyReferenceClass,
-            "Property storing reference class of the property.\n\n"
-            ":rtype: unicode"));
+            &CIMProperty::setPyReferenceClass));
 }
 
 bp::object CIMProperty::create(const Pegasus::CIMConstProperty &property)

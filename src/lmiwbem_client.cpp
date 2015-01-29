@@ -83,4 +83,3 @@ String CIMClient::getUrl() const
 {
     return m_url_info.url();
 }
-

@@ -1,0 +1,73 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+slp_discover = {
+slp_discover(srvtype=None, scopelist=None, filter=None, async=False)
+
+Peforms SLP discovery.
+
+Args:
+    srvtype (str): Service type
+    scopelist (str): Comma separated list of scope names
+    filter (str): Query formulated of attribute pattern matching expressions in
+        the form of an LDAPv3 search filter
+    async (bool): Defines, if a SLP callback should be called in asynchronous
+        way.
+
+Returns:
+    List of :py:class:`.SLPResult`
+
+Raises:
+    SLPError: When the SLP discovery fails.
+}
+
+# ------------------------------------------------------------------------------
+
+slp_discover_attrs = {
+slp_discover_attrs(srvurl=None, scopelist=None, attrids=None, async=False)
+
+Performs SLP attributes discovery.
+
+Args:
+     srvurl (str): Service URL
+     scopelist (str): Comma separated list of scope names
+     attrids (str): Comma separated list of attribute IDs to return
+
+Returns:
+    Dictionary containing attrs with values
+
+Raises:
+    SLPError: When the SLP discovery fails.
+}
+
+# ------------------------------------------------------------------------------
+
+SLPResult_init = {
+SLPResult(srvtype, host, port=0, family=None, srvpart=None)
+
+Args:
+    srvtype (str): Service type
+    host (str): Host name
+    port (int): Service port
+    family (str): Network address family
+    srvpart (str): Remainder of a URL (see SLP_)
+}

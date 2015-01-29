@@ -1,0 +1,120 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+CIMInstanceName_init = {
+CIMInstanceName(classname, keybindings=NocaseDict(), host=None, namespace=None)
+
+Args:
+    classname (str): Class name
+    keybindings (NocaseDict): Dictionary of keybindings
+    host (str): Hostname
+    namespace (str): Namespace name
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_unicode = {
+Returns:
+    unicode: Serialized object
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_repr = {
+Returns:
+    unicode: Pretty string of the object
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_has_key = {
+has_key(key)
+
+Args:
+    key (str): Key to check for presence in object's keybindings
+
+Returns:
+    bool: True, if the key is present in object's keybindings; False otherwise
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_keys = {
+keys()
+
+Returns:
+    List of strings of keybinding names
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_values = {
+values()
+
+Returns:
+    List of keybinding values
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_items = {
+items()
+
+Returns:
+    List of tuples with keybinding name and value
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_iterkeys = {
+iterkeys()
+
+Returns:
+    Iterator for keybinding names iteration
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_itervalues = {
+itervalues()
+
+Returns:
+    Iterator for keybinding values iteration
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_iteritems = {
+iteritems()
+
+Returns:
+    Iterator for keybinding name and value iteration
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstanceName_copy = {
+copy()
+
+Returns:
+    CIMInstanceName: Copy of the object itself
+}

@@ -62,7 +62,7 @@ public:
 #  endif // PY_MAJOR_VERSION
 
     String asString() const;
-    bp::object str() const;
+    bp::object unicode() const;
     bp::object repr() const;
 
     bp::object getitem(const bp::object &key);

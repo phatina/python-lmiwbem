@@ -1,0 +1,136 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+CIMIndicationListener_init = {
+CIMIndicationListener(listen_address, port, certfile=None, keyfile=None, \
+trust_store=None)
+
+Args:
+    listen_address (unicode): Bind address
+    port (int): Listening port
+    certfile (unicode): Path to X509 certificate
+    keyfile (unicode): Path to X509 private key; may be None, if cert_file also
+        contains private key
+    trust_store (unicode): Path to trust store
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_repr = {
+Returns:
+    unicode: Pretty string of the object
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_start = {
+start(retries=1)
+
+Starts indication listener.
+
+Args:
+    retries (int): Number of bind retries
+
+Raises:
+    ConnectionError: When the listener can't bind to specified port.
+
+Example:
+    Let's assume, ports 12345, 12346 are in use and 12347 is unused; but we
+    can bind to ports in range <12345-12355>::
+
+        listener = CIMIndicationListener('localhost', 12345)
+        listener.start(10)
+
+        listener.port == 12347  # True
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_stop = {
+stop()
+
+Stops indication listener.
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_add_handler = {
+add_handler(name, handler, *args, **kwargs)
+
+Adds callback for specific indication.
+
+Args:
+    name (str): Indication name
+    handler: Callable for indication
+    *args: Positional arguments passed to handler
+    **kwargs: Keyword arguments passed to handler
+
+Example:
+    Simple indication handler::
+
+        def indication_handler(ind, *args, **kwargs):
+            '''
+            Indication handler.
+
+            Args:
+                ind (CIMInstance): Exported indication
+                *args: Positional arguments passed from CIMIndicationListener.add_handler()
+                **kwargs: Keyword arguments passed from CIMIndicationListener.add_handler()
+            '''
+            # Do something with the indication
+            pass
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_remove_handler = {
+remove_handler(name)
+
+Removes a specified handler from indication listener.
+
+Args:
+    name (str): Indication name
+
+Raises:
+    KeyError: When such indication is **not** registered
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_is_alive = {
+Returns:
+    True, if the listener is running; False otherwise.
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_uses_ssl = {
+Returns:
+    True, if the listener uses secure connection; False otherwise.
+}
+
+# ------------------------------------------------------------------------------
+
+CIMIndicationListener_handlers = {
+Returns:
+    List of indication names which the listener accepts.
+}

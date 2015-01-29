@@ -25,6 +25,7 @@
 #include <boost/python/tuple.hpp>
 #include "obj/lmiwbem_config.h"
 #include "obj/lmiwbem_connection.h"
+#include "obj/lmiwbem_connection_pydoc.h"
 #include "obj/cim/lmiwbem_instance.h"
 #include "obj/cim/lmiwbem_instance_name.h"
 #include "obj/cim/lmiwbem_enum_ctx.h"
@@ -59,40 +60,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenEnumerateInstances(ClassName, namespace=None, LocalOnly=True, "
-        "DeepInheritance=True, IncludeQualifiers=False, "
-        "IncludeClassOrigin=False, PropertyList=None, QueryLang=None, "
-        "Query=None, OperationTimeout=None, ContinueOnError=False, "
-        "MaxObjectCnt=0)\n\n"
-        "Opens an enumeration sequence of :py:class:`.CIMInstance`.\n\n"
-        ":param str ClassName: String containing class name of instances to be "
-        "retrieved.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "instances should be retrieved.\n"
-        ":param bool LocalOnly: Unused\n"
-        ":param bool DeepInheritance: Boolean indicating whether the "
-        "enumeration should include all levels of derivation.\n"
-        ":param bool IncludeQualifiers: Unused\n"
-        ":param bool IncludeClassOrigin: Boolean indicating whether the "
-        "`CLASS ORIGIN` attribute is to be included in elements of the "
-        "returned instance.\n"
-        ":param list PropertyList: List of properties available in returned "
-        "instances.\n"
-        ":param str QueryLanguage: Query language to be used with the "
-        "Query.\n"
-        ":param str Query: Filter query to be applied to the enumeration.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return instances subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved :py:class:`.CIMInstance` "
-        "objects, enumeration context and boolean which defines if all the instances"
-        "have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenEnumerateInstances)
     .def("OpenEnumerateInstanceNames", &WBEMConnection::openEnumerateInstanceNames,
         (bp::arg("ClassName"),
          bp::arg("namespace") = None,
@@ -101,29 +69,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenEnumerateInstanceNames(ClassName, namespace=None, "
-        "QueryLanguage=None, Query=None, OperationTimeout=None, "
-        "ContinueOnError=False, MaxObjectCnt=0)\n\n"
-        "Opens an enumeration sequence of :py:class:`.CIMInstanceName`.\n\n"
-        ":param str ClassName: String containing class name of elements to be "
-        "retrieved.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "elements should be retrieved.\n"
-        ":param str QueryLanguage: Query language to be used with the "
-        "Query.\n"
-        ":param str Query: Filter query to be applied to the enumeration.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return elements subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstanceName` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenEnumerateInstanceNames)
     .def("OpenAssociators", &WBEMConnection::openAssociators,
         (bp::arg("ObjectName"),
          bp::arg("namespace") = None,
@@ -139,46 +85,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenAssociators(ObjectName, namespace=None, AssocClass=None, "
-        "ResultClass=None, Role=None, ResultRole=None, "
-        "IncludeQualifiers=False, IncludeClassOrigin=False, "
-        "PropertyList=None, QueryLanguage=None, Query=None, "
-        "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
-        "Opens an enumeration for associated :py:class:`.CIMInstance` objects "
-        "with an input ObjectName.\n\n"
-        ":param CIMInstanceName ObjectName: Object path that is the basis "
-        "for the enumeration.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "elements should be retrieved.\n"
-        ":param str AssocClass: Defines a filter on the reference instances "
-        "set to be returned.\n"
-        ":param str ResultClass: Defines a filter on the reference instances "
-        "set to be returned.\n"
-        ":param str Role: Defines a filter on the roles of associated "
-        "instances to be returned.\n"
-        ":param str ResultRole: Defines a filter on the result roles of "
-        "associated instances.\n"
-        ":param bool IncludeQualifiers: Unused\n"
-        ":param bool IncludeClassOrigin: Boolean indicating whether the "
-        "`CLASS ORIGIN` attribute is to be included in elements of the "
-        "returned instance.\n"
-        ":param list PropertyList: List of properties available in returned "
-        "instances.\n"
-        ":param str QueryLanguage: Query language to be used with the "
-        "Query.\n"
-        ":param str Query: Filter query to be applied to the enumeration.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return elements subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstance` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenAssociators)
     .def("OpenAssociatorNames", &WBEMConnection::openAssociatorNames,
         (bp::arg("ObjectName"),
          bp::arg("namespace") = None,
@@ -191,39 +98,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenAssociatorNames(ObjectName, namespace=None, AssocClass=None, "
-        "ResultClass=None, Role=None, ResultRole=None, QueryLanguage=None, "
-        "Query=None, OperationTimeout=None, ContinueOnError=False, "
-        "MaxObjectCnt=0)\n\n"
-        "Opens an enumeration for associated :py:class:`.CIMInstanceName` "
-        "objects with an input ObjectName.\n\n"
-        ":param CIMInstanceName ObjectName: Object path that is the basis "
-        "for the enumeration.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "elements should be retrieved.\n"
-        ":param str AssocClass: Defines a filter on the reference instances "
-        "set to be returned.\n"
-        ":param str ResultClass: Defines a filter on the reference instances "
-        "set to be returned.\n"
-        ":param str Role: Defines a filter on the roles of associated "
-        "instances to be returned.\n"
-        ":param str ResultRole: Defines a filter on the result roles of "
-        "associated instances to be returned.\n"
-        ":param str QueryLanguage: Query language to be used with the "
-        "Query.\n"
-        ":param str Query: Filter query to be applied to the enumeration.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return elements subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstanceName` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenAssociatorNames)
     .def("OpenReferences", &WBEMConnection::openReferences,
         (bp::arg("ObjectName"),
          bp::arg("namespace") = None,
@@ -237,40 +112,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenReferences(ObjectName, ns=None, ResultClass=None, Role=None, "
-        "IncludeQualifiers=False, IncludeClassOrigin=False, "
-        "PropertyList=None, QueryLanguage=None, Query=None, "
-        "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
-        "Opens an enumeration for association :py:class:`.CIMInstance` "
-        "objects with an input instance name.\n\n"
-        ":param CIMInstanceName ObjectName: Object path that is the basis "
-        "for the enumeration.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "elements should be retrieved.\n"
-        ":param str ResultClass: Defines a filter on the reference instances "
-        "set to be returned.\n"
-        ":param str Role: Defines a filter on the roles of references "
-        "instances to be returned.\n"
-        ":param bool IncludeQualifiers: Unused\n"
-        ":param bool IncludeClassOrigin: Indicates whether the `CLASS ORIGIN` "
-        "attribute is to be included in elements of the returned instance.\n"
-        ":param list PropertyList: List of properties available in returned "
-        "instances.\n"
-        ":param str QueryLanguage: Query language to be used with the "
-        "Query.\n"
-        ":param str Query: Filter query to be applied to the enumeration.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return elements subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstance` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenReferences)
     .def("OpenReferenceNames", &WBEMConnection::openReferenceNames,
         (bp::arg("ObjectName"),
          bp::arg("namespace") = None,
@@ -281,34 +123,7 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenReferenceNames(ObjectName, namespace=None, ResultClass=None, "
-        "Role=None, QueryLanguage=None, Query=None, OperationTimeout=None, "
-        "ContinueOnError=False, MaxObjectCnt=0)\n\n"
-        "Opens an enumeration for association :py:class:`.CIMInstanceName` "
-        "objects with an input instance name.\n\n"
-        ":param CIMInstanceName ObjectName: Object path that is the basis "
-        "for the enumeration.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "elements should be retrieved.\n"
-        ":param str ResultClass: Defines a filter on the reference instances "
-        "set to be returned.\n"
-        ":param str Role: Defines a filter on the roles of references "
-        "instances to be returned.\n"
-        ":param str QueryLanguage: Query language to be used with the "
-        "Query.\n"
-        ":param str Query: Filter query to be applied to the enumeration.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return elements subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstanceName` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenReferenceNames)
     .def("OpenExecQuery", &WBEMConnection::openExecQuery,
         (bp::arg("QueryLanguage"),
          bp::arg("Query"),
@@ -316,66 +131,18 @@ void WBEMConnection::init_type_pull(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("OperationTimeout") = None,
          bp::arg("ContinueOnError") = false,
          bp::arg("MaxObjectCnt") = 0),
-        "OpenExecQuery(QueryLanguage, Query, namespace=None, "
-        "OperationTimeout=None, ContinueOnError=False, MaxObjectCnt=0)\n\n"
-        "Opens an enumeration for Query.\n\n"
-        ":param str QueryLanguage: Defines the query language in which the "
-        "query parameter is expressed.\n"
-        ":param str Query: Specified the query to be executed.\n"
-        ":param str namespace: String containing namespace, from which the "
-        "elements should be retrieved.\n"
-        ":param int OperationTimeout: Defines the interoperation timeout in "
-        "seconds between the response and subsequent request operations of "
-        "an enumeration sequence.\n"
-        ":param bool ContinueOnError: Defines whether the server should "
-        "continue to return elements subsequent to a :py:exc:`.CIMError` "
-        "occurring in the server.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstance` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_OpenExecQuery)
     .def("PullInstances", &WBEMConnection::pullInstances,
         (bp::arg("Context"),
          bp::arg("MaxObjectCnt") = 0),
-        "PullInstances(Context, MaxObjectCnt=0)\n\n"
-        "Retrieves a list of :py:class:`.CIMInstance` for an open enumeration "
-        "sequence opened by an openQueryInstances operation and represented "
-        "by an enumeration context returned by the original open or "
-        "previous :py:meth:`.WBEMConnection.PullInstancesWithPath` "
-        "operation.\n\n"
-        ":param CIMEnumerationContext Context: Identifier for the "
-        "enumeration sequence.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing a list of retrieved "
-        ":py:class:`.CIMInstance` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_PullInstances)
     .def("PullInstanceNames", &WBEMConnection::pullInstanceNames,
         (bp::arg("Context"),
          bp::arg("MaxObjectCnt") = 0),
-        "PullInstanceNames(Context, MaxObjectCnt=0)\n\n"
-        "Retrieves a list of :py:class:`.CIMInstanceName` for an open "
-        "enumeration sequence opened by an openQueryInstances operation and "
-        "represented by an enumeration context returned by the original open "
-        "or previous :py:meth:`.WBEMConnection.PullInstanceNames` "
-        "operation.\n\n"
-        ":param CIMEnumerationContext Context: Identifier for the "
-        "enumeration sequence.\n"
-        ":param int MaxObjectCnt: Defines the maximum number of elements "
-        "that this Open operation can return.\n"
-        ":returns: Tuple containing list of retrieved "
-        ":py:class:`.CIMInstanceName` objects, enumeration context and boolean "
-        "which defines if all the instances have been retrieved.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`")
+        docstr_WBEMConnection_PullInstanceNames)
     .def("CloseEnumeration", &WBEMConnection::closeEnumeration,
         (bp::arg("Context")),
-        "CloseEnumeration(Context)\n\n"
-        "Closes an enumeration sequence.\n\n"
-        ":param CIMEnumerationContext Context: Enumeration context to close.\n"
-        ":raises: :py:exc:`.CIMError`, :py:exc:`.ConnectionError`");
+        docstr_WBEMConnection_CloseEnumeration);
 }
 
 bp::object WBEMConnection::openEnumerateInstances(

@@ -30,6 +30,7 @@
 #include "lmiwbem_gil.h"
 #include "lmiwbem_make_method.h"
 #include "obj/lmiwbem_listener.h"
+#include "obj/lmiwbem_listener_pydoc.h"
 #include "obj/cim/lmiwbem_instance.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
@@ -150,55 +151,29 @@ void CIMIndicationListener::init_type()
                     bp::arg("certfile") = None,
                     bp::arg("keyfile") = None,
                     bp::arg("trust_store") = None),
-                    "Constructs a :py:class:`.CIMIndicationListener` object.\n\n"
-                    ":param unicode listen_address: bind address\n"
-                    ":param int port: listening port\n"
-                    ":param unicode certfile: path to X509 certificate\n"
-                    ":param unicode keyfile: path to X509 private key; may be None,\n"
-                    "\tif cert_file also contains private key\n"
-                    ":param unicode trust_store: path to trust store"))
+                    docstr_CIMIndicationListener_init))
             .def("__repr__", &CIMIndicationListener::repr,
-                 ":returns: pretty string of the object")
+                 docstr_CIMIndicationListener_repr)
             .def("start",  &CIMIndicationListener::start,
                 (bp::arg("retries") = 1),
-                 "start(retries=1)\n\n"
-                 "Starts indication listener.\n\n"
-                 ":param int retries: number of bind retries.\n")
+                docstr_CIMIndicationListener_start)
             .def("stop", &CIMIndicationListener::stop,
-                "stop()\n\n"
-                "Stops indication listener.")
+                docstr_CIMIndicationListener_stop)
             .def("add_handler",
                 lmi::raw_method<CIMIndicationListener>(&CIMIndicationListener::addPyHandler, 1),
-                "add_handler(name, handler, *args, **kwargs)\n\n"
-                "Adds callback for specific indication.\n\n"
-                ":param str name: indication name\n"
-                ":param handler: callable for indication\n"
-                ":param args: positional arguments passed to handler\n"
-                ":param kwargs: keyword arguments passed to handler")
+                docstr_CIMIndicationListener_add_handler)
             .def("remove_handler", &CIMIndicationListener::removePyHandler,
-                "remove_handler(name)\n\n"
-                "Removes a specified handler from indication listener.\n\n"
-                ":param str name: indication name\n"
-                ":raises: :py:exc:`KeyError`")
+                docstr_CIMIndicationListener_remove_handler)
             .add_property("is_alive", &CIMIndicationListener::getIsAlive,
-                "Property storing flag, which indicates, if the indication\n"
-                "listener is running.\n\n"
-                ":rtype: bool")
+                docstr_CIMIndicationListener_is_alive)
             .add_property("uses_ssl",
                 &CIMIndicationListener::getUsesSSL,
-                "Property storing flag, which indicates, if the indication\n"
-                "listener uses secure connection.\n\n"
-                ":rtype: bool")
+                docstr_CIMIndicationListener_uses_ssl)
             .add_property("listen_address",
-                &CIMIndicationListener::getPyListenAddress,
-                "Property storing bind address.\n\n"
-                ":rtype: unicode")
-            .add_property("port", &CIMIndicationListener::getPyPort,
-                "Property storing listening port.\n\n"
-                ":rtype: int")
+                &CIMIndicationListener::getPyListenAddress)
+            .add_property("port", &CIMIndicationListener::getPyPort)
             .add_property("handlers", &CIMIndicationListener::getPyHandlers,
-                "Property storing list of strings of handlers.\n\n"
-                ":rtype: list"));
+                docstr_CIMIndicationListener_handlers));
 }
 
 bp::object CIMIndicationListener::repr()

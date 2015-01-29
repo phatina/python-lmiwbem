@@ -32,6 +32,7 @@
 #include <boost/python/tuple.hpp>
 #include "lmiwbem_exception.h"
 #include "obj/lmiwbem_slp.h"
+#include "obj/lmiwbem_slp_pydoc.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
@@ -80,28 +81,17 @@ ScopedSLPHandle::operator SLPHandle() const
 void SLP::init_type()
 {
     bp::def("slp_discover", SLP::discover,
-        (bp::arg("srvtype") = "",
-         bp::arg("scopelist") = "",
-         bp::arg("filter") = "",
+        (bp::arg("srvtype") = None,
+         bp::arg("scopelist") = None,
+         bp::arg("filter") = None,
          bp::arg("async") = false),
-        "Peforms SLP discovery.\n\n"
-        ":param str srvtype: service type\n"
-        ":param str scopelist: comma separated list of scope names\n"
-        ":param str filter: query formulated of attribute pattern matching"
-        "\texpressions in the form of an LDAPv3 search filter\n"
-        ":returns: list of :py:class:`.SLPResult`\n"
-        ":raises: :py:exc:`.SLPError`");
+        docstr_slp_discover);
     bp::def("slp_discover_attrs", SLP::discoverAttrs,
         (bp::arg("srvurl"),
-         bp::arg("scopelist") = "",
-         bp::arg("attrids") = "",
+         bp::arg("scopelist") = None,
+         bp::arg("attrids") = None,
          bp::arg("async") = false),
-         "Performs SLP attributes discovery.\n\n"
-         ":param str srvurl: service URL\n"
-         ":param str scopelist: comma separated list of scope names\n"
-         ":param str attrids: comma separated list of attribute ids to return\n"
-         ":returns: dict containing attrs with values\n"
-         ":raises: :py:exc:`.SLPError`");
+         docstr_slp_discover_attrs);
 }
 
 SLPBoolean SLP::urlCallback(
@@ -164,9 +154,19 @@ bp::object SLP::discover(
     const bp::object &filter,
     const bp::object &async)
 {
-    String c_srvtype = StringConv::asString(srvtype, "srvtype");
-    String c_scopelist = StringConv::asString(scopelist, "scopelist");
-    String c_filter = StringConv::asString(filter, "filter");
+    String c_srvtype;
+    String c_scopelist;
+    String c_filter;
+
+    if (!isnone(srvtype))
+        c_srvtype = StringConv::asString(srvtype, "srvtype");
+
+    if (!isnone(scopelist))
+        c_scopelist = StringConv::asString(scopelist, "scopelist");
+
+    if (!isnone(filter))
+        c_filter = StringConv::asString(filter, "filter");
+
     bool c_async = Conv::as<bool>(async, "async");
 
     // Open SLP handle.
@@ -197,9 +197,16 @@ bp::object SLP::discoverAttrs(
     const bp::object &attrids,
     const bp::object &async)
 {
-    String c_srvurl = StringConv::asString(srvurl, "srvurl");
-    String c_scopelist = StringConv::asString(scopelist, "scopelist");
-    String c_attrids = StringConv::asString(attrids, "attrids");
+    String c_srvurl(StringConv::asString(srvurl, "srvurl"));
+    String c_scopelist;
+    String c_attrids;
+
+    if (!isnone(scopelist))
+        c_scopelist = StringConv::asString(scopelist, "scopelist");
+
+    if (!isnone(attrids))
+        c_attrids = StringConv::asString(attrids, "attrids");
+
     bool c_async = Conv::as<bool>(async, "async");
 
     // Open SLP handle.
@@ -239,12 +246,21 @@ SLPResult::SLPResult(
     const bp::object &port,
     const bp::object &family,
     const bp::object &srvpart)
+    : m_srvtype()
+    , m_host()
+    , m_family()
+    , m_srvpart()
+    , m_port(0)
 {
     m_srvtype = StringConv::asString(srvtype, "srvtype");
     m_host = StringConv::asString(host, "host");
     m_port = Conv::as<int>(port, "port");
-    m_family = StringConv::asString(family, "family");
-    m_srvpart = StringConv::asString(srvpart, "srvpart");
+
+    if (!isnone(family))
+        m_family = StringConv::asString(family, "family");
+
+    if (!isnone(srvpart))
+        m_srvpart = StringConv::asString(srvpart, "srvpart");
 }
 
 void SLPResult::init_type()
@@ -260,40 +276,25 @@ void SLPResult::init_type()
                 bp::arg("srvtype"),
                 bp::arg("host"),
                 bp::arg("port") = 0,
-                bp::arg("family") = String(),
-                bp::arg("srvpart") = String()),
-                "Constructs a :py:class:`.CIMClass`.\n\n"
-                ":param str srvtype: service type\n"
-                ":param str host: host name\n"
-                ":param int port: service port\n"
-                ":param str family: network address family\n"
-                ":param str srvpart: remainder of a URL (see SLP)"))
+                bp::arg("family") = None,
+                bp::arg("srvpart") = None),
+                docstr_SLPResult_init))
         .def("__repr__", &SLPResult::repr)
         .add_property("srvtype",
             &SLPResult::getPySrvType,
-            &SLPResult::setPySrvType,
-            "Property storing service type.\n\n"
-            ":rtype: str")
+            &SLPResult::setPySrvType)
         .add_property("host",
             &SLPResult::getPyHost,
-            &SLPResult::setPyHost,
-            "Property storing host name of the service.\n\n"
-            ":rtype: str")
+            &SLPResult::setPyHost)
         .add_property("port",
             &SLPResult::getPyPort,
-            &SLPResult::setPyPort,
-            "Property storing port of the service.\n\n"
-            ":rtype: int")
+            &SLPResult::setPyPort)
         .add_property("family",
             &SLPResult::getPyFamily,
-            &SLPResult::setFamily,
-            "Property storing network address of the service.\n\n"
-            ":rtype: str")
+            &SLPResult::setFamily)
         .add_property("srvpart",
             &SLPResult::getPySrvPart,
-            &SLPResult::setPySrvPart,
-            "Property storing remainder of the service URL.\n\n"
-            ":rtype: str"));
+            &SLPResult::setPySrvPart));
 }
 
 bp::object SLPResult::create(const SLPSrvURL *url)

@@ -27,6 +27,7 @@
 #include <Pegasus/Common/CIMMethod.h>
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_method.h"
+#include "obj/cim/lmiwbem_method_pydoc.h"
 #include "obj/cim/lmiwbem_parameter.h"
 #include "obj/cim/lmiwbem_qualifier.h"
 #include "util/lmiwbem_convert.h"
@@ -51,10 +52,23 @@ CIMMethod::CIMMethod(
     const bp::object &class_origin,
     const bp::object &propagated,
     const bp::object &qualifiers)
+    : m_name()
+    , m_return_type()
+    , m_class_origin()
+    , m_is_propagated(false)
+    , m_parameters()
+    , m_qualifiers()
+    , m_rc_meth_parameters()
+    , m_rc_meth_qualifiers()
 {
     m_name  = StringConv::asString(name, "name");
-    m_return_type = StringConv::asString(return_type, "return_type");
-    m_class_origin = StringConv::asString(class_origin, "class_origin");
+
+    if (!isnone(return_type))
+        m_return_type = StringConv::asString(return_type, "return_type");
+
+    if (!isnone(class_origin))
+        m_class_origin = StringConv::asString(class_origin, "class_origin");
+
     m_is_propagated = Conv::as<bool>(propagated, "propagated");
 
     if (isnone(parameters))
@@ -78,16 +92,13 @@ void CIMMethod::init_type()
             const bp::object &,
             const bp::object &,
             const bp::object &>((
-                bp::arg("methodname"),
-                bp::arg("return_type") = String(),
+                bp::arg("name"),
+                bp::arg("return_type") = None,
                 bp::arg("parameters") = NocaseDict::create(),
-                bp::arg("class_origin") = String(),
+                bp::arg("class_origin") = None,
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create()),
-                "Constructs a :py:class:`.CIMMethod`.\n\n"
-                ":param str methodname: String containing the method's name\n"
-                ":param str return_type: String containing the method's return type\n"
-                ":param NocaseDict parameters: Dictionary containing method's parameters\n"))
+                docstr_CIMMethod_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMMethod::cmp)
 #  else
@@ -97,47 +108,27 @@ void CIMMethod::init_type()
         .def("__ge__", &CIMMethod::ge)
         .def("__le__", &CIMMethod::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__repr__", &CIMMethod::repr,
-            ":returns: pretty string of the object")
-        .def("copy", &CIMMethod::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMMethod`")
-        .def("tomof", &CIMMethod::tomof,
-            "tomof()\n\n"
-            ":returns: MOF representation of the object itself\n"
-            ":rtype: unicode")
+        .def("__repr__", &CIMMethod::repr, docstr_CIMMethod_repr)
+        .def("copy", &CIMMethod::copy, docstr_CIMMethod_copy)
+        .def("tomof", &CIMMethod::tomof, docstr_CIMMethod_tomof)
         .add_property("name",
             &CIMMethod::getPyName,
-            &CIMMethod::setPyName,
-            "Property storing method's name.\n\n"
-            ":rtype: unicode")
+            &CIMMethod::setPyName)
         .add_property("return_type",
             &CIMMethod::getPyReturnType,
-            &CIMMethod::setPyReturnType,
-            "Property storing method's return type.\n\n"
-            ":rtype: unicode")
+            &CIMMethod::setPyReturnType)
         .add_property("parameters",
             &CIMMethod::getPyParameters,
-            &CIMMethod::setPyParameters,
-            "Property storing method's parameters.\n\n"
-            ":rtype: :py:class:`.NocaseDict`")
+            &CIMMethod::setPyParameters)
         .add_property("class_origin",
             &CIMMethod::getPyClassOrigin,
-            &CIMMethod::setPyClassOrigin,
-            "Property storing method's class origin.\n\n"
-            ":rtype: unicode")
+            &CIMMethod::setPyClassOrigin)
         .add_property("propagated",
             &CIMMethod::getPyIsPropagated,
-            &CIMMethod::setPyIsPropagated,
-            "Property storing flag, which indicates, if the method is propagated.\n\n"
-            ":returns: True, if the method is propagated; False otherwise\n"
-            ":rtype: bool")
+            &CIMMethod::setPyIsPropagated)
         .add_property("qualifiers",
             &CIMMethod::getPyQualifiers,
-            &CIMMethod::setPyQualifiers,
-            "Property storing method's qualifiers.\n\n"
-            ":rtype: :py:class:`.NocaseDict`"));
+            &CIMMethod::setPyQualifiers));
 }
 
 bp::object CIMMethod::create(const Pegasus::CIMConstMethod &method)

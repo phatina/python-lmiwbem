@@ -1,0 +1,125 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+CIMInstance_init = {
+CIMInstance(classname, properties=NocaseDict(), qualifiers=NocaseDict(), \
+path=None, property_list=None)
+
+Args:
+    classname (str): Class name
+    properties (NocaseDict): Dictionary of :py:class:`.CIMProperty`
+    qualifiers (NocaseDict): Dictionary of :py:class:`.CIMQualifier`
+    path (CIMInstanceName): CIM object path
+    property_list (list): Properties
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_repr = {
+Returns:
+    unicode: Pretty string of the object
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_has_key = {
+has_key(key)
+
+Args:
+    key (str): Key to check for presence in object's properties
+
+Returns:
+    bool: True, if the key is present in object's properties; False otherwise
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_keys = {
+keys()
+
+Returns:
+    List of strings of property names
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_values = {
+values()
+
+Returns:
+    List of property values
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_items = {
+items()
+
+Returns:
+    List of tuples with property name and value
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_iterkeys = {
+iterkeys()
+
+Returns:
+    Iterator for property names iteration
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_itervalues = {
+itervalues()
+
+Returns:
+    Iterator for property values iteration
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_iteritems = {
+iteritems()
+
+Returns:
+    Iterator for property name and value iteration
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_copy = {
+copy()
+
+Returns:
+    CIMInstance: Copy of the object itself
+}
+
+# ------------------------------------------------------------------------------
+
+CIMInstance_tomof = {
+tomof()
+
+Returns:
+    unicode: MOF representation of the object itself
+
+}

@@ -28,6 +28,7 @@
 #include <Pegasus/Common/CIMMethod.h>
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_class.h"
+#include "obj/cim/lmiwbem_class_pydoc.h"
 #include "obj/cim/lmiwbem_method.h"
 #include "obj/cim/lmiwbem_property.h"
 #include "obj/cim/lmiwbem_qualifier.h"
@@ -52,12 +53,22 @@ CIMClass::CIMClass(
     const bp::object &qualifiers,
     const bp::object &methods,
     const bp::object &superclass)
+    : m_classname()
+    , m_super_classname()
+    , m_properties()
+    , m_qualifiers()
+    , m_methods()
+    , m_rc_class_properties()
+    , m_rc_class_qualifiers()
+    , m_rc_class_methods()
 {
     m_classname = StringConv::asString(classname, "classname");
-    m_super_classname = StringConv::asString(superclass, "superclass");
     m_properties = Conv::get<NocaseDict, bp::dict>(properties, "properties");
     m_qualifiers = Conv::get<NocaseDict, bp::dict>(qualifiers, "qualifiers");
     m_methods = Conv::get<NocaseDict, bp::dict>(methods, "methods");
+
+    if (!isnone(superclass))
+        m_super_classname = StringConv::asString(superclass, "superclass");
 }
 
 void CIMClass::init_type()
@@ -73,15 +84,8 @@ void CIMClass::init_type()
                 bp::arg("properties") = NocaseDict::create(),
                 bp::arg("qualifiers") = NocaseDict::create(),
                 bp::arg("methods") = NocaseDict::create(),
-                bp::arg("superclass") = String()),
-                "Constructs a :py:class:`.CIMClass`.\n\n"
-                ":param str classname: String containing class name\n"
-                ":param NocaseDict properties: Dictionary containing properties\n"
-                "\tof the class\n"
-                ":param NocaseDict qualifiers: Dictionary containing qualifiers\n"
-                "\tof the class\n"
-                ":param NocaseDict methods: Dictionary containing methods of the class\n"
-                ":param str superclass: String containing the name of super-class"))
+                bp::arg("superclass") = None),
+                docstr_CIMClass_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMClass::cmp)
 #  else
@@ -91,37 +95,23 @@ void CIMClass::init_type()
         .def("__ge__", &CIMClass::ge)
         .def("__le__", &CIMClass::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__repr__", &CIMClass::repr,
-            ":returns: pretty string of the object")
-        .def("copy", &CIMClass::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMClass`")
+        .def("__repr__", &CIMClass::repr, docstr_CIMClass_repr)
+        .def("copy", &CIMClass::copy, docstr_CIMClass_copy)
         .add_property("classname",
             &CIMClass::getPyClassname,
-            &CIMClass::setPyClassname,
-            "Property storing class name.\n\n"
-            ":rtype: unicode")
+            &CIMClass::setPyClassname)
         .add_property("superclass",
             &CIMClass::getPySuperClassname,
-            &CIMClass::setPySuperClassname,
-            "Property storing super-class name.\n\n"
-            ":rtype: unicode")
+            &CIMClass::setPySuperClassname)
         .add_property("properties",
             &CIMClass::getPyProperties,
-            &CIMClass::setPyProperties,
-            "Property storing properties.\n\n"
-            ":rtype: :py:class:`.NocaseDict`")
+            &CIMClass::setPyProperties)
         .add_property("qualifiers",
             &CIMClass::getPyQualifiers,
-            &CIMClass::setPyQualifiers,
-            "Property storing qualifiers.\n\n"
-            ":rtype: :py:class:`.NocaseDict`")
+            &CIMClass::setPyQualifiers)
         .add_property("methods",
             &CIMClass::getPyMethods,
-            &CIMClass::setPyMethods,
-            "Property storing methods.\n\n"
-            ":rtype: :py:class:`.NocaseDict`"));
+            &CIMClass::setPyMethods));
 }
 
 bp::object CIMClass::create(const Pegasus::CIMClass &cls)

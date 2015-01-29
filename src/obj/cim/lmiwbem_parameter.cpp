@@ -27,6 +27,7 @@
 #include "lmiwbem_exception.h"
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_parameter.h"
+#include "obj/cim/lmiwbem_parameter_pydoc.h"
 #include "obj/cim/lmiwbem_qualifier.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
@@ -36,7 +37,7 @@ CIMParameter::CIMParameter()
     , m_type()
     , m_reference_class()
     , m_is_array(false)
-    , m_array_size(-1)
+    , m_array_size(0)
     , m_qualifiers()
     , m_rc_param_qualifiers()
 {
@@ -49,14 +50,23 @@ CIMParameter::CIMParameter(
     const bp::object &is_array,
     const bp::object &array_size,
     const bp::object &qualifiers)
+    : m_name()
+    , m_type()
+    , m_reference_class()
+    , m_is_array(false)
+    , m_array_size(0)
+    , m_qualifiers()
+    , m_rc_param_qualifiers()
 {
     m_name = StringConv::asString(name, "name");
     m_type = StringConv::asString(type, "type");
-    m_reference_class = StringConv::asString(reference_class, "reference_class");
+
+    if (!isnone(reference_class))
+        m_reference_class = StringConv::asString(reference_class, "reference_class");
+
     m_is_array = Conv::as<bool>(is_array, "is_array");
     m_array_size = Conv::as<int>(array_size, "array_size");
-    m_qualifiers = Conv::get<NocaseDict, bp::dict>(
-        qualifiers, "qualifiers");
+    m_qualifiers = Conv::get<NocaseDict, bp::dict>( qualifiers, "qualifiers");
 }
 
 void CIMParameter::init_type()
@@ -72,19 +82,11 @@ void CIMParameter::init_type()
             const bp::object &>((
                 bp::arg("name"),
                 bp::arg("type"),
-                bp::arg("reference_class") = String(),
+                bp::arg("reference_class") = None,
                 bp::arg("is_array") = false,
-                bp::arg("array_size") = -1,
+                bp::arg("array_size") = 0,
                 bp::arg("qualifiers") = NocaseDict::create()),
-                "Parameter of a CIM method.\n\n"
-                ":param str name: String containing the parameter name\n"
-                ":param str type: String containing the parameter type\n"
-                ":param str reference_class: String containing the reference\n"
-                "\tclass for the property\n"
-                ":param bool is_array: Flag, which indicates, if the parameter\n"
-                "\tis array\n"
-                ":param int array_size: Array size\n"
-                ":param NocaseDict qualifiers: Dictionary of :py:class:`.CIMQualifier`"))
+                docstr_CIMParameter_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMParameter::cmp)
 #  else
@@ -94,47 +96,27 @@ void CIMParameter::init_type()
         .def("__ge__", &CIMParameter::ge)
         .def("__le__", &CIMParameter::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__repr__", &CIMParameter::repr,
-            ":returns: pretty string of the object")
-        .def("copy", &CIMParameter::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMParameter`")
-        .def("tomof", &CIMParameter::tomof,
-            "tomof()\n\n"
-            ":returns: MOF representation of the object itself\n"
-            ":rtype: unicode")
+        .def("__repr__", &CIMParameter::repr, docstr_CIMParameter_repr)
+        .def("copy", &CIMParameter::copy, docstr_CIMParameter_copy)
+        .def("tomof", &CIMParameter::tomof, docstr_CIMParameter_tomof)
         .add_property("name",
             &CIMParameter::getPyName,
-            &CIMParameter::setPyName,
-            "Property storing name of the parameter.\n\n"
-            ":returns: string containing the parameter's name")
+            &CIMParameter::setPyName)
         .add_property("type",
             &CIMParameter::getPyType,
-            &CIMParameter::setPyType,
-            "Property storing type of the parameter.\n\n"
-            ":rtype: unicode")
+            &CIMParameter::setPyType)
         .add_property("reference_class",
             &CIMParameter::getPyReferenceClass,
-            &CIMParameter::setPyReferenceClass,
-            "Property storing reference class of the parameter.\n\n"
-            ":rtype: unicode")
+            &CIMParameter::setPyReferenceClass)
         .add_property("is_array",
             &CIMParameter::getPyIsArray,
-            &CIMParameter::setPyIsArray,
-            "Property storing flag, which indicates, if the parameter is array.\n\n"
-            ":returns: True, if the parameter is array; False otherwise\n"
-            ":rtype: bool")
+            &CIMParameter::setPyIsArray)
         .add_property("array_size",
             &CIMParameter::getPyArraySize,
-            &CIMParameter::setPyArraySize,
-            "Property storing array size of the parameter.\n\n"
-            ":rtype: int")
+            &CIMParameter::setPyArraySize)
         .add_property("qualifiers",
             &CIMParameter::getPyQualifiers,
-            &CIMParameter::setPyQualifiers,
-            "Property storing qualifiers of the parameter.\n\n"
-            ":rtype: :py:class:`.NocaseDict`"));
+            &CIMParameter::setPyQualifiers));
 }
 
 bp::object CIMParameter::create(const Pegasus::CIMParameter &parameter)

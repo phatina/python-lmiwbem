@@ -28,6 +28,7 @@
 #include <Pegasus/Common/CIMValue.h>
 #include "obj/lmiwbem_nocasedict.h"
 #include "obj/cim/lmiwbem_instance_name.h"
+#include "obj/cim/lmiwbem_instance_name_pydoc.h"
 #include "util/lmiwbem_convert.h"
 #include "util/lmiwbem_util.h"
 
@@ -50,11 +51,15 @@ CIMInstanceName::CIMInstanceName(
     , m_keybindings()
 {
     m_classname = StringConv::asString(cls, "classname");
-    m_namespace = StringConv::asString(ns, "namespace");
+
+    if (!isnone(ns))
+        m_namespace = StringConv::asString(ns, "namespace");
+
     if (!isnone(host)) {
         // Host may be missing, other members (classname, namespace not)
         m_hostname  = StringConv::asString(host, "host");
     }
+
     if (isnone(keybindings))
         m_keybindings = NocaseDict::create();
     else
@@ -72,14 +77,9 @@ void CIMInstanceName::init_type()
             const bp::object &>((
                 bp::arg("classname"),
                 bp::arg("keybindings") = NocaseDict::create(),
-                bp::arg("host") = String(),
-                bp::arg("namespace") = String()),
-                "Constructs :py:class:`CIMInstance`.\n\n"
-                ":param str classname: Class name of the object path\n"
-                ":param NocaseDict keybindings: Dictionary containing keybindings\n"
-                "\t of the object path\n"
-                ":param str host: String containing hostname of the object path\n"
-                ":param str namespace: String containing namespace of the object path"))
+                bp::arg("host") = None,
+                bp::arg("namespace") = None),
+                docstr_CIMInstanceName_init))
 #  if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMInstanceName::cmp)
 #  else
@@ -89,70 +89,38 @@ void CIMInstanceName::init_type()
         .def("__ge__", &CIMInstanceName::ge)
         .def("__le__", &CIMInstanceName::le)
 #  endif // PY_MAJOR_VERSION
-        .def("__str__", &CIMInstanceName::str,
-            ":returns: serialized object\n"
-            ":rtype: unicode")
-        .def("__repr__", &CIMInstanceName::repr,
-            ":returns: pretty string of the object")
+        .def("__unicode__", &CIMInstanceName::unicode,
+            docstr_CIMInstanceName_unicode)
+        .def("__repr__", &CIMInstanceName::repr, docstr_CIMInstanceName_repr)
         .def("__getitem__", &CIMInstanceName::getitem)
         .def("__delitem__", &CIMInstanceName::delitem)
         .def("__setitem__", &CIMInstanceName::setitem)
         .def("__contains__", &CIMInstanceName::haskey)
         .def("__len__", &CIMInstanceName::len)
-        .def("has_key", &CIMInstanceName::haskey,
-            "has_key(key)\n\n"
-            ":param str key: key to check for presence in object's keybindings\n"
-            ":returns: True, if the key is present in object's keybindings;\n"
-            "\tFalse otherwise\n"
-            ":rtype: bool")
-        .def("keys", &CIMInstanceName::keys,
-            "keys()\n\n"
-            ":returns: list of strings of keybinding names\n"
-            ":rtype: list")
-        .def("values", &CIMInstanceName::values,
-            "values()\n\n"
-            ":returns: list of keybinding values\n"
-            ":rtype: list")
-        .def("items", &CIMInstanceName::items,
-            "items()\n\n"
-            ":returns: list of tuples with keybinding name and value\n"
-            ":rtype: list")
+        .def("has_key", &CIMInstanceName::haskey, docstr_CIMInstanceName_has_key)
+        .def("keys", &CIMInstanceName::keys, docstr_CIMInstanceName_keys)
+        .def("values", &CIMInstanceName::values, docstr_CIMInstanceName_values)
+        .def("items", &CIMInstanceName::items, docstr_CIMInstanceName_items)
         .def("iterkeys", &CIMInstanceName::iterkeys,
-            "iterkeys()\n\n"
-            ":returns: iterator for keybinding names iteration\n"
-            ":rtype: iterator")
+            docstr_CIMInstanceName_iterkeys)
         .def("itervalues", &CIMInstanceName::itervalues,
-            "itervalues()\n\n"
-            ":returns: iterator for keybinding values iteration\n"
-            ":rtype: iterator")
+            docstr_CIMInstanceName_itervalues)
         .def("iteritems", &CIMInstanceName::iteritems,
-            "iteritems()\n\n"
-            ":returns: iterator for keybinding name and value iteration\n"
-            ":rtype: iterator")
+            docstr_CIMInstanceName_iteritems)
         .def("copy", &CIMInstanceName::copy,
-            "copy()\n\n"
-            ":returns: copy of the object itself\n"
-            ":rtype: :py:class:`.CIMInstanceName`")
+            docstr_CIMInstanceName_copy)
         .add_property("classname",
             &CIMInstanceName::getPyClassname,
-            &CIMInstanceName::setPyClassname,
-            "Property storing class name.\n\n"
-            ":rtype: unicode")
+            &CIMInstanceName::setPyClassname)
         .add_property("namespace",
             &CIMInstanceName::getPyNamespace,
-            &CIMInstanceName::setPyNamespace,
-            "Property storing namespace.\n\n"
-            ":rtype: unicode")
+            &CIMInstanceName::setPyNamespace)
         .add_property("host",
             &CIMInstanceName::getPyHostname,
-            &CIMInstanceName::setPyHostname,
-            "Property storing hostname.\n\n"
-            ":rtype: unicode")
+            &CIMInstanceName::setPyHostname)
         .add_property("keybindings",
             &CIMInstanceName::getPyKeybindings,
-            &CIMInstanceName::setPyKeybindings,
-            "Property storing keybindings.\n\n"
-            ":rtype: :py:class:`.NocaseDict`"));
+            &CIMInstanceName::setPyKeybindings));
 }
 
 bp::object CIMInstanceName::create(
@@ -388,7 +356,7 @@ String CIMInstanceName::asString() const
     return ss.str();
 }
 
-bp::object CIMInstanceName::str() const
+bp::object CIMInstanceName::unicode() const
 {
     return StringConv::asPyUnicode(asString());
 }

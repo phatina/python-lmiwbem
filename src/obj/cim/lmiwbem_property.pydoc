@@ -1,0 +1,53 @@
+# ##### BEGIN LICENSE BLOCK #####
+#
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Lesser General Public License as
+#   published by the Free Software Foundation, either version 2.1 of the
+#   License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#   GNU Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this program; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#   MA 02110-1301 USA
+#
+# ##### END LICENSE BLOCK #####
+
+
+CIMProperty_init = {
+CIMProperty(name, value, type=None, class_origin=None, array_size=0, \
+propagated=False, qualifiers=NocaseDict(), is_array=None, reference_class=None)
+
+Args:
+    name (str): Property's name
+    value: Property's value
+    type (str): Property's type
+    class_origin (str): Property's class origin
+    array_size (int): Array size
+    propagated (bool): True, if the property is propagated; False otherwise
+    qualifiers (NocaseDict): Property's qualifiers
+    is_array (bool): True, if the property's value is array; False otherwise
+    reference_class (str): Property's reference class
+}
+
+# ------------------------------------------------------------------------------
+
+CIMProperty_repr = {
+Returns:
+    unicode: pretty string of the object
+}
+
+# ------------------------------------------------------------------------------
+
+CIMProperty_copy = {
+copy()
+
+Returns:
+    CIMProperty: copy of the object itself
+}
