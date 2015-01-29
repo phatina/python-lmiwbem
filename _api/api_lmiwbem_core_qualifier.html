@@ -140,22 +140,23 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMQualifier</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a <a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMQualifier" title="lmiwbem.lmiwbem_core.CIMQualifier"><tt class="xref py py-class docutils literal"><span class="pre">CIMQualifier</span></tt></a>.</p>
+<dd><p>CIMQualifier(name, value, type=None, propagated=False, overridable=False, tosubclass=False, toinstance=False, translatable=False)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) &#8211; String containing the qualifier&#8217;s name</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Qualifier&#8217;s name</li>
 <li><strong>value</strong> &#8211; Qualifier&#8217;s value</li>
-<li><strong>type</strong> (<em>str</em>) &#8211; String containing the qualifier&#8217;s type</li>
-<li><strong>propagated</strong> (<em>bool</em>) &#8211; True, if the qualifier is propadated;
-False otherwise</li>
+<li><strong>type</strong> (<em>str</em>) &#8211; Qualifier&#8217;s type</li>
+<li><strong>propagated</strong> (<em>bool</em>) &#8211; True, if the qualifier is propadated; False otherwise</li>
 <li><strong>overridable</strong> (<em>bool</em>) &#8211; True, if the qualifier can be overridden;
 False otherwise</li>
 <li><strong>tosubclass</strong> (<em>bool</em>) &#8211; True, if the qualifier shall appear in subclass;
-False otherwise:param bool toinstance: True, if the qualifier shall appear in instance;
-False otherwise:param bool translatable: True, if the qualifier can be translated;
+False otherwise</li>
+<li><strong>toinstance</strong> (<em>bool</em>) &#8211; True, if the qualifier shall appear in instance;
+False otherwise</li>
+<li><strong>translatable</strong> (<em>bool</em>) &#8211; True, if the qualifier can be translated;
 False otherwise</li>
 </ul>
 </td>
@@ -163,15 +164,30 @@ False otherwise</li>
 </tbody>
 </table>
 <dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMQualifier.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.copy">
 <tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.copy" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMQualifier" title="lmiwbem.lmiwbem_core.CIMQualifier"><tt class="xref py py-class docutils literal"><span class="pre">CIMQualifier</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMQualifier</td>
 </tr>
 </tbody>
 </table>
@@ -180,58 +196,22 @@ False otherwise</li>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.name">
 <tt class="descname">name</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing qualifier&#8217;s name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.overridable">
 <tt class="descname">overridable</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.overridable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing overriding flag of the qualifier.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.propagated">
 <tt class="descname">propagated</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.propagated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing propagation flag of the qualifier.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.toinstance">
 <tt class="descname">toinstance</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.toinstance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing toinstance flag.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.tomof">
@@ -251,58 +231,22 @@ False otherwise</li>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.tosubclass">
 <tt class="descname">tosubclass</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.tosubclass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing tosubclass flag.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.translatable">
 <tt class="descname">translatable</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.translatable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing qualifier&#8217;s translation flag.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.type">
 <tt class="descname">type</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing qualifier&#8217;s type.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMQualifier.value">
 <tt class="descname">value</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMQualifier.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing qualifier&#8217;s value.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">qualifier&#8217;s value</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -326,7 +270,7 @@ False otherwise</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

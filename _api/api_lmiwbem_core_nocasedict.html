@@ -140,7 +140,16 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.NocaseDict">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">NocaseDict</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.NocaseDict" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>NocaseDict(d=None)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> (<em>dict, NocaseDict</em>) &#8211; Dictionary to copy from</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
 <dt id="lmiwbem.lmiwbem_core.NocaseDict.clear">
 <tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.NocaseDict.clear" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -153,7 +162,23 @@
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.NocaseDict.get">
 <tt class="descname">get</tt><big>(</big><em>key</em>, <em>default_value=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.NocaseDict.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a value correponding to the key or default_value if not found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>basestring</em>) &#8211; Key of the value to return</li>
+<li><strong>default_value</strong> &#8211; Default value if key not found</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Corresponding value to key or default_value</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.NocaseDict.has_key">
@@ -188,7 +213,24 @@
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.NocaseDict.pop">
 <tt class="descname">pop</tt><big>(</big><em>key</em>, <em>default_value</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.NocaseDict.pop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns and removes a value correponding to the key. If the key is not present,
+default_value is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>basestring</em>) &#8211; Key of the value to return</li>
+<li><strong>default_value</strong> &#8211; Default value if key not found</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Corresponding value to key or default_value</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.NocaseDict.update">
@@ -222,7 +264,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

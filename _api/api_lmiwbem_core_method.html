@@ -140,33 +140,39 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMMethod</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a <a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMMethod" title="lmiwbem.lmiwbem_core.CIMMethod"><tt class="xref py py-class docutils literal"><span class="pre">CIMMethod</span></tt></a>.</p>
+<dd><p>CIMMethod(name, return_type=None, parameters=NocaseDict(), class_origin=None, propagated=False, qualifiers=NocaseDict())</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>methodname</strong> (<em>str</em>) &#8211; String containing the method&#8217;s name</li>
-<li><strong>return_type</strong> (<em>str</em>) &#8211; String containing the method&#8217;s return type</li>
-<li><strong>parameters</strong> (<em>NocaseDict</em>) &#8211; Dictionary containing method&#8217;s parameters</li>
+<li><strong>name</strong> (<em>unicode</em>) &#8211; Method&#8217;s name</li>
+<li><strong>return_type</strong> (<em>unicode</em>) &#8211; Method&#8217;s return type</li>
+<li><strong>parameters</strong> (<em>NocaseDict</em>) &#8211; Method&#8217;s parameters</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="lmiwbem.lmiwbem_core.CIMMethod.class_origin">
-<tt class="descname">class_origin</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.class_origin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing method&#8217;s class origin.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMMethod.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.CIMMethod.class_origin">
+<tt class="descname">class_origin</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.class_origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.copy">
@@ -175,9 +181,9 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMMethod" title="lmiwbem.lmiwbem_core.CIMMethod"><tt class="xref py py-class docutils literal"><span class="pre">CIMMethod</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMMethod</td>
 </tr>
 </tbody>
 </table>
@@ -186,74 +192,27 @@
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.name">
 <tt class="descname">name</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing method&#8217;s name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.parameters">
 <tt class="descname">parameters</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing method&#8217;s parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.propagated">
 <tt class="descname">propagated</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.propagated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing flag, which indicates, if the method is propagated.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True, if the method is propagated; False otherwise</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.qualifiers">
 <tt class="descname">qualifiers</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.qualifiers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing method&#8217;s qualifiers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.return_type">
 <tt class="descname">return_type</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMMethod.return_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing method&#8217;s return type.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMMethod.tomof">
@@ -292,7 +251,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

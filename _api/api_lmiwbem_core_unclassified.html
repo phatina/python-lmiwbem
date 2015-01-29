@@ -160,23 +160,27 @@
 
 <dl class="function">
 <dt id="lmiwbem.lmiwbem_core.slp_discover">
-<tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">slp_discover</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.slp_discover" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">slp_discover</tt><big>(</big><em>srvtype=None</em>, <em>scopelist=None</em>, <em>filter=None</em>, <em>async=False</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.slp_discover" title="Permalink to this definition">¶</a></dt>
 <dd><p>Peforms SLP discovery.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>srvtype</strong> (<em>str</em>) &#8211; service type</li>
-<li><strong>scopelist</strong> (<em>str</em>) &#8211; comma separated list of scope names</li>
-<li><strong>filter</strong> (<em>str</em>) &#8211; query formulated of attribute pattern matching       expressions in the form of an LDAPv3 search filter</li>
+<li><strong>srvtype</strong> (<em>str</em>) &#8211; Service type</li>
+<li><strong>scopelist</strong> (<em>str</em>) &#8211; Comma separated list of scope names</li>
+<li><strong>filter</strong> (<em>str</em>) &#8211; Query formulated of attribute pattern matching expressions in
+the form of an LDAPv3 search filter</li>
+<li><strong>async</strong> (<em>bool</em>) &#8211; Defines, if a SLP callback should be called in asynchronous
+way.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of <a class="reference internal" href="api_lmiwbem_core_slp_result.html#lmiwbem.lmiwbem_core.SLPResult" title="lmiwbem.lmiwbem_core.SLPResult"><tt class="xref py py-class docutils literal"><span class="pre">SLPResult</span></tt></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of <a class="reference internal" href="api_lmiwbem_core_slp_result.html#lmiwbem.lmiwbem_core.SLPResult" title="lmiwbem.lmiwbem_core.SLPResult"><tt class="xref py py-class docutils literal"><span class="pre">SLPResult</span></tt></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.SLPError" title="lmiwbem.lmiwbem_core.SLPError"><tt class="xref py py-exc docutils literal"><span class="pre">SLPError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">SLPError</span></tt> &#8211;
+When the SLP discovery fails.</p>
 </td>
 </tr>
 </tbody>
@@ -185,23 +189,24 @@
 
 <dl class="function">
 <dt id="lmiwbem.lmiwbem_core.slp_discover_attrs">
-<tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">slp_discover_attrs</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.slp_discover_attrs" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">slp_discover_attrs</tt><big>(</big><em>srvurl=None</em>, <em>scopelist=None</em>, <em>attrids=None</em>, <em>async=False</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.slp_discover_attrs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs SLP attributes discovery.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>srvurl</strong> (<em>str</em>) &#8211; service URL</li>
-<li><strong>scopelist</strong> (<em>str</em>) &#8211; comma separated list of scope names</li>
-<li><strong>attrids</strong> (<em>str</em>) &#8211; comma separated list of attribute ids to return</li>
+<li><strong>srvurl</strong> (<em>str</em>) &#8211; Service URL</li>
+<li><strong>scopelist</strong> (<em>str</em>) &#8211; Comma separated list of scope names</li>
+<li><strong>attrids</strong> (<em>str</em>) &#8211; Comma separated list of attribute IDs to return</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict containing attrs with values</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dictionary containing attrs with values</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.SLPError" title="lmiwbem.lmiwbem_core.SLPError"><tt class="xref py py-exc docutils literal"><span class="pre">SLPError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">SLPError</span></tt> &#8211;
+When the SLP discovery fails.</p>
 </td>
 </tr>
 </tbody>
@@ -270,7 +275,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

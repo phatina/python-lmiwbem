@@ -140,53 +140,50 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMProperty</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property of a CIM object.</p>
+<dd><p>CIMProperty(name, value, type=None, class_origin=None, array_size=0, propagated=False, qualifiers=NocaseDict(), is_array=None, reference_class=None)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) &#8211; String containing the property&#8217;s name</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Property&#8217;s name</li>
 <li><strong>value</strong> &#8211; Property&#8217;s value</li>
-<li><strong>type</strong> (<em>str</em>) &#8211; String containing the property&#8217;s type</li>
-<li><strong>class_origin</strong> (<em>str</em>) &#8211; String containing property&#8217;s class origin</li>
+<li><strong>type</strong> (<em>str</em>) &#8211; Property&#8217;s type</li>
+<li><strong>class_origin</strong> (<em>str</em>) &#8211; Property&#8217;s class origin</li>
 <li><strong>array_size</strong> (<em>int</em>) &#8211; Array size</li>
-<li><strong>propagated</strong> (<em>bool</em>) &#8211; True, if the property is propagated;
-False otherwise:param NocaseDict qualifiers: Dictionary containing propert&#8217;s qualifiers</li>
-<li><strong>is_array</strong> (<em>bool</em>) &#8211; True, if the property&#8217;s value is array;
-False otherwise:param str reference_class: String containing property&#8217;s reference class</li>
+<li><strong>propagated</strong> (<em>bool</em>) &#8211; True, if the property is propagated; False otherwise</li>
+<li><strong>qualifiers</strong> (<em>NocaseDict</em>) &#8211; Property&#8217;s qualifiers</li>
+<li><strong>is_array</strong> (<em>bool</em>) &#8211; True, if the property&#8217;s value is array; False otherwise</li>
+<li><strong>reference_class</strong> (<em>str</em>) &#8211; Property&#8217;s reference class</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="lmiwbem.lmiwbem_core.CIMProperty.array_size">
-<tt class="descname">array_size</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.array_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing array size of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMProperty.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.CIMProperty.array_size">
+<tt class="descname">array_size</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.array_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.class_origin">
 <tt class="descname">class_origin</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.class_origin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing class origin of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.copy">
@@ -197,7 +194,7 @@ False otherwise:param str reference_class: String containing property&#8217;s re
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMProperty" title="lmiwbem.lmiwbem_core.CIMProperty"><tt class="xref py py-class docutils literal"><span class="pre">CIMProperty</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMProperty</td>
 </tr>
 </tbody>
 </table>
@@ -206,103 +203,37 @@ False otherwise:param str reference_class: String containing property&#8217;s re
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.is_array">
 <tt class="descname">is_array</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.is_array" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Property storing flag, which indicates, if the property&#8217;s value is</dt>
-<dd>array.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.name">
 <tt class="descname">name</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing name of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.propagated">
 <tt class="descname">propagated</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.propagated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing propagation flag of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.qualifiers">
 <tt class="descname">qualifiers</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.qualifiers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing qualifiers of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.reference_class">
 <tt class="descname">reference_class</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.reference_class" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing reference class of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.type">
 <tt class="descname">type</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing type of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMProperty.value">
 <tt class="descname">value</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMProperty.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing value of the property.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">property&#8217;s value</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -326,7 +257,7 @@ False otherwise:param str reference_class: String containing property&#8217;s re
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

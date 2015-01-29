@@ -140,23 +140,38 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMIndicationListener</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a <a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMIndicationListener" title="lmiwbem.lmiwbem_core.CIMIndicationListener"><tt class="xref py py-class docutils literal"><span class="pre">CIMIndicationListener</span></tt></a> object.</p>
+<dd><p>CIMIndicationListener(listen_address, port, certfile=None, keyfile=None, trust_store=None)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>listen_address</strong> (<em>unicode</em>) &#8211; bind address</li>
-<li><strong>port</strong> (<em>int</em>) &#8211; listening port</li>
-<li><strong>certfile</strong> (<em>unicode</em>) &#8211; path to X509 certificate</li>
-<li><strong>keyfile</strong> (<em>unicode</em>) &#8211; path to X509 private key; may be None,
-if cert_file also contains private key</li>
-<li><strong>trust_store</strong> (<em>unicode</em>) &#8211; path to trust store</li>
+<li><strong>listen_address</strong> (<em>unicode</em>) &#8211; Bind address</li>
+<li><strong>port</strong> (<em>int</em>) &#8211; Listening port</li>
+<li><strong>certfile</strong> (<em>unicode</em>) &#8211; Path to X509 certificate</li>
+<li><strong>keyfile</strong> (<em>unicode</em>) &#8211; Path to X509 private key; may be None, if cert_file also
+contains private key</li>
+<li><strong>trust_store</strong> (<em>unicode</em>) &#8211; Path to trust store</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.add_handler">
 <tt class="descname">add_handler</tt><big>(</big><em>name</em>, <em>handler</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.add_handler" title="Permalink to this definition">¶</a></dt>
@@ -166,73 +181,55 @@ if cert_file also contains private key</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) &#8211; indication name</li>
-<li><strong>handler</strong> &#8211; callable for indication</li>
-<li><strong>args</strong> &#8211; positional arguments passed to handler</li>
-<li><strong>kwargs</strong> &#8211; keyword arguments passed to handler</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Indication name</li>
+<li><strong>handler</strong> &#8211; Callable for indication</li>
+<li><strong>*args</strong> &#8211; Positional arguments passed to handler</li>
+<li><strong>**kwargs</strong> &#8211; Keyword arguments passed to handler</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<p>Simple indication handler:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">indication_handler</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Indication handler.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ind (CIMInstance): Exported indication</span>
+<span class="sd">        *args: Positional arguments passed from CIMIndicationListener.add_handler()</span>
+<span class="sd">        **kwargs: Keyword arguments passed from CIMIndicationListener.add_handler()</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c"># Do something with the indication</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.handlers">
 <tt class="descname">handlers</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.handlers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing list of strings of handlers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Returns:
+List of indication names which the listener accepts.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.is_alive">
 <tt class="descname">is_alive</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.is_alive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing flag, which indicates, if the indication
-listener is running.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Returns:
+True, if the listener is running; False otherwise.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.listen_address">
 <tt class="descname">listen_address</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.listen_address" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing bind address.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.port">
 <tt class="descname">port</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing listening port.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.remove_handler">
@@ -242,9 +239,10 @@ listener is running.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; indication name</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Indication name</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> &#8211;
+When such indication is <strong>not</strong> registered</td>
 </tr>
 </tbody>
 </table>
@@ -258,10 +256,22 @@ listener is running.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>retries</strong> (<em>int</em>) &#8211; number of bind retries.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>retries</strong> (<em>int</em>) &#8211; Number of bind retries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When the listener can&#8217;t bind to specified port.</td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<p>Let&#8217;s assume, ports 12345, 12346 are in use and 12347 is unused; but we
+can bind to ports in range &lt;12345-12355&gt;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">listener</span> <span class="o">=</span> <span class="n">CIMIndicationListener</span><span class="p">(</span><span class="s">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">12345</span><span class="p">)</span>
+<span class="n">listener</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">listener</span><span class="o">.</span><span class="n">port</span> <span class="o">==</span> <span class="mi">12347</span>  <span class="c"># True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -273,16 +283,8 @@ listener is running.</p>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMIndicationListener.uses_ssl">
 <tt class="descname">uses_ssl</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMIndicationListener.uses_ssl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing flag, which indicates, if the indication
-listener uses secure connection.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Returns:
+True, if the listener uses secure connection; False otherwise.</p>
 </dd></dl>
 
 </dd></dl>
@@ -307,7 +309,7 @@ listener uses secure connection.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

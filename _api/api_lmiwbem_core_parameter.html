@@ -140,38 +140,42 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMParameter</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parameter of a CIM method.</p>
+<dd><p>CIMParameter(name, type, reference_class=None, is_array=False, array_size=0, qualifiers=NocaseDict())</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<em>str</em>) &#8211; String containing the parameter name</li>
-<li><strong>type</strong> (<em>str</em>) &#8211; String containing the parameter type</li>
-<li><strong>reference_class</strong> (<em>str</em>) &#8211; String containing the reference
-class for the property</li>
-<li><strong>is_array</strong> (<em>bool</em>) &#8211; Flag, which indicates, if the parameter
-is array</li>
-<li><strong>array_size</strong> (<em>int</em>) &#8211; Array size</li>
-<li><strong>qualifiers</strong> (<em>NocaseDict</em>) &#8211; Dictionary of <a class="reference internal" href="api_lmiwbem_core_qualifier.html#lmiwbem.lmiwbem_core.CIMQualifier" title="lmiwbem.lmiwbem_core.CIMQualifier"><tt class="xref py py-class docutils literal"><span class="pre">CIMQualifier</span></tt></a></li>
+<li><strong>name</strong> (<em>str</em>) &#8211; Parameter&#8217;s name</li>
+<li><strong>type</strong> (<em>str</em>) &#8211; Parameter&#8217;s type</li>
+<li><strong>reference_class</strong> (<em>str</em>) &#8211; Reference class for the property</li>
+<li><strong>is_array</strong> (<em>bool</em>) &#8211; True, if parameter&#8217;s value is an array; False otherwise</li>
+<li><strong>array_size</strong> (<em>int</em>) &#8211; Parameter&#8217;s array size</li>
+<li><strong>qualifiers</strong> (<em>NocaseDict</em>) &#8211; Parameter&#8217;s qualifiers</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="lmiwbem.lmiwbem_core.CIMParameter.array_size">
-<tt class="descname">array_size</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.array_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing array size of the parameter.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMParameter.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.CIMParameter.array_size">
+<tt class="descname">array_size</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.array_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.copy">
@@ -180,9 +184,9 @@ is array</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMParameter" title="lmiwbem.lmiwbem_core.CIMParameter"><tt class="xref py py-class docutils literal"><span class="pre">CIMParameter</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMParameter</td>
 </tr>
 </tbody>
 </table>
@@ -191,60 +195,22 @@ is array</li>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.is_array">
 <tt class="descname">is_array</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.is_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing flag, which indicates, if the parameter is array.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True, if the parameter is array; False otherwise</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.name">
 <tt class="descname">name</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing name of the parameter.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string containing the parameter&#8217;s name</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.qualifiers">
 <tt class="descname">qualifiers</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.qualifiers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing qualifiers of the parameter.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.reference_class">
 <tt class="descname">reference_class</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.reference_class" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing reference class of the parameter.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.tomof">
@@ -264,16 +230,7 @@ is array</li>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMParameter.type">
 <tt class="descname">type</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMParameter.type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing type of the parameter.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -297,7 +254,7 @@ is array</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

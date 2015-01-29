@@ -140,23 +140,19 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">WBEMConnection</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs <a class="reference internal" href="#lmiwbem.lmiwbem_core.WBEMConnection" title="lmiwbem.lmiwbem_core.WBEMConnection"><tt class="xref py py-class docutils literal"><span class="pre">WBEMConnection</span></tt></a> object.</p>
+<dd><p>WBEMConnection(url=None, creds=None, x509=None, default_namespace=None, no_verification=False, connect_locally=False)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>url</strong> (<em>str</em>) &#8211; String containing URL of CIMOM instance</li>
-<li><strong>creds</strong> (<em>tuple</em>) &#8211; tuple containing two string, where the first
-one stands for username, second for password</li>
-<li><strong>x509</strong> (<em>dict</em>) &#8211; dictionary containing keys &#8216;cert_file&#8217; and &#8216;key_file&#8217;
-The value of &#8216;cert_file&#8217; must be string specifying a filename of
-certificate and the value of &#8216;key_file&#8217; must be string specifying
-a filename of private key belonging to the certificate.</li>
-<li><strong>no_verification</strong> (<em>bool</em>) &#8211; set to True, if CIMOM&#8217;s X509 certificate
-shall not be verified; False otherwise. Default value is False.</li>
-<li><strong>connect_locally</strong> (<em>bool</em>) &#8211; if True, Unix socket will be
-used. Default value is False.</li>
+<li><strong>url</strong> (<em>str</em>) &#8211; URL of CIMOM instance</li>
+<li><strong>creds</strong> (<em>tuple</em>) &#8211; (username, password)</li>
+<li><strong>x509</strong> (<em>dict</em>) &#8211; <strong>&#8216;cert_file&#8217;:</strong> &#8216;path_to_cert_file&#8217;, <strong>&#8216;key_file&#8217;</strong> : &#8216;path_to_key_file&#8217;</li>
+<li><strong>default_namespace</strong> (<em>str</em>) &#8211; Default namespace used for CIM operations</li>
+<li><strong>no_verification</strong> (<em>bool</em>) &#8211; If True, CIMOM&#8217;s X509 certificate shall not be
+verified</li>
+<li><strong>connect_locally</strong> (<em>bool</em>) &#8211; If True, Unix socket will be used</li>
 </ul>
 </td>
 </tr>
@@ -166,134 +162,141 @@ used. Default value is False.</li>
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.AssociatorNames">
 <tt class="descname">AssociatorNames</tt><big>(</big><em>ObjectName</em>, <em>AssocClass=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>ResultRole=None</em>, <em>namespace=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.AssociatorNames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of associated <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an input
-instance name.</p>
+object path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; specifies CIM object for which the associated
-instance names will be enumerated.</li>
-<li><strong>AssocClass</strong> (<em>str</em>) &#8211; valid CIM association class name. It acts as a filter on
-the returned set of names by mandating that each returned name identify an
-object that shall be associated to the source object through an instance of
-this class or one of its subclasses.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; valid CIM class name. It acts as a filter on the
-returned set of names by mandating that each returned name identify an object
-that shall be either an instance of this class (or one of its subclasses) or
-be this class (or one of its subclasses).</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; valid property name. It acts as a filter on the returned set
-of names by mandating that each returned name identify an object that shall be
-associated to the source object through an association in which the source
-object plays the specified role. That is, the name of the property in the
-association class that refers to the source object shall match the value of
-this parameter.</li>
-<li><strong>ResultRole</strong> (<em>str</em>) &#8211; valid property name. It acts as a filter on the returned
-set of names by mandating that each returned name identify an object that
-shall be associated to the source object through an association in which the
-named returned object plays the specified role. That is, the name of the
-property in the association class that refers to the returned object shall
-match the value of this parameter.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.</li>
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for
+the enumeration</li>
+<li><strong>AssocClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultRole</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of associated <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with
-an input instance</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of associated <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an input
+object path</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_associator_names.html#example-associator-names"><em>AssociatorNames</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_associator_names.html#example-associator-names"><em>AssociatorNames</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.Associators">
 <tt class="descname">Associators</tt><big>(</big><em>ObjectName</em>, <em>AssocClass=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>ResultRole=None</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>namespace=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.Associators" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of associated <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input
-instance name.</p>
+object path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; specifies CIM object for which the associated
-instances will be enumerated.</li>
-<li><strong>AssocClass</strong> (<em>str</em>) &#8211; valid CIM association class name. It acts as a filter on
-the returned set of names by mandating that each returned name identify an
-object that shall be associated to the source object through an instance of
-this class or one of its subclasses.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; valid CIM class name. It acts as a filter on the
-returned set of names by mandating that each returned name identify an object
-that shall be either an instance of this class (or one of its subclasses) or
-be this class (or one of its subclasses).</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; valid property name. It acts as a filter on the returned set
-of names by mandating that each returned name identify an object that shall be
-associated to the source object through an association in which the source
-object plays the specified role. That is, the name of the property in the
-association class that refers to the source object shall match the value of
-this parameter.</li>
-<li><strong>ResultRole</strong> (<em>str</em>) &#8211; valid property name. It acts as a filter on the returned
-set of names by mandating that each returned name identify an object that
-shall be associated to the source object through an association in which the
-named returned object plays the specified role. That is, the name of the
-property in the association class that refers to the returned object shall
-match the value of this parameter.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; indicates, if all qualifiers for each object
-(including qualifiers on the object and on any returned properties) shall be
-included as <tt class="docutils literal"><span class="pre">&lt;QUALIFIER&gt;</span></tt> elements in the response. Default value is False.</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; indicates, if the <tt class="docutils literal"><span class="pre">CLASSORIGIN</span></tt> attribute shall
-be present on all appropriate elements in each returned object. Default value
-is False.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; if not None, the members of the array define one or more</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the elements should be retrieved.
-property names. Each returned object shall not include elements for any
-properties missing from this list. If PropertyList is an empty list, no
-properties are included in each returned object. If it is None, no additional
-filtering is defined. Default value is None.</li>
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for
+the enumeration</li>
+<li><strong>AssocClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultRole</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of associated <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input
-instance</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of associated <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input object
+path</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_associators.html#example-associators"><em>Associators</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_associators.html#example-associators"><em>Associators</em></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.CloseEnumeration">
+<tt class="descname">CloseEnumeration</tt><big>(</big><em>Context</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.CloseEnumeration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes an enumeration sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Context</strong> (<em>CIMEnumerationContext</em>) &#8211; Enumeration context to close.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.CreateInstance">
 <tt class="descname">CreateInstance</tt><big>(</big><em>NewInstance</em>, <em>ns=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.CreateInstance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new CIM instance and returns its instance name.</p>
+<dd><p>Creates a new CIM instance and returns its <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>NewInstance</strong> (<em>CIMInstance</em>) &#8211; new local <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a></li>
-<li><strong>ns</strong> (<em>str</em>) &#8211; Namespace in which the <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a>
-will be created. If <cite>ns</cite> is <tt class="docutils literal"><span class="pre">None</span></tt>, namespace will be used from
+<li><strong>NewInstance</strong> (<em>CIMInstance</em>) &#8211; New local CIM instance</li>
+<li><strong>ns</strong> (<em>str</em>) &#8211; Namespace in which the <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> will be created.
+If <cite>ns</cite> is <tt class="docutils literal"><span class="pre">None</span></tt>, namespace will be used from
 <tt class="docutils literal"><span class="pre">NewInstance.path.namespace</span></tt>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">instance name of new CIM instance</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> of new CIMInstance</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_create_instance.html#example-create-instance"><em>CreateInstance</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_create_instance.html#example-create-instance"><em>CreateInstance</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -304,13 +307,23 @@ will be created. If <cite>ns</cite> is <tt class="docutils literal"><span class=
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>InstanceName</strong> (<em>CIMInstanceName</em>) &#8211; object path of CIM instance</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>InstanceName</strong> (<em>CIMInstanceName</em>) &#8211; Object path of CIM instance</p>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_delete_instance.html#example-delete-instance"><em>DeleteInstance</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_delete_instance.html#example-delete-instance"><em>DeleteInstance</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -322,30 +335,30 @@ will be created. If <cite>ns</cite> is <tt class="docutils literal"><span class=
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>namespace</strong> (<em>str</em>) &#8211; string containing namespace, from which the
-classes  will be retrieved</li>
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; string containing a class name, which defines the
-class that is the basis for the enumeration</li>
-<li><strong>DeepInheritance</strong> (<em>bool</em>) &#8211; indicates, if all subclasses of the specified
-class should be returned. If the ClassName input parameter is absent, this
-implies that all classes in the target namespace should be returned. If
-DeepInheritance is false, only immediate child subclasses are returned. If the
-ClassName input parameter is None, this implies that all top-level classes
-(that is, classes with no superclass) in the target namespace should be
-returned. This definition of DeepInheritance applies only to the
-EnumerateClasses and EnumerateClassName operations.</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the classes  will be retrieved</li>
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; Class name, which defines the class that is the basis for
+the enumeration</li>
+<li><strong>DeepInheritance</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of strings of class names</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of strings of class names</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_enumerate_class_names.html#example-enumerate-class-names"><em>EnumerateClassNames</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_enumerate_class_names.html#example-enumerate-class-names"><em>EnumerateClassNames</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -357,41 +370,33 @@ EnumerateClasses and EnumerateClassName operations.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>namespace</strong> (<em>str</em>) &#8211; string containing namespace, from which the
-classes  will be retrieved</li>
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; string containing a class name, which defines the
-class that is the basis for the enumeration</li>
-<li><strong>DeepInheritance</strong> (<em>bool</em>) &#8211; indicates, if all subclasses of the specified
-class should be returned. If the ClassName input parameter is absent, this
-implies that all classes in the target namespace should be returned. If
-DeepInheritance is false, only immediate child subclasses are returned. If the
-ClassName input parameter is None, this implies that all top-level classes
-(that is, classes with no superclass) in the target namespace should be
-returned. This definition of DeepInheritance applies only to the
-EnumerateClasses and EnumerateClassName operations.</li>
-<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; indicates, if any CIM elements (properties, methods,
-and qualifiers) except those added or overridden in the class as specified in
-the classname input parameter shall not be included in the returned class. If
-it is false, this parameter defines no additional filtering.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; indicates, if all qualifiers for each class
-(including qualifiers on the class and on any returned properties, methods, or
-method parameters) shall be included as &lt;QUALIFIER&gt; XML elements in the
-response. If it is false, no &lt;QUALIFIER&gt; XML elements are present.</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; indicates, if the CLASSORIGIN attribute shall
-be present on all appropriate elements in each returned class. If it is false,
-no CLASSORIGIN attributes are present.</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the classes will be retrieved</li>
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; Class name, which defines the class that is the basis for
+the enumeration</li>
+<li><strong>DeepInheritance</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of <a class="reference internal" href="api_lmiwbem_core_class.html#lmiwbem.lmiwbem_core.CIMClass" title="lmiwbem.lmiwbem_core.CIMClass"><tt class="xref py py-class docutils literal"><span class="pre">CIMClass</span></tt></a> objects</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of <a class="reference internal" href="api_lmiwbem_core_class.html#lmiwbem.lmiwbem_core.CIMClass" title="lmiwbem.lmiwbem_core.CIMClass"><tt class="xref py py-class docutils literal"><span class="pre">CIMClass</span></tt></a> objects</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_enumerate_classes.html#example-enumerate-classes"><em>EnumerateClasses</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of :<a class="reference internal" href="../_examples/example_enumerate_classes.html#example-enumerate-classes"><em>EnumerateClasses</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -403,22 +408,29 @@ no CLASSORIGIN attributes are present.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; String containing class name of instance
-names to be retrieved.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the
-instance names will be retrieved.</li>
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; Class name of instance names to be retrieved</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the instance names will be
+retrieved</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_enumerate_instance_names.html#example-enumerate-instance-names"><em>EnumerateInstanceNames</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_enumerate_instance_names.html#example-enumerate-instance-names"><em>EnumerateInstanceNames</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -430,41 +442,33 @@ instance names will be retrieved.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; String containing class name of instances to be
-retrieved.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the
-instances should be retrieved.</li>
-<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; Indicates, if any CIM elements (properties,
-methods, and qualifiers) except those added oroverridden in the class as
-specified in the classname input parameter shall not be included in the
-returned class.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Indicates, if all qualifiers for each class
-(including qualifiers on the class and on any returned properties, methods,
-or method parameters) shall be included as <tt class="docutils literal"><span class="pre">&lt;QUALIFIER&gt;</span></tt> elements in the
-response.</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; Indicates, if the <tt class="docutils literal"><span class="pre">CLASSORIGIN</span></tt> attribute
-shall be present on all appropriate elements in each returned class.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; if present and not None, the members of the list
-define one or more property names. The returned class shall not include
-elements for properties missing from this list. Note that if LocalOnly is
-specified as True, it acts as an additional filter on the set of properties
-returned. For example, if property A is included in the PropertyList but
-LocalOnly is set to True and A is not local to the requested class, it is not
-included in the response. If the PropertyList input parameter is an empty
-list, no properties are included in the response. If the PropertyList input
-parameter is None, no additional filtering is defined. Default value is None.</li>
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; String containing class name of instances to be retrieved.</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the instances
+should be retrieved.</li>
+<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_enumerate_instances.html#example-enumerate-instances"><em>EnumerateInstances</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_enumerate_instances.html#example-enumerate-instances"><em>EnumerateInstances</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -476,21 +480,26 @@ parameter is None, no additional filtering is defined. Default value is None.</l
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>query_lang</strong> (<em>str</em>) &#8211; query language</li>
-<li><strong>query</strong> (<em>str</em>) &#8211; query to execute</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; target namespace for the query</li>
+<li><strong>query_lang</strong> (<em>str</em>) &#8211; Query language</li>
+<li><strong>query</strong> (<em>str</em>) &#8211; Query to execute</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Target namespace for the query</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_exec_query.html#example-exec-query"><em>ExecQuery</em></a></p>
+<p>See also <a class="reference internal" href="../_examples/example_exec_query.html#example-exec-query"><em>ExecQuery</em></a> example</p>
 </dd></dl>
 
 <dl class="method">
@@ -502,44 +511,32 @@ parameter is None, no additional filtering is defined. Default value is None.</l
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ClassName</strong> (<em>str</em>) &#8211; defines the name of the class to be retrieved.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; string containing namespace, from which the
-class will be retrieved</li>
-<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; indicates, if any CIM elements (properties, methods,
-and qualifiers), except those added or overridden in the class as specified in
-the classname input parameter, shall not be included in the returned class. If
-it is false, no additional filtering is defined.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; indicates, if all qualifiers for that class
-(including qualifiers on the class and on any returned properties, methods, or
-method parameters) shall be included as &lt;QUALIFIER&gt; XML elements in the
-response. If it is false, no &lt;QUALIFIER&gt; XML elements are present in the
-returned class.</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; indicates, if all qualifiers for that class
-(including qualifiers on the class and on any returned properties, methods, or
-method parameters) shall be included as &lt;QUALIFIER&gt; XML elements in the
-response. If it is false, no &lt;QUALIFIER&gt; XML elements are present in the
-returned class.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; if not None, the members of the array define one or
-more property names. The returned class shall not include any properties
-missing from this list. Note that if LocalOnly is specified as true, it acts
-as an additional filter on the set of properties returned. For example, if
-property A is included in PropertyList but LocalOnly is set to true and A is
-not local to the requested class, it is not included in the response. If the
-PropertyList input parameter is an empty array, no properties are included in
-the response. If the PropertyList input parameter is None, no additional
-filtering is defined.</li>
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; Class name of class to be retrieved</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the class will be retrieved</li>
+<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="api_lmiwbem_core_class.html#lmiwbem.lmiwbem_core.CIMClass" title="lmiwbem.lmiwbem_core.CIMClass"><tt class="xref py py-class docutils literal"><span class="pre">CIMClass</span></tt></a> object</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_get_class.html#example-get-class"><em>GetClass</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_get_class.html#example-get-class"><em>GetClass</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -552,41 +549,33 @@ filtering is defined.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>InstanceName</strong> (<em>CIMInstanceName</em>) &#8211; <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a>,
-which identifies a <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a></li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; string containing namespace, from which the
-instance will be retrieved</li>
-<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; indicates, if any CIM elements (properties,
-methods, and qualifiers) except those added oroverridden in the class as
-specified in the classname input parameter shall not be included in the
-returned class.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; indicates, if all qualifiers for each class
-(including qualifiers on the class and on any returned properties, methods,
-or method parameters) shall be included as <tt class="docutils literal"><span class="pre">&lt;QUALIFIER&gt;</span></tt> elements in the
-response.</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; indicates, if the <tt class="docutils literal"><span class="pre">CLASSORIGIN</span></tt> attribute
-shall be present on all appropriate elements in each returned class.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; if present and not None, the members of the list
-define one or more property names. The returned class shall not include
-elements for properties missing from this list. Note that if LocalOnly is
-specified as True, it acts as an additional filter on the set of properties
-returned. For example, if property A is included in the PropertyList but
-LocalOnly is set to True and A is not local to the requested class, it is not
-included in the response. If the PropertyList input parameter is an empty
-list, no properties are included in the response. If the PropertyList input
-parameter is None, no additional filtering is defined. Default value is None.</li>
+<li><strong>InstanceName</strong> (<em>CIMInstanceName</em>) &#8211; Identifies
+a <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a></li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the instance will be retrieved</li>
+<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> object</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_get_instance.html#example-get-instance"><em>GetInstance</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_get_instance.html#example-get-instance"><em>GetInstance</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -598,23 +587,30 @@ parameter is None, no additional filtering is defined. Default value is None.</l
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; specifies CIM object within which the method
-will be called</li>
-<li><strong>MethodName</strong> (<em>str</em>) &#8211; string containing a method name</li>
-<li><strong>ObjectName</strong> &#8211; object path</li>
-<li><strong>params</strong> (<em>dictionary</em>) &#8211; parameters passed to the method call</li>
+<li><strong>MethodName</strong> (<em>str</em>) &#8211; method name</li>
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; specifies CIM object within
+which the method will be called</li>
+<li><strong>params</strong> (<em>dict</em>) &#8211; parameters passed to the method call</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple containing method&#8217;s return value and output parameters</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing method&#8217;s return value and output parameters</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_invoke_method.html#example-invoke-method"><em>InvokeMethod</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_invoke_method.html#example-invoke-method"><em>InvokeMethod</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -626,112 +622,502 @@ will be called</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ModifiedInstance</strong> (<em>CIMInstance</em>) &#8211; modified instance</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Indicates, if the qualifiers are modified as
-specified in ModifiedInstance. If the parameter is false, qualifiers in
-ModifiedInstance are ignored and no qualifiers are explicitly modified.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; if present and not None, the members of the list
-define one or more property names. The properties specified in PropertyList
-are designated to be modified. Properties of the ModifiedInstance that are
-missing from PropertyList are not designated to be modified. If PropertyList
-is an empty array, no properties are designated to be modified. If
-PropertyList is None, the properties of ModifiedInstance with values different
-from the current values in the instance are designated to be modified.</li>
+<li><strong>ModifiedInstance</strong> (<em>CIMInstance</em>) &#8211; Modified CIM instance</li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; see <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_modify_instance.html#example-modify-instance"><em>ModifyInstance</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_modify_instance.html#example-modify-instance"><em>ModifyInstance</em></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociatorNames">
+<tt class="descname">OpenAssociatorNames</tt><big>(</big><em>ObjectName</em>, <em>namespace=None</em>, <em>AssocClass=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>ResultRole=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociatorNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration for associated <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a>
+objects with an input object path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis
+for the enumeration</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the elements should be
+retrieved</li>
+<li><strong>AssocClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultRole</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds
+between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociators">
+<tt class="descname">OpenAssociators</tt><big>(</big><em>ObjectName</em>, <em>namespace=None</em>, <em>AssocClass=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>ResultRole=None</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenAssociators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration for associated <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects
+with an input object path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for
+the enumeration</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the elements should be
+retrieved</li>
+<li><strong>AssocClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>ResultRole</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds
+between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstanceNames">
+<tt class="descname">OpenEnumerateInstanceNames</tt><big>(</big><em>ClassName</em>, <em>namespace=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstanceNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration sequence of <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; Class name of elements to be retrieved</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the
+elements should be retrieved.</li>
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds
+between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstances">
+<tt class="descname">OpenEnumerateInstances</tt><big>(</big><em>ClassName</em>, <em>namespace=None</em>, <em>LocalOnly=True</em>, <em>DeepInheritance=True</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>QueryLang=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenEnumerateInstances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration sequence of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ClassName</strong> (<em>str</em>) &#8211; String containing class name of instances to be retrieved.</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the instances should be
+retrieved</li>
+<li><strong>LocalOnly</strong> (<em>bool</em>) &#8211; Unused</li>
+<li><strong>DeepInheritance</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Unused</li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in
+seconds between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return instances subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a>
+objects, enumeration context and boolean which defines if all the instances
+have been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenExecQuery">
+<tt class="descname">OpenExecQuery</tt><big>(</big><em>QueryLanguage</em>, <em>Query</em>, <em>namespace=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenExecQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration for Query.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language in which the query parameter is
+expressed</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Specified the query to be executed</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the elements should be
+retrieved.</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds
+between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenReferenceNames">
+<tt class="descname">OpenReferenceNames</tt><big>(</big><em>ObjectName</em>, <em>namespace=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenReferenceNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration for association <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a>
+objects with an input object path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis
+for the enumeration.</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the elements should be
+retrieved.</li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query.</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration.</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds
+between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.OpenReferences">
+<tt class="descname">OpenReferences</tt><big>(</big><em>ObjectName</em>, <em>ns=None</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>QueryLanguage=None</em>, <em>Query=None</em>, <em>OperationTimeout=None</em>, <em>ContinueOnError=False</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.OpenReferences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens an enumeration for association <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a>
+objects with an input object path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis
+for the enumeration.</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name, from which the elements should be
+retrieved.</li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; Unused</li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>QueryLanguage</strong> (<em>str</em>) &#8211; Query language to be used with the Query</li>
+<li><strong>Query</strong> (<em>str</em>) &#8211; Filter query to be applied to the enumeration</li>
+<li><strong>OperationTimeout</strong> (<em>int</em>) &#8211; Defines the interoperation timeout in seconds
+between the response and subsequent request operations of an
+enumeration sequence.</li>
+<li><strong>ContinueOnError</strong> (<em>bool</em>) &#8211; Defines whether the server should continue to
+return elements subsequent to a <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a> occurring in the
+server.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames">
+<tt class="descname">PullInstanceNames</tt><big>(</big><em>Context</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> for an open enumeration
+sequence opened by an openQueryInstances operation and represented by an
+enumeration context returned by the original open or previous
+<a class="reference internal" href="#lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames" title="lmiwbem.lmiwbem_core.WBEMConnection.PullInstanceNames"><tt class="xref py py-meth docutils literal"><span class="pre">WBEMConnection.PullInstanceNames()</span></tt></a> operation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Context</strong> (<em>CIMEnumerationContext</em>) &#8211; Identifier for the
+enumeration sequence.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.WBEMConnection.PullInstances">
+<tt class="descname">PullInstances</tt><big>(</big><em>Context</em>, <em>MaxObjectCnt=0</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.PullInstances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> for an open enumeration sequence
+opened by an openQueryInstances operation and represented by an enumeration
+context returned by the original open or previous
+<tt class="xref py py-meth docutils literal"><span class="pre">WBEMConnection.PullInstancesWithPath()</span></tt> operation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Context</strong> (<em>CIMEnumerationContext</em>) &#8211; Identifier for the
+enumeration sequence.</li>
+<li><strong>MaxObjectCnt</strong> (<em>int</em>) &#8211; Defines the maximum number of elements that this Open
+operation can return.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing a list of retrieved <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects,
+enumeration context and boolean which defines if all the instances have
+been retrieved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.ReferenceNames">
 <tt class="descname">ReferenceNames</tt><big>(</big><em>ObjectName</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>namespace=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.ReferenceNames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of association <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an
-input instance.</p>
+input object path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; specifies CIM object for which the association
-instance names will be enumerated.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; valid CIM class name. It acts as a filter on the
-returned set of object names by mandating that each returned Object Name identify
-an instance of this class (or one of its subclasses) or this class (or one of its
-subclasses).</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; valid property name. It acts as a filter on the returned set
-of object names by mandating that each returned object name shall identify an
-object that refers to the target instance through a property with a name that
-matches the value of this parameter.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the
-instances should be retrieved.</li>
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for
+the enumeration</li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of association <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an input
-instance</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of association <a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a> objects with an input
+object path</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_reference_names.html#example-reference-names"><em>ReferenceNames</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../_examples/example_reference_names.html#example-reference-names"><em>ReferenceNames</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.References">
 <tt class="descname">References</tt><big>(</big><em>ObjectName</em>, <em>ResultClass=None</em>, <em>Role=None</em>, <em>IncludeQualifiers=False</em>, <em>IncludeClassOrigin=False</em>, <em>PropertyList=None</em>, <em>namespace=None</em><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.References" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of association <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input
-instance name.</p>
+object path.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; specifies CIM object for which the association
-instances will be enumerated.</li>
-<li><strong>ResultClass</strong> (<em>str</em>) &#8211; valid CIM class name. It acts as a filter on the
-returned set of objects by mandating that each returned object shall be an
-instance of this class (or one of its subclasses) or this class (or one of its
-subclasses). Default value is None.</li>
-<li><strong>Role</strong> (<em>str</em>) &#8211; valid property name. It acts as a filter on the returned set
-of objects by mandating that each returned object shall refer to the target
-object through a property with a name that matches the value of this
-parameter. Default value is None.</li>
-<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; bool flag indicating, if all qualifiers for each
-object (including qualifiers on the object and on any returned properties)
-shall be included as <tt class="docutils literal"><span class="pre">&lt;QUALIFIER&gt;</span></tt> elements in the response. Default value
-is False.</li>
-<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; bool flag indicating, if the <tt class="docutils literal"><span class="pre">CLASSORIGIN</span></tt>
-attribute shall be present on all appropriate elements in each returned
-object. Default value is False.</li>
-<li><strong>PropertyList</strong> (<em>list</em>) &#8211; if not None, the members of the list define one or more
-property names. Each returned object shall not include elements for any
-properties missing from this list. If PropertyList is an empty list, no
-properties are included in each returned object. If PropertyList is None, no
-additional filtering is defined. Default value is None.</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace, from which the
-instances should be retrieved.</li>
+<li><strong>ObjectName</strong> (<em>CIMInstanceName</em>) &#8211; Object path that is the basis for
+the enumeration</li>
+<li><strong>ResultClass</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>Role</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeQualifiers</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>IncludeClassOrigin</strong> (<em>bool</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>PropertyList</strong> (<em>list</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; See <a class="reference external" href="http://www.dmtf.org/sites/default/files/standards/documents/DSP0200_1.4.0.pdf">DMTF</a></li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of association <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input
-instance</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of association <a class="reference internal" href="api_lmiwbem_core_instance.html#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a> objects with an input
+object path</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.CIMError" title="lmiwbem.lmiwbem_core.CIMError"><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt></a>, <a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><tt class="xref py py-exc docutils literal"><span class="pre">CIMError</span></tt> &#8211;
+When a CIM error occurs.</li>
+<li><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../_examples/example_references.html#example-references"><em>References</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of  <a class="reference internal" href="../_examples/example_references.html#example-references"><em>References</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -743,20 +1129,24 @@ instance</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>url</strong> (<em>str</em>) &#8211; String containing url of remote CIMOM.</li>
-<li><strong>username</strong> (<em>str</em>) &#8211; String containing username for authentication.</li>
-<li><strong>password</strong> (<em>str</em>) &#8211; String containing password for authentication.</li>
-<li><strong>no_verification</strong> (<em>bool</em>) &#8211; set to True, if CIMOM&#8217;s X509 certificate
-shall not be verified; False otherwise. Default value is False.</li>
+<li><strong>url</strong> (<em>str</em>) &#8211; URL of CIMOM instance</li>
+<li><strong>username</strong> (<em>str</em>) &#8211; Username for authentication</li>
+<li><strong>password</strong> (<em>str</em>) &#8211; Password for authentication</li>
+<li><strong>no_verification</strong> (<em>bool</em>) &#8211; If True, CIMOM&#8217;s X509 certificate shall not be
+verified</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../usage.html#example-connection"><em>Connecting to CIMOM</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../usage.html#example-connection"><em>Connecting to CIMOM</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -767,54 +1157,31 @@ shall not be verified; False otherwise. Default value is False.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_exceptions.html#lmiwbem.lmiwbem_core.ConnectionError" title="lmiwbem.lmiwbem_core.ConnectionError"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">ConnectionError</span></tt> &#8211;
+When a connection can&#8217;t be established.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example:</strong> <a class="reference internal" href="../usage.html#example-connection-socket"><em>Connection using Unix Socket</em></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Full example of <a class="reference internal" href="../usage.html#example-connection-socket"><em>Connection using Unix Socket</em></a>.</p>
+</div>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.connect_locally">
 <tt class="descname">connect_locally</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.connect_locally" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing flag means of connection. If set to True, local Unix socket
-will be used; HTTP(S) otherwise.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.creds">
 <tt class="descname">creds</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.creds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing user credentials.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple containing username and password</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.default_namespace">
 <tt class="descname">default_namespace</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.default_namespace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing default CIM namespace used for CIM operations.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Property for default CIM namespace used for CIM operations.</p>
 </dd></dl>
 
 <dl class="method">
@@ -826,86 +1193,36 @@ will be used; HTTP(S) otherwise.</p>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.hostname">
 <tt class="descname">hostname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.hostname" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property returning CIMOM hostname.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Returns a CIMOM hostname.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.is_connected">
 <tt class="descname">is_connected</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.is_connected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property, which return True, if the client is connected to certain CIMOM.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Returns True, if the client is connected to a CIMOM.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.no_verification">
 <tt class="descname">no_verification</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.no_verification" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing X509 certificate verification flag.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.request_accept_languages">
 <tt class="descname">request_accept_languages</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.request_accept_languages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing accept languages currently configured for this client.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of tuples (lang, q)</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Property for accept languages currently configured for this client.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.timeout">
 <tt class="descname">timeout</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.timeout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing CIM operations timeout in milliseconds. Default value is 60000ms.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
+<dd><p>Property for CIM operations timeout in milliseconds. Default value is 60000ms.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.WBEMConnection.url">
 <tt class="descname">url</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.WBEMConnection.url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property returning connection URL.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -929,7 +1246,7 @@ will be used; HTTP(S) otherwise.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

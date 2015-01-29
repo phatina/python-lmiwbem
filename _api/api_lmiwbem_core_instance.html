@@ -140,35 +140,41 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMInstance</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a <a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a>.</p>
+<dd><p>CIMInstance(classname, properties=NocaseDict(), qualifiers=NocaseDict(), path=None, property_list=None)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>classname</strong> (<em>str</em>) &#8211; String containing a class name</li>
-<li><strong>properties</strong> (<em>NocaseDict</em>) &#8211; Dictionary containing <a class="reference internal" href="api_lmiwbem_core_property.html#lmiwbem.lmiwbem_core.CIMProperty" title="lmiwbem.lmiwbem_core.CIMProperty"><tt class="xref py py-class docutils literal"><span class="pre">CIMProperty</span></tt></a></li>
-<li><strong>qualifiers</strong> (<em>NocaseDict</em>) &#8211; Dictionary containing <a class="reference internal" href="api_lmiwbem_core_qualifier.html#lmiwbem.lmiwbem_core.CIMQualifier" title="lmiwbem.lmiwbem_core.CIMQualifier"><tt class="xref py py-class docutils literal"><span class="pre">CIMQualifier</span></tt></a></li>
-<li><strong>path</strong> (<em>CIMInstanceName</em>) &#8211; Object path</li>
-<li><strong>property_list</strong> (<em>list</em>) &#8211; List containing strings of properties</li>
+<li><strong>classname</strong> (<em>str</em>) &#8211; Class name</li>
+<li><strong>properties</strong> (<em>NocaseDict</em>) &#8211; Dictionary of <a class="reference internal" href="api_lmiwbem_core_property.html#lmiwbem.lmiwbem_core.CIMProperty" title="lmiwbem.lmiwbem_core.CIMProperty"><tt class="xref py py-class docutils literal"><span class="pre">CIMProperty</span></tt></a></li>
+<li><strong>qualifiers</strong> (<em>NocaseDict</em>) &#8211; Dictionary of <a class="reference internal" href="api_lmiwbem_core_qualifier.html#lmiwbem.lmiwbem_core.CIMQualifier" title="lmiwbem.lmiwbem_core.CIMQualifier"><tt class="xref py py-class docutils literal"><span class="pre">CIMQualifier</span></tt></a></li>
+<li><strong>path</strong> (<em>CIMInstanceName</em>) &#8211; CIM object path</li>
+<li><strong>property_list</strong> (<em>list</em>) &#8211; Properties</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="lmiwbem.lmiwbem_core.CIMInstance.classname">
-<tt class="descname">classname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.classname" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing class name</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMInstance.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.CIMInstance.classname">
+<tt class="descname">classname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.classname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance.copy">
@@ -177,9 +183,9 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMInstance" title="lmiwbem.lmiwbem_core.CIMInstance"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMInstance</td>
 </tr>
 </tbody>
 </table>
@@ -192,10 +198,9 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; key to check for presence in object&#8217;s properties</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; Key to check for presence in object&#8217;s properties</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True, if the key is present in object&#8217;s properties;
-False otherwise</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True, if the key is present in object&#8217;s properties; False otherwise</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
@@ -210,9 +215,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of tuples with property name and value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of tuples with property name and value</td>
 </tr>
 </tbody>
 </table>
@@ -225,9 +228,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">iterator for property name and value iteration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Iterator for property name and value iteration</td>
 </tr>
 </tbody>
 </table>
@@ -240,9 +241,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">iterator for property names iteration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Iterator for property names iteration</td>
 </tr>
 </tbody>
 </table>
@@ -255,9 +254,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">iterator for property values iteration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Iterator for property values iteration</td>
 </tr>
 </tbody>
 </table>
@@ -270,9 +267,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of strings of property names</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings of property names</td>
 </tr>
 </tbody>
 </table>
@@ -281,58 +276,22 @@ False otherwise</td>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance.path">
 <tt class="descname">path</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing object path</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_instance_name.html#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance.properties">
 <tt class="descname">properties</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing instance properties</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance.property_list">
 <tt class="descname">property_list</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.property_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing instance properties</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of instance properties names</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance.qualifiers">
 <tt class="descname">qualifiers</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstance.qualifiers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing instance qualifiers</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMInstance.tomof">
@@ -356,9 +315,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of property values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of property values</td>
 </tr>
 </tbody>
 </table>
@@ -386,7 +343,7 @@ False otherwise</td>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

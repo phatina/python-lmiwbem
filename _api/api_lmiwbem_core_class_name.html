@@ -140,33 +140,39 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMClassName">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMClassName</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMClassName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a <a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMClassName" title="lmiwbem.lmiwbem_core.CIMClassName"><tt class="xref py py-class docutils literal"><span class="pre">CIMClassName</span></tt></a>.</p>
+<dd><p>CIMClassName(classname, host=None, namespace=None)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>classname</strong> (<em>str</em>) &#8211; String containing class name</li>
-<li><strong>host</strong> (<em>str</em>) &#8211; String containing host name</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace name</li>
+<li><strong>classname</strong> (<em>str</em>) &#8211; Class name</li>
+<li><strong>host</strong> (<em>str</em>) &#8211; Host name</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="lmiwbem.lmiwbem_core.CIMClassName.classname">
-<tt class="descname">classname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMClassName.classname" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing class name.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMClassName.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMClassName.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.CIMClassName.classname">
+<tt class="descname">classname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMClassName.classname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMClassName.copy">
@@ -175,9 +181,9 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMClassName" title="lmiwbem.lmiwbem_core.CIMClassName"><tt class="xref py py-class docutils literal"><span class="pre">CIMClassName</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMClassName</td>
 </tr>
 </tbody>
 </table>
@@ -186,30 +192,12 @@
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMClassName.host">
 <tt class="descname">host</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMClassName.host" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing host name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMClassName.namespace">
 <tt class="descname">namespace</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMClassName.namespace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing namespace name.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -233,7 +221,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 

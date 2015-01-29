@@ -140,35 +140,55 @@
 <dl class="class">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName">
 <em class="property">class </em><tt class="descclassname">lmiwbem.lmiwbem_core.</tt><tt class="descname">CIMInstanceName</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs <tt class="xref py py-class docutils literal"><span class="pre">CIMInstance</span></tt>.</p>
+<dd><p>CIMInstanceName(classname, keybindings=NocaseDict(), host=None, namespace=None)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>classname</strong> (<em>str</em>) &#8211; Class name of the object path</li>
-<li><strong>keybindings</strong> (<em>NocaseDict</em>) &#8211; Dictionary containing keybindings
-of the object path</li>
-<li><strong>host</strong> (<em>str</em>) &#8211; String containing hostname of the object path</li>
-<li><strong>namespace</strong> (<em>str</em>) &#8211; String containing namespace of the object path</li>
+<li><strong>classname</strong> (<em>str</em>) &#8211; Class name</li>
+<li><strong>keybindings</strong> (<em>NocaseDict</em>) &#8211; Dictionary of keybindings</li>
+<li><strong>host</strong> (<em>str</em>) &#8211; Hostname</li>
+<li><strong>namespace</strong> (<em>str</em>) &#8211; Namespace name</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="lmiwbem.lmiwbem_core.CIMInstanceName.classname">
-<tt class="descname">classname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.classname" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing class name.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMInstanceName.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pretty string of the object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="lmiwbem.lmiwbem_core.CIMInstanceName.__unicode__">
+<tt class="descname">__unicode__</tt><big>(</big><big>)</big><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.__unicode__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Serialized object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lmiwbem.lmiwbem_core.CIMInstanceName.classname">
+<tt class="descname">classname</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.classname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.copy">
@@ -177,9 +197,9 @@ of the object path</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">copy of the object itself</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Copy of the object itself</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#lmiwbem.lmiwbem_core.CIMInstanceName" title="lmiwbem.lmiwbem_core.CIMInstanceName"><tt class="xref py py-class docutils literal"><span class="pre">CIMInstanceName</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CIMInstanceName</td>
 </tr>
 </tbody>
 </table>
@@ -192,10 +212,9 @@ of the object path</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; key to check for presence in object&#8217;s keybindings</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; Key to check for presence in object&#8217;s keybindings</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True, if the key is present in object&#8217;s keybindings;
-False otherwise</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True, if the key is present in object&#8217;s keybindings; False otherwise</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
@@ -206,16 +225,7 @@ False otherwise</td>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.host">
 <tt class="descname">host</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.host" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing hostname.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.items">
@@ -224,9 +234,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of tuples with keybinding name and value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of tuples with keybinding name and value</td>
 </tr>
 </tbody>
 </table>
@@ -239,9 +247,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">iterator for keybinding name and value iteration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Iterator for keybinding name and value iteration</td>
 </tr>
 </tbody>
 </table>
@@ -254,9 +260,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">iterator for keybinding names iteration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Iterator for keybinding names iteration</td>
 </tr>
 </tbody>
 </table>
@@ -269,9 +273,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">iterator for keybinding values iteration</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">iterator</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Iterator for keybinding values iteration</td>
 </tr>
 </tbody>
 </table>
@@ -280,16 +282,7 @@ False otherwise</td>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.keybindings">
 <tt class="descname">keybindings</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.keybindings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing keybindings.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="api_lmiwbem_core_nocasedict.html#lmiwbem.lmiwbem_core.NocaseDict" title="lmiwbem.lmiwbem_core.NocaseDict"><tt class="xref py py-class docutils literal"><span class="pre">NocaseDict</span></tt></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.keys">
@@ -298,9 +291,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of strings of keybinding names</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings of keybinding names</td>
 </tr>
 </tbody>
 </table>
@@ -309,16 +300,7 @@ False otherwise</td>
 <dl class="attribute">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.namespace">
 <tt class="descname">namespace</tt><a class="headerlink" href="#lmiwbem.lmiwbem_core.CIMInstanceName.namespace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Property storing namespace.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">unicode</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="lmiwbem.lmiwbem_core.CIMInstanceName.values">
@@ -327,9 +309,7 @@ False otherwise</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of keybinding values</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of keybinding values</td>
 </tr>
 </tbody>
 </table>
@@ -357,7 +337,7 @@ False otherwise</td>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Peter Hatina.
+        &copy; Copyright 2014-2015, Peter Hatina.
     </p>
   </div>
 
