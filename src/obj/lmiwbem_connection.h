@@ -78,6 +78,10 @@ private:
         ~ScopedConnection();
 
     private:
+        void connect();
+        void connectLocally();
+        void disconnect();
+
         WBEMConnection *m_conn;
         bool m_conn_orig_state;
     };

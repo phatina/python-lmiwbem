@@ -90,43 +90,56 @@ WBEMConnection::ScopedConnection::ScopedConnection(WBEMConnection *conn)
         // We are already connected, nothing to do here.
         return;
     } else if (m_conn->m_connect_locally) {
-        m_conn->client()->connectLocally();
-        return;
-    } else if (not m_conn->client()->getURLInfo().isValid()) {
+        connectLocally();
+    } else if (m_conn->client()->getURLInfo().isValid()) {
+        connect();
+    } else {
         throw_ValueError("WBEMConnection constructed with invalid url parameter");
     }
+}
 
-    try {
-        m_conn->client()->connect(
-            m_conn->client()->getUrl(),
-            m_conn->m_username,
-            m_conn->m_password,
-            m_conn->m_cert_file,
-            m_conn->m_key_file,
-            Config::defaultTrustStore());
-    } catch (...) {
-        std::stringstream ss;
-        if (Config::isVerbose()) {
-            bool connect_locally = m_conn->m_connect_locally;
-            if (connect_locally)
-                ss << "connect_locally(";
-            else
-                ss << "connect(";
-
-            if (Config::isVerboseMore() && !connect_locally) {
-                ss << "url='" << m_conn->client()->getURLInfo().url() << '\'';
-            }
-            ss << ')';
-        }
-        handle_all_exceptions(ss);
+void WBEMConnection::ScopedConnection::connect() try
+{
+    m_conn->client()->connect(
+        m_conn->client()->getUrl(),
+        m_conn->m_username,
+        m_conn->m_password,
+        m_conn->m_cert_file,
+        m_conn->m_key_file,
+        Config::defaultTrustStore());
+} catch (...) {
+    std::stringstream ss;
+    if (Config::isVerbose()) {
+        ss << "connect(";
+        if (Config::isVerboseMore())
+            ss << "url='" << m_conn->client()->getURLInfo().url() << '\'';
+        ss << ')';
     }
+    handle_all_exceptions(ss);
+}
+
+void WBEMConnection::ScopedConnection::connectLocally() try
+{
+    m_conn->client()->connectLocally();
+} catch (...) {
+    std::stringstream ss;
+    if (Config::isVerbose())
+        ss << "connect_locally()";
+    handle_all_exceptions(ss);
+}
+
+void WBEMConnection::ScopedConnection::disconnect()
+{
+    m_conn->client()->disconnect();
 }
 
 WBEMConnection::ScopedConnection::~ScopedConnection()
 {
     if (!m_conn_orig_state)
-        m_conn->client()->disconnect();
+        disconnect();
 }
+
+// -----------------------------------------------------------------------------
 
 WBEMConnection::ScopedTransaction::ScopedTransaction(WBEMConnection *conn)
     : m_sct(conn->client())
