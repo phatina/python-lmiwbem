@@ -45,6 +45,8 @@ public:
     String path() const;
     uint32_t port() const;
 
+    String error() const;
+
     bool isHttps() const;
     bool isLocal() const;
     bool isValid() const;
@@ -62,11 +64,14 @@ public:
     static const uint32_t PORT_CIMXML_HTTPS = 5989;
 
 private:
+    bool setInvalid(const String &error);
+
     String m_url;
     String m_hostname;
     String m_username;
     String m_password;
     String m_path;
+    String m_error;
     uint32_t m_port;
     bool m_is_https;
     bool m_is_local;

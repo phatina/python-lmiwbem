@@ -177,7 +177,7 @@ WBEMConnection::WBEMConnection(
 
         if (!url_info.isValid()) {
             std::stringstream ss;
-            ss << "Invalid URL: '" << url_info.url() << '\'';
+            ss << url_info.error() << '\'';
             throw_ValueError(ss.str());
         }
 

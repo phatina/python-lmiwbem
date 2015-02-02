@@ -87,6 +87,7 @@ URLInfo::URLInfo()
     , m_username()
     , m_password()
     , m_path()
+    , m_error()
     , m_port(URLInfo::PORT_NOT_SET)
     , m_is_https(true)
     , m_is_local(false)
@@ -101,6 +102,7 @@ URLInfo::URLInfo(const String &url)
     , m_username()
     , m_password()
     , m_path()
+    , m_error()
     , m_port(URLInfo::PORT_NOT_SET)
     , m_is_https(true)
     , m_is_local(false)
@@ -116,6 +118,7 @@ URLInfo::URLInfo(const URLInfo &copy)
     , m_username(copy.m_username)
     , m_password(copy.m_password)
     , m_path(copy.m_path)
+    , m_error(copy.m_error)
     , m_port(copy.m_port)
     , m_is_https(copy.m_is_https)
     , m_is_local(copy.m_is_local)
@@ -147,7 +150,7 @@ bool URLInfo::set(const String &url)
         spos = 8;
         m_is_https = true;
     } else {
-        return m_is_valid = false;
+        return setInvalid("Invalid scheme: " + url);
     }
 
     // Parse username:password from URL.
@@ -179,13 +182,13 @@ bool URLInfo::set(const String &url)
             begin, m_url.end(), is_path_delimiter);
         size_t len = end - begin;
         if (len == 0 || len > 5)
-            return m_is_valid = false;
+            return setInvalid("Port number out of range: " + url);
 
         // Store a port.
         char *pend;
         long int port = strtol(m_url.substr(pos + 1, len).c_str(), &pend, 10);
         if (*pend != '\0' || errno == ERANGE || port < 0 || port > 65535)
-            return m_is_valid = false;
+            return setInvalid("Port number out of range: " + url);
         m_port = static_cast<uint32_t>(port);
 
         spos = pos + len + 1;
@@ -250,6 +253,11 @@ uint32_t URLInfo::port() const
     return m_port;
 }
 
+String URLInfo::error() const
+{
+    return m_error;
+}
+
 bool URLInfo::isHttps() const
 {
     return m_is_https;
@@ -285,6 +293,7 @@ URLInfo &URLInfo::operator=(const URLInfo &rhs)
     m_username = rhs.m_username;
     m_password = rhs.m_password;
     m_path = rhs.m_path;
+    m_error = rhs.m_error;
     m_port = rhs.m_port;
     m_is_https = rhs.m_is_https;
     m_is_local = rhs.m_is_local;
@@ -305,6 +314,12 @@ bool URLInfo::isLocalhost(const String &url)
         url == "127.0.0.1" || url == "::1";
 }
 
+bool URLInfo::setInvalid(const String &error)
+{
+    m_error = error;
+    return m_is_valid = false;
+}
+
 #ifdef DEBUG
 #  include <iostream>
 
@@ -318,8 +333,10 @@ int main(int argc, char **argv)
 
     URLInfo info(argv[1]);
 
-    if (!info.isValid())
+    if (!info.isValid()) {
+        std::cerr << info.error() << std::endl;
         return 2;
+    }
 
     std::cout << "hostname: " << info.hostname() << std::endl;
     std::cout << "port    : " << info.port() << std::endl;
