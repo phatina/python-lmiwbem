@@ -21,13 +21,13 @@
 
 #include <config.h>
 #include <Pegasus/Common/CIMType.h>
-#  include <Pegasus/Common/Char16.h>
-#  include <Pegasus/Common/CIMDateTime.h>
-#  include <Pegasus/Common/CIMName.h>
-#  include <Pegasus/Common/CIMObjectPath.h>
-#  include <Pegasus/Common/CIMPropertyList.h>
-#  include <Pegasus/Common/CIMValue.h>
-#  include <Pegasus/Common/String.h>
+#include <Pegasus/Common/Char16.h>
+#include <Pegasus/Common/CIMDateTime.h>
+#include <Pegasus/Common/CIMName.h>
+#include <Pegasus/Common/CIMObjectPath.h>
+#include <Pegasus/Common/CIMPropertyList.h>
+#include <Pegasus/Common/CIMValue.h>
+#include <Pegasus/Common/String.h>
 #include "obj/cim/lmiwbem_class.h"
 #include "obj/cim/lmiwbem_class_name.h"
 #include "obj/cim/lmiwbem_instance.h"
