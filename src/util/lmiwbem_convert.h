@@ -19,6 +19,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#ifndef   LMIWBEM_CONVERT_H
+#  define LMIWBEM_CONVERT_H
+
 #  include <map>
 #  include <boost/python/extract.hpp>
 #  include <boost/python/list.hpp>
@@ -47,9 +50,6 @@ class String;
 PEGASUS_END
 
 namespace bp = boost::python;
-
-#ifndef   LMIWBEM_CONVERT_H
-#  define LMIWBEM_CONVERT_H
 
 #  define DECL_TO_CONVERTER(name, type) \
        struct name \
