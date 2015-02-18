@@ -27,6 +27,8 @@
 #include <boost/python/tuple.hpp>
 #include <Pegasus/Common/CIMName.h>
 #include <Pegasus/Common/CIMPropertyList.h>
+#include "lmiwbem_client_cimxml.h"
+#include "lmiwbem_client_wsman.h"
 #include "lmiwbem_exception.h"
 #include "lmiwbem_make_method.h"
 #include "lmiwbem_urlinfo.h"
@@ -54,12 +56,14 @@ CIMClient *WBEMConnectionBase::client() const
 {
     if (!m_client) {
         switch (m_type) {
-        case CLIENT_CIMXML:
-            m_client.reset(new CIMXMLClient());
-            break;
         case CLIENT_WSMAN:
-            // For now, we create CIM-XML client even if we want to talk WSMAN.
-            // TODO: Implement WSMAN support.
+#ifdef HAVE_OPENWSMAN
+            m_client.reset(new WSMANClient());
+            break;
+#else
+            // YES, this is OK. Fall through and always use CIM-XML.
+#endif // HAVE_OPENWSMAN
+        case CLIENT_CIMXML:
             m_client.reset(new CIMXMLClient());
             break;
         }

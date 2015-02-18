@@ -41,6 +41,7 @@ const char *KEY_EXC_VERB_NONE    = "EXC_VERB_NONE";
 const char *KEY_EXC_VERB_CALL    = "EXC_VERB_CALL";
 const char *KEY_EXC_VERB_MORE    = "EXC_VERB_MORE";
 const char *KEY_SUPPORTS_PULL_OP = "SUPPORTS_PULL_OPERATIONS";
+const char *KEY_SUPPORTS_WSMAN   = "SUPPORTS_WSMAN";
 
 } // Unnamed namespace
 
@@ -73,7 +74,9 @@ void Config::init_type()
             &Config::getPyExcVerbosity,
             &Config::setPyExcVerbosity)
         .add_property(KEY_SUPPORTS_PULL_OP,
-            &Config::getPySupportsPullOp));
+            &Config::getPySupportsPullOp)
+        .add_property(KEY_SUPPORTS_WSMAN,
+            &Config::getPySupportsWSMAN));
 
     bp::scope().attr(KEY_EXC_VERB_NONE) = static_cast<int>(EXC_VERB_NONE);
     bp::scope().attr(KEY_EXC_VERB_CALL) = static_cast<int>(EXC_VERB_CALL);
@@ -207,6 +210,15 @@ bp::object Config::getPyExcVerbosity() const
 bp::object Config::getPySupportsPullOp() const
 {
 #ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+    return bp::object(true);
+#else
+    return bp::object(false);
+#endif
+}
+
+bp::object Config::getPySupportsWSMAN() const
+{
+#ifdef HAVE_OPENWSMAN
     return bp::object(true);
 #else
     return bp::object(false);

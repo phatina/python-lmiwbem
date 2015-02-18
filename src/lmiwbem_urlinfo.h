@@ -43,6 +43,7 @@ public:
     String username() const;
     String password() const;
     String path() const;
+    String scheme() const;
     uint32_t port() const;
 
     String error() const;
@@ -58,8 +59,8 @@ public:
     static bool isLocalhost(const String &url);
 
     static const uint32_t PORT_NOT_SET      = ~0;
-    static const uint32_t PORT_WSMAN_HTTP   = 5986;
-    static const uint32_t PORT_WSMAN_HTTPS  = 5987;
+    static const uint32_t PORT_WSMAN_HTTP   = 5985;
+    static const uint32_t PORT_WSMAN_HTTPS  = 5986;
     static const uint32_t PORT_CIMXML_HTTP  = 5988;
     static const uint32_t PORT_CIMXML_HTTPS = 5989;
 

@@ -248,6 +248,15 @@ String URLInfo::path() const
     return m_path;
 }
 
+String URLInfo::scheme() const
+{
+    if (!m_is_valid)
+        return String();
+    else if (m_is_https)
+        return String("https");
+    return String("http");
+}
+
 uint32_t URLInfo::port() const
 {
     return m_port;

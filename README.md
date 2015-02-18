@@ -94,6 +94,7 @@ based on the options selected:
     --with-default-trust-store=DIR;     default: /etc/pki/ca-trust/source/anchors/
     --with-listener=[yes/no];           default: yes
     --with-slp=[yes/no];                default: yes
+    --with-wsman=[yes/no];              default: no
 
 By default, LMIWBEM is configured to work with Python 2.6.x and 2.7.x. It is
 possible to build the project with Python 3.x.x compatibility by running
@@ -127,13 +128,15 @@ Currently supported intrinsic methods:
 - ModifyInstance()
 - References()
 - ReferenceNames()
-- OpenAssociators()
-- OpenAssociatorNames()
-- OpenEnumerateInstances()
-- OpenEnumerateInstanceNames()
-- OpenExecQuery()
-- OpenReferences()
-- OpenReferenceNames()
+- \*OpenAssociators()
+- \*OpenAssociatorNames()
+- \*OpenEnumerateInstances()
+- \*OpenEnumerateInstanceNames()
+- \*OpenExecQuery()
+- \*OpenReferences()
+- \*OpenReferenceNames()
+
+\***NOTE:** WSMAN backend doesn't support *pull operations* right now.
 
 There is major difference when compared to PyWBEM: using LMIWBEM, it is
 possible to create and maintain a connection with a CIMOM:
@@ -169,6 +172,17 @@ conn = lmiwbem.WBEMConnection('hostname', ('username', 'password'))
 
 **NOTE:** It is not necessary to call `.disconnect()` when using such
 structure.
+
+Connection to WSMAN CIMOM:
+
+``` python
+import lmiwbem
+
+conn = lmiwbem.WBEMConnection('hostname/wsman', ('username', 'password'))
+...
+```
+**NOTE:** LMIWBEM needs to be configured to use OpenWSMAN; otherwise CIM-XML
+backend will be used.
 
 
 PERFORMANCE

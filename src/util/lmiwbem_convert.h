@@ -22,7 +22,11 @@
 #ifndef   LMIWBEM_CONVERT_H
 #  define LMIWBEM_CONVERT_H
 
+#  include <config.h>
 #  include <map>
+#  ifdef HAVE_OPENWSMAN
+#    include <vector>
+#  endif // HAVE_OPENWSMAN
 #  include <boost/python/extract.hpp>
 #  include <boost/python/list.hpp>
 #  include <boost/python/to_python_converter.hpp>
@@ -261,6 +265,17 @@ public:
     static Pegasus::CIMPropertyList asPegasusPropertyList(
         const bp::object &property_list,
         const String &message);
+
+#  ifdef HAVE_OPENWSMAN
+    static Pegasus::Array<Pegasus::CIMInstance> asPegasusCIMInstancesWithPathList(
+        const std::vector<std::string> &enum_result,
+        const String &hostname,
+        const String &namespace_);
+    static Pegasus::Array<Pegasus::CIMObjectPath> asPegasusCIMInstanceNameList(
+        const std::vector<std::string> &enum_result,
+        const String &hostname,
+        const String &namespace_);
+#  endif // HAVE_OPENWSMAN
 
     static bp::object asPyCIMInstanceList(
         const Pegasus::Array<Pegasus::CIMInstance> &arr,

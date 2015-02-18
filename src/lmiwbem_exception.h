@@ -22,6 +22,7 @@
 #ifndef   LMIWBEM_EXCEPTION_H
 #  define LMIWBEM_EXCEPTION_H
 
+#  include <stdexcept>
 #  include <sstream>
 #  include "lmiwbem.h"
 #  include "lmiwbem_traits.h"
@@ -34,12 +35,38 @@ PEGASUS_END
 
 namespace bp = boost::python;
 
+class Exception: public std::exception
+{
+public:
+    Exception(const String &what_arg) throw();
+    virtual ~Exception() throw();
+    virtual const char *what() const throw();
+
+protected:
+    String m_what_arg;
+};
+
+class NotSupportedException: public Exception
+{
+public:
+    NotSupportedException(const String &what_arg) throw();
+};
+
+class WsmanException: public Exception
+{
+public:
+    WsmanException(const String &what_arg) throw();
+};
+
+// -----------------------------------------------------------------------------
+
 void throw_Exception(const Pegasus::Exception &e);
 void throw_Exception(const String &message);
 void throw_CIMError(const Pegasus::CIMException &e);
 void throw_CIMError(const String &message, int code = 0);
 void throw_ConnectionError(const String &message, int code = 0);
 void throw_SLPError(const String &message, int code = 0);
+void throw_WsmanError(const String &message, int code = 0);
 
 void throw_ValueError(const String &message);
 void throw_KeyError(const String &message);

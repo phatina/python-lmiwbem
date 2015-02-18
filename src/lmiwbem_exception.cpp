@@ -34,6 +34,32 @@ namespace bp = boost::python;
 extern bp::object CIMErrorExc;
 extern bp::object ConnectionErrorExc;
 extern bp::object SLPErrorExc;
+extern bp::object WsmanErrorExc;
+
+Exception::Exception(const String &what_arg) throw()
+    : std::exception()
+    , m_what_arg(what_arg)
+{
+}
+
+Exception::~Exception() throw()
+{
+}
+
+const char *Exception::what() const throw()
+{
+    return m_what_arg.c_str();
+}
+
+NotSupportedException::NotSupportedException(const String &what_arg) throw()
+    : Exception(what_arg)
+{
+}
+
+WsmanException::WsmanException(const String &what_arg) throw()
+    : Exception(what_arg)
+{
+}
 
 namespace {
 
@@ -103,6 +129,12 @@ void throw_SLPError(const String &message, int code)
     bp::throw_error_already_set();
 }
 
+void throw_WsmanError(const String &message, int code)
+{
+    throw_core(WsmanErrorExc, message, code);
+    bp::throw_error_already_set();
+}
+
 void throw_ValueError(const String &message)
 {
     throw_core(PyExc_ValueError, message);
@@ -151,6 +183,8 @@ void handle_all_exceptions(std::stringstream &prefix)
             throw;
         } catch (const Pegasus::Exception &e) {
             prefix << e.getMessage();
+        } catch (const std::exception &e) {
+            prefix << e.what();
         }
 
         // Re-throw to raise proper Python exception.
@@ -191,6 +225,14 @@ void handle_all_exceptions(std::stringstream &prefix)
         throw_ConnectionError(
             prefix.str(),
             CIMConstants::CON_ERR_BIND);
+    } catch (const NotSupportedException &e) {
+        throw_CIMError(
+            prefix.str(),
+            CIMConstants::CIM_ERR_NOT_SUPPORTED);
+    } catch (const WsmanException &e) {
+        throw_WsmanError(
+            prefix.str(),
+            CIMConstants::CIM_ERR_FAILED);
     } catch (const Pegasus::Exception &e) {
         throw_Exception(prefix.str());
     }

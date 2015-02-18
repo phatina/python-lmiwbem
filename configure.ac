@@ -169,6 +169,7 @@ AC_TRY_LINK(
      AC_MSG_RESULT([no])]
 )
 
+AC_SUBST([WITH_ENUM_CTX], ["$with_enum_ctx"])
 AM_CONDITIONAL([BUILD_WITH_ENUM_CTX], [test x"$with_enum_ctx" = x"yes"])
 
 dnl --with-slp
@@ -246,6 +247,29 @@ if test x"$with_defns" = x; then
     with_defns="root/cimv2"
 fi
 
+dnl --with-wsman
+AC_ARG_WITH(
+    [wsman],
+    [AS_HELP_STRING(
+        [with-wsman=@<:@yes/no@:>@],
+        [Support WSMAN [default=no]])],
+    [with_wsman=$withval])
+
+if test x"$with_wsman" = x"yes"; then
+    PKG_CHECK_MODULES(
+        [OPENWSMAN],
+        [openwsman++], [
+            AC_DEFINE([HAVE_OPENWSMAN], [1], [OpenWSMAN support])
+            AC_SUBST([OPENWSMAN_CFLAGS])
+            AC_SUBST([OPENWSMAN_LIBS])
+        ], [])
+else
+    with_wsman="no"
+fi
+
+AC_SUBST([WITH_WSMAN], ["$with_wsman"])
+AM_CONDITIONAL([BUILD_WITH_WSMAN], [test x"$with_wsman" = x"yes"])
+
 AC_DEFINE_UNQUOTED([DEFAULT_NAMESPACE], ["$with_defns"], [Default CIM namespace])
 
 dnl --with-default-trust-store
@@ -277,6 +301,9 @@ AM_CONDITIONAL([BUILD_WITH_DOC], [test x"$with_doc" = x"yes"])
 
 AC_SUBST([SPECFILE_DATE], [$(date +"%a %b %e %G")])
 
+dnl Substitute CXXFLAGS for setup.py.
+AC_SUBST([CXXFLAGS], [$CXXFLAGS])
+
 AC_OUTPUT(
     [makefile
      lmiwbem.spec
@@ -303,6 +330,7 @@ AC_MSG_NOTICE([
     Support CIMListener bind Address       : $with_listener_bind_addr
     Support X509 Verification Capabilities : $with_x509_verif_cap
     Support Enumeration Context            : $with_enum_ctx
+    Support WSMAN                          : $with_wsman
 
     Build documentation                    : $with_doc
 

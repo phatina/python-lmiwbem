@@ -28,6 +28,9 @@
 #include <Pegasus/Common/CIMPropertyList.h>
 #include <Pegasus/Common/CIMValue.h>
 #include <Pegasus/Common/String.h>
+#ifdef HAVE_OPENWSMAN
+#  include "lmiwbem_client_wsman_builder.h"
+#endif // HAVE_OPENWSMAN
 #include "obj/cim/lmiwbem_class.h"
 #include "obj/cim/lmiwbem_class_name.h"
 #include "obj/cim/lmiwbem_instance.h"
@@ -242,6 +245,46 @@ Pegasus::CIMPropertyList ListConv::asPegasusPropertyList(
 
     return peg_property_list;
 }
+
+#ifdef HAVE_OPENWSMAN
+Pegasus::Array<Pegasus::CIMInstance> ListConv::asPegasusCIMInstancesWithPathList(
+    const std::vector<std::string> &enum_result,
+        const String &hostname,
+        const String &namespace_)
+{
+    Pegasus::Array<Pegasus::CIMInstance> peg_inst_list;
+
+    std::vector<std::string>::const_iterator it;
+    for (it = enum_result.begin(); it != enum_result.end(); ++it) {
+        peg_inst_list.append(
+            ObjectFactory::makeCIMInstanceWithPath(
+                *it,
+                hostname,
+                namespace_));
+    }
+
+    return peg_inst_list;
+}
+
+Pegasus::Array<Pegasus::CIMObjectPath> ListConv::asPegasusCIMInstanceNameList(
+    const std::vector<std::string> &enum_result,
+    const String &hostname,
+    const String &namespace_)
+{
+    Pegasus::Array<Pegasus::CIMObjectPath> peg_inst_name_list;
+
+    std::vector<std::string>::const_iterator it;
+    for (it = enum_result.begin(); it != enum_result.end(); ++it) {
+        peg_inst_name_list.append(
+            ObjectFactory::makeCIMInstanceName(
+                *it,
+                hostname,
+                namespace_));
+    }
+
+    return peg_inst_name_list;
+}
+#endif //HAVE_OPENWSMAN
 
 bp::object ListConv::asPyCIMInstanceList(
     const Pegasus::Array<Pegasus::CIMInstance> &arr,

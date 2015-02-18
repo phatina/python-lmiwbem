@@ -31,4 +31,9 @@
 #  define PEGASUS_BEGIN namespace Pegasus {
 #  define PEGASUS_END }
 
+#  define WSMAN_CLIENT_BEGIN namespace WsmanClientNamespace {
+#  define WSMAN_CLIENT_END }
+
+#  define UNUSED(x) (void)(x)
+
 #endif // LMIWBEM_H

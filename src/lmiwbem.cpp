@@ -59,6 +59,7 @@ namespace bp = boost::python;
 bp::object CIMErrorExc;
 bp::object ConnectionErrorExc;
 bp::object SLPErrorExc;
+bp::object WsmanErrorExc;
 
 BOOST_PYTHON_MODULE(lmiwbem_core) {
     // Initialize Python threads
@@ -70,6 +71,8 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
         bp::handle<>(PyErr_NewException((char*) "lmiwbem_core.ConnectionError", NULL, NULL)));
     SLPErrorExc = bp::object(
         bp::handle<>(PyErr_NewException((char*) "lmiwbem_core.SLPError", NULL, NULL)));
+    WsmanErrorExc = bp::object(
+        bp::handle<>(PyErr_NewException((char*) "lmiwbem_core.WsmanError", NULL, NULL)));
 
     // Disable C++ signatures in Python's doc-strings
     bp::docstring_options doc_options;
@@ -80,6 +83,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     bp::scope().attr("CIMError") = CIMErrorExc;
     bp::scope().attr("ConnectionError") = ConnectionErrorExc;
     bp::scope().attr("SLPError") = SLPErrorExc;
+    bp::scope().attr("WsmanError") = WsmanErrorExc;
 
     // Register type converts
     StringToPythonString::register_converter();

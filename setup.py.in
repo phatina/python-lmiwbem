@@ -1,6 +1,6 @@
 # ##### BEGIN LICENSE BLOCK #####
 #
-#   Copyright (C) 2014, Peter Hatina <phatina@redhat.com>
+#   Copyright (C) 2014-2015, Peter Hatina <phatina@redhat.com>
 #
 #   This library is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU Lesser General Public License as
@@ -24,17 +24,18 @@
 # - default trust store
 # - pass configured values from configure script
 
-"""
+'''
 LMIWBEM setup script.
 
 Python version for compilation is set at runtime:
 
   python2 setup.py [command] or
   python3 setup.py [command]
-"""
+'''
 
 import os
 import os.path
+import subprocess
 import sys
 from collections import namedtuple
 from distutils.core import setup
@@ -42,112 +43,196 @@ from distutils.core import Extension
 from distutils.command.build import build
 
 
+lmiwbem_docgen = '@top_srcdir@/util/docgen'
+
+# prefix == @top_srcdir@
+lmiwbem_pydocs = [
+    'src/obj/cim/lmiwbem_parameter.pydoc',
+    'src/obj/cim/lmiwbem_instance.pydoc',
+    'src/obj/cim/lmiwbem_instance_name.pydoc',
+    'src/obj/cim/lmiwbem_class.pydoc',
+    'src/obj/cim/lmiwbem_method.pydoc',
+    'src/obj/cim/lmiwbem_class_name.pydoc',
+    'src/obj/cim/lmiwbem_qualifier.pydoc',
+    'src/obj/cim/lmiwbem_property.pydoc',
+    'src/obj/lmiwbem_listener.pydoc',
+    'src/obj/lmiwbem_slp.pydoc',
+    'src/obj/lmiwbem_connection.pydoc',
+    'src/obj/lmiwbem_nocasedict.pydoc'
+]
+
+
 class lmiwbem_build(build):
-    """
+    '''
     Helper class for build command. It creates a temporary Python module named
     lmiwbem.
-    """
-    def run(self):
+    '''
+    def setup(self):
         try:
-            os.symlink("src/lmiwbem", "lmiwbem")
+            os.symlink('src/lmiwbem', 'lmiwbem')
         except OSError as e:
-            raise OSError(e.args[0], "Can't create 'lmiwbem' module directory")
-        build.run(self)
-        os.unlink("lmiwbem")
+            raise OSError(e.args[0], 'Can\'t create \'lmiwbem\' module directory')
 
+    def generate_docs(self):
+        pydocs = [
+            os.path.join('@top_srcdir@', pydoc)
+            for pydoc in lmiwbem_pydocs
+        ]
+
+        headers = [
+            os.path.join(
+                '@top_builddir@',
+                os.path.splitext(header)[0] + '_pydoc.h')
+            for header in lmiwbem_pydocs
+        ]
+
+        # Generate pydoc headers
+        for pydoc, header in zip(pydocs, headers):
+            print 'docgen %s %s' % (pydoc, header)
+            subprocess.check_call([lmiwbem_docgen, pydoc, header])
+
+    def teardown(self):
+        os.unlink('lmiwbem')
+
+    def run(self):
+        self.setup()
+        self.generate_docs()
+        build.run(self)
+        self.teardown()
 
 # User defined values from configure script.
-with_listener = "@WITH_LISTENER@" == "yes"
-with_slp = "@WITH_SLP@" == "yes"
+with_listener = '@WITH_LISTENER@' == 'yes'
+with_slp = '@WITH_SLP@' == 'yes'
+with_enum_ctx = '@WITH_ENUM_CTX@' == 'yes'
+with_wsman = '@WITH_WSMAN@' == 'yes'
+
+# LMIWBEM extra compile args.
+lmiwbem_extra_compile_args = '@CXXFLAGS@'.split(' ')
+
+# LMIWBEM include directories.
+lmiwbem_include_dirs = [
+    '@top_builddir@',
+    '@top_srcdir@/src',
+    '@top_srcdir@/src/obj',
+    '@top_srcdir@/src/obj/cim',
+    '@top_srcdir@/src/util',
+    '@top_builddir@/src',
+    '@top_builddir@/src/obj',
+    '@top_builddir@/src/obj/cim']
 
 # LMIWBEM defines.
-lmiwbem_defines = [("@PEGASUS_PLATFORM@", None)]
+lmiwbem_defines = [('@PEGASUS_PLATFORM@', None)]
 
 # LMIWBEM source files.
 lmiwbem_sources = [
-    "lmiwbem_addr.cpp",
-    "lmiwbem_class.cpp",
-    "lmiwbem_class_name.cpp",
-    "lmiwbem_client.cpp",
-    "lmiwbem_connection.cpp",
-    "lmiwbem_constants.cpp",
-    "lmiwbem.cpp",
-    "lmiwbem_exception.cpp",
-    "lmiwbem_extract.cpp",
-    "lmiwbem_instance.cpp",
-    "lmiwbem_instance_name.cpp",
-    "lmiwbem_method.cpp",
-    "lmiwbem_nocasedict.cpp",
-    "lmiwbem_parameter.cpp",
-    "lmiwbem_property.cpp",
-    "lmiwbem_qualifier.cpp",
-    "lmiwbem_types.cpp",
-    "lmiwbem_util.cpp",
-    "lmiwbem_value.cpp"]
+    'util/lmiwbem_convert.cpp',
+    'util/lmiwbem_string.cpp',
+    'util/lmiwbem_util.cpp',
+    'lmiwbem_gil.cpp',
+    'obj/lmiwbem_connection.cpp',
+    'obj/cim/lmiwbem_class.cpp',
+    'obj/cim/lmiwbem_instance.cpp',
+    'obj/cim/lmiwbem_instance_name.cpp',
+    'obj/cim/lmiwbem_method.cpp',
+    'obj/cim/lmiwbem_property.cpp',
+    'obj/cim/lmiwbem_qualifier.cpp',
+    'obj/cim/lmiwbem_class_name.cpp',
+    'obj/cim/lmiwbem_types.cpp',
+    'obj/cim/lmiwbem_parameter.cpp',
+    'obj/cim/lmiwbem_constants.cpp',
+    'obj/cim/lmiwbem_value.cpp',
+    'obj/lmiwbem_config.cpp',
+    'obj/lmiwbem_nocasedict.cpp',
+    'lmiwbem_client_cimxml.cpp',
+    'lmiwbem_urlinfo.cpp',
+    'lmiwbem_mutex.cpp',
+    'lmiwbem.cpp',
+    'lmiwbem_client.cpp',
+    'lmiwbem_exception.cpp']
 
 # LMIWBEM default libraries.
-lmiwbem_libraries = ["pegclient", "pegcommon"]
+lmiwbem_libraries = ['pegclient', 'pegcommon']
 
 # We do not provide --with-python3 CLI option. Proper boost::python library is
 # chosen at runtime.
 if sys.version_info.major == 2:
-    lmiwbem_libraries.append("boost_python")
+    lmiwbem_libraries.append('boost_python')
 elif sys.version_info.major == 3:
-    lmiwbem_libraries.append("boost_python3")
+    lmiwbem_libraries.append('boost_python3')
 else:
-    raise RuntimeError("Unsupported Python version")
+    raise RuntimeError('Unsupported Python version')
 
 # Build with indication listener.
 if with_listener:
-    lmiwbem_defines.append(("HAVE_PEGASUS_LISTENER", None))
-    lmiwbem_sources.append("lmiwbem_listener.cpp")
-    lmiwbem_libraries.append("peglistener")
+    lmiwbem_defines.append(('HAVE_PEGASUS_LISTENER', None))
+    lmiwbem_sources.append('obj/lmiwbem_listener.cpp')
+    lmiwbem_libraries.append('peglistener')
 
 # Build with SLP support.
 if with_slp:
-    lmiwbem_defines.append(("HAVE_SLP", None))
-    lmiwbem_sources.append("lmiwbem_slp.cpp")
-    lmiwbem_libraries.append("slp")
+    lmiwbem_defines.append(('HAVE_SLP', None))
+    lmiwbem_sources.append('obj/lmiwbem_slp.cpp')
+    lmiwbem_libraries.append('slp')
 
-srcdir = os.path.normpath("@abs_srcdir@/src")
+# Build with Enumeration Context.
+if with_enum_ctx:
+    lmiwbem_defines.append(('HAVE_PEGASUS_ENUMERATION_CONTEXT', None))
+    lmiwbem_sources.extend([
+        'obj/cim/lmiwbem_enum_ctx.cpp',
+        'obj/lmiwbem_connection_pull.cpp'])
+
+# Build with OpenWSMAN support.
+if with_wsman:
+    lmiwbem_include_dirs.extend([
+        '/usr/include/openwsman',
+        '/usr/include/openwsman/cpp'])
+    lmiwbem_defines.append(('HAVE_OPENWSMAN', None))
+    lmiwbem_sources.extend([
+        'lmiwbem_client_wsman_request.cpp',
+        'lmiwbem_client_wsman.cpp',
+        'lmiwbem_client_wsman_builder.cpp'])
+    lmiwbem_libraries.extend(['wsman', 'wsman_clientpp'])
+
+srcdir = os.path.normpath('@abs_srcdir@/src')
 
 # C++ extension
 lmiwbem_core = Extension(
-    "lmiwbem.lmiwbem_core",
+    'lmiwbem.lmiwbem_core',
     define_macros=lmiwbem_defines,
-    include_dirs=["@top_builddir@"],
+    extra_compile_args=lmiwbem_extra_compile_args,
+    include_dirs=lmiwbem_include_dirs,
     sources=[os.path.join(srcdir, source) for source in lmiwbem_sources],
     libraries=lmiwbem_libraries)
 
 setup(
-    name="lmiwbem",
-    version="@VERSION@",
-    license="LGPLv2+",
-    author="Peter Hatina",
-    author_email="phatina@redhat.com",
-    url="https://github.com/phatina/lmiwbem",
-    description="LMIWBEM is a Python library, which performs CIM operations"
-                "using CIM-XML protocol.",
+    name='lmiwbem',
+    version='@VERSION@',
+    license='LGPLv2+',
+    author='Peter Hatina',
+    author_email='phatina@redhat.com',
+    url='https://github.com/phatina/lmiwbem',
+    description='LMIWBEM is a Python library, which performs CIM operations'
+                'using CIM-XML protocol.',
     ext_modules=[lmiwbem_core],
-    packages=["lmiwbem"],
-    cmdclass={"build": lmiwbem_build},
+    packages=['lmiwbem'],
+    cmdclass={'build': lmiwbem_build},
     classifiers=[
-        "License :: OSI Approved :: GNU Lesser General Public License v2 or"
-        "later (LGPLv2+)",
-        "Operating System :: POSIX :: Linux",
-        "Topic :: System :: Systems Administration",
-        "Programming Language :: C++",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.2",
-        "Intended Audience :: Developers",
-        "Environment :: Console",
+        'License :: OSI Approved :: GNU Lesser General Public License v2 or'
+        'later (LGPLv2+)',
+        'Operating System :: POSIX :: Linux',
+        'Topic :: System :: Systems Administration',
+        'Programming Language :: C++',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.2',
+        'Intended Audience :: Developers',
+        'Environment :: Console',
     ],
 
     long_description=\
-        """
+        '''
         LMIWBEM is a Python library, which performs CIM operations using
         CIM-XML protocol. The library tries to mimic PyWBEM, but does things in
         different way:
@@ -155,4 +240,4 @@ setup(
         - TOG-Pegasus client's library is used for communication
         - lazy evaluation of CIM objects is used
         - some minor API was added for performance reasons
-        """)
+        ''')

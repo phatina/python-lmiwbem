@@ -38,6 +38,7 @@ public:
     static Pegasus::CIMValue asPegasusCIMValue(
         const bp::object &value,
         const String &def_type = String());
+    static String asString(const Pegasus::CIMValue &value);
 };
 
 #endif // LMIWBEM_VALUE_H

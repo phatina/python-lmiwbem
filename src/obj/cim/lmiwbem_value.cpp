@@ -180,6 +180,24 @@ Pegasus::CIMValue setPegasusValueS(
     return setPegasusValue<T, T>(value, is_array);
 }
 
+template <typename T>
+String pegasusValueAsString(const Pegasus::CIMValue &value)
+{
+    std::stringstream ss;
+    T raw_value;
+    value.get(raw_value);
+    ss << raw_value;
+    return String(ss.str());
+}
+
+template <typename T>
+String pegasusValueToString(const Pegasus::CIMValue &value)
+{
+    T raw_value;
+    value.get(raw_value);
+    return String(raw_value.toString());
+}
+
 } // unnamed namespace
 
 bp::object CIMValue::asLMIWbemCIMValue(const Pegasus::CIMValue &value)
@@ -287,4 +305,51 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(
 
     throw_TypeError("CIMValue: Unsupported TOG-Pegasus type");
     return Pegasus::CIMValue();
+}
+
+String CIMValue::asString(const Pegasus::CIMValue &value)
+{
+    switch (value.getType()) {
+    case Pegasus::CIMTYPE_BOOLEAN:
+        return pegasusValueAsString<Pegasus::Boolean>(value);
+    case Pegasus::CIMTYPE_UINT8:
+        return pegasusValueAsString<Pegasus::Uint8>(value);
+    case Pegasus::CIMTYPE_SINT8:
+        return pegasusValueAsString<Pegasus::Sint8>(value);
+    case Pegasus::CIMTYPE_UINT16:
+        return pegasusValueAsString<Pegasus::Uint16>(value);
+    case Pegasus::CIMTYPE_SINT16:
+        return pegasusValueAsString<Pegasus::Sint16>(value);
+    case Pegasus::CIMTYPE_UINT32:
+        return pegasusValueAsString<Pegasus::Uint32>(value);
+    case Pegasus::CIMTYPE_SINT32:
+        return pegasusValueAsString<Pegasus::Sint32>(value);
+    case Pegasus::CIMTYPE_UINT64:
+        return pegasusValueAsString<Pegasus::Uint64>(value);
+    case Pegasus::CIMTYPE_SINT64:
+        return pegasusValueAsString<Pegasus::Sint64>(value);
+    case Pegasus::CIMTYPE_REAL32:
+        return pegasusValueAsString<Pegasus::Real32>(value);
+    case Pegasus::CIMTYPE_REAL64:
+        return pegasusValueAsString<Pegasus::Real64>(value);
+    case Pegasus::CIMTYPE_CHAR16:
+        return pegasusValueAsString<Pegasus::Char16>(value);
+    case Pegasus::CIMTYPE_STRING:
+        return pegasusValueAsString<Pegasus::String>(value);
+    case Pegasus::CIMTYPE_DATETIME:
+        return pegasusValueToString<Pegasus::CIMDateTime>(value);
+    case Pegasus::CIMTYPE_REFERENCE:
+        return pegasusValueToString<Pegasus::CIMObjectPath>(value);
+    case Pegasus::CIMTYPE_OBJECT:
+        return pegasusValueToString<Pegasus::CIMObject>(value);
+#if 0
+    // Following type(s) are not supported.
+    case Pegasus::CIMTYPE_INSTANCE:
+        return pegasusValueAsString<Pegasus::CIMInstance>(value);
+#endif
+    default:
+        // As we have covered all CIM types, we should never get here.
+        LMIWBEM_UNREACHABLE(assert(false && "Unsupported CIM type value passed"));
+        return String();
+    }
 }

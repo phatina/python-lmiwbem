@@ -133,5 +133,21 @@ lmiwbem_core_la_LIBADD      +=                \
 	@SLP_LIB@
 endif # BUILD_WITH_SLP
 
+if BUILD_WITH_WSMAN
+lmiwbem_core_la_SOURCES     +=                \
+	lmiwbem_client_wsman.h                \
+	lmiwbem_client_wsman_builder.h        \
+	lmiwbem_client_wsman_request.h        \
+	lmiwbem_client_wsman.cpp              \
+	lmiwbem_client_wsman_builder.cpp      \
+	lmiwbem_client_wsman_request.cpp
+
+lmiwbem_core_la_CPPFLAGS    +=                \
+	@OPENWSMAN_CFLAGS@
+
+lmiwbem_core_la_LIBADD      +=                \
+	@OPENWSMAN_LIBS@
+endif # BUILD_WITH_WSMAN
+
 clean-local:
 	rm -f $$(find $(builddir) -name \*_pydoc.h)

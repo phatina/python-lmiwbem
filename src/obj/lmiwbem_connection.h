@@ -27,7 +27,7 @@
 #  include <boost/python/class.hpp>
 #  include "lmiwbem.h"
 #  include "lmiwbem_cimbase.h"
-#  include "lmiwbem_client_cimxml.h"
+#  include "lmiwbem_client.h"
 #  include "util/lmiwbem_string.h"
 
 BOOST_PYTHON_BEGIN

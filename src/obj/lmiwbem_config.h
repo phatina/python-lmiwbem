@@ -62,6 +62,7 @@ public:
     bp::object getPyDefaultTrustStore() const;
     bp::object getPyExcVerbosity() const;
     bp::object getPySupportsPullOp() const;
+    bp::object getPySupportsWSMAN() const;
     void setPyDefaultNamespace(const bp::object &def_namespace);
     void setPyDefaultTrustStore(const bp::object &def_trust_store);
     void setPyExcVerbosity(const bp::object &exc_verbosity);
