@@ -60,6 +60,7 @@ ScopedGILAcquire::~ScopedGILAcquire()
 }
 
 ScopedGILRelease::ScopedGILRelease()
+    : m_rep(new ScopedGILReleaseRep)
 {
     m_rep->m_thread_state = PyEval_SaveThread();
 }
