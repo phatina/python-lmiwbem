@@ -3,6 +3,20 @@ DOCGEN = $(top_srcdir)/util/docgen
 %_pydoc.h: %.pydoc
 	$(AM_V_GEN)$(DOCGEN) $< $@
 
+EXTRA_DIST =                                  \
+	obj/cim/lmiwbem_parameter.pydoc       \
+	obj/cim/lmiwbem_instance.pydoc        \
+	obj/cim/lmiwbem_instance_name.pydoc   \
+	obj/cim/lmiwbem_class.pydoc           \
+	obj/cim/lmiwbem_method.pydoc          \
+	obj/cim/lmiwbem_class_name.pydoc      \
+	obj/cim/lmiwbem_qualifier.pydoc       \
+	obj/cim/lmiwbem_property.pydoc        \
+	obj/lmiwbem_listener.pydoc            \
+	obj/lmiwbem_slp.pydoc                 \
+	obj/lmiwbem_connection.pydoc          \
+	obj/lmiwbem_nocasedict.pydoc
+
 obj/lmiwbem_connection.cpp: obj/lmiwbem_connection_pydoc.h
 obj/lmiwbem_listener.cpp: obj/lmiwbem_listener_pydoc.h
 obj/lmiwbem_nocasedict.cpp: obj/lmiwbem_nocasedict_pydoc.h

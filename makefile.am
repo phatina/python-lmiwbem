@@ -6,6 +6,7 @@ endif # BUILD_WITH_DOC
 
 EXTRA_DIST =         \
 	examples     \
+	util         \
 	lmiwbem.spec \
 	NEWS         \
 	README.md

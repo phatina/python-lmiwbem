@@ -1,3 +1,9 @@
+New in version 0.7.0:
+* renamed to python-lmiwbem
+* introduced WSMAN support
+* URLInfo redesigned for better error handling
+* various fixes and improvements
+
 New in version 0.6.0:
 * WBEMConnection can parse username:password from URL
 * added compatibility parameters in pull operations

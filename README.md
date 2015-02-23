@@ -243,9 +243,9 @@ BUG REPORTS
 Report bugs to **[phatina@redhat.com](mailto:phatina@redhat.com)**
 or **[lmiwbem issues][]**.
 
-[lmiwbem]: https://github.com/phatina/lmiwbem "lmiwbem repository on github"
-[lmiwbem doc]: http://phatina.github.io/lmiwbem "lmiwbem documentation"
-[lmiwbem doc api]: http://phatina.github.io/lmiwbem/api.html "lmiwbem API documentation"
-[lmiwbem doc examples]: http://phatina.github.io/lmiwbem/examples.html "examples of usage"
-[lmiwbem issues]: https://github.com/phatina/lmiwbem/issues "Report a bug"
+[lmiwbem]: https://github.com/phatina/python-lmiwbem "lmiwbem repository on github"
+[lmiwbem doc]: http://phatina.github.io/python-lmiwbem "lmiwbem documentation"
+[lmiwbem doc api]: http://phatina.github.io/python-lmiwbem/api.html "lmiwbem API documentation"
+[lmiwbem doc examples]: http://phatina.github.io/python-lmiwbem/examples.html "examples of usage"
+[lmiwbem issues]: https://github.com/phatina/python-lmiwbem/issues "Report a bug"
 [LMI Meta-Command]: https://git.fedorahosted.org/git/openlmi-tools.git
