@@ -123,15 +123,15 @@ void CIMProperty::init_type()
                 bp::arg("is_array") = None,
                 bp::arg("reference_class") = None),
                 docstr_CIMProperty_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMProperty::cmp)
-#  else
+#else
         .def("__eq__", &CIMProperty::eq)
         .def("__gt__", &CIMProperty::gt)
         .def("__lt__", &CIMProperty::lt)
         .def("__ge__", &CIMProperty::ge)
         .def("__le__", &CIMProperty::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMProperty::repr, docstr_CIMProperty_repr)
         .def("copy", &CIMProperty::copy, docstr_CIMProperty_copy)
         .add_property("name",
@@ -212,7 +212,7 @@ Pegasus::CIMProperty CIMProperty::asPegasusCIMProperty() try
     return Pegasus::CIMProperty();
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMProperty::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMProperty::type()))
@@ -239,7 +239,7 @@ int CIMProperty::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMProperty::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMProperty::type()))
@@ -303,7 +303,7 @@ bool CIMProperty::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMProperty::repr()
 {

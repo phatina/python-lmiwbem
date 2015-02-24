@@ -92,15 +92,15 @@ void CIMQualifier::init_type()
                 bp::arg("toinstance") = false,
                 bp::arg("translatable") = false),
                 docstr_CIMQualifier_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMQualifier::cmp)
-#  else
+#else
         .def("__eq__", &CIMQualifier::eq)
         .def("__gt__", &CIMQualifier::gt)
         .def("__lt__", &CIMQualifier::lt)
         .def("__ge__", &CIMQualifier::ge)
         .def("__le__", &CIMQualifier::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMQualifier::repr, docstr_CIMQualifier_repr)
         .def("copy", &CIMQualifier::copy, docstr_CIMQualifier_copy)
         .def("tomof", &CIMQualifier::tomof, docstr_CIMQualifier_tomof)
@@ -169,7 +169,7 @@ Pegasus::CIMQualifier CIMQualifier::asPegasusCIMQualifier() const
         m_is_propagated);
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMQualifier::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMQualifier::type()))
@@ -197,7 +197,7 @@ int CIMQualifier::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMQualifier::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMQualifier::type()))
@@ -258,7 +258,7 @@ bool CIMQualifier::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMQualifier::repr()
 {

@@ -65,15 +65,15 @@ void CIMClassName::init_type()
                 bp::arg("host") = None,
                 bp::arg("namespace") = None),
                 docstr_CIMClassName_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMClassName::cmp)
-#  else
+#else
         .def("__eq__", &CIMClassName::eq)
         .def("__gt__", &CIMClassName::gt)
         .def("__lt__", &CIMClassName::lt)
         .def("__ge__", &CIMClassName::ge)
         .def("__le__", &CIMClassName::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMClassName::repr, docstr_CIMClassName_repr)
         .def("copy", &CIMClassName::copy, docstr_CIMClassName_copy)
         .add_property("classname",
@@ -102,7 +102,7 @@ bp::object CIMClassName::create(
     return inst;
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMClassName::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMClassName::type()))
@@ -120,7 +120,7 @@ int CIMClassName::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMClassName::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMClassName::type()))
@@ -166,7 +166,7 @@ bool CIMClassName::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMClassName::repr()
 {

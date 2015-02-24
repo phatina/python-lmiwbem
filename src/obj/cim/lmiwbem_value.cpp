@@ -290,13 +290,13 @@ Pegasus::CIMValue CIMValue::asPegasusCIMValue(
         return setPegasusValueS<Pegasus::String>(value, is_array);
     } else if (isbool(py_value_type_check)) {
         return setPegasusValueS<bool>(value, is_array);
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
     } else if (isint(py_value_type_check)) {
         if (sizeof(long) == sizeof(Pegasus::Sint32)) {
             return setPegasusValueS<Pegasus::Sint32>(value, is_array);
         }
         return setPegasusValueS<Pegasus::Sint64>(value, is_array);
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
     } else if (islong(py_value_type_check)) {
         return setPegasusValueS<Pegasus::Sint64>(value, is_array);
     } else if (isfloat(py_value_type_check)) {

@@ -50,7 +50,7 @@ extract<String>::extract(const bp::object &obj)
     , m_str()
 {
     if (isunicode(obj)) {
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         m_str = String(
             PyString_AsString(
                 PyUnicode_EncodeUTF8(
@@ -59,9 +59,9 @@ extract<String>::extract(const bp::object &obj)
                     NULL)));
     } else if (isstring(obj)) {
         m_str = String(PyString_AsString(obj.ptr()));
-#  else
+#else
         m_str = String(PyUnicode_AsUTF8(obj.ptr()));
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
     } else {
         m_good = false;
     }
@@ -328,11 +328,11 @@ String ObjectConv::asString(const bp::object &obj)
     PyObject *py_str_ptr = PyObject_Str(obj.ptr());
     if (!py_str_ptr)
         return String();
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
     return String(PyString_AsString(py_str_ptr));
-#  else
+#else
     return String(PyUnicode_AsUTF8(py_str_ptr));
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 }
 
 bp::object ObjectConv::asPyUnicode(const bp::object &obj)
@@ -399,7 +399,7 @@ bp::object StringConv::asPyBool(const Pegasus::String &str)
     return asPyBool(str.getCString());
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 bp::object StringConv::asPyInt(const char *str)
 {
     char *s = strdup(str);
@@ -417,7 +417,7 @@ bp::object StringConv::asPyInt(const Pegasus::String &str)
 {
     return asPyInt(str.getCString());
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object StringConv::asPyFloat(const char *str)
 {

@@ -99,15 +99,15 @@ void CIMMethod::init_type()
                 bp::arg("propagated") = false,
                 bp::arg("qualifiers") = NocaseDict::create()),
                 docstr_CIMMethod_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMMethod::cmp)
-#  else
+#else
         .def("__eq__", &CIMMethod::eq)
         .def("__gt__", &CIMMethod::gt)
         .def("__lt__", &CIMMethod::lt)
         .def("__ge__", &CIMMethod::ge)
         .def("__le__", &CIMMethod::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMMethod::repr, docstr_CIMMethod_repr)
         .def("copy", &CIMMethod::copy, docstr_CIMMethod_copy)
         .def("tomof", &CIMMethod::tomof, docstr_CIMMethod_tomof)
@@ -181,7 +181,7 @@ Pegasus::CIMMethod CIMMethod::asPegasusCIMMethod()
     return peg_method;
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMMethod::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMMethod::type()))
@@ -203,7 +203,7 @@ int CIMMethod::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMMethod::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMMethod::type()))
@@ -258,7 +258,7 @@ bool CIMMethod::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMMethod::repr()
 {

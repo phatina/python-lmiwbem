@@ -87,15 +87,15 @@ void CIMParameter::init_type()
                 bp::arg("array_size") = 0,
                 bp::arg("qualifiers") = NocaseDict::create()),
                 docstr_CIMParameter_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMParameter::cmp)
-#  else
+#else
         .def("__eq__", &CIMParameter::eq)
         .def("__gt__", &CIMParameter::gt)
         .def("__lt__", &CIMParameter::lt)
         .def("__ge__", &CIMParameter::ge)
         .def("__le__", &CIMParameter::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMParameter::repr, docstr_CIMParameter_repr)
         .def("copy", &CIMParameter::copy, docstr_CIMParameter_copy)
         .def("tomof", &CIMParameter::tomof, docstr_CIMParameter_tomof)
@@ -169,7 +169,7 @@ Pegasus::CIMParameter CIMParameter::asPegasusCIMParameter() try
     return Pegasus::CIMParameter();
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMParameter::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMParameter::type()))
@@ -192,7 +192,7 @@ int CIMParameter::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMParameter::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMParameter::type()))
@@ -247,7 +247,7 @@ bool CIMParameter::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMParameter::repr()
 {

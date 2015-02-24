@@ -142,14 +142,14 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     CIMClass::init_type();
     CIMClassName::init_type();
     CIMConstants::init_type();
-#  ifdef HAVE_PEGASUS_LISTENER
+#ifdef HAVE_PEGASUS_LISTENER
     CIMIndicationListener::init_type();
-#  endif // HAVE_PEGASUS_LISTENER
-#  ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
+#endif // HAVE_PEGASUS_LISTENER
+#ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
     CIMEnumerationContext::init_type();
-#  endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
-#  ifdef HAVE_SLP
+#endif // HAVE_PEGASUS_ENUMERATION_CONTEXT
+#ifdef HAVE_SLP
     SLP::init_type();
     SLPResult::init_type();
-#  endif // HAVE_SLP
+#endif // HAVE_SLP
 }

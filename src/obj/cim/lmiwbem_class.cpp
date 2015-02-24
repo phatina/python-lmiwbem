@@ -86,15 +86,15 @@ void CIMClass::init_type()
                 bp::arg("methods") = NocaseDict::create(),
                 bp::arg("superclass") = None),
                 docstr_CIMClass_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMClass::cmp)
-#  else
+#else
         .def("__eq__", &CIMClass::eq)
         .def("__gt__", &CIMClass::gt)
         .def("__lt__", &CIMClass::lt)
         .def("__ge__", &CIMClass::ge)
         .def("__le__", &CIMClass::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__repr__", &CIMClass::repr, docstr_CIMClass_repr)
         .def("copy", &CIMClass::copy, docstr_CIMClass_copy)
         .add_property("classname",
@@ -181,7 +181,7 @@ Pegasus::CIMClass CIMClass::asPegasusCIMClass()
     return peg_class;
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMClass::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMClass::type()))
@@ -201,7 +201,7 @@ int CIMClass::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMClass::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMClass::type()))
@@ -253,7 +253,7 @@ bool CIMClass::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMClass::repr()
 {

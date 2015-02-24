@@ -80,15 +80,15 @@ void CIMInstanceName::init_type()
                 bp::arg("host") = None,
                 bp::arg("namespace") = None),
                 docstr_CIMInstanceName_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMInstanceName::cmp)
-#  else
+#else
         .def("__eq__", &CIMInstanceName::eq)
         .def("__gt__", &CIMInstanceName::gt)
         .def("__lt__", &CIMInstanceName::lt)
         .def("__ge__", &CIMInstanceName::ge)
         .def("__le__", &CIMInstanceName::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__unicode__", &CIMInstanceName::unicode,
             docstr_CIMInstanceName_unicode)
         .def("__repr__", &CIMInstanceName::repr, docstr_CIMInstanceName_repr)
@@ -189,9 +189,9 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
             }
 
             if (islong(it->second) ||
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
                 isint(it->second) ||
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
                 isfloat(it->second))
             {
                 // Create numeric CIMKeyBinding. All the lmiwbem.lmiwbem_types.{Uint8, Sint8, ...}
@@ -235,7 +235,7 @@ Pegasus::CIMObjectPath CIMInstanceName::asPegasusCIMObjectPath() const
         peg_arr_keybindings);
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMInstanceName::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMInstanceName::type()))
@@ -254,7 +254,7 @@ int CIMInstanceName::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMInstanceName::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMInstanceName::type()))
@@ -303,7 +303,7 @@ bool CIMInstanceName::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMInstanceName::copy()
 {
@@ -516,12 +516,12 @@ bp::object CIMInstanceName::keybindingToValue(const Pegasus::CIMKeyBinding &keyb
         return StringConv::asPyUnicode(cim_value);
     case Pegasus::CIMKeyBinding::NUMERIC: {
         bp::object py_num;
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         if (!isnone(py_num = StringConv::asPyInt(cim_value))  ||
             !isnone(py_num = StringConv::asPyLong(cim_value)) ||
-#  else
+#else
         if (!isnone(py_num = StringConv::asPyLong(cim_value)) ||
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
             !isnone(py_num = StringConv::asPyFloat(cim_value)))
         {
             return py_num;

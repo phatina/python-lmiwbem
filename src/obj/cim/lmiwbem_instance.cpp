@@ -109,9 +109,9 @@ void CIMInstance::init_type()
                 bp::arg("path") = None,
                 bp::arg("property_list") = None),
                 docstr_CIMInstance_init))
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &CIMInstance::cmp)
-#  else
+#else
         .def("__eq__", &CIMInstanceName::eq)
         .def("__gt__", &CIMInstanceName::gt)
         .def("__lt__", &CIMInstanceName::lt)
@@ -213,7 +213,7 @@ Pegasus::CIMInstance CIMInstance::asPegasusCIMInstance()
     return peg_instance;
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int CIMInstance::cmp(const bp::object &other)
 {
     if (!isinstance(other, CIMInstance::type()))
@@ -232,7 +232,7 @@ int CIMInstance::cmp(const bp::object &other)
 
     return 0;
 }
-#  else
+#else
 bool CIMInstance::eq(const bp::object &other)
 {
     if (!isinstance(other, CIMInstance::type()))
@@ -281,7 +281,7 @@ bool CIMInstance::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 bp::object CIMInstance::repr()
 {

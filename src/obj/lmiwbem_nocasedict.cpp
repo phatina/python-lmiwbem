@@ -60,15 +60,15 @@ void NocaseDict::init_type()
         .def("__setitem__", &NocaseDict::setitem)
         .def("__delitem__", &NocaseDict::delitem)
         .def("__contains__", &NocaseDict::haskey)
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
         .def("__cmp__", &NocaseDict::cmp)
-#  else
+#else
         .def("__eq__", &NocaseDict::eq)
         .def("__gt__", &NocaseDict::gt)
         .def("__lt__", &NocaseDict::lt)
         .def("__ge__", &NocaseDict::ge)
         .def("__le__", &NocaseDict::le)
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
         .def("__len__", &NocaseDict::len)
         .def("__repr__", &NocaseDict::repr)
         .def("keys", &NocaseDict::keys, "keys()")
@@ -303,7 +303,7 @@ bp::object NocaseDict::copy()
     return py_inst;
 }
 
-#  if PY_MAJOR_VERSION < 3
+#if PY_MAJOR_VERSION < 3
 int NocaseDict::cmp(const bp::object &other)
 {
     if (!isinstance(other, type()))
@@ -324,7 +324,7 @@ int NocaseDict::cmp(const bp::object &other)
 
     return m_dict.size() - c_other_dict.size();
 }
-#  else
+#else
 bool NocaseDict::eq(const bp::object &other)
 {
     if (!isinstance(other, type()))
@@ -362,7 +362,7 @@ bool NocaseDict::le(const bp::object &other)
 {
     return lt(other) || eq(other);
 }
-#  endif // PY_MAJOR_VERSION
+#endif // PY_MAJOR_VERSION
 
 // ----------------------------------------------------------------------------
 
