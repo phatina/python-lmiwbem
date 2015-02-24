@@ -138,7 +138,7 @@ void WSMANClient::connect(
             username.c_str(),
             password.c_str()));
 
-    m_client->SetClientCert(cert_file.c_str(), key_file.c_str());
+    m_client->SetClientCert(cert_file, key_file);
 }
 
 void WSMANClient::connectLocally()

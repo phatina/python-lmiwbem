@@ -48,10 +48,13 @@ LMIWBEM has several dependencies:
 
 - C++ compiler with support of C++98 standard
 - tog-pegasus-libs (2.12.0)
-- boost-python (1.50.0)
-- python-devel
-- openslp-devel
+- boost-python or boost-python3 (1.50.0)
+- python-devel or python3-devel
 - build tools (autoconf, automake, make, ...)
+
+Optional dependencies:
+- openslp-devel
+- openwsman-devel
 
 LMIWBEM supports 2 build systems:
 - Autotools (*must precede distutils*)

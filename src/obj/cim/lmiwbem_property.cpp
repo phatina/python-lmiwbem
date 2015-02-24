@@ -254,7 +254,7 @@ bool CIMProperty::eq(const bp::object &other)
         m_is_array == cim_other.m_is_array &&
         m_is_propagated == cim_other.m_is_propagated &&
         m_array_size == cim_other.m_array_size &&
-        compare(getValue(), cim_other.getValue(), Py_EQ) &&
+        compare(getPyValue(), cim_other.getPyValue(), Py_EQ) &&
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_EQ);
 }
 
@@ -272,7 +272,7 @@ bool CIMProperty::gt(const bp::object &other)
         m_is_array > cim_other.m_is_array ||
         m_is_propagated > cim_other.m_is_propagated ||
         m_array_size > cim_other.m_array_size ||
-        compare(getValue(), cim_other.getValue(), Py_GT) ||
+        compare(getPyValue(), cim_other.getPyValue(), Py_GT) ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_GT);
 }
 
@@ -290,7 +290,7 @@ bool CIMProperty::lt(const bp::object &other)
         m_is_array < cim_other.m_is_array ||
         m_is_propagated < cim_other.m_is_propagated ||
         m_array_size < cim_other.m_array_size ||
-        compare(getValue(), cim_other.getValue(), Py_LT) ||
+        compare(getPyValue(), cim_other.getPyValue(), Py_LT) ||
         compare(getPyQualifiers(), cim_other.getPyQualifiers(), Py_LT);
 }
 

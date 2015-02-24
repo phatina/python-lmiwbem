@@ -337,7 +337,11 @@ String ObjectConv::asString(const bp::object &obj)
 
 bp::object ObjectConv::asPyUnicode(const bp::object &obj)
 {
+#if PY_MAJOR_VERSION < 3
     return bp::object(bp::handle<>(PyObject_Unicode(obj.ptr())));
+#else
+    return bp::object(bp::handle<>(PyObject_Str(obj.ptr())));
+#endif // PY_MAJOR_VERSION
 }
 
 String StringConv::asString(const bp::object &obj)

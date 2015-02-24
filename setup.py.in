@@ -88,7 +88,7 @@ class lmiwbem_build(build):
 
         # Generate pydoc headers
         for pydoc, header in zip(pydocs, headers):
-            print 'docgen %s %s' % (pydoc, header)
+            print('docgen %s %s' % (pydoc, header))
             subprocess.check_call([lmiwbem_docgen, pydoc, header])
 
     def teardown(self):
