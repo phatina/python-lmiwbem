@@ -225,8 +225,12 @@ dnl Check for Boost::Python
 AX_BOOST_BASE([1.40], [],
     [AC_MSG_ERROR([Boost not found; install boost-devel])])
 AX_BOOST_PYTHON([$PYTHON_VERSION])
-if test x"$ac_cv_boost_python" = x"no"; then
-    AC_MSG_ERROR(Boost::Python not found; install boost-python)
+if test x"$BOOST_PYTHON_LIB" = x""; then
+    if test x"${PYTHON_VERSION:0:1}" = x"3"; then
+        AC_MSG_ERROR(Boost::Python3 not found; install boost-python3)
+    else
+        AC_MSG_ERROR(Boost::Python not found; install boost-python)
+    fi
 fi
 
 dnl Note that AX_BOOST_PYTHON just gives us the name of the library (BOOST_PYTHON_LIB),
