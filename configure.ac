@@ -3,7 +3,7 @@ AC_PREREQ([2.60])
 dnl lmiwbem version number
 m4_define(lmiwbem_version_major, 0)
 m4_define(lmiwbem_version_minor, 7)
-m4_define(lmiwbem_version_patch, 0)
+m4_define(lmiwbem_version_patch, 1)
 m4_define(lmiwbem_version, lmiwbem_version_major.lmiwbem_version_minor.lmiwbem_version_patch)
 
 AC_INIT([python-lmiwbem], [lmiwbem_version], [phatina@redhat.com])
@@ -309,7 +309,7 @@ AC_SUBST([CXXFLAGS], [$CXXFLAGS])
 
 AC_OUTPUT(
     [makefile
-     lmiwbem.spec
+     python-lmiwbem.spec
      setup.py
      doc/makefile
      doc/src/conf.py

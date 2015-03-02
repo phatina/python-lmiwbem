@@ -1,3 +1,7 @@
+New in version 0.7.1:
+* fixed python3 build
+* fixed boost::python library checks
+
 New in version 0.7.0:
 * renamed to python-lmiwbem
 * introduced WSMAN support
