@@ -21,14 +21,14 @@
 
 
 WBEMConnection_init = {
-WBEMConnection(url=None, creds=None, x509=None, default_namespace=None, \
+WBEMConnection(url=None, creds=None, default_namespace=None, x509=None, \
 no_verification=False, connect_locally=False)
 
 Args:
     url (str): URL of CIMOM instance
     creds (tuple):  (username, password)
-    x509 (dict): **'cert_file':** 'path_to_cert_file', **'key_file'** : 'path_to_key_file'
     default_namespace (str): Default namespace used for CIM operations
+    x509 (dict): **'cert_file':** 'path_to_cert_file', **'key_file'** : 'path_to_key_file'
     no_verification (bool): If True, CIMOM's X509 certificate shall not be
         verified
     connect_locally (bool): If True, Unix socket will be used

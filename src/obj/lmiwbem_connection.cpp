@@ -153,8 +153,8 @@ WBEMConnection::ScopedTransaction::ScopedTransaction(WBEMConnection *conn)
 WBEMConnection::WBEMConnection(
     const bp::object &url,
     const bp::object &creds,
-    const bp::object &x509,
     const bp::object &default_namespace,
+    const bp::object &x509,
     const bp::object &no_verification,
     const bp::object &connect_locally)
     : WBEMConnectionBase()
@@ -251,8 +251,8 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
         const bp::object &>((
             bp::arg("url") = None,
             bp::arg("creds") = None,
-            bp::arg("x509") = None,
             bp::arg("default_namespace") = None,
+            bp::arg("x509") = None,
             bp::arg("no_verification") = false,
             bp::arg("connect_locally") = false),
             docstr_WBEMConnection_init))
