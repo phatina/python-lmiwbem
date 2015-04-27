@@ -40,7 +40,7 @@ Summary:        Documentation for %{name}
 Group:          Documentation
 BuildArch:      noarch
 Provides:       lmiwbem-doc = %{version}-%{release}
-Obsoletes:      lmiwbem <= 0.6.0-2
+Obsoletes:      lmiwbem-doc <= 0.6.0-2
 
 %description doc
 %{summary}
