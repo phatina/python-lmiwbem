@@ -217,6 +217,18 @@ void handle_all_exceptions(std::stringstream &prefix)
         throw_ConnectionError(
             prefix.str(),
             static_cast<int>(e.getCode()));
+    } catch (const Pegasus::AlreadyExistsException &e) {
+        throw_CIMError(
+            prefix.str(),
+            static_cast<int>(CIMConstants::CIM_ERR_ALREADY_EXISTS));
+    } catch (const Pegasus::InvalidNamespaceNameException &e) {
+        throw_CIMError(
+            prefix.str(),
+            static_cast<int>(CIMConstants::CIM_ERR_INVALID_NAMESPACE));
+    } catch (const Pegasus::TypeMismatchException &e) {
+        throw_CIMError(
+            prefix.str(),
+            static_cast<int>(CIMConstants::CIM_ERR_TYPE_MISMATCH));
     } catch (const Pegasus::CIMException &e) {
         throw_CIMError(
             prefix.str(),
