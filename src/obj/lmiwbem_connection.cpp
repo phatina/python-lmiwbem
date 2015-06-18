@@ -211,8 +211,10 @@ WBEMConnection::WBEMConnection(
         }
     }
 
-    bool c_verify = Conv::as<bool>(no_verification, "no_verification");
-    client()->setVerifyCertificate(c_verify);
+    if (!isnone(no_verification)) {
+        bool c_no_verify = Conv::as<bool>(no_verification, "no_verification");
+        client()->setVerifyCertificate(!c_no_verify);
+    }
 
     if (!isnone(default_namespace)) {
         m_default_namespace = StringConv::asString(
@@ -263,7 +265,7 @@ void WBEMConnection::init_type_base(WBEMConnection::WBEMConnectionClass &cls)
          bp::arg("password") = None,
          bp::arg("cert_file") = None,
          bp::arg("key_file") = None,
-         bp::arg("no_verification") = None),
+         bp::arg("no_verification") = false),
         docstr_WBEMConnection_connect)
     .def("connectLocally", &WBEMConnection::connectLocally,
         docstr_WBEMConnection_connectLocally)
