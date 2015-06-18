@@ -121,7 +121,7 @@ CIMIndicationListener::CIMIndicationListener(
     , m_listen_address()
     , m_certfile()
     , m_keyfile()
-    , m_trust_store(Config::defaultTrustStore())
+    , m_trust_store(Config::getDefaultTrustStore())
     , m_terminating(false)
 {
     m_listen_address = StringConv::asString(

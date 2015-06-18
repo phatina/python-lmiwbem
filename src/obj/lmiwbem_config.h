@@ -31,54 +31,59 @@ BOOST_PYTHON_BEGIN
 class object;
 BOOST_PYTHON_END
 
-class Config: public CIMBase<Config>
+class Config
 {
 public:
-    Config();
-
-    static Config *instance();
-    static void init_type();
-
-    bp::object repr() const;
-
-    String getDefaultNamespace() const;
-    String getDefaultTrustStore() const;
-    int getExceptionVerbosity() const;
-    static String defaultNamespace();
-    static String defaultTrustStore();
-    static int exceptionVerbosity();
-    void setDefaultNamespace(const String &def_namespace);
-    void setDefaultTrustStore(const String &def_trust_store);
-    void setExcVerbosity(const int verbosity);
-
-    bool getIsVerbose() const;
-    bool getIsVerboseCall() const;
-    bool getIsVerboseMore() const;
-    static bool isVerbose();
-    static bool isVerboseCall();
-    static bool isVerboseMore();
-
-    bp::object getPyDefaultNamespace() const;
-    bp::object getPyDefaultTrustStore() const;
-    bp::object getPyExcVerbosity() const;
-    bp::object getPySupportsPullOp() const;
-    bp::object getPySupportsWSMAN() const;
-    void setPyDefaultNamespace(const bp::object &def_namespace);
-    void setPyDefaultTrustStore(const bp::object &def_trust_store);
-    void setPyExcVerbosity(const bp::object &exc_verbosity);
-
-private:
     enum {
         EXC_VERB_NONE,
         EXC_VERB_CALL,
         EXC_VERB_MORE
     };
 
+    static Config *instance();
+
+    static String getDefaultNamespace();
+    static String getDefaultTrustStore();
+    static void setDefaultNamespace(const String &def_namespace);
+    static void setDefaultTrustStore(const String &def_trust_store);
+
+    static int getExceptionVerbosity();
+    static bool isVerbose();
+    static bool isVerboseCall();
+    static bool isVerboseMore();
+    static void setExceptionVerbosity(const int verbosity);
+
+private:
+    Config();
+
     static boost::shared_ptr<Config> s_inst_ptr;
 
     String m_def_namespace;
     String m_def_trust_store;
     int m_exc_verbosity;
+};
+
+class ConfigProxy: public CIMBase<ConfigProxy>
+{
+public:
+    ConfigProxy();
+
+    static void init_type();
+
+    bp::object repr() const;
+
+    bp::object getPyDefaultNamespace() const;
+    bp::object getPyDefaultTrustStore() const;
+    bp::object getPyExcVerbosity() const;
+    bp::object getPySupportsPullOp() const;
+    bp::object getPySupportsWSMAN() const;
+
+    void setPyDefaultNamespace(const bp::object &def_namespace);
+    void setPyDefaultTrustStore(const bp::object &def_trust_store);
+    void setPyExceptionVerbosity(const bp::object &exc_verbosity);
+
+protected:
+    static Config *instance();
 };
 
 #endif // LMIWBEM_CONFIG_H

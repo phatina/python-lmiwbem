@@ -59,96 +59,47 @@ Config *Config::instance()
     return s_inst_ptr.get();
 }
 
-void Config::init_type()
+String Config::getDefaultNamespace()
 {
-    CIMBase<Config>::init_type(
-        bp::class_<Config>("_Config", bp::init<>())
-        .def("__repr__", &Config::repr)
-        .add_property(KEY_DEF_NAMESPACE,
-            &Config::getPyDefaultNamespace,
-            &Config::setPyDefaultNamespace)
-        .add_property(KEY_DEF_TRUST_STORE,
-            &Config::getPyDefaultTrustStore,
-            &Config::setPyDefaultTrustStore)
-        .add_property(KEY_EXC_VERBOSITY,
-            &Config::getPyExcVerbosity,
-            &Config::setPyExcVerbosity)
-        .add_property(KEY_SUPPORTS_PULL_OP,
-            &Config::getPySupportsPullOp)
-        .add_property(KEY_SUPPORTS_WSMAN,
-            &Config::getPySupportsWSMAN));
-
-    bp::scope().attr(KEY_EXC_VERB_NONE) = static_cast<int>(EXC_VERB_NONE);
-    bp::scope().attr(KEY_EXC_VERB_CALL) = static_cast<int>(EXC_VERB_CALL);
-    bp::scope().attr(KEY_EXC_VERB_MORE) = static_cast<int>(EXC_VERB_MORE);
-
-    bp::object inst = Config::create();
-    bp::scope().attr("config") = inst;
-    bp::scope().attr(KEY_DEF_NAMESPACE) = inst.attr(KEY_DEF_NAMESPACE);
+    return instance()->m_def_namespace;
 }
 
-bp::object Config::repr() const
+String Config::getDefaultTrustStore()
 {
-    std::stringstream ss;
-    ss << "Config(ns='" << m_def_namespace << "', trust_store='"
-       << m_def_trust_store << "', verbosity='";
-    switch (m_exc_verbosity) {
-    case EXC_VERB_NONE:
-        ss << "EXC_VERB_NONE";
-        break;
-    case EXC_VERB_CALL:
-        ss << "EXC_VERB_CALL";
-        break;
-    case EXC_VERB_MORE:
-        ss << "EXC_VERB_MORE";
-        break;
-    }
-    ss << "')";
-
-    return StringConv::asPyUnicode(ss.str());
-}
-
-String Config::getDefaultNamespace() const
-{
-    return m_def_namespace;
-}
-
-String Config::getDefaultTrustStore() const
-{
-    return m_def_trust_store;
-}
-
-int Config::getExceptionVerbosity() const
-{
-    return m_exc_verbosity;
-}
-
-String Config::defaultNamespace()
-{
-    return instance()->getDefaultNamespace();
-}
-
-String Config::defaultTrustStore()
-{
-    return instance()->getDefaultTrustStore();
-}
-
-int Config::exceptionVerbosity()
-{
-    return instance()->getExceptionVerbosity();
+    return instance()->m_def_trust_store;
 }
 
 void Config::setDefaultNamespace(const String &def_namespace)
 {
-    m_def_namespace = def_namespace;
+    instance()->m_def_namespace = def_namespace;
 }
 
 void Config::setDefaultTrustStore(const String &def_trust_store)
 {
-    m_def_trust_store = def_trust_store;
+    instance()->m_def_trust_store = def_trust_store;
 }
 
-void Config::setExcVerbosity(const int verbosity)
+int Config::getExceptionVerbosity()
+{
+    return instance()->m_exc_verbosity;
+}
+
+bool Config::isVerbose()
+{
+    return instance()->isVerboseCall() || instance()->isVerboseMore();
+}
+
+bool Config::isVerboseCall()
+{
+    return instance()->m_exc_verbosity == EXC_VERB_CALL;
+}
+
+bool Config::isVerboseMore()
+{
+    return instance()->m_exc_verbosity == EXC_VERB_MORE;
+}
+
+void Config::setExceptionVerbosity(const int verbosity)
 {
     switch (verbosity) {
     case EXC_VERB_NONE:
@@ -159,55 +110,83 @@ void Config::setExcVerbosity(const int verbosity)
         throw std::out_of_range("EXCEPTION_VERBOSITY contains unexpected value");
     }
 
-    m_exc_verbosity = verbosity;
+    instance()->m_exc_verbosity = verbosity;
 }
 
-bool Config::getIsVerbose() const
+
+// -----------------------------------------------------------------------------
+
+ConfigProxy::ConfigProxy()
 {
-    return getIsVerboseCall() || getIsVerboseMore();
 }
 
-bool Config::getIsVerboseCall() const
+void ConfigProxy::init_type()
 {
-    return getExceptionVerbosity() == static_cast<int>(EXC_VERB_CALL);
+    CIMBase<ConfigProxy>::init_type(
+        bp::class_<ConfigProxy>("_ConfigProxy", bp::init<>())
+        .def("__repr__", &ConfigProxy::repr)
+        .add_property(KEY_DEF_NAMESPACE,
+            &ConfigProxy::getPyDefaultNamespace,
+            &ConfigProxy::setPyDefaultNamespace)
+        .add_property(KEY_DEF_TRUST_STORE,
+            &ConfigProxy::getPyDefaultTrustStore,
+            &ConfigProxy::setPyDefaultTrustStore)
+        .add_property(KEY_EXC_VERBOSITY,
+            &ConfigProxy::getPyExcVerbosity,
+            &ConfigProxy::setPyExceptionVerbosity)
+        .add_property(KEY_SUPPORTS_PULL_OP,
+            &ConfigProxy::getPySupportsPullOp)
+        .add_property(KEY_SUPPORTS_WSMAN,
+            &ConfigProxy::getPySupportsWSMAN));
+
+    bp::scope().attr(KEY_EXC_VERB_NONE) = static_cast<int>(Config::EXC_VERB_NONE);
+    bp::scope().attr(KEY_EXC_VERB_CALL) = static_cast<int>(Config::EXC_VERB_CALL);
+    bp::scope().attr(KEY_EXC_VERB_MORE) = static_cast<int>(Config::EXC_VERB_MORE);
+
+    bp::object inst = ConfigProxy::create();
+    bp::scope().attr("config") = inst;
+    bp::scope().attr(KEY_DEF_NAMESPACE) = inst.attr(KEY_DEF_NAMESPACE);
 }
 
-bool Config::getIsVerboseMore() const
+bp::object ConfigProxy::repr() const
 {
-    return getExceptionVerbosity() == static_cast<int>(EXC_VERB_MORE);
+    std::stringstream ss;
+    ss << "Config(ns='" << Config::instance()->getDefaultNamespace()
+       << "', trust_store='" << Config::instance()->getDefaultTrustStore()
+       << "', verbosity='";
+    switch (Config::instance()->getExceptionVerbosity()) {
+    case Config::EXC_VERB_NONE:
+        ss << "EXC_VERB_NONE";
+        break;
+    case Config::EXC_VERB_CALL:
+        ss << "EXC_VERB_CALL";
+        break;
+    case Config::EXC_VERB_MORE:
+        ss << "EXC_VERB_MORE";
+        break;
+    }
+    ss << "')";
+
+    return StringConv::asPyUnicode(ss.str());
 }
 
-bool Config::isVerbose()
+
+bp::object ConfigProxy::getPyDefaultNamespace() const
 {
-    return instance()->getIsVerbose();
+    return StringConv::asPyUnicode(Config::instance()->getDefaultNamespace());
 }
 
-bool Config::isVerboseCall()
+bp::object ConfigProxy::getPyDefaultTrustStore() const
 {
-    return instance()->getIsVerboseCall();
+    return StringConv::asPyUnicode(Config::instance()->getDefaultTrustStore());
 }
 
-bool Config::isVerboseMore()
+bp::object ConfigProxy::getPyExcVerbosity() const
 {
-    return instance()->getIsVerboseMore();
+    return bp::object(Config::instance()->getExceptionVerbosity());
 }
 
-bp::object Config::getPyDefaultNamespace() const
-{
-    return StringConv::asPyUnicode(getDefaultNamespace());
-}
-
-bp::object Config::getPyDefaultTrustStore() const
-{
-    return StringConv::asPyUnicode(getDefaultTrustStore());
-}
-
-bp::object Config::getPyExcVerbosity() const
-{
-    return bp::object(getExceptionVerbosity());
-}
-
-bp::object Config::getPySupportsPullOp() const
+bp::object ConfigProxy::getPySupportsPullOp() const
 {
 #ifdef HAVE_PEGASUS_ENUMERATION_CONTEXT
     return bp::object(true);
@@ -216,7 +195,7 @@ bp::object Config::getPySupportsPullOp() const
 #endif
 }
 
-bp::object Config::getPySupportsWSMAN() const
+bp::object ConfigProxy::getPySupportsWSMAN() const
 {
 #ifdef HAVE_OPENWSMAN
     return bp::object(true);
@@ -225,21 +204,22 @@ bp::object Config::getPySupportsWSMAN() const
 #endif
 }
 
-void Config::setPyDefaultNamespace(const bp::object &def_namespace)
+void ConfigProxy::setPyDefaultNamespace(const bp::object &def_namespace)
 {
-    setDefaultNamespace(
+    Config::instance()->setDefaultNamespace(
         StringConv::asString(
             def_namespace, KEY_DEF_NAMESPACE));
 }
 
-void Config::setPyDefaultTrustStore(const bp::object &def_trust_store)
+void ConfigProxy::setPyDefaultTrustStore(const bp::object &def_trust_store)
 {
-    setDefaultTrustStore(
+    Config::instance()->setDefaultTrustStore(
         StringConv::asString(
             def_trust_store, KEY_DEF_TRUST_STORE));
 }
 
-void Config::setPyExcVerbosity(const bp::object &exc_verbosity)
+void ConfigProxy::setPyExceptionVerbosity(const bp::object &exc_verbosity)
 {
-    setExcVerbosity(Conv::as<int>(exc_verbosity, KEY_EXC_VERBOSITY));
+    Config::instance()->setExceptionVerbosity(
+        Conv::as<int>(exc_verbosity, KEY_EXC_VERBOSITY));
 }

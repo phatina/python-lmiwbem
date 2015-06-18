@@ -132,7 +132,7 @@ BOOST_PYTHON_MODULE(lmiwbem_core) {
     NocaseDictKeyIterator::init_type();
     NocaseDictValueIterator::init_type();
     NocaseDictItemIterator::init_type();
-    Config::init_type();
+    ConfigProxy::init_type();
     CIMInstance::init_type();
     CIMInstanceName::init_type();
     CIMMethod::init_type();

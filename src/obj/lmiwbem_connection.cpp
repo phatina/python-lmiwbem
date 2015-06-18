@@ -110,7 +110,7 @@ void WBEMConnection::ScopedConnection::connect() try
         m_conn->m_password,
         m_conn->m_cert_file,
         m_conn->m_key_file,
-        Config::defaultTrustStore());
+        Config::getDefaultTrustStore());
 } catch (...) {
     std::stringstream ss;
     if (Config::isVerbose()) {
@@ -165,7 +165,7 @@ WBEMConnection::WBEMConnection(
     , m_password()
     , m_cert_file()
     , m_key_file()
-    , m_default_namespace(Config::defaultNamespace())
+    , m_default_namespace(Config::getDefaultNamespace())
 {
     setConnectLocally(Conv::as<bool>(connect_locally, "connect_locally"));
 
@@ -454,7 +454,7 @@ void WBEMConnection::connect(
             m_password,
             c_cert_file,
             c_key_file,
-            Config::defaultTrustStore());
+            Config::getDefaultTrustStore());
         m_connect_locally = false;
     } catch (...) {
         std::stringstream ss;
