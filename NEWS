@@ -1,3 +1,8 @@
+New in version 0.7.2:
+* fixed parameter compatibility in WBEMConnection.__init__() with PyWBEM
+* fixed lmiwbem.config modifications
+* improved exceptions handling
+
 New in version 0.7.1:
 * fixed python3 build
 * fixed boost::python library checks

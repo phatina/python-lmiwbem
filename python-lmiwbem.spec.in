@@ -76,6 +76,9 @@ find %{buildroot} -name '*.la' | xargs rm -f
 * @SPECFILE_DATE@ Peter Hatina <phatina@redhat.com> - @VERSION@-1
 - upgrade to @VERSION@
 
+* Mon Jun 29 2015 Peter Hatina <phatina@redhat.com> - 0.7.2-1
+- upgrade to 0.7.2
+
 * Tue Feb 24 2015 Peter Hatina <phatina@redhat.com> - 0.7.1-1
 - upgrade to 0.7.1
 - rename to python-lmiwbem
